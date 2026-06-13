@@ -7,6 +7,7 @@ const raw = JSON.parse(fs.readFileSync(__dirname + "/data/itsu-raw.json", "utf8"
 const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 const DEFAULT_ON = new Set(["healthy_soups", "gyoza_bao", "rice_bowls", "hot_noodles", "sushi_poke"]);
 const DRINK_CATS = new Set(["cold_drinks", "hot_iced_drinks"]); // Getränke: in der App IMMER vom Optimizer ausgeschlossen
+const EXCLUDE_NAMES = new Set(["edamame"]); // User-Ausschluss: plain edamame-Beilage ("chocolate edamame" bleibt)
 
 const cats = raw.categories.map(c => {
   const name = c.trim();
@@ -17,7 +18,7 @@ const catOrder = new Map(cats.map((c, i) => [c.id, i]));
 const num = v => { const f = parseFloat(v); return isNaN(f) ? 0 : Math.round(f * 100) / 100; };
 const usedIds = new Set();
 
-const items = raw.items.map(it => {
+const items = raw.items.filter(it => !EXCLUDE_NAMES.has(it.name.trim().toLowerCase())).map(it => {
   let id = slug(it.url.split("/").filter(Boolean).pop());
   while (usedIds.has(id)) id += "_2";
   usedIds.add(id);

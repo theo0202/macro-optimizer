@@ -4,7 +4,7 @@
     "workflow": "User liefert Daten als Copy-Paste-Batches -> Items hier ergänzen -> node gdk-update.js",
     "updated": "2026-06-12",
     "switches": "No Sauce = alle sauce:true raus · No rice bowl = Kategorie rice_bowls raus",
-    "notes": "sauce:true = Item enthält Sauce (WITH SAUCE / plain Quesadilla / Ketchup-Juniors). 'EXTRA HOT'-Junior-Varianten weggelassen (makro-identisch zur Curry-Version). DONER BURRITO MIX fat=12.4 ist laut Rechnung ein Tippfehler im GDK-Sheet (~69 erwartet) — wie geliefert übernommen.",
+    "notes": "sauce:true = Item enthält Sauce (WITH SAUCE / plain Quesadilla / Ketchup-Juniors). 'EXTRA HOT'-Junior-Varianten weggelassen (makro-identisch zur Curry-Version). DONER BURRITO MIX entfernt (User-Entscheidung): fat=12.4 war ein Tippfehler im GDK-Sheet (~69 erwartet, 1175 kcal mit 12g Fett unmöglich).",
     "junior_default_off": true
   },
   "items": [
@@ -36,7 +36,6 @@
 
     { "name": "Doner Burrito Beef", "cat": "burritos", "kcal": 1218, "fat": 71.5, "sat": 27.8, "carbs": 84.8, "sugars": 10, "fibre": 6.8, "protein": 52.6, "salt": 3.98 },
     { "name": "Doner Burrito Chicken", "cat": "burritos", "kcal": 1008, "fat": 48.1, "sat": 16.7, "carbs": 104, "sugars": 10, "fibre": 5, "protein": 29.1, "salt": 3.76 },
-    { "name": "Doner Burrito Mix", "cat": "burritos", "kcal": 1175, "fat": 12.4, "sat": 4.4, "carbs": 81.4, "sugars": 9.4, "fibre": 7, "protein": 56.1, "salt": 3.57 },
     { "name": "Doner Burrito Plant-Based", "cat": "burritos", "kcal": 868, "fat": 35.8, "sat": 12.7, "carbs": 78.5, "sugars": 7.7, "fibre": 8.8, "protein": 47.6, "salt": 2.76 },
 
     { "name": "Quesadilla Beef (with sauce)", "cat": "quesadillas", "sauce": true, "kcal": 931, "fat": 62.6, "sat": 22.9, "carbs": 58.9, "sugars": 5.9, "fibre": 10.7, "protein": 31.9, "salt": 4.18 },

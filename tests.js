@@ -82,6 +82,8 @@ check("FJ Kale Miso Slaw Side kcal (Web-Update)", T.FJ.sides.find(x => x.id === 
 check("Itsu Items vorhanden (>=100, re-crawl-stabil)", T.ITSU.items.length >= 100, true);
 check("Itsu Kategorien", T.ITSU.cats.length, 9);
 check("Itsu Thai salmon curry kcal", T.ITSU.items.find(x => x.id.includes("salmon_thai_rice_bowl")).kcal, 736);
+check("Itsu edamame entfernt (User-Ausschluss)", !T.ITSU.items.find(x => x.name === "edamame"), true);
+check("Itsu chocolate edamame bleibt", !!T.ITSU.items.find(x => x.name === "chocolate edamame"), true);
 
 const itsuCatsDefault = {};
 T.ITSU.cats.forEach(c => itsuCatsDefault[c.id] = c.on);
@@ -130,6 +132,8 @@ check("Pret Items vorhanden (>=120, re-crawl-stabil)", T.PRET.items.length >= 12
 check("Pret Kategorien", T.PRET.cats.length, 13);
 check("Pret Chicken Salad kcal", T.PRET.items.find(x => x.id === "chicken_salad").kcal, 529);
 check("Pret relevante Items (Whitelist)", T.PRET.items.filter(x => x.rel).length, 67);
+check("Pret Apple + Banana entfernt (User-Ausschluss)", !T.PRET.items.find(x => x.name === "Apple" || x.name === "Banana"), true);
+check("Pret The Big Apple Bowl bleibt (nicht versehentlich gematcht)", !!T.PRET.items.find(x => x.id === "the_big_apple_bowl"), true);
 
 const pretAll = {};
 T.PRET.cats.forEach(c => pretAll[c.id] = true);
@@ -198,6 +202,14 @@ const rnNoSauce = T.optimizeNandos(t9, "macros", {}, nanAll, 2, false, true);
 check("Nando's 'No sauces' filtert Saucen", rnNoSauce.every(r => r.items.every(x => !x.sauce)), true);
 const rnWithSauce = T.optimizeNandos(t9, "macros", {}, nanAll, 2, false, false);
 check("Nando's ohne Schalter: Saucen erlaubt (Gegenprobe)", rnWithSauce.some(r => r.items.some(x => x.sauce)), true);
+
+// Schalter "No grilled pineapple": Grilled Pineapple nie in Ergebnissen
+check("Nando's Grilled Pineapple existiert", !!T.NANDOS.items.find(x => x.id === "grilled_pineapple"), true);
+const tPine = { protein: 4, carbs: 9, fat: 4, kcal: 88, fibMin: null, fibMax: null, sMin: null, sMax: null }; // nah an Pineapple (37 kcal) → würde sonst auftauchen
+const rnPine = T.optimizeNandos(tPine, "macros", {}, nanAll, 2, false, false, true);
+check("Nando's 'No grilled pineapple' filtert es raus", rnPine.every(r => r.items.every(x => x.id !== "grilled_pineapple")), true);
+const rnNoPineOff = T.optimizeNandos(tPine, "macros", {}, nanAll, 2, false, false, false);
+check("Nando's ohne Schalter: Pineapple erlaubt (Gegenprobe)", rnNoPineOff.some(r => r.items.some(x => x.id === "grilled_pineapple")), true);
 
 // ── Urban Greens (NUR Build Your Own — fertige Gerichte bewusst entfernt) ──
 check("UG: keine fertigen Gerichte mehr (nur BYO)", T.UG.pre === undefined, true);
@@ -304,7 +316,8 @@ check("sortResults fat: aufsteigende |Ist−Ziel|", monotone(T.sortResults(srcRe
 check("sortResults mutiert Original nicht", srcRes[0].score <= srcRes[1].score, true);
 
 // ── German Doner Kebab (GDK, à la carte, Copy-Paste-Daten) ──
-check("GDK Items (61)", T.GDK.items.length, 61);
+check("GDK Items (60, Burrito Mix entfernt)", T.GDK.items.length, 60);
+check("GDK Doner Burrito Mix entfernt (Datenfehler)", !T.GDK.items.find(x => x.id === "doner_burrito_mix"), true);
 check("GDK Kategorien (7)", T.GDK.cats.length, 7);
 check("GDK OG Kebab Beef with sauce kcal", T.GDK.items.find(x => x.id === "og_kebab_beef_with_sauce").kcal, 994);
 check("GDK OG Kebab Beef no sauce kcal", T.GDK.items.find(x => x.id === "og_kebab_beef_no_sauce").kcal, 744);

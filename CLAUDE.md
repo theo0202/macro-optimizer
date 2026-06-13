@@ -67,7 +67,8 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - 61 Items, 7 Kategorien (kebabs, wraps, burritos, quesadillas, rice_bowls, boxes, juniors); Juniors standardmäßig AUS (Kids-Menü, wie Nando's Nandinos)
   - `sauce:true` = Item enthält Sauce: alle "WITH SAUCE"-Varianten, plain Quesadilla (vs. "Doner Quesadilla … WITHOUT SAUCE"), alle Ketchup-Juniors. Schalter "No Sauce" filtert diese
   - "EXTRA HOT"-Junior-Varianten weggelassen (makro-identisch zur Curry-Version)
-  - **ACHTUNG Daten-Anomalie**: DONER BURRITO MIX fat=12.4 ist laut Kalorienrechnung ein Tippfehler im GDK-Sheet (~69 erwartet) — wie geliefert übernommen, bei Gelegenheit verifizieren
+  - **DONER BURRITO MIX entfernt** (User-Entscheidung 12.06.2026): fat=12.4 war ein Tippfehler im GDK-Sheet (1175 kcal mit 12g Fett unmöglich, ~69 erwartet). Falls korrekter Wert nachkommt → wieder in gdk-raw.json aufnehmen
+  - **EXCLUDE-Listen in den Update-Skripten**: itsu-update.js `EXCLUDE_NAMES` ("edamame" — plain Beilage, "chocolate edamame" bleibt), pret-update.js `EXCLUDE_NAMES` ("Apple", "Banana") — überleben Re-Crawls
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -119,6 +120,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Drinks sind gar nicht erst in den App-Daten** (User-Vorgabe "von Anfang an weglassen")
 - **Schalter "No desserts, Lunch Fix & platters"**: schließt Desserts + The Lunch Fix + Sharing Platters aus (`NANDOS_SWITCH_CATS`)
 - **Schalter "No sauces"**: schließt alle 14 `sauce:true`-Items aus — die komplette "Dips"-Subsection (PERinaise, Garlic PERinaise, PERi-Chicken Gravy, Chilli Jam, PERi-Honey, Mayonnaise), die "Bottles"-Subsection (6 Flaschensaucen + PERi-PERi Salt) und PERi-PERi Drizzle. NICHT geflaggt: essbare Extras wie Halloumi, Grilled Pineapple, Brote
+- **Schalter "No grilled pineapple"**: schließt das Einzel-Item "Grilled Pineapple" (id `grilled_pineapple`) aus — Parameter `noPineapple` in optimizeNandos
 - Standard-Chips: alle an außer Nandinos (Kids)
 - Dips & Extras-Kategorie = Add-ons (Grilled Chicken Breast, Halloumi, 1/2 Avocado, Brote, Dips) — als Pool-Items nützlich für Makro-Feintuning
 
@@ -130,7 +132,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 
 ## Bestellablauf German Doner Kebab / GDK (à la carte)
 - Wie Itsu/Pret/Nando's/Wagamama: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`)
-- Kategorien (61 Items): Kebabs (12), Wraps (12), Burritos (4), Quesadillas (6), Rice Bowls (4), Boxes (12), Juniors/Kids (11)
+- Kategorien (60 Items): Kebabs (12), Wraps (12), Burritos (3), Quesadillas (6), Rice Bowls (4), Boxes (12), Juniors/Kids (11) — "Doner Burrito Mix" wegen Datenfehler (fat=12.4) entfernt
 - **Schalter "No Sauce"**: schließt alle 26 `sauce:true`-Items aus (alle "with sauce"-Varianten, plain Quesadillas, Ketchup-Juniors) → die "no sauce"/"without sauce"-Varianten bleiben
 - **Schalter "No rice bowl"**: schließt die Kategorie rice_bowls aus
 - Standard-Chips: alle an außer Juniors (Kids); beide Schalter aus
@@ -146,7 +148,7 @@ BYO-**Salad**-Schritte (genau wie Deliveroo):
 4. Add Extra Protein?: 0–1 (gleiche Liste OHNE Avocado Whole, `noExtra`-Flag)
 5. Choose 3 Veg or Pickles: GENAU 3 aus 14
 6. Any Extra Veg or Pickles?: beliebig — Pool = Leafy Greens + die 14 Veg OHNE Cucumber (`noExtra`-Flag, so auf Deliveroo)
-7. Choose 2 Toppings: GENAU 2 aus 6 (Coriander/Mint/Parsley = User-Ausschluss) — **Schalter "No nuts"** erzwingt 0 und schließt Toppings auch als Extras aus
+7. Choose 2 Toppings: GENAU 2 aus 6 (Coriander/Mint/Parsley = User-Ausschluss) — **Schalter 'No "2 Toppings" / Nuts etc.'** (intern `noNuts`) erzwingt 0 und schließt Toppings auch als Extras aus
 8. Choose a Dressing: 0–1 aus 6 (optional; Olive Oil = User-Ausschluss) — **Schalter "No Dressing"** erzwingt 0 (auch Extra-Dressings)
 9. Any Extra Dressing?: beliebig (Optimizer: über Extras-Stufe)
 10. Any extra Scoops, Premiums or Toppings?: beliebig (9 Scoops/Premiums + 6 Toppings)
@@ -165,6 +167,10 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Yogurt Mint & Garlic Sauce (nicht im PDF)
   - Shawarma Spiced Chicken (nicht im PDF)
 
+## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing".
+**EINZIGE Ausnahme: Pret "Salads and protein pots only" startet AUS** — würde sonst "only relevant items" überstimmen und alles außer den 13 Salads verstecken (zu eng als Default). Beim Hinzufügen neuer Schalter: per Default AN, außer der Schalter ist ein enger Spezialmodus.
+
 ## Standard-Defaults (beim App-Start)
 - **Restaurant**: Subway
 - **Brot**: Wholegrain (locked, kann aber gewechselt werden)
@@ -174,12 +180,12 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 - **Standard-Salad**: Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions (alles AUSSER Jalapeños, Sweetcorn, Olives)
 - **Makro-Präferenzen** (Kalorien-Modus): High Protein + Low Fat vorausgewählt
 - **Farmer J**: "Nur Gratis-Items" aktiv (keine bezahlten Toppings/Saucen in Vorschlägen)
-- **Itsu**: nur Food-Kategorien aktiv, max. 3 Items pro Bestellung, Schalter "No soups, desserts, snacks etc." aus, Getränke immer ignoriert
-- **Pret**: 8 Food-Kategorien aktiv, max. 3 Items, beide Schalter aus, Getränke immer ignoriert
-- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 3 Items, beide Schalter aus, Drinks nicht in den Daten
-- **Wagamama**: alle Kategorien aktiv, max. 3 Items, "No Ramen" aus
-- **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 3 Items, "No Sauce" + "No rice bowl" aus
-- **Urban Greens**: Modus "BYO Salad", "No nuts" + "No Dressing" aus
+- **Itsu**: nur Food-Kategorien aktiv, max. 3 Items pro Bestellung, Schalter "No soups, desserts, snacks etc." AN, Getränke immer ignoriert
+- **Pret**: 8 Food-Kategorien aktiv, max. 3 Items, "only relevant items" AN / "Salads and protein pots only" AUS, Getränke immer ignoriert
+- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 3 Items, alle 3 Schalter AN, Drinks nicht in den Daten
+- **Wagamama**: alle Kategorien aktiv, max. 3 Items, "No Ramen" AN
+- **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 3 Items, "No Sauce" + "No rice bowl" AN
+- **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -194,7 +200,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
 4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK)
-5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), 2 Modus-Buttons (BYO Salad / BYO Tray) + "No nuts"/"No Dressing" (Urban Greens)
+5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
 

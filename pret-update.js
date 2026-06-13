@@ -23,6 +23,8 @@ const REL_NAMES = new Set([
   "Super Fruit", "Fruit Salad",
   "Bircher Muesli", "Blueberry Balance Bowl", "Five Berry Bowl", "The Big Apple Bowl",
 ].map(norm));
+// User-Ausschlüsse (NIEMALS vorschlagen)
+const EXCLUDE_NAMES = new Set(["Apple", "Banana"].map(norm));
 
 const cats = APP_CATS.map(name => ({ id: slug(name), name, on: DEFAULT_ON.has(slug(name)), drink: DRINK_CATS.has(slug(name)) }));
 const catOrder = new Map(cats.map((c, i) => [c.id, i]));
@@ -33,7 +35,7 @@ const usedIds = new Set();
 const matchedNames = new Set();
 
 const items = raw.items
-  .filter(it => it.kcal != null && it.categories.some(c => appCatSet.has(c)))
+  .filter(it => it.kcal != null && it.categories.some(c => appCatSet.has(c)) && !EXCLUDE_NAMES.has(norm(it.name)))
   .map(it => {
     const catName = it.categories.find(c => appCatSet.has(c));
     let id = slug(it.name);
