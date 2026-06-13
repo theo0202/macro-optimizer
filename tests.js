@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, sortResults };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, sortResults };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -302,6 +302,43 @@ check("sortResults kcal: aufsteigende |Ist−Ziel|", monotone(T.sortResults(srcR
 check("sortResults protein: aufsteigende |Ist−Ziel|", monotone(T.sortResults(srcRes, "protein", tgts), "protein", tgts.protein), true);
 check("sortResults fat: aufsteigende |Ist−Ziel|", monotone(T.sortResults(srcRes, "fat", tgts), "fat", tgts.fat), true);
 check("sortResults mutiert Original nicht", srcRes[0].score <= srcRes[1].score, true);
+
+// ── German Doner Kebab (GDK, à la carte, Copy-Paste-Daten) ──
+check("GDK Items (61)", T.GDK.items.length, 61);
+check("GDK Kategorien (7)", T.GDK.cats.length, 7);
+check("GDK OG Kebab Beef with sauce kcal", T.GDK.items.find(x => x.id === "og_kebab_beef_with_sauce").kcal, 994);
+check("GDK OG Kebab Beef no sauce kcal", T.GDK.items.find(x => x.id === "og_kebab_beef_no_sauce").kcal, 744);
+check("GDK Juniors-Kategorie standardmäßig aus", T.GDK.cats.find(c => c.id === "juniors").on, false);
+check("GDK Rice Bowl Chicken Protein", T.GDK.items.find(x => x.id === "rice_bowl_chicken").protein, 47.5);
+
+const gdkAll = {};
+T.GDK.cats.forEach(c => gdkAll[c.id] = true);
+const t12 = { protein: 50, carbs: 70, fat: 30, kcal: 750, fibMin: null, fibMax: null, sMin: null, sMax: null };
+
+const rg = T.optimizeGDK(t12, "macros", {}, gdkAll, 3, false, false);
+let gSumOk = true, gLenOk = true;
+for (const r of rg) {
+  const exp = Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10;
+  if (!approx(r.nutrition.kcal, exp)) gSumOk = false;
+  if (r.items.length < 1 || r.items.length > 3) gLenOk = false;
+}
+check("GDK Nutrition == Summe (alle Ergebnisse)", gSumOk, true);
+check("GDK 1–3 Items", gLenOk, true);
+
+// Schalter "No Sauce": kein sauce:true-Item in den Ergebnissen
+check("GDK Saucen-Items geflaggt (26)", T.GDK.items.filter(x => x.sauce).length, 26);
+const rgNS = T.optimizeGDK(t12, "macros", {}, gdkAll, 3, true, false);
+check("GDK 'No Sauce' filtert alle Sauce-Items", rgNS.every(r => r.items.every(x => !x.sauce)), true);
+const rgWith = T.optimizeGDK(t12, "macros", {}, gdkAll, 2, false, false);
+check("GDK ohne Schalter: Sauce erlaubt (Gegenprobe)", rgWith.some(r => r.items.some(x => x.sauce)), true);
+
+// Schalter "No rice bowl": keine rice_bowls-Items
+const rgNRB = T.optimizeGDK(t12, "macros", {}, gdkAll, 3, false, true);
+check("GDK 'No rice bowl' filtert rice_bowls-Kategorie", rgNRB.every(r => r.items.every(x => x.cat !== "rice_bowls")), true);
+
+// Beide Schalter kombiniert
+const rgBoth = T.optimizeGDK(t12, "macros", {}, gdkAll, 3, true, true);
+check("GDK beide Schalter: keine Sauce UND keine Rice Bowls", rgBoth.every(r => r.items.every(x => !x.sauce && x.cat !== "rice_bowls")), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

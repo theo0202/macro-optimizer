@@ -1,7 +1,10 @@
-# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama)
+# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK)
 
 ## Projektübersicht
-Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari. Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London) und **Wagamama** (UK), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen.
+Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK) und **German Doner Kebab / GDK** (UK), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen.
+
+## Deployment / Sync
+Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
 
 ## Tech Stack
 - Single `index.html` file (PWA)
@@ -20,6 +23,7 @@ Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen ba
 - `node pret-crawl.js && node pret-update.js` aktualisiert die Pret-Daten (Web-Crawl → index.html)
 - `node nandos-crawl.js && node nandos-update.js` aktualisiert die Nando's-Daten (Web-Crawl → index.html)
 - `node wagamama-update.js` generiert den WAGAMAMA-Block aus `data/wagamama-raw.json` (KEIN Crawler — User liefert Copy-Paste-Batches)
+- `node gdk-update.js` generiert den GDK-Block aus `data/gdk-raw.json` (KEIN Crawler — User liefert offizielle Nährwerttabelle als Copy-Paste)
 - Preview-Server: `.claude/launch.json` → "macro-optimizer" (py -3 -m http.server 8321)
 
 ## Datenquellen
@@ -58,6 +62,12 @@ Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen ba
   - Workflow: neue Items in `data/wagamama-raw.json` ergänzen (Name, cat, 8 Makros; Sodium weglassen, Salt reicht) → `node wagamama-update.js` → WAGAMAMA-Block in index.html (Marker `__WAGAMAMA_DATA_START__`/`__WAGAMAMA_DATA_END__`)
   - Kategorien sind selbst zugeordnet (donburi, ramen, teppanyaki = alle soba/udon-Gerichte, salads, sides) und entstehen automatisch aus den `cat`-Feldern
   - Stand Juni 2026: 21 Items aus 2 Batches; weitere folgen
+- **German Doner Kebab (GDK)**: offizielle Nährwerttabelle (per-Serving-Spalte) — KEIN Crawler, **User liefert Copy-Paste**
+  - Workflow: Items in `data/gdk-raw.json` (Name, cat, `sauce:true` wenn Sauce drin, 8 Makros) → `node gdk-update.js` → GDK-Block (Marker `__GDK_DATA_START__`/`__GDK_DATA_END__`)
+  - 61 Items, 7 Kategorien (kebabs, wraps, burritos, quesadillas, rice_bowls, boxes, juniors); Juniors standardmäßig AUS (Kids-Menü, wie Nando's Nandinos)
+  - `sauce:true` = Item enthält Sauce: alle "WITH SAUCE"-Varianten, plain Quesadilla (vs. "Doner Quesadilla … WITHOUT SAUCE"), alle Ketchup-Juniors. Schalter "No Sauce" filtert diese
+  - "EXTRA HOT"-Junior-Varianten weggelassen (makro-identisch zur Curry-Version)
+  - **ACHTUNG Daten-Anomalie**: DONER BURRITO MIX fat=12.4 ist laut Kalorienrechnung ein Tippfehler im GDK-Sheet (~69 erwartet) — wie geliefert übernommen, bei Gelegenheit verifizieren
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -67,6 +77,7 @@ Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen ba
 - **Pret**: `PRET.cats[]` (gleiches Schema wie Itsu) + `PRET.items[]` (zusätzlich `rel:true` = Whitelist für "only relevant items, no bullshit")
 - **Nando's**: `NANDOS.cats[]` + `NANDOS.items[]` (gleiches Schema; Drinks existieren im Block gar nicht)
 - **Wagamama**: `WAGA.cats[]` + `WAGA.items[]` (gleiches Schema wie Itsu/Pret/Nando's)
+- **GDK**: `GDK.cats[]` + `GDK.items[]` (gleiches Schema; Items zusätzlich `sauce:true`-Flag für "No Sauce"-Schalter)
 - **Urban Greens**: `UG.pre[]` (18 fertige Salads/Trays, `group`-Feld) + BYO-Komponenten `UG.greens[]`, `UG.carbs[]`, `UG.prots[]`, `UG.veg[]`, `UG.tops[]`, `UG.dress[]`, `UG.scoops[]` — Items nur mit kcal/protein/fat/carbs
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
@@ -117,6 +128,13 @@ Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen ba
 - **Schalter "No Ramen"**: schließt die komplette ramen-Kategorie aus (tantanmen beef brisket, grilled chicken, chilli chicken, kare burosu — und automatisch alle künftig ergänzten Ramen)
 - Standard-Chips: alle an
 
+## Bestellablauf German Doner Kebab / GDK (à la carte)
+- Wie Itsu/Pret/Nando's/Wagamama: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`)
+- Kategorien (61 Items): Kebabs (12), Wraps (12), Burritos (4), Quesadillas (6), Rice Bowls (4), Boxes (12), Juniors/Kids (11)
+- **Schalter "No Sauce"**: schließt alle 26 `sauce:true`-Items aus (alle "with sauce"-Varianten, plain Quesadillas, Ketchup-Juniors) → die "no sauce"/"without sauce"-Varianten bleiben
+- **Schalter "No rice bowl"**: schließt die Kategorie rice_bowls aus
+- Standard-Chips: alle an außer Juniors (Kids); beide Schalter aus
+
 ## Bestellablauf Urban Greens (Deliveroo)
 Zwei Modi (Umschalt-Buttons): **"BYO Salad"** und **"BYO Tray"** — fertige Gerichte gibt es in der App NICHT (User-Entscheidung, siehe Datenquellen).
 (Getrennte Modi statt gemischter Ergebnisse: Salads dominieren Trays im Score fast immer, weil sie mehr Freiheitsgrade haben.)
@@ -160,6 +178,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 - **Pret**: 8 Food-Kategorien aktiv, max. 3 Items, beide Schalter aus, Getränke immer ignoriert
 - **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 3 Items, beide Schalter aus, Drinks nicht in den Daten
 - **Wagamama**: alle Kategorien aktiv, max. 3 Items, "No Ramen" aus
+- **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 3 Items, "No Sauce" + "No rice bowl" aus
 - **Urban Greens**: Modus "BYO Salad", "No nuts" + "No Dressing" aus
 
 ## Standard-Salad in Berechnungen (Subway)
@@ -174,8 +193,8 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama)
-5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama), 2 Modus-Buttons (BYO Salad / BYO Tray) + "No nuts"/"No Dressing" (Urban Greens)
+4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK)
+5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), 2 Modus-Buttons (BYO Salad / BYO Tray) + "No nuts"/"No Dressing" (Urban Greens)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
 
@@ -209,7 +228,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 3. Set Fieldtrays/Fieldbowls/Solo-Salate laufen als Einzel-Kandidaten mit
 4. Gleiche Score-Funktion, Top 20/Top 8 wie Subway
 
-### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`) und Wagamama (`optimizeWaga`)
+### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`) und GDK (`optimizeGDK`)
 Alle nutzen den gemeinsamen Kern `alaCarteCombos`:
 1. Enumeriert alle Singles und Paare (Duplikate erlaubt, i<=j)
 2. Triples per Beam-Suche: nur Erweiterungen der besten 80 Paare (dedupliziert) — bleibt auch mit großem Pool flott
@@ -221,8 +240,9 @@ Pool-Bildung:
 - **Pret**: Getränke immer raus; dann Vorrang: "Salads and protein pots only" > "only relevant items, no bullshit" (rel-Whitelist) > Chips
 - **Nando's**: aktive Chips MINUS Desserts/Sharing Platters (Schalter, `NANDOS_SWITCH_CATS`) MINUS Saucen (Schalter "No sauces", `sauce:true`); Drinks sind nicht in den Daten
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
+- **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 
-UI-Rendering: Itsu, Pret, Nando's & Wagamama teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
+UI-Rendering: Itsu, Pret, Nando's, Wagamama & GDK teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
 ### Urban Greens (`optimizeUG`)
 - Modus "pre": 18 fertige Trays/Salads als Einzel-Kandidaten (wie FJ-Sets)
@@ -266,6 +286,7 @@ Essen bestellen Claude Tool/
 ├── nandos-update.js         ← Generiert NANDOS-Block in index.html (mg→g, Filter-Regeln)
 ├── export-urbangreens.js    ← Regeneriert data/urbangreens.json aus index.html
 ├── wagamama-update.js       ← Generiert WAGAMAMA-Block in index.html aus data/wagamama-raw.json
+├── gdk-update.js            ← Generiert GDK-Block in index.html aus data/gdk-raw.json
 ├── .claude/launch.json      ← Preview-Server-Konfiguration
 └── data/
     ├── urbangreens.json     ← Urban-Greens-Daten + Order Rules als JSON
@@ -278,6 +299,7 @@ Essen bestellen Claude Tool/
     ├── pret-raw.json        ← Pret-Rohdaten vom Crawl (inkl. Preise, Allergene, Veggie-Flags)
     ├── nandos-raw.json      ← Nando's-Rohdaten von der Order-API (inkl. Drinks, Preise, Subsections)
     ├── wagamama-raw.json    ← Wagamama-Daten aus User-Copy-Paste-Batches (inkl. Allergene, Veggie-Flags)
+    ├── gdk-raw.json         ← GDK-Daten aus User-Copy-Paste (offizielle Nährwerttabelle, sauce-Flags)
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
     ├── Farmer J _ Nutritional Info.xlsx ← Original-Erfassung Farmer J
     └── UKIandROINutritionalInformationJan2026.pdf ← Original-PDF Subway
