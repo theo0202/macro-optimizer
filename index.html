@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -147,10 +147,10 @@ const FJ = {
     { id:"the_salmon_bowl_april_2026",name:"The Salmon Bowl April 2026",group:"Fieldbowl",kcal:717,fat:56,sat:8.9,carbs:16,sugars:12,fibre:9.1,protein:33,salt:4.3 },
     { id:"the_harissa_bowl_april_2026",name:"The Harissa Bowl April 2026",group:"Fieldbowl",kcal:938,fat:52,sat:9.8,carbs:79,sugars:21,fibre:14,protein:33,salt:3.7 },
     { id:"the_tofu_bowl_april_2026",name:"The Tofu Bowl April 2026",group:"Fieldbowl",kcal:747,fat:45,sat:13,carbs:61,sugars:8.2,fibre:7.7,protein:21,salt:5 },
-    { id:"j_s_nicoise_salad",name:"J's Niçoise Salad",group:"Salat Solo",kcal:258,fat:15,sat:2.2,carbs:20,sugars:6.2,fibre:7.5,protein:6.3,salt:3.1 },
-    { id:"feta_radicchio_caesar_salad",name:"Feta Radicchio Caesar Salad",group:"Salat Solo",kcal:397,fat:29,sat:6.1,carbs:22,sugars:4.4,fibre:4.1,protein:8.6,salt:2.4 },
-    { id:"kale_miso_slaw_salad",name:"Kale Miso Slaw Salad",group:"Salat Solo",kcal:330,fat:28,sat:4.4,carbs:11,sugars:7,fibre:6.2,protein:5.3,salt:2 },
-    { id:"iow_tomatoes_butter_beans_fennel_salad",name:"IOW Tomatoes, Butter Beans + Fennel Salad",group:"Salat Solo",kcal:359,fat:24,sat:3.5,carbs:24,sugars:4.9,fibre:8.7,protein:8,salt:3.8 },
+    { id:"j_s_nicoise_salad",name:"J's Niçoise Salad",group:"Salad Solo",kcal:258,fat:15,sat:2.2,carbs:20,sugars:6.2,fibre:7.5,protein:6.3,salt:3.1 },
+    { id:"feta_radicchio_caesar_salad",name:"Feta Radicchio Caesar Salad",group:"Salad Solo",kcal:397,fat:29,sat:6.1,carbs:22,sugars:4.4,fibre:4.1,protein:8.6,salt:2.4 },
+    { id:"kale_miso_slaw_salad",name:"Kale Miso Slaw Salad",group:"Salad Solo",kcal:330,fat:28,sat:4.4,carbs:11,sugars:7,fibre:6.2,protein:5.3,salt:2 },
+    { id:"iow_tomatoes_butter_beans_fennel_salad",name:"IOW Tomatoes, Butter Beans + Fennel Salad",group:"Salad Solo",kcal:359,fat:24,sat:3.5,carbs:24,sugars:4.9,fibre:8.7,protein:8,salt:3.8 },
   ],
 };
 
@@ -1177,18 +1177,18 @@ function App() {
   const [fSdt,setFSdt]=useState({});
   // Itsu
   const [itsuCats,setIC]=useState(()=>{const o={};ITSU.cats.forEach(c=>o[c.id]=c.on);return o;});
-  const [maxIt,setMaxIt]=useState(3);
+  const [maxIt,setMaxIt]=useState(5);
   const [noSoupsEtc,setNSE]=useState(true);
   const [selI,setSelI]=useState(null);
   // Pret
   const [pretCats,setPC]=useState(()=>{const o={};PRET.cats.forEach(c=>o[c.id]=c.on);return o;});
-  const [maxP,setMaxP]=useState(3);
+  const [maxP,setMaxP]=useState(5);
   const [onlyRel,setOR]=useState(true);
-  const [saladsOnly,setSO]=useState(false); // bewusst aus: würde "only relevant" überstimmen und alles außer Salads verstecken
+  const [saladsOnly,setSO]=useState(true); // User-Wunsch: Pret standardmäßig nur Salads & protein pots
   const [selP,setSelP]=useState(null);
   // Nando's
   const [nanCats,setNAC]=useState(()=>{const o={};NANDOS.cats.forEach(c=>o[c.id]=c.on);return o;});
-  const [maxNa,setMaxNa]=useState(3);
+  const [maxNa,setMaxNa]=useState(5);
   const [noDess,setND]=useState(true);
   const [nanNoSauce,setNNS]=useState(true);
   const [noPineapple,setNP]=useState(true);
@@ -1200,12 +1200,12 @@ function App() {
   const [selU,setSelU]=useState(null);
   // Wagamama
   const [wagCats,setWC]=useState(()=>{const o={};WAGA.cats.forEach(c=>o[c.id]=c.on);return o;});
-  const [maxW,setMaxW]=useState(3);
+  const [maxW,setMaxW]=useState(5);
   const [noRamen,setNR]=useState(true);
   const [selW,setSelW]=useState(null);
   // German Doner Kebab
   const [gdkCats,setGC]=useState(()=>{const o={};GDK.cats.forEach(c=>o[c.id]=c.on);return o;});
-  const [maxG,setMaxG]=useState(3);
+  const [maxG,setMaxG]=useState(5);
   const [gdkNoSauce,setGNS]=useState(true);
   const [noRiceBowl,setNRB]=useState(true);
   const [selG,setSelG]=useState(null);
@@ -1284,15 +1284,15 @@ function App() {
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
       h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
-      h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Finde die optimale Bestellung für deine Ziele")
+      h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
 
     h("div",{style:{padding:"16px 16px 0"}},
 
       // Mode (vor der Restaurant-Wahl: Ziele bleiben beim Wechsel erhalten)
       h("div",{style:{display:"flex",gap:8,marginBottom:16}},
-        btn("macros","Makros eingeben",mode,setMode),
-        btn("calories","Kalorien + Präferenzen",mode,setMode)
+        btn("macros","Enter macros",mode,setMode),
+        btn("calories","Calories + preferences",mode,setMode)
       ),
 
       // Input
@@ -1303,10 +1303,10 @@ function App() {
             h(NumIn,{label:"Carbs",value:tC,onChange:setTC,placeholder:"45",unit:"g"}),
             h(NumIn,{label:"Fat",value:tF,onChange:setTF,placeholder:"12",unit:"g"})
           ),
-          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"inkl. Standard-Salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (ohne Fibre/Salt-Daten)":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
+          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
         ):h("div",null,
-          h("div",{style:{marginBottom:12}},h(NumIn,{label:"Kalorien-Ziel",value:tK,onChange:setTK,placeholder:"450",unit:"kcal"})),
-          h("div",{style:{fontSize:10,color:"#666",marginBottom:8,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Makro-Präferenzen"),
+          h("div",{style:{marginBottom:12}},h(NumIn,{label:"Calorie target",value:tK,onChange:setTK,placeholder:"450",unit:"kcal"})),
+          h("div",{style:{fontSize:10,color:"#666",marginBottom:8,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Macro preferences"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:6}},
             ...[["hp","High Protein"],["lp","Low Protein"],["hc","High Carb"],["lc","Low Carb"],["hf","High Fat"],["lf","Low Fat"]].map(([k,l])=>
               h(Chip,{key:k,label:l,active:prefs[k],onClick:()=>toggleP(k)}))
@@ -1317,7 +1317,7 @@ function App() {
       // Fibre/Salt Constraints (gehören zu den Zielen)
       h("div",{style:{marginTop:-8,marginBottom:12}},
         h("button",{onClick:()=>setAdv(!showAdv),style:{background:"none",border:"none",color:"#666",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},
-          showAdv?"Weniger ▴":"Fibre / Salt ▾")
+          showAdv?"Less ▴":"Fibre / Salt ▾")
       ),
 
       showAdv&&h("div",{style:{background:"#151515",borderRadius:12,padding:16,marginBottom:16,border:"1px solid #222"}},
@@ -1343,21 +1343,21 @@ function App() {
 
       // Bread selector (nur Subway)
       resto==="subway"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Brot"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Bread"),
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
-          h(Chip,{label:"Alle (Optimizer wählt)",active:!lockedBread,onClick:()=>setLB(null),small:true}),
+          h(Chip,{label:"All (optimizer picks)",active:!lockedBread,onClick:()=>setLB(null),small:true}),
           ...D.breads.map(b=>h(Chip,{key:b.id,label:b.name,active:lockedBread===b.id,onClick:()=>setLB(b.id),small:true}))
         )
       ),
 
       // Itsu: Kategorien + Anzahl Items
       resto==="itsu"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
           ...ITSU.cats.filter(c=>!c.drink).map(c=>h(Chip,{key:c.id,label:c.name,active:!!itsuCats[c.id],
             onClick:()=>setIC(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxIt===n,onClick:()=>setMaxIt(n),small:true}))
         )
@@ -1365,12 +1365,12 @@ function App() {
 
       // Pret: Kategorien + Anzahl Items
       resto==="pret"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
           ...PRET.cats.filter(c=>!c.drink).map(c=>h(Chip,{key:c.id,label:c.name,active:!!pretCats[c.id],
             onClick:()=>setPC(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxP===n,onClick:()=>setMaxP(n),small:true}))
         )
@@ -1378,12 +1378,12 @@ function App() {
 
       // Nando's: Kategorien + Anzahl Items
       resto==="nandos"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
           ...NANDOS.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!nanCats[c.id],
             onClick:()=>setNAC(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxNa===n,onClick:()=>setMaxNa(n),small:true}))
         )
@@ -1391,12 +1391,12 @@ function App() {
 
       // Wagamama: Kategorien + Anzahl Items
       resto==="wagamama"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
           ...WAGA.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!wagCats[c.id],
             onClick:()=>setWC(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxW===n,onClick:()=>setMaxW(n),small:true}))
         )
@@ -1404,12 +1404,12 @@ function App() {
 
       // GDK: Kategorien + Anzahl Items
       resto==="gdk"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
           ...GDK.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!gdkCats[c.id],
             onClick:()=>setGC(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxG===n,onClick:()=>setMaxG(n),small:true}))
         )
@@ -1446,20 +1446,20 @@ function App() {
         resto==="gdk"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noRiceBowl,onChange:e=>setNRB(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No rice bowl"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-          h("input",{type:"checkbox",checked:noCheese,onChange:e=>setNC(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Kein Käse"),
+          h("input",{type:"checkbox",checked:noCheese,onChange:e=>setNC(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-          h("input",{type:"checkbox",checked:noSauce,onChange:e=>setNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Keine Sauce"),
+          h("input",{type:"checkbox",checked:noSauce,onChange:e=>setNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="farmerj"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-          h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Nur Gratis-Items")
+          h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Free items only")
       ),
 
       // Results header + Sort by (Accuracy-Sortierung)
       h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top Ergebnisse"),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top results"),
         h("div",{style:{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}},
           h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Sort by"),
           h(Chip,{label:"Score",small:true,active:sortBy==="score",onClick:()=>setSortBy("score")}),
-          h(Chip,{label:"Kalorien",small:true,active:sortBy==="kcal",onClick:()=>setSortBy("kcal")}),
+          h(Chip,{label:"Calories",small:true,active:sortBy==="kcal",onClick:()=>setSortBy("kcal")}),
           ...(mode==="macros"?[
             h(Chip,{key:"sp",label:"Protein",small:true,active:sortBy==="protein",onClick:()=>setSortBy("protein")}),
             h(Chip,{key:"sc",label:"Carbs",small:true,active:sortBy==="carbs",onClick:()=>setSortBy("carbs")}),
@@ -1475,8 +1475,8 @@ function App() {
             const isSelU=selU===r;
             const title=(r.prot?r.prot.name:"Ohne Protein")+(r.prot2?" + "+r.prot2.name:"");
             const sub=(r.kind==="tray"?"BYO Tray · ":"BYO Salad · ")
-               +[...(r.kind==="salad"?[r.green?r.green.name:"keine Green Base"]:[]),
-                  (r.carb?r.carb.name:"keine Carb Base"),
+               +[...(r.kind==="salad"?[r.green?r.green.name:"no green base"]:[]),
+                  (r.carb?r.carb.name:"no carb base"),
                   r.veg.map(v=>v.name).join(", ")].join(" · ")
                +(r.scoop?" · "+r.scoop.name:"")
                +(r.tops.length?" · +"+r.tops.map(x=>x.name).join(", +"):"")
@@ -1541,7 +1541,7 @@ function App() {
                   h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
                     r.set?"Set · "+r.set.group:
                     r.fjBase.name
-                    +(r.sides.length>0?" · "+r.sides.map(s=>s.name).join(" + "):" · keine Sides")
+                    +(r.sides.length>0?" · "+r.sides.map(s=>s.name).join(" + "):" · no sides")
                     +(r.tops.length>0?" · +"+r.tops.map(x=>x.name).join(", +"):"")
                     +(r.sdt.length>0?" · +"+r.sdt.map(x=>x.name).join(", +"):"")
                   )
@@ -1591,9 +1591,9 @@ function App() {
       // Set-Browser (Farmer J): alle Sets & Salate direkt durchsuchen
       resto==="farmerj"&&h("div",{style:{marginBottom:20}},
         h("button",{onClick:()=>setShowSets(!showSets),style:{background:"none",border:"none",color:"#666",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},
-          showSets?"Sets & Salate ausblenden ▴":"Alle Sets & Salate durchsuchen ▾"),
+          showSets?"Hide sets & salads ▴":"Browse all sets & salads ▾"),
         showSets&&h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginTop:10}},
-          ...[["Fieldtray","Set Fieldtrays"],["Fieldbowl","Set Fieldbowls"],["Salat Solo","The Salad, Solo"]].flatMap(([g,label])=>[
+          ...[["Fieldtray","Set Fieldtrays"],["Fieldbowl","Set Fieldbowls"],["Salad Solo","The Salad, Solo"]].flatMap(([g,label])=>[
             h("div",{key:"hdr_"+g,style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginTop:6}},label),
             ...FJ.sets.filter(s=>s.group===g).map(st=>{
               const isSelSet=!!(selF&&selF.set&&selF.set.id===st.id);
@@ -1628,7 +1628,7 @@ function App() {
 
         // Macro bars
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Kalorien",value:selTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Calories",value:selTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
           h(MacroBar,{label:"Protein",value:selTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:selTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:selTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
@@ -1638,7 +1638,7 @@ function App() {
 
         // Extras
         h("div",{style:{marginBottom:12}},
-          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Extras hinzufügen"),
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Add extras"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)).map(e=>
               h(Chip,{key:e.id,label:e.name+" (+"+e.kcal+")",small:true,active:!!mExt[e.id],
@@ -1657,7 +1657,7 @@ function App() {
             h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Salad"),
             h("button",{onClick:()=>{
               const std={};D.salads.forEach(s=>{if(!["jalapenos","sweetcorn","olives"].includes(s.id))std[s.id]=true;});setMSal(std);
-            },style:{padding:"5px 12px",borderRadius:6,fontSize:11,fontWeight:600,background:S.green,border:"none",color:"#fff",cursor:"pointer",fontFamily:S.font}},"✦ Mein Standard")
+            },style:{padding:"5px 12px",borderRadius:6,fontSize:11,fontWeight:600,background:S.green,border:"none",color:"#fff",cursor:"pointer",fontFamily:S.font}},"✦ My standard")
           ),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...D.salads.map(s=>h(Chip,{key:s.id,label:s.name,small:true,active:!!mSal[s.id],
@@ -1667,7 +1667,7 @@ function App() {
 
         // Sauces
         !noSauce&&h("div",{style:{marginBottom:12}},
-          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Saucen (max 2)"),
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Sauces (max 2)"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...D.sauces.filter(s=>!sel.sauces.find(x=>x.id===s.id)).map(s=>{
               const cnt=Object.values(mSau).filter(Boolean).length+sel.sauces.length;
@@ -1695,17 +1695,17 @@ function App() {
           const aSea=D.seasonings.filter(s=>mSea[s.id]);
           const dm=!!mExt["__double_meat"],dc=!!mExt["__double_cheese"];
           const steps=[
-            {l:"Sub",v:sel.protein.name},{l:"Größe",v:subSize==="footlong"?"Footlong":"6 Inch"},
-            {l:"Brot",v:sel.bread.name},
-            {l:"Käse",v:sel.cheese.id==="none"?"Kein Käse":sel.cheese.name},
+            {l:"Sub",v:sel.protein.name},{l:"Size",v:subSize==="footlong"?"Footlong":"6 Inch"},
+            {l:"Bread",v:sel.bread.name},
+            {l:"Cheese",v:sel.cheese.id==="none"?"No cheese":sel.cheese.name},
             {l:"Extras",v:[dm&&"Double Meat",dc&&"Double Cheese",...aE.map(e=>e.name)].filter(Boolean).join(", ")||"–"},
             {l:"Salad",v:aSal.map(s=>s.name).join(", ")||"–"},
-            {l:"Sauce",v:noSauce?"Keine":(aS.map(s=>s.name).join(", ")||"–")},
+            {l:"Sauce",v:noSauce?"None":(aS.map(s=>s.name).join(", ")||"–")},
             {l:"Seasonings",v:aSea.map(s=>s.name).join(", ")||"–"},
           ];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
-              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+              h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
             ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
               h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
               h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
@@ -1720,11 +1720,11 @@ function App() {
         h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},selF.set?selF.set.name:selF.main.name),
         h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},
           selF.set?"Set · "+selF.set.group:
-          selF.fjBase.name+(selF.sides.length>0?" · "+selF.sides.map(s=>s.name).join(" + "):" · keine Sides")),
+          selF.fjBase.name+(selF.sides.length>0?" · "+selF.sides.map(s=>s.name).join(" + "):" · no sides")),
 
         // Macro bars
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Kalorien",value:selFTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Calories",value:selFTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
           h(MacroBar,{label:"Protein",value:selFTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:selFTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:selFTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
@@ -1734,7 +1734,7 @@ function App() {
 
         // Toppings (nur Custom Builds)
         !selF.set&&h("div",{style:{marginBottom:12}},
-          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Toppings (bezahlt)"),
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Toppings (paid)"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...FJ.toppings.filter(x=>!selF.tops.find(y=>y.id===x.id)).map(x=>
               h(Chip,{key:x.id,label:x.name+" (+"+x.kcal+")",small:true,active:!!fTop[x.id],
@@ -1745,7 +1745,7 @@ function App() {
 
         // Sauce, Dip or Topping (max 1, nur Custom Builds)
         !selF.set&&h("div",{style:{marginBottom:16}},
-          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Sauce / Dip / Topping (bezahlt, max 1)"),
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Sauce / Dip / Topping (paid, max 1)"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...FJ.sdt.filter(x=>!selF.sdt.find(y=>y.id===x.id)).map(x=>{
               const cnt=Object.values(fSdt).filter(Boolean).length+selF.sdt.length;
@@ -1760,7 +1760,7 @@ function App() {
         (()=>{
           const box=(steps)=>h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
-              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+              h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
             ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
               h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
               h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
@@ -1774,10 +1774,10 @@ function App() {
           const aT=[...selF.tops,...FJ.toppings.filter(x=>fTop[x.id])];
           const aS=[...selF.sdt,...FJ.sdt.filter(x=>fSdt[x.id])];
           return box([
-            {l:"Typ",v:"Custom Fieldtray"},
+            {l:"Type",v:"Custom Fieldtray"},
             {l:"Main",v:selF.main.name},
             {l:"Base",v:selF.fjBase.name},
-            {l:"Sides (2 frei)",v:selF.sides.map(s=>s.name).join(", ")||"–"},
+            {l:"Sides (2 free)",v:selF.sides.map(s=>s.name).join(", ")||"–"},
             {l:"Topping",v:aT.map(x=>x.name).join(", ")||"–"},
             {l:"Sauce/Dip",v:aS.map(x=>x.name).join(", ")||"–"},
           ]);
@@ -1791,7 +1791,7 @@ function App() {
 
         // Macro bars
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Kalorien",value:AC.sel.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Calories",value:AC.sel.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
           h(MacroBar,{label:"Protein",value:AC.sel.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:AC.sel.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:AC.sel.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
@@ -1816,7 +1816,7 @@ function App() {
           const steps=uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name}));
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
-              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+              h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
             ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
               h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
               h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
@@ -1835,7 +1835,7 @@ function App() {
 
         // Macro bars (UG hat keine Fibre/Salt-Daten)
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Kalorien",value:selU.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Calories",value:selU.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
           h(MacroBar,{label:"Protein",value:selU.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:selU.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:selU.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"})
@@ -1843,7 +1843,7 @@ function App() {
 
         // Komponenten
         h("div",{style:{marginBottom:16}},
-          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Komponenten"),
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Components"),
           ...[["Green Base",selU.green?[selU.green]:[]],["Carb Base",selU.carb?[selU.carb]:[]],
               ["Protein",selU.prot?[selU.prot]:[]],["Extra Protein",selU.prot2?[selU.prot2]:[]],
               ["Veg & Pickles",selU.veg],["Scoop / Premium",selU.scoop?[selU.scoop]:[]],
@@ -1859,7 +1859,7 @@ function App() {
         (()=>{
           const box=(steps)=>h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
-              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+              h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
             ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
               h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
               h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:100}},st.l),
@@ -1870,7 +1870,7 @@ function App() {
           const xDress=selU.extras.filter(e=>e.kind==="dressing").map(e=>e.it.name);
           const xScoop=selU.extras.filter(e=>e.kind==="scoop"||e.kind==="top").map(e=>e.it.name);
           if(selU.kind==="tray") return box([
-            {l:"Gericht",v:"BYO Tray"},
+            {l:"Dish",v:"BYO Tray"},
             {l:"Carb Base",v:selU.carb?selU.carb.name:"No Carb Base"},
             {l:"Protein",v:selU.prot?selU.prot.name:"No Protein"},
             {l:"Extra Protein?",v:selU.prot2?selU.prot2.name:"–"},
@@ -1882,7 +1882,7 @@ function App() {
             {l:"Extra Scoops etc.?",v:xScoop.join(", ")||"–"},
           ]);
           return box([
-            {l:"Gericht",v:"BYO Salad"},
+            {l:"Dish",v:"BYO Salad"},
             {l:"Green Base",v:selU.green?selU.green.name:"No Green Base"},
             {l:"Carb Base",v:selU.carb?selU.carb.name:"No Carb Base"},
             {l:"Protein",v:selU.prot?selU.prot.name:"No Protein"},
@@ -1899,7 +1899,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="subway"?"Daten: Subway UK & ROI Jan 2026":resto==="farmerj"?"Daten: farmerj.com · Stand Juni 2026":resto==="itsu"?"Daten: itsu.com · Stand Juni 2026":resto==="pret"?"Daten: pret.co.uk · Stand Juni 2026":resto==="nandos"?"Daten: nandos.co.uk · Stand Juni 2026":resto==="wagamama"?"Daten: wagamama.com · Stand Juni 2026 (Screenshot-Batches)":resto==="gdk"?"Daten: GDK offizielle Nährwerttabelle · Stand Juni 2026":"Daten: Urban Greens Allergen Guide 2026 · nur kcal/P/F/C")
+        resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }

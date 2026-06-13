@@ -6,6 +6,9 @@ Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen ba
 ## Deployment / Sync
 Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
 
+## Sprache
+- **UI-Strings sind ENGLISCH** (User teilt das Tool mit nicht-deutschsprachigen Freunden) — alle sichtbaren Texte (Buttons, Labels, Bestellanleitung, Footer) auf Englisch halten. Code-KOMMENTARE bleiben Deutsch (nur für Dev). Antworten an den User + diese CLAUDE.md weiterhin Deutsch.
+
 ## Tech Stack
 - Single `index.html` file (PWA)
 - React 18 via CDN (UMD build, kein Build-Step)
@@ -169,7 +172,8 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
 Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing".
-**EINZIGE Ausnahme: Pret "Salads and protein pots only" startet AUS** — würde sonst "only relevant items" überstimmen und alles außer den 13 Salads verstecken (zu eng als Default). Beim Hinzufügen neuer Schalter: per Default AN, außer der Schalter ist ein enger Spezialmodus.
+Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
+**Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
 
 ## Standard-Defaults (beim App-Start)
 - **Restaurant**: Subway
@@ -180,11 +184,11 @@ Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der Use
 - **Standard-Salad**: Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions (alles AUSSER Jalapeños, Sweetcorn, Olives)
 - **Makro-Präferenzen** (Kalorien-Modus): High Protein + Low Fat vorausgewählt
 - **Farmer J**: "Nur Gratis-Items" aktiv (keine bezahlten Toppings/Saucen in Vorschlägen)
-- **Itsu**: nur Food-Kategorien aktiv, max. 3 Items pro Bestellung, Schalter "No soups, desserts, snacks etc." AN, Getränke immer ignoriert
-- **Pret**: 8 Food-Kategorien aktiv, max. 3 Items, "only relevant items" AN / "Salads and protein pots only" AUS, Getränke immer ignoriert
-- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 3 Items, alle 3 Schalter AN, Drinks nicht in den Daten
-- **Wagamama**: alle Kategorien aktiv, max. 3 Items, "No Ramen" AN
-- **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 3 Items, "No Sauce" + "No rice bowl" AN
+- **Itsu**: nur Food-Kategorien aktiv, max. 5 Items pro Bestellung, Schalter "No soups, desserts, snacks etc." AN, Getränke immer ignoriert
+- **Pret**: 8 Food-Kategorien aktiv, max. 5 Items, "only relevant items" AN + "Salads and protein pots only" AN (= nur Salads/Protein Pots), Getränke immer ignoriert
+- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 5 Items, alle 3 Schalter AN, Drinks nicht in den Daten
+- **Wagamama**: alle Kategorien aktiv, max. 5 Items, "No Ramen" AN
+- **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 5 Items, "No Sauce" + "No rice bowl" AN
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
 
 ## Standard-Salad in Berechnungen (Subway)
