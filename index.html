@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sub Macros">
+<meta name="theme-color" content="#009743">
+<title>Subway Macro Optimizer</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMDA5NzQzIi8+PHRleHQgeD0iOTAiIHk9IjEwNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI3MCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiPk08L3RleHQ+PC9zdmc+">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { background: #0d0d0d; overflow-x: hidden; padding-top: env(safe-area-inset-top); }
+  input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+const { useState, useMemo, createElement: h } = React;
+
+const D = {
+  breads: [
+    { id:"hearty_italian",name:"Hearty Italian",servingG:75,kcal:206,fat:2.2,sat:0.4,carbs:39,sugars:4.3,fibre:2,protein:7.4,salt:0.6 },
+    { id:"honey_oat",name:"Honey & Oat",servingG:85,kcal:192,fat:1.5,sat:0.2,carbs:33,sugars:4.7,fibre:5,protein:8.6,salt:0.56 },
+    { id:"herbs_cheese",name:"Italian Herbs & Cheese",servingG:101,kcal:283,fat:6,sat:4,carbs:44,sugars:5,fibre:3,protein:12,salt:0.7 },
+    { id:"italian_white",name:"Italian White",servingG:70,kcal:190,fat:2.1,sat:0,carbs:36,sugars:4.2,fibre:2.1,protein:7,salt:0.6 },
+    { id:"wholegrain",name:"Wholegrain",servingG:76,kcal:157,fat:0.8,sat:0.2,carbs:27,sugars:1.4,fibre:4.4,protein:7.5,salt:0.56 },
+    { id:"gluten_free",name:"Gluten-Free",servingG:110,kcal:294,fat:6.6,sat:0.6,carbs:53,sugars:1.2,fibre:3.7,protein:3.3,salt:1.0 },
+  ],
+  proteins: [
+    { id:"roast_chicken",name:"Roast Chicken Breast",servingG:71,kcal:85,fat:1,sat:0.5,carbs:1,sugars:1.4,fibre:0,protein:16,salt:0.9 },
+    { id:"chicken_tikka",name:"Chicken Tikka",servingG:71,kcal:89,fat:1.4,sat:0.4,carbs:2,sugars:0.9,fibre:0,protein:18,salt:0.6 },
+    { id:"rotisserie_chicken",name:"Rotisserie-Style Chicken",servingG:56,kcal:71,fat:2,sat:0.3,carbs:0,sugars:0.1,fibre:0,protein:12,salt:0.5 },
+    { id:"breaded_chicken",name:"Breaded Chicken",servingG:85,kcal:176,fat:7,sat:1,carbs:14.3,sugars:2.7,fibre:0.7,protein:14,salt:0.8 },
+    { id:"ham",name:"Ham",servingG:28,kcal:34,fat:1,sat:0.3,carbs:1,sugars:0.4,fibre:0.3,protein:5,salt:0.5 },
+    { id:"turkey",name:"Turkey Breast",servingG:38,kcal:38,fat:0.6,sat:0.1,carbs:0,sugars:0.4,fibre:0.2,protein:8,salt:0.6 },
+    { id:"meatball_marinara",name:"Meatball Marinara",servingG:137,kcal:193,fat:10,sat:3.1,carbs:10,sugars:6.4,fibre:2.9,protein:13,salt:1 },
+    { id:"philly_steak",name:"Philly Steak",servingG:71,kcal:86,fat:1.4,sat:0.4,carbs:8,sugars:3.9,fibre:0.7,protein:11,salt:0.7 },
+    { id:"spiced_plant",name:"Spiced Plant Patty",servingG:85,kcal:169,fat:9,sat:0.8,carbs:10,sugars:1.6,fibre:2.7,protein:11,salt:1 },
+    { id:"lincolnshire_sausage",name:"Lincolnshire Sausage",servingG:50,kcal:121,fat:9,sat:3,carbs:3,sugars:0.3,fibre:0.5,protein:7,salt:0.7 },
+    { id:"falafel",name:"Falafel Bites",servingG:90,kcal:226,fat:13,sat:1.1,carbs:26,sugars:1.4,fibre:12,protein:6.5,salt:1.2 },
+    { id:"pepperoni_main",name:"Pepperoni",servingG:18,kcal:73,fat:6.3,sat:2.2,carbs:1,sugars:0,fibre:0,protein:3.6,salt:0.7 },
+    { id:"salami_main",name:"Salami",servingG:18,kcal:73,fat:6.3,sat:2.3,carbs:1,sugars:0,fibre:0,protein:4,salt:0.7 },
+  ],
+  cheeses: [
+    { id:"none",name:"No Cheese",servingG:0,kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"american",name:"American-style Cheese",servingG:12,kcal:42,fat:3.5,sat:2.2,carbs:0.4,sugars:0.4,fibre:0,protein:2.3,salt:0.3 },
+    { id:"mozzarella_cheddar",name:"Mozzarella & Cheddar",servingG:14,kcal:45,fat:3.4,sat:2.2,carbs:0.6,sugars:0.1,fibre:0,protein:3.2,salt:0.2 },
+  ],
+  extras: [
+    { id:"turkey_rashers",name:"Turkey Rashers",servingG:19,kcal:29,fat:1,sat:0.3,carbs:0,sugars:0,fibre:0,protein:4.8,salt:0.4 },
+    { id:"pepperoni_extra",name:"Pepperoni",servingG:18,kcal:73,fat:6.3,sat:2.2,carbs:1,sugars:0,fibre:0,protein:3.6,salt:0.7 },
+    { id:"hash_browns",name:"Hash Browns",servingG:111,kcal:184,fat:11,sat:0.8,carbs:22,sugars:1.1,fibre:2.3,protein:2.4,salt:0.8 },
+    { id:"chicken_strips",name:"Chicken Strips",servingG:71,kcal:85,fat:1,sat:0.5,carbs:1,sugars:1.4,fibre:0,protein:16,salt:0.9 },
+    { id:"turkey_ham",name:"Turkey Ham",servingG:28,kcal:29,fat:1.1,sat:0.4,carbs:0,sugars:0.1,fibre:0.1,protein:3.9,salt:0.5 },
+    { id:"poached_egg",name:"Poached Egg",servingG:50,kcal:62,fat:3.6,sat:1.2,carbs:0.9,sugars:0.2,fibre:0.4,protein:6.5,salt:0.2 },
+    { id:"salami_extra",name:"Salami",servingG:18,kcal:73,fat:6.3,sat:2.3,carbs:1,sugars:0,fibre:0,protein:4,salt:0.7 },
+    { id:"breaded_chicken_extra",name:"Breaded Chicken",servingG:85,kcal:176,fat:7,sat:1,carbs:14.3,sugars:2.7,fibre:0.7,protein:14,salt:0.8 },
+    { id:"smashed_falafel",name:"Smashed Falafel",servingG:90,kcal:226,fat:13,sat:1.1,carbs:26,sugars:1.4,fibre:12,protein:6.5,salt:1.2 },
+    { id:"philly_steak_extra",name:"Philly-Style Steak",servingG:71,kcal:86,fat:1.4,sat:0.4,carbs:8,sugars:3.9,fibre:0.7,protein:11,salt:0.7 },
+    { id:"chicken_tikka_extra",name:"Chicken Tikka",servingG:71,kcal:89,fat:1.4,sat:0.4,carbs:2,sugars:0.9,fibre:0,protein:18,salt:0.6 },
+  ],
+  salads: [
+    { id:"lettuce",name:"Lettuce",servingG:14,kcal:2,fat:0,sat:0,carbs:0.2,sugars:0.2,fibre:0.2,protein:0.2,salt:0 },
+    { id:"tomatoes",name:"Tomatoes",servingG:30,kcal:5,fat:0,sat:0,carbs:0.8,sugars:0.8,fibre:0.4,protein:0.3,salt:0 },
+    { id:"cucumber",name:"Cucumber",servingG:18,kcal:3,fat:0,sat:0,carbs:0.6,sugars:0.3,fibre:0.1,protein:0.1,salt:0 },
+    { id:"pickles",name:"Pickles",servingG:7.5,kcal:1,fat:0,sat:0,carbs:0.1,sugars:0,fibre:0.1,protein:0,salt:0.2 },
+    { id:"peppers",name:"Peppers",servingG:12,kcal:3,fat:0,sat:0,carbs:0.5,sugars:0.3,fibre:0.2,protein:0.1,salt:0 },
+    { id:"olives",name:"Olives",servingG:3,kcal:3,fat:0,sat:0,carbs:0,sugars:0,fibre:0.1,protein:0,salt:0.1 },
+    { id:"red_onions",name:"Red Onions",servingG:7,kcal:3,fat:0,sat:0,carbs:0.6,sugars:0.4,fibre:0.1,protein:0.1,salt:0 },
+    { id:"jalapenos",name:"Jalapeños",servingG:7,kcal:1,fat:0,sat:0,carbs:0.1,sugars:0.1,fibre:0.1,protein:0,salt:0.3 },
+    { id:"sweetcorn",name:"Sweetcorn",servingG:7,kcal:6,fat:0,sat:0,carbs:0.8,sugars:0.4,fibre:0.3,protein:0.2,salt:0 },
+  ],
+  sauces: [
+    { id:"sweet_chilli",name:"Sweet Chilli",servingG:14,kcal:30,fat:0,sat:0,carbs:7.5,sugars:6.5,fibre:0,protein:0,salt:0.2 },
+    { id:"chipotle_sw",name:"Chipotle Southwest",servingG:14,kcal:58,fat:5.8,sat:0.4,carbs:1.2,sugars:0.6,fibre:0.1,protein:0.1,salt:0.2 },
+    { id:"sweet_onion",name:"Sweet Onion",servingG:14,kcal:23,fat:0.1,sat:0,carbs:5.6,sugars:4.8,fibre:0.1,protein:0.1,salt:0.1 },
+    { id:"honey_mustard",name:"Honey Mustard",servingG:14,kcal:29,fat:1.9,sat:0.1,carbs:2.7,sugars:2.3,fibre:0.2,protein:0.3,salt:0.2 },
+    { id:"ketchup",name:"Ketchup",servingG:14,kcal:14,fat:0,sat:0,carbs:3.2,sugars:3.2,fibre:0,protein:0.2,salt:0.3 },
+    { id:"xspy_chipotle",name:"X-Spy Chipotle",servingG:14,kcal:60,fat:6.1,sat:0.5,carbs:1.1,sugars:0.7,fibre:0.1,protein:0.2,salt:0.3 },
+    { id:"garlic_herb",name:"Garlic & Herb",servingG:14,kcal:80,fat:8.4,sat:0.6,carbs:0.9,sugars:0.4,fibre:0,protein:0,salt:0.1 },
+    { id:"teriyaki",name:"Teriyaki",servingG:14,kcal:24,fat:0,sat:0,carbs:5.6,sugars:4.1,fibre:0,protein:0.4,salt:0.5 },
+    { id:"lite_mayo",name:"Lite Mayo",servingG:14,kcal:46,fat:4.9,sat:0.3,carbs:0.6,sugars:0.6,fibre:0,protein:0,salt:0.2 },
+    { id:"bbq",name:"BBQ Sauce",servingG:14,kcal:24,fat:0.1,sat:0,carbs:5.8,sugars:5.2,fibre:0.1,protein:0.1,salt:0.2 },
+  ],
+  seasonings: [
+    { id:"sea_salt",name:"Sea Salt",servingG:1,kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.4 },
+    { id:"mixed_pepper",name:"Mixed Peppercorns",servingG:1,kcal:3,fat:0,sat:0,carbs:0.4,sugars:0,fibre:0.2,protein:0.1,salt:0 },
+    { id:"crispy_onions",name:"Crispy Onions",servingG:7,kcal:41,fat:3,sat:1,carbs:2.9,sugars:0.6,fibre:0.3,protein:0.4,salt:0 },
+  ],
+};
+
+// Farmer J (eigene Erfassung, data/farmerj.json). Order Rule (Deliveroo):
+// Custom Fieldtray = 1 Main + 1 Base + 2 Sides (frei) · Toppings unbegrenzt (bezahlt) · "Sauce, Dip or Topping" max 1 (bezahlt)
+const FJ = {
+  mains: [
+    { id:"charred_harissa_chicken",name:"Charred Harissa Chicken",kcal:267,fat:20,sat:4.9,carbs:1.1,sugars:0.2,fibre:0.5,protein:20,salt:0.7 },
+    { id:"amba_chicken_green_tahini",name:"Amba Chicken + Green Tahini",kcal:239,fat:15,sat:3.2,carbs:4,sugars:1,fibre:1.1,protein:22,salt:1.7 },
+    { id:"gochujang_salmon",name:"Gochujang Salmon",kcal:265,fat:17,sat:2.9,carbs:3.9,sugars:3.1,fibre:0.5,protein:25,salt:0.9 },
+    { id:"charred_flank_steak",name:"Charred Flank Steak",kcal:259,fat:14,sat:4.4,carbs:1,sugars:0.5,fibre:0.1,protein:33,salt:0.8 },
+    { id:"lime_leaf_tofu_roasted_hispi",name:"Lime Leaf Tofu + Roasted Hispi",kcal:290,fat:23,sat:9.8,carbs:8.5,sugars:5.1,fibre:3,protein:11,salt:1.8 },
+  ],
+  bases: [
+    { id:"brown_rice",name:"Brown Rice",kcal:251,fat:5.1,sat:0.9,carbs:46,sugars:0.8,fibre:1.1,protein:4.6,salt:1.2 },
+    { id:"baby_spinach_rocket_mix",name:"Baby Spinach & Rocket Mix",kcal:10,fat:0.2,sat:0,carbs:1.1,sugars:0.5,fibre:0.5,protein:0.8,salt:0 },
+    { id:"sesame_cabbage_april_2026",name:"Sesame Cabbage April 2026",kcal:134,fat:11,sat:1.3,carbs:5.5,sugars:4.8,fibre:3,protein:2,salt:1 },
+    { id:"farmer_s_grains",name:"Farmer's Grains",kcal:261,fat:9.5,sat:2,carbs:34,sugars:1.7,fibre:5.7,protein:6.5,salt:1.7 },
+  ],
+  sides: [
+    { id:"sesame_broccoli_cavelo_nero",name:"Sesame Broccoli + Cavelo Nero",group:"Warm Side",kcal:141,fat:11,sat:1.4,carbs:6.9,sugars:2.6,fibre:3.1,protein:2.6,salt:0.9 },
+    { id:"roasted_cauliflower_april_2026",name:"Roasted Cauliflower April 2026",group:"Warm Side",kcal:171,fat:14,sat:2.2,carbs:4.9,sugars:2.9,fibre:3.9,protein:3.6,salt:1.4 },
+    { id:"broccoli_kale_mac_cheese",name:"Broccoli + Kale Mac & Cheese",group:"Warm Side",kcal:285,fat:20,sat:11,carbs:14,sugars:2.7,fibre:1.1,protein:11,salt:1.5 },
+    { id:"date_spiced_sweet_potatoes",name:"Date Spiced Sweet Potatoes",group:"Warm Side",kcal:295,fat:7.9,sat:1.1,carbs:49,sugars:13,fibre:7.2,protein:3.7,salt:0.7 },
+    { id:"charred_greens_shrooms_nori_crunch",name:"Charred Greens, Shrooms + Nori Crunch",group:"Warm Side",kcal:158,fat:13,sat:1.8,carbs:5.4,sugars:2,fibre:2.9,protein:3.6,salt:1.2 },
+    { id:"feta_radicchio_caesar",name:"Feta Radicchio Caesar",group:"Salad",kcal:138,fat:10,sat:2.1,carbs:7.8,sugars:1.5,fibre:1.4,protein:3,salt:0.8 },
+    { id:"kale_miso_slaw",name:"Kale Miso Slaw",group:"Salad",kcal:112,fat:9.6,sat:1.5,carbs:3.6,sugars:2.4,fibre:2.1,protein:1.8,salt:0.7 },
+    { id:"iow_tomatoes_butter_beans_fennel",name:"IOW Tomatoes, Butter Beans + Fennel",group:"Salad",kcal:149,fat:9.9,sat:1.5,carbs:9.9,sugars:2,fibre:3.6,protein:3.3,salt:1.6 },
+    { id:"j_s_nicoise",name:"J's Niçoise",group:"Salad",kcal:89,fat:5.2,sat:0.8,carbs:6.8,sugars:2.1,fibre:2.6,protein:2.1,salt:1.1 },
+  ],
+  toppings: [
+    { id:"pickled_red_onion",name:"Pickled Red Onion",kcal:24,fat:0.1,sat:0,carbs:4.8,sugars:3.7,fibre:0.9,protein:0.5,salt:0.7 },
+    { id:"sesame_cucumber_wakame_seaweed",name:"Sesame Cucumber + Wakame Seaweed",kcal:72,fat:6.7,sat:0.8,carbs:1.1,sugars:0.7,fibre:1,protein:1.4,salt:1 },
+    { id:"pickled_cucumber",name:"Pickled Cucumber",kcal:3,fat:0,sat:0,carbs:0.5,sugars:0,fibre:0.5,protein:0.5,salt:1.1 },
+  ],
+  sdt: [
+    { id:"green_tahini",name:"Green Tahini",group:"Sauce",kcal:135,fat:12,sat:2,carbs:2.3,sugars:0.2,fibre:0.5,protein:4,salt:0.1 },
+    { id:"chimichuri",name:"Chimichuri",group:"Sauce",kcal:269,fat:29,sat:3.8,carbs:0.5,sugars:0.2,fibre:0.5,protein:0.5,salt:0.3 },
+    { id:"j_s_habanero_hot_sauce",name:"J's Habanero Hot Sauce",group:"Sauce",kcal:25,fat:0.7,sat:0,carbs:4,sugars:0.6,fibre:0.5,protein:0.5,salt:2.9 },
+    { id:"j_s_aioli",name:"J's Aioli",group:"Sauce",kcal:128,fat:12,sat:1.9,carbs:2.8,sugars:1.6,fibre:0.1,protein:1.4,salt:0.6 },
+    { id:"free_range_egg",name:"Free Range Egg",group:"Extra",kcal:84,fat:5.8,sat:1.9,carbs:0.5,sugars:0.2,fibre:0,protein:7.6,salt:0 },
+    { id:"avo",name:"Avo",group:"Extra",kcal:116,fat:11,sat:2.3,carbs:1.4,sugars:0.5,fibre:2.9,protein:1.1,salt:0.7 },
+    { id:"chunky_butter_bean_hummus",name:"Chunky Butter Bean Hummus",group:"Extra",kcal:238,fat:15,sat:2.2,carbs:14,sugars:0,fibre:6.4,protein:9.5,salt:1.6 },
+    { id:"spicy_aubergine_baba_ghanoush",name:"Spicy Aubergine Baba Ghanoush",group:"Extra",kcal:167,fat:12,sat:1.9,carbs:7.5,sugars:2.8,fibre:2.7,protein:5.6,salt:1.3 },
+  ],
+  sets: [
+    { id:"the_med_april_2026",name:"The Med April 2026",group:"Fieldtray",kcal:945,fat:42,sat:7.8,carbs:97,sugars:18,fibre:18,protein:36,salt:5.7 },
+    { id:"farmer_s_catch_april_2026",name:"Farmer's Catch April 2026",group:"Fieldtray",kcal:664,fat:49,sat:7.3,carbs:20,sugars:13,fibre:8.6,protein:32,salt:3.5 },
+    { id:"butcher_s_cut_april_2026",name:"Butcher's Cut April 2026",group:"Fieldtray",kcal:722,fat:47,sat:18,carbs:24,sugars:6.3,fibre:4.8,protein:49,salt:3.4 },
+    { id:"j_s_classic_april_2026",name:"J's Classic April 2026",group:"Fieldtray",kcal:1129,fat:56,sat:19,carbs:111,sugars:17,fibre:10,protein:41,salt:4.3 },
+    { id:"where_s_my_vegans_at_april_2026",name:"Where's My Vegans At? April 2026",group:"Fieldtray",kcal:770,fat:46,sat:13,carbs:64,sugars:11,fibre:9,protein:20,salt:4.3 },
+    { id:"season_s_favourite_bowl",name:"Season's Favourite Bowl",group:"Fieldbowl",kcal:876,fat:42,sat:7.4,carbs:85,sugars:11,fibre:8.8,protein:35,salt:3.9 },
+    { id:"the_salmon_bowl_april_2026",name:"The Salmon Bowl April 2026",group:"Fieldbowl",kcal:717,fat:56,sat:8.9,carbs:16,sugars:12,fibre:9.1,protein:33,salt:4.3 },
+    { id:"the_harissa_bowl_april_2026",name:"The Harissa Bowl April 2026",group:"Fieldbowl",kcal:938,fat:52,sat:9.8,carbs:79,sugars:21,fibre:14,protein:33,salt:3.7 },
+    { id:"the_tofu_bowl_april_2026",name:"The Tofu Bowl April 2026",group:"Fieldbowl",kcal:747,fat:45,sat:13,carbs:61,sugars:8.2,fibre:7.7,protein:21,salt:5 },
+    { id:"j_s_nicoise_salad",name:"J's Niçoise Salad",group:"Salat Solo",kcal:258,fat:15,sat:2.2,carbs:20,sugars:6.2,fibre:7.5,protein:6.3,salt:3.1 },
+    { id:"feta_radicchio_caesar_salad",name:"Feta Radicchio Caesar Salad",group:"Salat Solo",kcal:397,fat:29,sat:6.1,carbs:22,sugars:4.4,fibre:4.1,protein:8.6,salt:2.4 },
+    { id:"kale_miso_slaw_salad",name:"Kale Miso Slaw Salad",group:"Salat Solo",kcal:330,fat:28,sat:4.4,carbs:11,sugars:7,fibre:6.2,protein:5.3,salt:2 },
+    { id:"iow_tomatoes_butter_beans_fennel_salad",name:"IOW Tomatoes, Butter Beans + Fennel Salad",group:"Salat Solo",kcal:359,fat:24,sat:3.5,carbs:24,sugars:4.9,fibre:8.7,protein:8,salt:3.8 },
+  ],
+};
+
+// __ITSU_DATA_START__ (generiert via: node itsu-crawl.js && node itsu-update.js — nicht von Hand editieren)
+// Quelle: itsu.com · Stand 2026-06-10 · 130 Items
+const ITSU = {
+  cats: [
+    { id:"healthy_soups",name:"healthy soups",on:true },
+    { id:"gyoza_bao",name:"gyoza & bao",on:true },
+    { id:"rice_bowls",name:"rice'bowls",on:true },
+    { id:"hot_noodles",name:"hot noodles",on:true },
+    { id:"sushi_poke",name:"sushi & poké",on:true },
+    { id:"desserts_snacks",name:"desserts & snacks",on:false },
+    { id:"breakfast",name:"breakfast",on:false },
+    { id:"cold_drinks",name:"cold drinks",on:false,drink:true },
+    { id:"hot_iced_drinks",name:"hot & iced drinks",on:false,drink:true },
+  ],
+  items: [
+    { id:"hot_chicken_noodle_soup_120925",name:"chicken noodle soup",cat:"healthy_soups",kcal:285,fat:8.3,sat:1.6,carbs:34.6,sugars:2,fibre:4.8,protein:15.6,salt:2.7 },
+    { id:"hot_detox_miso_noodle_soup_120925",name:"detox miso noodle soup",cat:"healthy_soups",kcal:190,fat:3.1,sat:0.4,carbs:31.5,sugars:3.5,fibre:4.3,protein:6.9,salt:3.24 },
+    { id:"hot_soup_coconut_chicken_270326",name:"famous coconut chicken soup",cat:"healthy_soups",kcal:379,fat:20.8,sat:12.9,carbs:28.2,sugars:6.8,fibre:5.5,protein:17,salt:2.88 },
+    { id:"hot_king_prawn_miso_soup_120925",name:"king prawn miso soup",cat:"healthy_soups",kcal:101,fat:1.8,sat:0.3,carbs:4.7,sugars:1.4,fibre:1.8,protein:18,salt:3.63 },
+    { id:"hot_chargrilled_chicken_miso_soup_120925",name:"loaded chicken miso soup",cat:"healthy_soups",kcal:137,fat:3.9,sat:1,carbs:3.7,sugars:1.1,fibre:1.2,protein:22.9,salt:2.98 },
+    { id:"hot_miso_soup_120925",name:"miso soup",cat:"healthy_soups",kcal:32,fat:1.2,sat:0.2,carbs:3.7,sugars:1.1,fibre:1.2,protein:2.8,salt:1.8 },
+    { id:"hot_spicy_miso_soup_120925",name:"spicy miso soup",cat:"healthy_soups",kcal:72,fat:2,sat:0.5,carbs:9.3,sugars:3.5,fibre:1,protein:4.4,salt:3.15 },
+    { id:"hot_veggie_meatball_and_coconut_soup_270326",name:"veggie'balls & coconut soup",cat:"healthy_soups",kcal:421,fat:21.3,sat:13.6,carbs:41.5,sugars:11.4,fibre:9.6,protein:10.9,salt:3.35 },
+    { id:"hot_side_chicken_gyoza",name:"chicken & spring onion gyoza",cat:"gyoza_bao",kcal:251,fat:7,sat:1.9,carbs:32.6,sugars:4,fibre:2.1,protein:13.2,salt:1.3 },
+    { id:"hot_side_hoisin_duck_bao_buns_090126",name:"hoisin duck bao buns",cat:"gyoza_bao",kcal:302,fat:5.9,sat:1.5,carbs:48.6,sugars:10.7,fibre:3.2,protein:11.6,salt:1.49 },
+    { id:"hot_side_vegetable_gyoza",name:"vegetable fusion gyoza",cat:"gyoza_bao",kcal:234,fat:4.1,sat:0.6,carbs:39.5,sugars:5.1,fibre:4.4,protein:7.7,salt:2.42 },
+    { id:"hot_rice_bowl_chicken_teriyaki_120925",name:"chicken teriyaki",cat:"rice_bowls",kcal:485,fat:13.2,sat:2.7,carbs:56,sugars:11.4,fibre:10.2,protein:30.3,salt:2.92 },
+    { id:"hot_rice_bowl_double_chicken_teriyaki_120925",name:"double chicken teriyaki",cat:"rice_bowls",kcal:625,fat:19.7,sat:4.4,carbs:56,sugars:11.4,fibre:10.6,protein:50.9,salt:3.67 },
+    { id:"hot_rice_bowl_klean_katsu_chicken_120925",name:"grilled katsu chicken curry",cat:"rice_bowls",kcal:507,fat:17.8,sat:7.9,carbs:51.7,sugars:2.8,fibre:9.2,protein:30.2,salt:3.93 },
+    { id:"hot_midi_chicken_teriyaki_rice_bowl_120925",name:"little chicken teriyaki",cat:"rice_bowls",kcal:252,fat:4.6,sat:0.9,carbs:33.6,sugars:5.1,fibre:5.9,protein:15.9,salt:1.72 },
+    { id:"hot_midi_klean_katsu_rice_bowl_120925",name:"little grilled katsu chicken curry",cat:"rice_bowls",kcal:263,fat:6.6,sat:2.7,carbs:30.2,sugars:1.2,fibre:5,protein:18.2,salt:2.21 },
+    { id:"hot_paradise_rice_with_greens_120925",name:"little rice & greens",cat:"rice_bowls",kcal:225,fat:4.4,sat:0.7,carbs:37.5,sugars:0.2,fibre:3.2,protein:7.4,salt:0.2 },
+    { id:"hot_midi_spicy_chicken_teriyaki_rice_bowl_120925",name:"little spicy chicken teriyaki",cat:"rice_bowls",kcal:292,fat:5.1,sat:1,carbs:40.7,sugars:8,fibre:5.9,protein:17.5,salt:1.72 },
+    { id:"hot_midi_chicken_thai_rice_bowl_120925",name:"little Thai chicken curry",cat:"rice_bowls",kcal:335,fat:14.2,sat:8.6,carbs:30,sugars:2.4,fibre:6.3,protein:18.5,salt:2.17 },
+    { id:"hot_midi_thai_veggie_ball_rice_bowl_270326",name:"little Thai veggie'balls curry",cat:"rice_bowls",kcal:378,fat:15.2,sat:8.6,carbs:42.1,sugars:6.8,fibre:11,protein:12.5,salt:2.38 },
+    { id:"hot_midi_veggie_balls_teriyaki_rice_bowl_270326",name:"little veggie'balls teriyaki",cat:"rice_bowls",kcal:294,fat:7.6,sat:1.2,carbs:39.7,sugars:8.7,fibre:10.3,protein:7.9,salt:2.33 },
+    { id:"hot_spicy_chicken_teriyaki_rice_bowl_120925",name:"spicy chicken teriyaki",cat:"rice_bowls",kcal:525,fat:14.5,sat:2.8,carbs:61.9,sugars:15.2,fibre:9.4,protein:32.1,salt:4.04 },
+    { id:"hot_chicken_thai_rice_bowl_120925",name:"Thai chicken curry",cat:"rice_bowls",kcal:657,fat:33.6,sat:18.2,carbs:44.7,sugars:3.1,fibre:12.1,protein:37.7,salt:4.23 },
+    { id:"hot_king_prawns_thai_rice_bowl_120925",name:"Thai king prawn curry",cat:"rice_bowls",kcal:623,fat:26.3,sat:15.75,carbs:57.25,sugars:6.3,fibre:13.79,protein:32.21,salt:2.49 },
+    { id:"hot_salmon_thai_rice_bowl_120925",name:"Thai salmon curry",cat:"rice_bowls",kcal:736,fat:37.84,sat:15.9,carbs:62.6,sugars:6.9,fibre:12.66,protein:29.82,salt:2.4 },
+    { id:"hot_rice_bowl_veggie_balls_thai_270326",name:"Thai veggie'balls curry",cat:"rice_bowls",kcal:519,fat:35.3,sat:21.8,carbs:67.7,sugars:11.9,fibre:22.9,protein:25,salt:5.42 },
+    { id:"hot_rice_bowl_veggie_balls_teriyaki_270326",name:"veggie'balls teriyaki",cat:"rice_bowls",kcal:521,fat:14.8,sat:1.8,carbs:63.7,sugars:18.8,fibre:20.5,protein:22.3,salt:2.8 },
+    { id:"hot_udon_bowl_chicken_gyoza_270326",name:"chicken gyoza noodle'bowl",cat:"hot_noodles",kcal:468,fat:10,sat:1.9,carbs:72.2,sugars:19.8,fibre:8.1,protein:18.1,salt:3.98 },
+    { id:"hot_chicken_gyoza_udon_with_ssamjang_270326",name:"chilli chicken gyoza noodle'bowl",cat:"hot_noodles",kcal:507,fat:10.6,sat:2,carbs:79.4,sugars:24,fibre:8.1,protein:19.7,salt:4.23 },
+    { id:"hot_stirfry_japanese_curry_120925",name:"katsu curry noodles",cat:"hot_noodles",kcal:451,fat:16.4,sat:10.3,carbs:57.5,sugars:6,fibre:10.9,protein:13.1,salt:2.37 },
+    { id:"hot_stirfry_korean_noodles_120925",name:"Korean spicy noodles",cat:"hot_noodles",kcal:495,fat:16,sat:10.7,carbs:66.8,sugars:11.4,fibre:12.2,protein:14.6,salt:4.42 },
+    { id:"hot_stirfry_thai_120925",name:"Thai noodles",cat:"hot_noodles",kcal:558,fat:26.6,sat:18.7,carbs:58,sugars:7.3,fibre:11.8,protein:15.7,salt:2.55 },
+    { id:"hot_udon_bowl_veggie_gyoza_270326",name:"veggie gyoza noodle'bowl",cat:"hot_noodles",kcal:489,fat:11.1,sat:1.2,carbs:74.5,sugars:16.5,fibre:11.7,protein:17.1,salt:5.34 },
+    { id:"hot_chicken_vitality_bowl_270326",name:"Vitality glass noodle'bowl",cat:"hot_noodles",kcal:458,fat:16.7,sat:2.7,carbs:65.8,sugars:6.2,fibre:4.3,protein:10.1,salt:4.95 },
+    { id:"sushi_avo_baby_rolls_midi",name:"avo baby rolls",cat:"sushi_poke",kcal:346,fat:3.3,sat:0.7,carbs:71.3,sugars:8.4,fibre:3.3,protein:6.2,salt:1.4 },
+    { id:"sushi_best_of_itsu_large_141125",name:"best of itsu",cat:"sushi_poke",kcal:510,fat:12.7,sat:2.6,carbs:71.9,sugars:13,fibre:5.9,protein:21.3,salt:3.88 },
+    { id:"sushi_california_rolls_midi_141125",name:"California rolls",cat:"sushi_poke",kcal:336,fat:16.1,sat:2.4,carbs:39.8,sugars:5.6,fibre:3.2,protein:6.5,salt:2.03 },
+    { id:"poke_chargrilled_chicken_poke_300525",name:"chargrilled chicken poké",cat:"sushi_poke",kcal:641,fat:15.9,sat:3.8,carbs:90.7,sugars:5.6,fibre:7.3,protein:29.7,salt:3.63 },
+    { id:"side_edamame_cup",name:"edamame",cat:"sushi_poke",kcal:132,fat:4.9,sat:0.6,carbs:3.4,sugars:0.2,fibre:17.4,protein:10,salt:2.35 },
+    { id:"sushi_itsu_classics_large_141125",name:"itsu classics",cat:"sushi_poke",kcal:591,fat:19.3,sat:3.3,carbs:81.9,sugars:10,fibre:5.5,protein:19.7,salt:3.89 },
+    { id:"poke_poached_salmon_poke_300525",name:"poached salmon poké",cat:"sushi_poke",kcal:571,fat:18.2,sat:3.3,carbs:73.4,sugars:6,fibre:6.4,protein:25.3,salt:2.62 },
+    { id:"salmon_avo_dragon_rolls",name:"salmon & avo dragon rolls",cat:"sushi_poke",kcal:515,fat:24.6,sat:5.8,carbs:53.5,sugars:14.5,fibre:5.5,protein:13.6,salt:2.87 },
+    { id:"sushi_salmon_full_house_large_141125",name:"salmon full house",cat:"sushi_poke",kcal:626,fat:15.5,sat:2.6,carbs:87.4,sugars:11.8,fibre:6.4,protein:31,salt:4.92 },
+    { id:"poke_salmon_tartare_poke_270326",name:"salmon tartare poké",cat:"sushi_poke",kcal:545,fat:13,sat:2.1,carbs:81.5,sugars:4.3,fibre:8.9,protein:21.2,salt:4.43 },
+    { id:"sushi_tuna_dragon_roll_120925",name:"spicy tuna dragon rolls",cat:"sushi_poke",kcal:482,fat:18.2,sat:5.6,carbs:59,sugars:16,fibre:6.5,protein:30.2,salt:2.55 },
+    { id:"sushi_super_salmon_light_midi_141125",name:"super salmon light",cat:"sushi_poke",kcal:431,fat:14.7,sat:2.7,carbs:53,sugars:8.1,fibre:4.6,protein:17.6,salt:2.77 },
+    { id:"sushi_sushi_festival_midi",name:"sushi festival",cat:"sushi_poke",kcal:510,fat:8.8,sat:1.6,carbs:87.2,sugars:3.9,fibre:2.4,protein:19.1,salt:1.89 },
+    { id:"sushi_salmon_and_tuna_sashimi_midi_270326",name:"tuna & salmon sashimi",cat:"sushi_poke",kcal:212,fat:10.4,sat:1.6,carbs:3.7,sugars:1.7,fibre:5.4,protein:23.6,salt:1.66 },
+    { id:"sushi_salmon_and_tuna_sushi_midi_270326",name:"tuna & salmon sushi",cat:"sushi_poke",kcal:269,fat:4.7,sat:0.9,carbs:38.8,sugars:5.9,fibre:2.7,protein:14.9,salt:2.14 },
+    { id:"poke_tuna_poke_090126",name:"tuna tartare poké",cat:"sushi_poke",kcal:684,fat:12.8,sat:2.9,carbs:107.7,sugars:22.2,fibre:9.5,protein:25.8,salt:5.21 },
+    { id:"snacks_dark_chocolate_moons",name:"60% dark chocolate moons",cat:"desserts_snacks",kcal:214,fat:14,sat:8.8,carbs:17,sugars:15,fibre:3.9,protein:3,salt:0 },
+    { id:"snacks_about_half_a_mango_160925",name:"about half a mango",cat:"desserts_snacks",kcal:140,fat:0.4,sat:0.2,carbs:31,sugars:24,fibre:3.9,protein:1.2,salt:0 },
+    { id:"snacks_angelic_almonds",name:"angelic almonds",cat:"desserts_snacks",kcal:261,fat:19,sat:6.8,carbs:15,sugars:15,fibre:2.1,protein:5.4,salt:0.13 },
+    { id:"snacks_chinese_prawn_crackers",name:"Chinese prawn crackers",cat:"desserts_snacks",kcal:97,fat:5.3,sat:0.4,carbs:12,sugars:1.8,fibre:0.2,protein:0.2,salt:0.46 },
+    { id:"snacks_chocolate_edamame",name:"chocolate edamame",cat:"desserts_snacks",kcal:167,fat:8.4,sat:4.2,carbs:14,sugars:9.8,fibre:3.5,protein:7.4,salt:0.18 },
+    { id:"dessert_chocolate_mochi_141125",name:"chocolate ganache mochi",cat:"desserts_snacks",kcal:230,fat:9.6,sat:5.6,carbs:34,sugars:24,fibre:0,protein:2.4,salt:0.08 },
+    { id:"dessert_chocolate_mousse",name:"chocolate mousse",cat:"desserts_snacks",kcal:248,fat:20.6,sat:12.6,carbs:12.7,sugars:11.8,fibre:2,protein:2,salt:0.18 },
+    { id:"snacks_sea_salt_seaweed_thins",name:"crispy seaweed thins sea salt",cat:"desserts_snacks",kcal:23,fat:1.5,sat:0.2,carbs:0.4,sugars:0.1,fibre:1.2,protein:1.4,salt:0.24 },
+    { id:"snacks_sweet_soy_seaweed_thins",name:"crispy seaweed thins sweet soy",cat:"desserts_snacks",kcal:24,fat:1.6,sat:0.3,carbs:0.5,sugars:0.1,fibre:1.1,protein:1.3,salt:0.14 },
+    { id:"snacks_wasabi_seaweed_thins",name:"crispy seaweed thins wasabi",cat:"desserts_snacks",kcal:22,fat:1.4,sat:0.2,carbs:0.6,sugars:0,fibre:0.7,protein:1.6,salt:0.33 },
+    { id:"snacks_dark_chocolate_corn_cakes",name:"dark chocolate corn cakes",cat:"desserts_snacks",kcal:168,fat:7.9,sat:4.8,carbs:22,sugars:10.6,fibre:1.4,protein:2.2,salt:0.04 },
+    { id:"snacks_katsu_prawn_crackers",name:"Japanese prawn crackers",cat:"desserts_snacks",kcal:97,fat:5.3,sat:0.4,carbs:12,sugars:1.9,fibre:0.5,protein:0.5,salt:0.58 },
+    { id:"snacks_lemon_baked_pistachios",name:"lemon baked pistachios",cat:"desserts_snacks",kcal:233,fat:19,sat:2.4,carbs:2.2,sugars:2.2,fibre:6.8,protein:10,salt:1.36 },
+    { id:"dessert_mango_cheesecake_mochi_141125",name:"mango cheesecake mochi",cat:"desserts_snacks",kcal:208,fat:8.4,sat:5.2,carbs:36,sugars:28,fibre:0,protein:2.2,salt:0.24 },
+    { id:"snacks_milk_chocolate_corn_cakes",name:"milk chocolate corn cakes",cat:"desserts_snacks",kcal:166,fat:7.2,sat:4.4,carbs:22,sugars:10.4,fibre:0.6,protein:2.4,salt:0.06 },
+    { id:"dessert_mixed_fruit_cup_090126",name:"mixed fruit'cup",cat:"desserts_snacks",kcal:85,fat:0,sat:0,carbs:19,sugars:18,fibre:1.8,protein:1,salt:0 },
+    { id:"snacks_original_prawn_crackers",name:"original prawn crackers",cat:"desserts_snacks",kcal:96,fat:5,sat:0.4,carbs:12,sugars:1.3,fibre:0.1,protein:0.2,salt:0.47 },
+    { id:"dessert_raspberry_cheesecake_mochi_141125",name:"raspberry & white chocolate cheesecake mochi",cat:"desserts_snacks",kcal:208,fat:8.4,sat:5.2,carbs:36,sugars:28,fibre:0,protein:2.2,salt:0.24 },
+    { id:"snacks_salted_caramel_corn_cakes",name:"salted caramel corn cakes",cat:"desserts_snacks",kcal:166,fat:7.4,sat:4.4,carbs:22,sugars:10.4,fibre:0.6,protein:2.2,salt:0.36 },
+    { id:"snacks_sushi_style_noricrunch",name:"sushi style nori’crunch",cat:"desserts_snacks",kcal:80,fat:0.1,sat:0.1,carbs:18,sugars:0.9,fibre:0.2,protein:1.4,salt:0.38 },
+    { id:"snacks_sweet_chilli_toasted_cashews",name:"sweet chilli toasted cashews",cat:"desserts_snacks",kcal:236,fat:17,sat:3.4,carbs:12,sugars:2.9,fibre:1.2,protein:7.2,salt:0.71 },
+    { id:"snacks_thai_prawn_crackers",name:"Thai prawn crackers",cat:"desserts_snacks",kcal:97,fat:5.2,sat:0.4,carbs:12,sugars:1.7,fibre:0.1,protein:0.2,salt:0.4 },
+    { id:"snacks_proteinplenty_tamari_almonds",name:"umami roasted almonds",cat:"desserts_snacks",kcal:247,fat:20,sat:1.6,carbs:3,sugars:1.9,fibre:4.4,protein:11,salt:0.82 },
+    { id:"dessert_white_chocolate_dream",name:"white chocolate dream",cat:"desserts_snacks",kcal:292,fat:20.7,sat:12.9,carbs:24,sugars:23.2,fibre:0.2,protein:2.2,salt:0.5 },
+    { id:"little_sausages_eggpot",name:"little sausages egg'pot",cat:"breakfast",kcal:277,fat:13.9,sat:4.3,carbs:24.4,sugars:2.4,fibre:1.9,protein:15,salt:1.68 },
+    { id:"mango_yoghurt_pot",name:"mango yoghurt pot",cat:"breakfast",kcal:327,fat:17.6,sat:12.1,carbs:30.8,sugars:20.6,fibre:3.4,protein:10.5,salt:0.35 },
+    { id:"porridge_with_agave",name:"porridge with agave",cat:"breakfast",kcal:185,fat:6.2,sat:3.4,carbs:22.7,sugars:6.1,fibre:2.5,protein:7.8,salt:0.13 },
+    { id:"blueberry_porridge",name:"porridge with fresh blueberries",cat:"breakfast",kcal:215,fat:6.3,sat:3.4,carbs:29.4,sugars:11.4,fibre:3.1,protein:8.1,salt:0.13 },
+    { id:"blueberry_seeds_porridge",name:"porridge with fresh blueberries & superseeds",cat:"breakfast",kcal:323,fat:14.1,sat:5.1,carbs:36.1,sugars:14.7,fibre:4.9,protein:11.4,salt:0.14 },
+    { id:"raspberry_yoghurt_pot",name:"raspberry yoghurt pot",cat:"breakfast",kcal:323,fat:17.3,sat:12.2,carbs:30.4,sugars:21.1,fibre:3.6,protein:10.4,salt:0.35 },
+    { id:"roasted_bacon_eggpot",name:"roasted bacon egg'pot",cat:"breakfast",kcal:205,fat:8.5,sat:2.3,carbs:20.5,sugars:3.2,fibre:1.9,protein:11.9,salt:0.93 },
+    { id:"salmon_avo_eggpot",name:"smoked salmon & avo egg'pot",cat:"breakfast",kcal:208,fat:15.2,sat:3.7,carbs:4.6,sugars:0.8,fibre:2.9,protein:14.9,salt:0.38 },
+    { id:"soy_roasted_seeds_eggpot",name:"soy roasted seeds egg'pot",cat:"breakfast",kcal:88,fat:5.9,sat:1.4,carbs:2.8,sugars:0.5,fibre:0.8,protein:7.6,salt:0.28 },
+    { id:"spinach_avo_eggpot",name:"spinach & avo egg'pot",cat:"breakfast",kcal:195,fat:14.3,sat:3.6,carbs:7.1,sugars:2.3,fibre:3.5,protein:16.2,salt:0.55 },
+    { id:"spinach_seeds_eggpot",name:"spinach & seeds egg'pot",cat:"breakfast",kcal:198,fat:6.7,sat:1.8,carbs:24,sugars:4.8,fibre:3,protein:16.6,salt:1.17 },
+    { id:"aloeverawater",name:"aloe vera",cat:"cold_drinks",kcal:45,fat:0,sat:0,carbs:11.5,sugars:11.5,fibre:0,protein:0,salt:0 },
+    { id:"alcohol_asahi",name:"asahi",cat:"cold_drinks",kcal:135,fat:0,sat:0,carbs:9.2,sugars:0,fibre:0,protein:1,salt:0 },
+    { id:"drinks_coca_cola_can_regular",name:"coca cola",cat:"cold_drinks",kcal:139,fat:0,sat:0,carbs:35,sugars:35,fibre:0,protein:0,salt:0 },
+    { id:"cocacolacanzero",name:"coca cola zero sugar",cat:"cold_drinks",kcal:1,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.66 },
+    { id:"drinks_can_zen_cucumber_and_mint_2024",name:"cucumber & mint zen'water can",cat:"cold_drinks",kcal:3,fat:0.5,sat:0.1,carbs:0.5,sugars:0.5,fibre:0.5,protein:0.5,salt:0.01 },
+    { id:"drinks_coca_cola_can_diet",name:"diet coke",cat:"cold_drinks",kcal:1,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"drinks_fiery_ginger_kombucha",name:"fiery ginger kombucha",cat:"cold_drinks",kcal:17,fat:0,sat:0,carbs:3.3,sugars:3.3,fibre:0,protein:0,salt:0 },
+    { id:"drinks_can_zen_water_ginger_and_lime_2024",name:"ginger & lime zen'water can",cat:"cold_drinks",kcal:7,fat:0.5,sat:0.1,carbs:0.5,sugars:0.5,fibre:0.5,protein:0.5,salt:0.01 },
+    { id:"mojugingershot",name:"ginger shot",cat:"cold_drinks",kcal:28,fat:0,sat:0,carbs:5.9,sugars:5.2,fibre:0.8,protein:0.5,salt:0.02 },
+    { id:"drinks_moju_hot_mango_shot",name:"hot mango Shot",cat:"cold_drinks",kcal:29,fat:0,sat:0,carbs:6,sugars:6,fibre:1,protein:0,salt:0.01 },
+    { id:"sparklingwater",name:"itsu sparkling water",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"drinks_itsu_still_water_nd",name:"itsu still water",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"drinks_can_zen_water_lemon_yuzu_2024",name:"lemon & yuzu zen'water can",cat:"cold_drinks",kcal:6,fat:0.5,sat:0.1,carbs:0.5,sugars:0.5,fibre:0.5,protein:0.5,salt:0.01 },
+    { id:"drinks_peach_lychee_zen_water",name:"peach & lychee zen'water bottle",cat:"cold_drinks",kcal:3,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"drinks_can_zen_water_peach_lychee_2024",name:"peach & lychee zen'water can",cat:"cold_drinks",kcal:9,fat:0.5,sat:0.1,carbs:0.5,sugars:0.5,fibre:0.5,protein:0.5,salt:0.01 },
+    { id:"drinks_raspberry_and_dragon_fruit_zenwater",name:"raspberry & dragon fruit zen'water can",cat:"cold_drinks",kcal:10,fat:0.5,sat:0.1,carbs:0.5,sugars:0.5,fibre:0.5,protein:0.5,salt:0.01 },
+    { id:"drinks_raspberry_and_elderflower_kombucha",name:"raspberry & elderflower kombucha",cat:"cold_drinks",kcal:18,fat:0,sat:0,carbs:3.5,sugars:3.4,fibre:0,protein:0,salt:0 },
+    { id:"drinks_itsu_sparkling_water_refill",name:"sparkling refill flask",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"drinks_itsu_still_water_refill",name:"still water - refill flask",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"americano",name:"americano",cat:"hot_iced_drinks",kcal:2,fat:0.1,sat:0.1,carbs:0.6,sugars:0.6,fibre:0,protein:0.2,salt:0 },
+    { id:"blueberry_matcha_latte",name:"blueberry matcha latte",cat:"hot_iced_drinks",kcal:65,fat:0.1,sat:0,carbs:14.7,sugars:13.7,fibre:0,protein:0.8,salt:0.01 },
+    { id:"cappucino",name:"cappucino",cat:"hot_iced_drinks",kcal:1,fat:0,sat:0,carbs:0,sugars:0.2,fibre:0,protein:0.1,salt:0 },
+    { id:"english_breakfast_tea",name:"English breakfast tea",cat:"hot_iced_drinks",kcal:3,fat:0,sat:0,carbs:0.5,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"espresso",name:"espresso",cat:"hot_iced_drinks",kcal:2,fat:0.1,sat:0.1,carbs:0.6,sugars:0.6,fibre:0,protein:0.2,salt:0 },
+    { id:"flat_white",name:"flat white",cat:"hot_iced_drinks",kcal:1,fat:0,sat:0,carbs:0,sugars:0.2,fibre:0,protein:0.1,salt:0 },
+    { id:"green_tea",name:"green tea",cat:"hot_iced_drinks",kcal:2,fat:0,sat:0,carbs:0.5,sugars:0.2,fibre:0,protein:0.1,salt:0 },
+    { id:"iced_americano",name:"iced americano",cat:"hot_iced_drinks",kcal:1,fat:0,sat:0,carbs:0.2,sugars:0.2,fibre:0,protein:0.1,salt:0 },
+    { id:"iced_blueberry_latte",name:"iced blueberry latte",cat:"hot_iced_drinks",kcal:83,fat:0,sat:0,carbs:20.1,sugars:20.1,fibre:0,protein:0.1,salt:0.01 },
+    { id:"iced_blueberry_matcha_latte",name:"iced blueberry matcha latte",cat:"hot_iced_drinks",kcal:62,fat:0.1,sat:0,carbs:14.1,sugars:13.1,fibre:0,protein:0.7,salt:0.01 },
+    { id:"iced_latte",name:"iced latte",cat:"hot_iced_drinks",kcal:1,fat:0,sat:0,carbs:0.2,sugars:0.2,fibre:0,protein:0.1,salt:0 },
+    { id:"iced_matcha_latte",name:"iced matcha latte",cat:"hot_iced_drinks",kcal:10,fat:0.2,sat:0,carbs:1.2,sugars:0,fibre:0,protein:0.9,salt:0 },
+    { id:"iced_salted_caramel_latte",name:"iced salted caramel latte",cat:"hot_iced_drinks",kcal:86,fat:0,sat:0,carbs:21.3,sugars:21.3,fibre:0,protein:0.1,salt:0.49 },
+    { id:"iced_salted_caramel_matcha_latte",name:"iced salted caramel matcha latte",cat:"hot_iced_drinks",kcal:65,fat:0.1,sat:0,carbs:15.1,sugars:14.1,fibre:0,protein:0.8,salt:0.33 },
+    { id:"iced_vanilla_latte",name:"iced vanilla latte",cat:"hot_iced_drinks",kcal:87,fat:0,sat:0,carbs:21.6,sugars:21.7,fibre:0,protein:0.1,salt:0.01 },
+    { id:"iced_vanilla_matcha_latte",name:"iced vanilla matcha latte",cat:"hot_iced_drinks",kcal:66,fat:0.1,sat:0,carbs:15.4,sugars:14.4,fibre:0,protein:1.2,salt:0.01 },
+    { id:"hot_drinks_jasmine_tea",name:"jasmine green tea",cat:"hot_iced_drinks",kcal:2,fat:0,sat:0,carbs:0.5,sugars:0.1,fibre:0,protein:0.1,salt:0 },
+    { id:"latte",name:"latte",cat:"hot_iced_drinks",kcal:1,fat:0,sat:0,carbs:0,sugars:0.2,fibre:0,protein:0.1,salt:0 },
+    { id:"matcha_latte",name:"matcha latte",cat:"hot_iced_drinks",kcal:10,fat:0.2,sat:0,carbs:1.2,sugars:0,fibre:0,protein:0.9,salt:0 },
+    { id:"peppermint_tea",name:"peppermint tea",cat:"hot_iced_drinks",kcal:3,fat:0,sat:0,carbs:0.72,sugars:0.06,fibre:0,protein:0.08,salt:0.06 },
+    { id:"salted_caramel_cappuccino",name:"salted caramel cappuccino",cat:"hot_iced_drinks",kcal:86,fat:0,sat:0,carbs:21.3,sugars:21.3,fibre:0,protein:0.1,salt:0.49 },
+    { id:"salted_caramel_latte",name:"salted caramel latte",cat:"hot_iced_drinks",kcal:86,fat:0,sat:0,carbs:21.3,sugars:21.3,fibre:0,protein:0.1,salt:0.49 },
+    { id:"salted_caramel_matcha_latte",name:"salted caramel matcha latte",cat:"hot_iced_drinks",kcal:62,fat:0.1,sat:0,carbs:14.1,sugars:13.1,fibre:0,protein:0.7,salt:0.01 },
+    { id:"vanilla_cappuccino",name:"vanilla cappuccino",cat:"hot_iced_drinks",kcal:85,fat:0,sat:0,carbs:21.2,sugars:21.1,fibre:0,protein:0.1,salt:0 },
+    { id:"vanilla_latte",name:"vanilla latte",cat:"hot_iced_drinks",kcal:85,fat:0,sat:0,carbs:21.2,sugars:21.1,fibre:0,protein:0.1,salt:0 },
+    { id:"vanilla_matcha_latte",name:"vanilla matcha latte",cat:"hot_iced_drinks",kcal:66,fat:0.1,sat:0,carbs:15.4,sugars:14.4,fibre:0,protein:0.8,salt:0.01 },
+  ],
+};
+// __ITSU_DATA_END__
+
+// __PRET_DATA_START__ (generiert via: node pret-crawl.js && node pret-update.js — nicht von Hand editieren)
+// Quelle: pret.co.uk Delivery-Menü · Stand 2026-06-10 · 140 Items · rel = 'only relevant items, no bullshit'-Whitelist
+const PRET = {
+  cats: [
+    { id:"bakery",name:"Bakery",on:false },
+    { id:"breakfast_baguettes",name:"Breakfast baguettes",on:false },
+    { id:"sandwiches",name:"Sandwiches",on:true },
+    { id:"baguettes",name:"Baguettes",on:true },
+    { id:"wraps_and_flatbreads",name:"Wraps and flatbreads",on:true },
+    { id:"rye_rolls",name:"Rye rolls",on:true },
+    { id:"salads_and_protein_pots",name:"Salads and protein pots",on:true },
+    { id:"little_pret_stars",name:"Little Pret Stars",on:true },
+    { id:"fruit",name:"Fruit",on:true },
+    { id:"sweet_pots",name:"Sweet pots",on:true },
+    { id:"sweet_treats",name:"Sweet treats",on:false },
+    { id:"snacks",name:"Snacks",on:false },
+    { id:"cold_drinks",name:"Cold drinks",on:false,drink:true },
+  ],
+  items: [
+    { id:"all_butter_croissant",name:"All Butter Croissant",cat:"bakery",kcal:291,fat:16.8,sat:11.5,carbs:27.5,sugars:4.5,fibre:1.6,protein:6.5,salt:0.68 },
+    { id:"almond_croissant",name:"Almond Croissant",cat:"bakery",kcal:382,fat:21.1,sat:10.7,carbs:38.9,sugars:14.3,fibre:2.6,protein:7.8,salt:0.53 },
+    { id:"chocolate_chunk_cookie",name:"Chocolate Chunk Cookie",cat:"bakery",kcal:329,fat:12.5,sat:7.4,carbs:48.9,sugars:25.2,fibre:2.1,protein:4.1,salt:0.41 },
+    { id:"chocolate_croissant",name:"Chocolate Croissant",cat:"bakery",kcal:350,fat:20.6,sat:12.3,carbs:33.4,sugars:15.6,fibre:3.7,protein:5.9,salt:0.41 },
+    { id:"cinnamon_danish",name:"Cinnamon Danish",cat:"bakery",kcal:413,fat:20.9,sat:13.2,carbs:48.3,sugars:24.1,fibre:2.5,protein:6.7,salt:1.01 },
+    { id:"dark_choc_almond_butter_cookie",name:"Dark Choc & Almond Butter Cookie",cat:"bakery",kcal:370,fat:14.9,sat:7.5,carbs:50.9,sugars:30.6,fibre:4,protein:6.2,salt:0.63 },
+    { id:"double_berry_muffin",name:"Double Berry Muffin",cat:"bakery",kcal:441,fat:21.6,sat:2.5,carbs:53.4,sugars:30.5,fibre:3.5,protein:6.6,salt:0.72 },
+    { id:"fruit_oat_spelt_cookie",name:"Fruit, Oat & Spelt Cookie",cat:"bakery",kcal:339,fat:13.2,sat:7.4,carbs:48.2,sugars:48.2,fibre:2.9,protein:5.5,salt:0.27 },
+    { id:"pain_aux_raisins",name:"Pain aux Raisins",cat:"bakery",kcal:358,fat:14.4,sat:9.1,carbs:49,sugars:21.4,fibre:2.5,protein:7,salt:0.85 },
+    { id:"pret_s_chocolate_brownie_swirl",name:"Pret's Chocolate Brownie Swirl",cat:"bakery",kcal:417,fat:20.8,sat:13.3,carbs:47.9,sugars:22.9,fibre:3.5,protein:7.8,salt:0.79 },
+    { id:"spiced_apple_pecan_muffin",name:"Spiced Apple & Pecan Muffin",cat:"bakery",kcal:502,fat:28.8,sat:2.6,carbs:52,sugars:28.8,fibre:2.9,protein:7.1,salt:0.73 },
+    { id:"very_berry_croissant",name:"Very Berry Croissant",cat:"bakery",kcal:299,fat:12.2,sat:7.4,carbs:41.7,sugars:21.9,fibre:2.3,protein:4.4,salt:0.56 },
+    { id:"avo_egg_mayo_breakfast_baguette",name:"Avo & Egg Mayo Breakfast Baguette",cat:"breakfast_baguettes",kcal:347,fat:15,sat:3.2,carbs:39.1,sugars:1.7,fibre:3.2,protein:12.3,salt:2.09 },
+    { id:"bacon_egg_mayo_breakfast_baguette",name:"Bacon & Egg Mayo Breakfast Baguette",cat:"breakfast_baguettes",kcal:357,fat:14.5,sat:3.7,carbs:38.8,sugars:1.5,fibre:1.9,protein:16.8,salt:1.98 },
+    { id:"roasted_tomato_egg_mayo_breakfast_baguette",name:"Roasted Tomato & Egg Mayo Breakfast Baguette",cat:"breakfast_baguettes",kcal:361,fat:14.3,sat:2.3,carbs:42.3,sugars:5.2,fibre:3.2,protein:14.1,salt:1.88 },
+    { id:"smoked_salmon_egg_mayo_breakfast_baguette",name:"Smoked Salmon & Egg Mayo Breakfast Baguette",cat:"breakfast_baguettes",kcal:352,fat:13.7,sat:2.6,carbs:38.7,sugars:1.5,fibre:1.9,protein:17.5,salt:2.14 },
+    { id:"all_day_breakfast_triple",name:"All-Day Breakfast Triple",cat:"sandwiches",rel:true,kcal:729,fat:35.7,sat:9.7,carbs:66.7,sugars:5.9,fibre:6.3,protein:32.2,salt:3.57 },
+    { id:"chicken_salad",name:"Chicken Salad",cat:"sandwiches",rel:true,kcal:529,fat:29.3,sat:7.9,carbs:42.7,sugars:3.1,fibre:3.8,protein:21.8,salt:2.22 },
+    { id:"chicken_avocado_basil",name:"Chicken, Avocado & Basil",cat:"sandwiches",rel:true,kcal:488,fat:23.3,sat:4.7,carbs:43.5,sugars:3.4,fibre:6,protein:23.2,salt:2.07 },
+    { id:"classic_super_club",name:"Classic Super Club",cat:"sandwiches",rel:true,kcal:542,fat:27.8,sat:4.8,carbs:43.6,sugars:3.9,fibre:4.1,protein:27.1,salt:2.91 },
+    { id:"crayfish_rocket",name:"Crayfish & Rocket",cat:"sandwiches",rel:true,kcal:384,fat:13.3,sat:1.1,carbs:42.7,sugars:2.6,fibre:3.7,protein:21.4,salt:2.27 },
+    { id:"egg_florentine",name:"Egg Florentine",cat:"sandwiches",rel:true,kcal:459,fat:19.2,sat:5.9,carbs:45.5,sugars:3.6,fibre:4.7,protein:23.7,salt:1.84 },
+    { id:"everyday_triple",name:"Everyday Triple",cat:"sandwiches",rel:true,kcal:650,fat:28,sat:4.6,carbs:65.1,sugars:4.7,fibre:5.7,protein:31.5,salt:2.92 },
+    { id:"free_range_egg_mayo",name:"Free-Range Egg Mayo",cat:"sandwiches",rel:true,kcal:379,fat:14.3,sat:2.8,carbs:43.3,sugars:2.1,fibre:3.8,protein:17.3,salt:1.52 },
+    { id:"ham_cheese",name:"Ham & Cheese",cat:"sandwiches",rel:true,kcal:531,fat:25.8,sat:15.8,carbs:42.7,sugars:2.5,fibre:3.9,protein:30,salt:3.61 },
+    { id:"mature_cheddar_pret_pickle",name:"Mature Cheddar & Pret Pickle",cat:"sandwiches",rel:true,kcal:508,fat:23,sat:9.4,carbs:54.7,sugars:12.9,fibre:4.8,protein:18.2,salt:2.16 },
+    { id:"scottish_smoked_salmon",name:"Scottish Smoked Salmon",cat:"sandwiches",rel:true,kcal:416,fat:17.4,sat:5.3,carbs:40.8,sugars:2.3,fibre:3.4,protein:22.2,salt:3.19 },
+    { id:"tuna_cucumber",name:"Tuna & Cucumber",cat:"sandwiches",rel:true,kcal:379,fat:13.9,sat:1.6,carbs:43.3,sugars:3.4,fibre:3.5,protein:18.5,salt:1.42 },
+    { id:"avo_olive_toms_baguette",name:"Avo, Olive & Toms Baguette",cat:"baguettes",rel:true,kcal:562,fat:29.3,sat:5.1,carbs:57.3,sugars:5.7,fibre:8.8,protein:13,salt:1.65 },
+    { id:"avo_olive_toms_half_baguette",name:"Avo, Olive & Toms Half Baguette",cat:"baguettes",rel:true,kcal:281,fat:14.6,sat:2.5,carbs:28.7,sugars:2.9,fibre:4.4,protein:6.5,salt:0.82 },
+    { id:"brie_tomato_basil_baguette",name:"Brie, Tomato & Basil Baguette",cat:"baguettes",rel:true,kcal:439,fat:15.2,sat:10.1,carbs:56.2,sugars:3.6,fibre:3.3,protein:17.6,salt:2.14 },
+    { id:"chicken_caesar_bacon_half_baguette",name:"Chicken Caesar & Bacon Half Baguette",cat:"baguettes",rel:true,kcal:302,fat:14.2,sat:2.6,carbs:27.2,sugars:1.6,fibre:2.2,protein:15.2,salt:1.35 },
+    { id:"chicken_caesar_bacon_baguette",name:"Chicken Caesar Bacon Baguette",cat:"baguettes",rel:true,kcal:604,fat:28.4,sat:5.2,carbs:54.4,sugars:3.2,fibre:4.4,protein:30.5,salt:2.71 },
+    { id:"chicken_salad_baguette",name:"Chicken Salad Baguette",cat:"baguettes",rel:true,kcal:595,fat:29.5,sat:7.9,carbs:57,sugars:3.2,fibre:2.8,protein:24,salt:2.98 },
+    { id:"chicken_satay_half_baguette",name:"Chicken Satay Half Baguette",cat:"baguettes",rel:true,kcal:269,fat:8.8,sat:1.6,carbs:32.4,sugars:4.9,fibre:2.2,protein:13.8,salt:1.67 },
+    { id:"italian_prosciutto_baguette",name:"Italian Prosciutto Baguette",cat:"baguettes",rel:true,kcal:546,fat:24.7,sat:5.9,carbs:54.3,sugars:3.8,fibre:4.8,protein:24.1,salt:3.59 },
+    { id:"italian_prosciutto_half_baguette",name:"Italian Prosciutto Half Baguette",cat:"baguettes",rel:true,kcal:274,fat:12.4,sat:3,carbs:27.2,sugars:1.9,fibre:2.4,protein:12.1,salt:1.8 },
+    { id:"jambon_beurre",name:"Jambon Beurre",cat:"baguettes",rel:true,kcal:331,fat:11.4,sat:6.8,carbs:40.3,sugars:1.5,fibre:3,protein:15.4,salt:2.54 },
+    { id:"kimchi_blt_baguette",name:"Kimchi BLT Baguette",cat:"baguettes",rel:true,kcal:536,fat:21.8,sat:11.6,carbs:58.2,sugars:3.8,fibre:3.7,protein:24.7,salt:3.64 },
+    { id:"pole_line_caught_tuna_half_baguette",name:"Pole & Line Caught Tuna Half Baguette",cat:"baguettes",rel:true,kcal:257,fat:9.6,sat:1.1,carbs:29.4,sugars:2,fibre:1.3,protein:12.6,salt:1.23 },
+    { id:"posh_cheddar_pickle_baguette",name:"Posh Cheddar & Pickle Baguette",cat:"baguettes",rel:true,kcal:643,fat:28.5,sat:9.8,carbs:71.9,sugars:18.6,fibre:6.6,protein:21.4,salt:2.82 },
+    { id:"posh_cheddar_pickle_half_baguette",name:"Posh Cheddar & Pickle Half Baguette",cat:"baguettes",rel:true,kcal:322,fat:14.3,sat:4.9,carbs:36,sugars:9.3,fibre:3.3,protein:10.7,salt:1.41 },
+    { id:"pret_s_chicken_satay_baguette",name:"Pret's Chicken Satay Baguette",cat:"baguettes",rel:true,kcal:537,fat:17.6,sat:3.2,carbs:64.8,sugars:9.9,fibre:4.4,protein:27.6,salt:3.34 },
+    { id:"slim_ham_greve_baguette",name:"Slim Ham &  Grevé Baguette",cat:"baguettes",rel:true,kcal:298,fat:13,sat:4.2,carbs:28.7,sugars:1.6,fibre:1.7,protein:15.7,salt:1.93 },
+    { id:"smoked_salmon_egg_mayo_avo_baguette",name:"Smoked Salmon, Egg Mayo & Avo Baguette",cat:"baguettes",rel:true,kcal:552,fat:24.9,sat:4.9,carbs:54.6,sugars:2.4,fibre:5.7,protein:24.6,salt:2.86 },
+    { id:"tuna_mayo_baguette",name:"Tuna Mayo Baguette",cat:"baguettes",rel:true,kcal:515,fat:19.3,sat:2.2,carbs:58.8,sugars:4.1,fibre:2.6,protein:25.2,salt:2.46 },
+    { id:"wiltshire_cured_ham_greve_baguette",name:"Wiltshire Cured Ham & Grevé Baguette",cat:"baguettes",rel:true,kcal:596,fat:25.9,sat:8.3,carbs:57.4,sugars:3.2,fibre:3.4,protein:31.5,salt:3.85 },
+    { id:"avo_herb_wrap",name:"Avo & Herb Wrap",cat:"wraps_and_flatbreads",rel:true,kcal:500,fat:30.5,sat:6.7,carbs:40.8,sugars:3.9,fibre:6.7,protein:12.3,salt:1.31 },
+    { id:"chicken_pesto_rocket_wrap",name:"Chicken Pesto & Rocket Wrap",cat:"wraps_and_flatbreads",rel:true,kcal:516,fat:29.4,sat:3.6,carbs:39,sugars:3.2,fibre:3.6,protein:22,salt:2.01 },
+    { id:"falafel_avo_chipotle_flatbread",name:"Falafel, Avo & Chipotle Flatbread",cat:"wraps_and_flatbreads",rel:true,kcal:505,fat:20,sat:4.3,carbs:66.1,sugars:15.4,fibre:8.9,protein:10.6,salt:1.26 },
+    { id:"falafel_avo_chipotle_half_flatbread",name:"Falafel, Avo & Chipotle Half Flatbread",cat:"wraps_and_flatbreads",rel:true,kcal:252,fat:10,sat:2.1,carbs:33,sugars:7.7,fibre:4.4,protein:5.3,salt:0.63 },
+    { id:"hoisin_duck_wrap",name:"Hoisin Duck Wrap",cat:"wraps_and_flatbreads",rel:true,kcal:444,fat:17.5,sat:2.8,carbs:48.6,sugars:12.5,fibre:3.8,protein:21,salt:2.61 },
+    { id:"humous_chipotle_wrap",name:"Humous & Chipotle Wrap",cat:"wraps_and_flatbreads",rel:true,kcal:396,fat:14,sat:1.9,carbs:50.3,sugars:10.9,fibre:10.1,protein:12,salt:1.28 },
+    { id:"mediterranean_style_tuna_flatbread",name:"Mediterranean Style Tuna Flatbread",cat:"wraps_and_flatbreads",rel:true,kcal:508,fat:23,sat:2.7,carbs:50.3,sugars:7.9,fibre:3.8,protein:23,salt:1.99 },
+    { id:"pret_s_chicken_satay_wrap",name:"Pret's Chicken Satay Wrap",cat:"wraps_and_flatbreads",rel:true,kcal:461,fat:19.2,sat:3.5,carbs:45.3,sugars:8.8,fibre:4.6,protein:24.4,salt:2.39 },
+    { id:"shawarma_spiced_chicken_flatbread",name:"Shawarma Spiced Chicken Flatbread",cat:"wraps_and_flatbreads",rel:true,kcal:446,fat:10.3,sat:1.7,carbs:57.7,sugars:14,fibre:7.8,protein:26.8,salt:2.42 },
+    { id:"shawarma_spiced_chicken_half_flatbread",name:"Shawarma Spiced Chicken Half Flatbread",cat:"wraps_and_flatbreads",rel:true,kcal:223,fat:5.1,sat:0.9,carbs:28.9,sugars:7,fibre:3.9,protein:13.4,salt:1.21 },
+    { id:"falafel_avo_slaw_rye_roll",name:"Falafel, Avo & Slaw Rye Roll",cat:"rye_rolls",rel:true,kcal:431,fat:14,sat:2.4,carbs:61.3,sugars:15,fibre:8.5,protein:10.6,salt:1.83 },
+    { id:"new_yorker_rye_roll",name:"New Yorker Rye Roll",cat:"rye_rolls",rel:true,kcal:401,fat:13.9,sat:3.2,carbs:48.8,sugars:9.8,fibre:4.5,protein:17.8,salt:1.86 },
+    { id:"scandi_style_salmon_rye_roll",name:"Scandi Style Salmon Rye Roll",cat:"rye_rolls",rel:true,kcal:392,fat:15.7,sat:1.9,carbs:44.7,sugars:7.3,fibre:3.8,protein:15.9,salt:2.1 },
+    { id:"scottish_smoked_salmon_dill_rye_roll",name:"Scottish Smoked Salmon & Dill Rye Roll",cat:"rye_rolls",rel:true,kcal:359,fat:11.4,sat:3,carbs:44.4,sugars:7.3,fibre:3.8,protein:18,salt:2.32 },
+    { id:"soup_baguette_with_butter",name:"Soup Baguette with Butter",cat:"rye_rolls",kcal:241,fat:7.3,sat:4.7,carbs:36.6,sugars:1.5,fibre:1.6,protein:6.5,salt:1.01 },
+    { id:"soup_roll_with_butter",name:"Soup Roll with Butter",cat:"rye_rolls",kcal:278,fat:7.9,sat:4.7,carbs:42.4,sugars:5.5,fibre:3.4,protein:7.6,salt:0.91 },
+    { id:"butternut_humous_mezze_bowl",name:"Butternut & Humous Mezze Bowl",cat:"salads_and_protein_pots",rel:true,kcal:379,fat:15.4,sat:2,carbs:41,sugars:11.7,fibre:12.7,protein:12.7,salt:1.37 },
+    { id:"chef_s_italian_chicken_salad",name:"Chef's Italian Chicken Salad",cat:"salads_and_protein_pots",rel:true,kcal:526,fat:41.2,sat:5.9,carbs:12,sugars:10.3,fibre:3.2,protein:25.3,salt:2.3 },
+    { id:"chicken_edamame_protein_pot",name:"Chicken & Edamame Protein Pot",cat:"salads_and_protein_pots",rel:true,kcal:173,fat:4.4,sat:1,carbs:6.6,sugars:0.5,fibre:2.5,protein:25.5,salt:1.17 },
+    { id:"chicken_greens_protein_plate",name:"Chicken & Greens Protein Plate",cat:"salads_and_protein_pots",rel:true,kcal:285,fat:9,sat:2.1,carbs:14.6,sugars:9.2,fibre:4.3,protein:34.2,salt:2.85 },
+    { id:"chipotle_chicken",name:"Chipotle Chicken",cat:"salads_and_protein_pots",rel:true,kcal:709,fat:32,sat:8.9,carbs:48.4,sugars:13.6,fibre:13.9,protein:50.1,salt:2.53 },
+    { id:"egg_spinach_protein_pot",name:"Egg & Spinach Protein Pot",cat:"salads_and_protein_pots",rel:true,kcal:103,fat:5.3,sat:1.5,carbs:2.3,sugars:0.2,fibre:0.3,protein:11.4,salt:0.57 },
+    { id:"korean_bbq_tofu",name:"Korean BBQ Tofu",cat:"salads_and_protein_pots",rel:true,kcal:449,fat:15.4,sat:10,carbs:51,sugars:21,fibre:10.4,protein:21.5,salt:3.27 },
+    { id:"miso_chicken_rice_bowl",name:"Miso Chicken Rice Bowl",cat:"salads_and_protein_pots",rel:true,kcal:385,fat:14.5,sat:1.8,carbs:34.3,sugars:17.5,fibre:7.1,protein:26.6,salt:2.98 },
+    { id:"miso_salmon",name:"Miso Salmon",cat:"salads_and_protein_pots",rel:true,kcal:761,fat:47.1,sat:7.1,carbs:43.4,sugars:16.5,fibre:12.8,protein:36,salt:3.16 },
+    { id:"roasted_salmon_mango_protein_plate",name:"Roasted Salmon & Mango Protein Plate",cat:"salads_and_protein_pots",rel:true,kcal:402,fat:26,sat:5,carbs:13.6,sugars:9.4,fibre:5,protein:26,salt:1.81 },
+    { id:"shawarma_chicken",name:"Shawarma Chicken",cat:"salads_and_protein_pots",rel:true,kcal:608,fat:28.3,sat:3.9,carbs:32,sugars:14,fibre:13.7,protein:49.7,salt:2.49 },
+    { id:"smoked_salmon_egg_protein_plate",name:"Smoked Salmon & Egg Protein Plate",cat:"salads_and_protein_pots",rel:true,kcal:413,fat:27.3,sat:5.6,carbs:7.7,sugars:1.9,fibre:3.9,protein:32,salt:3.09 },
+    { id:"tuna_nicoise_salad",name:"Tuna Nicoise Salad",cat:"salads_and_protein_pots",rel:true,kcal:357,fat:22.4,sat:3.4,carbs:8.5,sugars:7,fibre:1.5,protein:29.6,salt:1.97 },
+    { id:"kids_cheese_tomato_triangles",name:"Kids Cheese & Tomato Triangles",cat:"little_pret_stars",rel:true,kcal:369,fat:12.9,sat:7.5,carbs:43.2,sugars:3.9,fibre:4.1,protein:17.9,salt:1.25 },
+    { id:"kids_ham_triangles",name:"Kids' Ham Triangles",cat:"little_pret_stars",rel:true,kcal:288,fat:7,sat:3.8,carbs:40.8,sugars:2.2,fibre:3.5,protein:13.9,salt:1.72 },
+    { id:"kids_humous_cucumber_bowl",name:"Kids' Humous & Cucumber Bowl",cat:"little_pret_stars",rel:true,kcal:74,fat:4.9,sat:0.6,carbs:3.4,sugars:1,fibre:2.6,protein:2.7,salt:0.17 },
+    { id:"apple",name:"Apple",cat:"fruit",kcal:85,fat:0.2,sat:0,carbs:18.9,sugars:18.9,fibre:2.9,protein:0.6,salt:0.02 },
+    { id:"banana",name:"Banana",cat:"fruit",kcal:76,fat:0.2,sat:0.1,carbs:17.2,sugars:13.4,fibre:1,protein:0.9,salt:0 },
+    { id:"fruit_salad",name:"Fruit Salad",cat:"fruit",rel:true,kcal:107,fat:0.4,sat:0,carbs:22.7,sugars:22.7,fibre:3.1,protein:1.3,salt:0.02 },
+    { id:"mango_lime",name:"Mango & Lime",cat:"fruit",kcal:72,fat:0.9,sat:0.1,carbs:14.1,sugars:13.8,fibre:1.5,protein:1,salt:0.01 },
+    { id:"super_fruit",name:"Super Fruit",cat:"fruit",rel:true,kcal:88,fat:1,sat:0.2,carbs:17,sugars:16.7,fibre:2.5,protein:1.4,salt:0.01 },
+    { id:"acai_almond_butter_bowl",name:"Acai & Almond Butter Bowl",cat:"sweet_pots",kcal:340,fat:13.3,sat:1.7,carbs:43.4,sugars:29.4,fibre:6.8,protein:8.4,salt:0.22 },
+    { id:"bircher_muesli",name:"Bircher Muesli",cat:"sweet_pots",rel:true,kcal:338,fat:11.3,sat:4.2,carbs:43.2,sugars:35.7,fibre:3.3,protein:14.2,salt:0.28 },
+    { id:"blueberry_balance_bowl",name:"Blueberry Balance Bowl",cat:"sweet_pots",rel:true,kcal:318,fat:13.6,sat:9.3,carbs:33.8,sugars:20,fibre:4.2,protein:12.9,salt:0.2 },
+    { id:"chocolate_moose",name:"Chocolate Moose",cat:"sweet_pots",kcal:394,fat:30.4,sat:18.9,carbs:25.4,sugars:21.6,fibre:1.8,protein:3.8,salt:0.07 },
+    { id:"five_berry_bowl",name:"Five Berry Bowl",cat:"sweet_pots",rel:true,kcal:337,fat:10.3,sat:3.7,carbs:45.3,sugars:31.4,fibre:4.8,protein:13.2,salt:0.34 },
+    { id:"mango_banana_sunshine_bowl",name:"Mango & Banana Sunshine Bowl",cat:"sweet_pots",kcal:347,fat:14,sat:8.2,carbs:46.1,sugars:29.5,fibre:4.8,protein:6.8,salt:0.09 },
+    { id:"the_big_apple_bowl",name:"The Big Apple Bowl",cat:"sweet_pots",rel:true,kcal:306,fat:8.8,sat:3.4,carbs:42.9,sugars:33.1,fibre:3.6,protein:11.9,salt:0.26 },
+    { id:"choc_bar",name:"Choc Bar",cat:"sweet_treats",kcal:380,fat:23.5,sat:14.1,carbs:37.3,sugars:22.7,fibre:3.1,protein:3.1,salt:0.32 },
+    { id:"chocolate_brownie_bar",name:"Chocolate Brownie Bar",cat:"sweet_treats",kcal:321,fat:19.9,sat:12.4,carbs:30,sugars:25.3,fibre:2.8,protein:4,salt:0.1 },
+    { id:"chocolatey_coconut_bite",name:"Chocolatey Coconut Bite",cat:"sweet_treats",kcal:210,fat:18,sat:15.3,carbs:7.8,sugars:5.8,fibre:4.8,protein:1.7,salt:0.06 },
+    { id:"dark_chocolate_salted_almonds",name:"Dark Chocolate Salted Almonds",cat:"sweet_treats",kcal:215,fat:15.1,sat:5.3,carbs:12.4,sugars:7.9,fibre:3.5,protein:5.5,salt:0.2 },
+    { id:"dark_chocolate_with_sea_salt",name:"Dark Chocolate with Sea Salt",cat:"sweet_treats",kcal:172,fat:12.9,sat:7.8,carbs:9.5,sugars:8.3,fibre:3.9,protein:2.7,salt:0 },
+    { id:"love_bar",name:"Love Bar",cat:"sweet_treats",kcal:348,fat:18,sat:9,carbs:41.2,sugars:20.8,fibre:3,protein:3.8,salt:0.4 },
+    { id:"love_stack",name:"Love Stack",cat:"sweet_treats",kcal:447,fat:23.1,sat:11.5,carbs:52.9,sugars:26.7,fibre:3.9,protein:4.9,salt:0.52 },
+    { id:"milk_chocolate_bar",name:"Milk Chocolate Bar",cat:"sweet_treats",kcal:172,fat:11.8,sat:7.2,carbs:13.3,sugars:13,fibre:1.6,protein:2.3,salt:0 },
+    { id:"nutty_pistachio_almond_loaf_cake",name:"Nutty Pistachio & Almond Loaf Cake",cat:"sweet_treats",kcal:604,fat:45.5,sat:17.9,carbs:34.7,sugars:32.8,fibre:3.1,protein:12.3,salt:0.94 },
+    { id:"popcorn_bar",name:"Popcorn Bar",cat:"sweet_treats",kcal:176,fat:8.9,sat:5.1,carbs:21.8,sugars:12.5,fibre:0.8,protein:1.7,salt:0.13 },
+    { id:"pret_bar",name:"Pret Bar",cat:"sweet_treats",kcal:279,fat:13.4,sat:7,carbs:34.6,sugars:22.4,fibre:2.6,protein:4,salt:0.11 },
+    { id:"zingy_lemon_almond_loaf_cake",name:"Zingy Lemon & Almond Loaf Cake",cat:"sweet_treats",kcal:592,fat:41.2,sat:14.8,carbs:44.7,sugars:42.3,fibre:2.6,protein:9.4,salt:0.85 },
+    { id:"cranberries_in_coats",name:"Cranberries in Coats",cat:"snacks",kcal:235,fat:9.5,sat:5.5,carbs:36.5,sugars:31,fibre:0.8,protein:0.5,salt:0.1 },
+    { id:"dark_chocolate_corn_cakes",name:"Dark Chocolate Corn Cakes",cat:"snacks",kcal:82,fat:3.7,sat:2.2,carbs:10.4,sugars:4.4,fibre:0.8,protein:1.2,salt:0.01 },
+    { id:"mature_cheddar_red_onion_crisps",name:"Mature Cheddar & Red Onion Crisps",cat:"snacks",kcal:210,fat:12.7,sat:1,carbs:20.5,sugars:1,fibre:1.8,protein:2.6,salt:0.53 },
+    { id:"nuts_fruit_chocolate",name:"Nuts, Fruit, Chocolate",cat:"snacks",kcal:196,fat:12.8,sat:2,carbs:13.4,sugars:10.1,fibre:2.2,protein:5.7,salt:0.01 },
+    { id:"pret_a_mango",name:"Pret A Mango",cat:"snacks",kcal:118,fat:0.4,sat:0.1,carbs:26.9,sugars:17.5,fibre:1.8,protein:0.7,salt:0 },
+    { id:"pret_s_gingerbread_biscuit_godfrey",name:"Pret's Gingerbread Biscuit Godfrey",cat:"snacks",kcal:200,fat:6.3,sat:2.8,carbs:33.2,sugars:17.5,fibre:0.7,protein:2.1,salt:0.34 },
+    { id:"salt_cider_vinegar_crisps",name:"Salt & Cider Vinegar Crisps",cat:"snacks",kcal:206,fat:12.2,sat:0.9,carbs:21.3,sugars:0.4,fibre:1.7,protein:1.9,salt:0.65 },
+    { id:"salted_popcorn",name:"Salted Popcorn",cat:"snacks",kcal:136,fat:6.9,sat:0.5,carbs:14.2,sugars:0.1,fibre:3.5,protein:2.5,salt:0.44 },
+    { id:"sea_salt_crisps",name:"Sea Salt Crisps",cat:"snacks",kcal:213,fat:12.4,sat:1.4,carbs:22,sugars:0.2,fibre:1.7,protein:2.4,salt:0.36 },
+    { id:"smoky_chipotle_crisps",name:"Smoky Chipotle Crisps",cat:"snacks",kcal:208,fat:12.4,sat:0.9,carbs:21,sugars:0.9,fibre:1.9,protein:2.2,salt:0.39 },
+    { id:"sweet_salt_popcorn",name:"Sweet & Salt Popcorn",cat:"snacks",kcal:157,fat:9.3,sat:0.7,carbs:15.2,sugars:5.4,fibre:2.4,protein:1.7,salt:0.24 },
+    { id:"apple_juice",name:"Apple Juice",cat:"cold_drinks",kcal:126,fat:0.2,sat:0.1,carbs:30.7,sugars:28.2,fibre:0,protein:0.3,salt:0 },
+    { id:"coke_bottle",name:"Coke Bottle",cat:"cold_drinks",kcal:212,fat:0,sat:0,carbs:53,sugars:53,fibre:0,protein:0,salt:0 },
+    { id:"coke_can",name:"Coke Can",cat:"cold_drinks",kcal:140,fat:0,sat:0,carbs:35,sugars:35,fibre:0,protein:0,salt:0 },
+    { id:"coke_zero_bottle",name:"Coke Zero Bottle",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"coke_zero_can",name:"Coke Zero Can",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"cranberry_raspberry_pomegranate_pret_still",name:"Cranberry, Raspberry & Pomegranate Pret Still",cat:"cold_drinks",kcal:115,fat:1.1,sat:0.3,carbs:24.5,sugars:24.5,fibre:2.6,protein:0.5,salt:0 },
+    { id:"diet_coke_bottle",name:"Diet Coke Bottle",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"diet_coke_can",name:"Diet Coke Can",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"easy_greens",name:"Easy Greens",cat:"cold_drinks",kcal:35,fat:0,sat:0,carbs:8.8,sugars:7,fibre:0,protein:0,salt:0.11 },
+    { id:"ginger_kombucha",name:"Ginger Kombucha",cat:"cold_drinks",kcal:45,fat:0,sat:0,carbs:11.2,sugars:11.2,fibre:0,protein:0,salt:0 },
+    { id:"ginger_shot",name:"Ginger Shot",cat:"cold_drinks",kcal:55,fat:0.3,sat:0.1,carbs:11.4,sugars:9.7,fibre:1.8,protein:0.8,salt:0.11 },
+    { id:"hot_shot",name:"Hot Shot",cat:"cold_drinks",kcal:27,fat:0.2,sat:0,carbs:5.2,sugars:3.7,fibre:1.4,protein:0.4,salt:0.02 },
+    { id:"orange_juice",name:"Orange Juice",cat:"cold_drinks",kcal:63,fat:0.3,sat:0,carbs:13.5,sugars:12.6,fibre:0.7,protein:1.2,salt:0.01 },
+    { id:"poppi_lemon_lime",name:"poppi Lemon Lime",cat:"cold_drinks",kcal:26,fat:0,sat:0,carbs:4.9,sugars:4.6,fibre:3,protein:0,salt:0 },
+    { id:"poppi_orange",name:"poppi Orange",cat:"cold_drinks",kcal:26,fat:0,sat:0,carbs:4.9,sugars:4.3,fibre:3,protein:0,salt:0 },
+    { id:"poppi_raspberry_rose",name:"poppi Raspberry Rose",cat:"cold_drinks",kcal:27,fat:0,sat:0,carbs:4.9,sugars:3.6,fibre:3.6,protein:0,salt:0 },
+    { id:"poppi_strawberry_lemon",name:"poppi Strawberry & Lemon",cat:"cold_drinks",kcal:27,fat:0,sat:0,carbs:5.3,sugars:4.3,fibre:3,protein:0,salt:0 },
+    { id:"poppi_wild_berry",name:"poppi Wild Berry",cat:"cold_drinks",kcal:24,fat:0,sat:0,carbs:4.6,sugars:4.3,fibre:3,protein:0,salt:0 },
+    { id:"pret_sparkling_water_500ml",name:"Pret Sparkling Water 500ml",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+    { id:"pret_still_water_500ml",name:"Pret Still Water 500ml",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.07 },
+    { id:"pret_still_water_750ml",name:"Pret Still Water 750ml",cat:"cold_drinks",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.1 },
+    { id:"pret_s_rhubarb_lemonade",name:"Pret's Rhubarb Lemonade",cat:"cold_drinks",kcal:107,fat:0,sat:0,carbs:26.7,sugars:26.7,fibre:0,protein:0,salt:0.03 },
+    { id:"pret_s_sparkling_apple_fizz",name:"Pret's Sparkling Apple Fizz",cat:"cold_drinks",kcal:104,fat:0,sat:0,carbs:26.1,sugars:25.1,fibre:0,protein:0,salt:0.13 },
+    { id:"pret_s_sparkling_ginger_beer",name:"Pret's Sparkling Ginger Beer",cat:"cold_drinks",kcal:119,fat:0,sat:0,carbs:29.7,sugars:29.4,fibre:0,protein:0,salt:0 },
+    { id:"pret_s_sparkling_grape_elderflower",name:"Pret's Sparkling Grape & Elderflower",cat:"cold_drinks",kcal:98,fat:0,sat:0,carbs:24.4,sugars:24.4,fibre:0,protein:0,salt:0 },
+    { id:"vitamin_volcano",name:"Vitamin Volcano",cat:"cold_drinks",kcal:137,fat:0.2,sat:0.1,carbs:30.5,sugars:29.5,fibre:3.2,protein:1.5,salt:0.18 },
+  ],
+};
+// __PRET_DATA_END__
+
+// __NANDOS_DATA_START__ (generiert via: node nandos-crawl.js && node nandos-update.js — nicht von Hand editieren)
+// Quelle: api.nandos.services/menu-v2 · Stand 2026-06-11 · 112 Items · Drinks & Kids-Dessert/Drink sind bewusst NICHT enthalten
+const NANDOS = {
+  cats: [
+    { id:"the_lunch_fix",name:"The Lunch Fix",on:true },
+    { id:"starters",name:"Starters",on:true },
+    { id:"peri_peri_chicken",name:"PERi-PERi Chicken",on:true },
+    { id:"burgers_pittas_wraps",name:"Burgers, Pittas, Wraps",on:true },
+    { id:"salads_bowls",name:"Salads & Bowls",on:true },
+    { id:"sharing_platters",name:"Sharing Platters",on:true },
+    { id:"veggie",name:"Veggie",on:true },
+    { id:"nandinos_kids",name:"Nandinos (Kids)",on:false },
+    { id:"sides",name:"Sides",on:true },
+    { id:"dips_extras",name:"Dips & Extras",on:true },
+    { id:"desserts",name:"Desserts",on:true },
+  ],
+  items: [
+    { id:"hearty_bowl",name:"Hearty Bowl",cat:"the_lunch_fix",kcal:432,fat:22.9,sat:2.2,carbs:44.3,sugars:14.1,fibre:11.4,protein:9.3,salt:2.6 },
+    { id:"sol_bowl",name:"Sol Bowl",cat:"the_lunch_fix",kcal:583,fat:31.5,sat:2.3,carbs:63,sugars:15.2,fibre:8.1,protein:7.2,salt:3.4 },
+    { id:"the_big_caesar",name:"The Big Caesar",cat:"the_lunch_fix",kcal:649,fat:27.7,sat:5.1,carbs:63.2,sugars:5.7,fibre:6.3,protein:29.5,salt:1.9 },
+    { id:"cheesy_garlic_pitta",name:"Cheesy Garlic Pitta",cat:"starters",kcal:596,fat:31.6,sat:12.2,carbs:61.7,sugars:15.4,fibre:3.3,protein:17.8,salt:1.8 },
+    { id:"halloumi_sticks_chilli_jam",name:"Halloumi Sticks & Chilli Jam",cat:"starters",kcal:458,fat:32,sat:16.6,carbs:15.9,sugars:12.6,fibre:0.4,protein:26.7,salt:2.3 },
+    { id:"halloumi_sticks_peri_honey",name:"Halloumi Sticks & PERi-Honey",cat:"starters",kcal:526,fat:32,sat:16.6,carbs:35.6,sugars:33.6,fibre:0,protein:26.2,salt:2.2 },
+    { id:"houmous_with_peri_peri_drizzle",name:"Houmous with PERi-PERi Drizzle",cat:"starters",kcal:792,fat:32.6,sat:4.3,carbs:98.7,sugars:4.2,fibre:14.3,protein:25,salt:2.9 },
+    { id:"peri_peri_nuts",name:"PERi-PERi Nuts",cat:"starters",kcal:793,fat:67.4,sat:8.8,carbs:14.8,sugars:5.9,fibre:9,protein:27.3,salt:1.2 },
+    { id:"spicy_mixed_olives",name:"Spicy Mixed Olives",cat:"starters",kcal:138,fat:13.5,sat:1.4,carbs:4.7,sugars:0,fibre:3.9,protein:1.2,salt:4.6 },
+    { id:"sweet_potato_wedges",name:"Sweet Potato Wedges",cat:"starters",kcal:398,fat:22.8,sat:10,carbs:43.6,sugars:24.4,fibre:6,protein:7.6,salt:1.5 },
+    { id:"1_2_chicken",name:"1/2 Chicken",cat:"peri_peri_chicken",kcal:579,fat:29.1,sat:8,carbs:0.6,sugars:0,fibre:1.4,protein:78.7,salt:1.7 },
+    { id:"1_4_chicken",name:"1/4 Chicken",cat:"peri_peri_chicken",kcal:289,fat:14.5,sat:4,carbs:0.3,sugars:0,fibre:0.7,protein:39.3,salt:0.9 },
+    { id:"10_chicken_wings",name:"10 Chicken Wings",cat:"peri_peri_chicken",kcal:786,fat:39.4,sat:9.4,carbs:0.9,sugars:0.4,fibre:2.5,protein:106.4,salt:4.4 },
+    { id:"10_extra_saucy_wings",name:"10 Extra Saucy Wings",cat:"peri_peri_chicken",kcal:958,fat:49.5,sat:10.4,carbs:19.8,sugars:17.4,fibre:3.1,protein:107.4,salt:5.3 },
+    { id:"3_chicken_wings",name:"3 Chicken Wings",cat:"peri_peri_chicken",kcal:236,fat:11.8,sat:2.8,carbs:0.3,sugars:0.1,fibre:0.7,protein:31.9,salt:1.3 },
+    { id:"3_extra_saucy_wings",name:"3 Extra Saucy Wings",cat:"peri_peri_chicken",kcal:299,fat:15.9,sat:3.2,carbs:6.4,sugars:5.6,fibre:0.9,protein:32.3,salt:1.6 },
+    { id:"4_boneless_chicken_thighs",name:"4 Boneless Chicken Thighs",cat:"peri_peri_chicken",kcal:706,fat:37.2,sat:9.6,carbs:0.3,sugars:0.3,fibre:1.4,protein:85.5,salt:2.1 },
+    { id:"5_chicken_wings",name:"5 Chicken Wings",cat:"peri_peri_chicken",kcal:393,fat:19.7,sat:4.7,carbs:0.4,sugars:0.2,fibre:1.2,protein:53.2,salt:2.2 },
+    { id:"5_extra_saucy_wings",name:"5 Extra Saucy Wings",cat:"peri_peri_chicken",kcal:513,fat:27.8,sat:5.5,carbs:11.4,sugars:9.8,fibre:1.6,protein:53.9,salt:2.8 },
+    { id:"chicken_butterfly",name:"Chicken Butterfly",cat:"peri_peri_chicken",kcal:332,fat:10.1,sat:2.3,carbs:0.2,sugars:0.2,fibre:1.5,protein:59.4,salt:1.3 },
+    { id:"chicken_livers_rustic_portuguese_roll",name:"Chicken Livers & Rustic Portuguese Roll",cat:"peri_peri_chicken",kcal:653,fat:32.6,sat:12.6,carbs:54.1,sugars:2.9,fibre:3.4,protein:38.2,salt:2.9 },
+    { id:"whole_chicken",name:"Whole Chicken",cat:"peri_peri_chicken",kcal:1159,fat:58,sat:16.3,carbs:1.1,sugars:0.6,fibre:3,protein:157.6,salt:3.5 },
+    { id:"wing_roulette",name:"Wing Roulette",cat:"peri_peri_chicken",kcal:893,fat:48.1,sat:10.2,carbs:7.5,sugars:5.2,fibre:3.7,protein:107.1,salt:6.5 },
+    { id:"butterfly_burger",name:"Butterfly Burger",cat:"burgers_pittas_wraps",kcal:651,fat:19.5,sat:3.5,carbs:55.3,sugars:6.8,fibre:4.4,protein:65.2,salt:3 },
+    { id:"double_chicken_burger",name:"Double Chicken Burger",cat:"burgers_pittas_wraps",kcal:581,fat:11.5,sat:2.6,carbs:55.2,sugars:4.7,fibre:3.8,protein:63.3,salt:2.7 },
+    { id:"double_chicken_pitta",name:"Double Chicken Pitta",cat:"burgers_pittas_wraps",kcal:691,fat:26.7,sat:4.5,carbs:50.3,sugars:6,fibre:2.6,protein:65,salt:2.6 },
+    { id:"double_chicken_wrap",name:"Double Chicken Wrap",cat:"burgers_pittas_wraps",kcal:748,fat:29,sat:5.4,carbs:54.9,sugars:10.1,fibre:5.9,protein:65.3,salt:2.4 },
+    { id:"fino_pitta",name:"Fino Pitta",cat:"burgers_pittas_wraps",kcal:841,fat:40.1,sat:15.2,carbs:58.3,sugars:14.6,fibre:3.8,protein:62.1,salt:3.3 },
+    { id:"garlic_churrasco_burger",name:"Garlic Churrasco Burger",cat:"burgers_pittas_wraps",kcal:787,fat:39.9,sat:12,carbs:55.3,sugars:5,fibre:3.9,protein:49,salt:2.4 },
+    { id:"grilled_chicken_burger",name:"Grilled Chicken Burger",cat:"burgers_pittas_wraps",kcal:443,fat:8.9,sat:2,carbs:55.1,sugars:4.6,fibre:3.4,protein:34.8,salt:1.9 },
+    { id:"grilled_chicken_pitta",name:"Grilled Chicken Pitta",cat:"burgers_pittas_wraps",kcal:508,fat:19.1,sat:3.7,carbs:50.2,sugars:5.9,fibre:1.9,protein:36.4,salt:1.9 },
+    { id:"grilled_chicken_wrap",name:"Grilled Chicken Wrap",cat:"burgers_pittas_wraps",kcal:521,fat:16.4,sat:4.2,carbs:54.8,sugars:10,fibre:5.4,protein:36.7,salt:1.7 },
+    { id:"sunset_burger",name:"Sunset Burger",cat:"burgers_pittas_wraps",kcal:725,fat:30.4,sat:10.2,carbs:60.8,sugars:8.5,fibre:2.5,protein:53.4,salt:2.4 },
+    { id:"caesar_salad",name:"Caesar Salad",cat:"salads_bowls",kcal:473,fat:39.6,sat:7.4,carbs:14.9,sugars:3.5,fibre:1.2,protein:12.8,salt:1.5 },
+    { id:"mediterranean_salad",name:"Mediterranean Salad",cat:"salads_bowls",kcal:360,fat:28.3,sat:5.6,carbs:14.9,sugars:12,fibre:4.9,protein:7.4,salt:3.9 },
+    { id:"spicy_rice_bowl",name:"Spicy Rice Bowl",cat:"salads_bowls",kcal:600,fat:31.7,sat:3.5,carbs:21.5,sugars:8.3,fibre:3.6,protein:15.1,salt:3.6 },
+    { id:"all_in_platter",name:"All-in Platter",cat:"sharing_platters",kcal:1157,fat:58.1,sat:16,carbs:1.1,sugars:0,fibre:2.9,protein:157.3,salt:3.4 },
+    { id:"boneless_platter",name:"Boneless Platter",cat:"sharing_platters",kcal:1037,fat:47.2,sat:11.9,carbs:0.5,sugars:0.5,fibre:3,protein:144.9,salt:3.5 },
+    { id:"family_platter",name:"Family Platter",cat:"sharing_platters",kcal:2317,fat:116,sat:32.5,carbs:2.3,sugars:1.1,fibre:6,protein:315.2,salt:6.9 },
+    { id:"full_platter",name:"Full Platter",cat:"sharing_platters",kcal:1159,fat:58,sat:16.3,carbs:1.1,sugars:0.6,fibre:3,protein:157.6,salt:3.5 },
+    { id:"xl_wing_platter",name:"XL Wing Platter",cat:"sharing_platters",kcal:1176,fat:58.8,sat:14.2,carbs:1.1,sugars:0,fibre:3.7,protein:159.6,salt:6.8 },
+    { id:"beanie_burger",name:"Beanie Burger",cat:"veggie",kcal:562,fat:19.2,sat:5.5,carbs:83.5,sugars:6.9,fibre:9.3,protein:19.5,salt:2.6 },
+    { id:"beanie_pitta",name:"Beanie Pitta",cat:"veggie",kcal:632,fat:29.2,sat:6.7,carbs:76.5,sugars:6.6,fibre:2.6,protein:21.2,salt:2.6 },
+    { id:"beanie_wrap",name:"Beanie Wrap",cat:"veggie",kcal:644,fat:26.5,sat:7.2,carbs:37,sugars:10.7,fibre:11.3,protein:21.5,salt:2.4 },
+    { id:"the_big_cheese",name:"The Big Cheese",cat:"veggie",kcal:748,fat:45.4,sat:20.4,carbs:60.6,sugars:8.6,fibre:3.4,protein:27.6,salt:3.5 },
+    { id:"the_great_imitator_wrap",name:"The Great Imitator Wrap",cat:"veggie",kcal:493,fat:19.5,sat:8,carbs:57.7,sugars:10.2,fibre:10.3,protein:17.4,salt:1.8 },
+    { id:"3_chicken_wings_2",name:"3 Chicken Wings",cat:"nandinos_kids",kcal:235,fat:11.8,sat:2.8,carbs:0.2,sugars:0,fibre:0.7,protein:31.9,salt:1.4 },
+    { id:"chicken_breast",name:"Chicken Breast",cat:"nandinos_kids",kcal:138,fat:2.6,sat:0.6,carbs:0.1,sugars:0.1,fibre:0.5,protein:28.6,salt:0.7 },
+    { id:"little_pitta",name:"Little Pitta",cat:"nandinos_kids",kcal:302,fat:7.8,sat:1.8,carbs:24.7,sugars:4.5,fibre:1.6,protein:32.5,salt:1.4 },
+    { id:"mac_cheese",name:"Mac & Cheese",cat:"nandinos_kids",kcal:435,fat:21.9,sat:13.1,carbs:40.5,sugars:2.5,fibre:0,protein:20.5,salt:1.5 },
+    { id:"nandino_burger",name:"Nandino Burger",cat:"nandinos_kids",kcal:285,fat:6,sat:1.6,carbs:27.5,sugars:3,fibre:1.6,protein:31.4,salt:1.4 },
+    { id:"charred_corn",name:"Charred Corn",cat:"sides",kcal:255,fat:12.6,sat:0.9,carbs:27.4,sugars:11.7,fibre:0.8,protein:4.9,salt:0.8 },
+    { id:"chips_large",name:"Chips (Large)",cat:"sides",kcal:1120,fat:45,sat:3.6,carbs:171.5,sugars:1.5,fibre:18,protein:16.4,salt:3.3 },
+    { id:"chips_regular",name:"Chips (Regular)",cat:"sides",kcal:448,fat:18,sat:1.4,carbs:68.6,sugars:0.6,fibre:7.2,protein:6.6,salt:1.3 },
+    { id:"coleslaw_large",name:"Coleslaw (Large)",cat:"sides",kcal:465,fat:42.3,sat:3,carbs:16.2,sugars:13.8,fibre:3.9,protein:2.4,salt:1.5 },
+    { id:"coleslaw_regular",name:"Coleslaw (Regular)",cat:"sides",kcal:233,fat:21.2,sat:1.5,carbs:8.1,sugars:6.9,fibre:2,protein:1.2,salt:0.8 },
+    { id:"corn_on_the_cob_large",name:"Corn on the Cob (Large)",cat:"sides",kcal:273,fat:14,sat:7.4,carbs:42,sugars:9.1,fibre:4,protein:6.7,salt:0.3 },
+    { id:"corn_on_the_cob_regular",name:"Corn on the Cob (Regular)",cat:"sides",kcal:137,fat:7,sat:3.7,carbs:21,sugars:4.6,fibre:2,protein:3.3,salt:0.2 },
+    { id:"creamy_mash_large",name:"Creamy Mash (Large)",cat:"sides",kcal:616,fat:44,sat:26.8,carbs:50.8,sugars:1.2,fibre:3.6,protein:5.6,salt:2.4 },
+    { id:"creamy_mash_regular",name:"Creamy Mash (Regular)",cat:"sides",kcal:308,fat:22,sat:13.4,carbs:25.4,sugars:0.6,fibre:1.8,protein:2.8,salt:1.2 },
+    { id:"fully_loaded_chips",name:"Fully Loaded Chips",cat:"sides",kcal:1102,fat:55,sat:11,carbs:114.6,sugars:7,fibre:4.5,protein:37.5,salt:4.5 },
+    { id:"garlic_bread_large",name:"Garlic Bread (Large)",cat:"sides",kcal:743,fat:32.2,sat:8.2,carbs:103.9,sugars:1.2,fibre:4.7,protein:11.8,salt:2 },
+    { id:"garlic_bread_regular",name:"Garlic Bread (Regular)",cat:"sides",kcal:372,fat:16.1,sat:4.1,carbs:51.9,sugars:0.6,fibre:2.3,protein:5.9,salt:1 },
+    { id:"hearty_grains_large",name:"Hearty Grains (Large)",cat:"sides",kcal:441,fat:19.1,sat:1.6,carbs:50,sugars:6,fibre:12.6,protein:10.5,salt:2.5 },
+    { id:"hearty_grains_regular",name:"Hearty Grains (Regular)",cat:"sides",kcal:245,fat:12.1,sat:1.1,carbs:25.4,sugars:3.2,fibre:6.3,protein:5.3,salt:1.3 },
+    { id:"macho_peas_large",name:"Macho Peas (Large)",cat:"sides",kcal:310,fat:16.5,sat:2.4,carbs:35.8,sugars:6.9,fibre:20,protein:14.1,salt:2.5 },
+    { id:"macho_peas_regular",name:"Macho Peas (Regular)",cat:"sides",kcal:155,fat:8.3,sat:1.2,carbs:17.9,sugars:3.4,fibre:10,protein:7.1,salt:1.2 },
+    { id:"peri_mac_cheese",name:"PERi-Mac & Cheese",cat:"sides",kcal:494,fat:25.5,sat:14,carbs:46,sugars:2.7,fibre:0.2,protein:21,salt:1.7 },
+    { id:"peri_salted_chips_large",name:"PERi-Salted Chips (Large)",cat:"sides",kcal:1123,fat:45.1,sat:3.6,carbs:172.2,sugars:1.8,fibre:18.1,protein:16.5,salt:4.4 },
+    { id:"peri_salted_chips_regular",name:"PERi-Salted Chips (Regular)",cat:"sides",kcal:450,fat:18,sat:1.4,carbs:68.9,sugars:0.7,fibre:7.3,protein:6.6,salt:1.9 },
+    { id:"portuguese_tomato_salad",name:"Portuguese Tomato Salad",cat:"sides",kcal:137,fat:7.8,sat:0.9,carbs:13.9,sugars:12.1,fibre:3.1,protein:2.9,salt:0.9 },
+    { id:"rainbow_slaw_large",name:"Rainbow Slaw (Large)",cat:"sides",kcal:263,fat:23.1,sat:2.8,carbs:14.8,sugars:8.3,fibre:0.9,protein:3.6,salt:0.9 },
+    { id:"rainbow_slaw_regular",name:"Rainbow Slaw (Regular)",cat:"sides",kcal:132,fat:11.6,sat:1.4,carbs:7.4,sugars:4.2,fibre:0.5,protein:1.8,salt:0.5 },
+    { id:"rostinas",name:"Rostinas",cat:"sides",kcal:447,fat:26.3,sat:5.4,carbs:51.4,sugars:1.5,fibre:6.6,protein:4.6,salt:3 },
+    { id:"spicy_rice_large",name:"Spicy Rice (Large)",cat:"sides",kcal:492,fat:12,sat:0.9,carbs:84.3,sugars:2.4,fibre:7.8,protein:7.5,salt:3.3 },
+    { id:"spicy_rice_regular",name:"Spicy Rice (Regular)",cat:"sides",kcal:246,fat:6,sat:0.5,carbs:42.2,sugars:1.2,fibre:3.9,protein:3.8,salt:1.7 },
+    { id:"tenderstem_broccoli_large",name:"Tenderstem® Broccoli (Large)",cat:"sides",kcal:65,fat:3.1,sat:0.2,carbs:7.3,sugars:0.5,fibre:4.4,protein:4.3,salt:1.2 },
+    { id:"tenderstem_broccoli_regular",name:"Tenderstem® Broccoli (Regular)",cat:"sides",kcal:32,fat:1.5,sat:0.1,carbs:3.7,sugars:0.3,fibre:2.2,protein:2.1,salt:0.6 },
+    { id:"1_2_avocado",name:"1/2 Avocado",cat:"dips_extras",kcal:165,fat:16.8,sat:3.5,carbs:1.7,sugars:0.5,fibre:2.9,protein:1.7,salt:0 },
+    { id:"2_boneless_chicken_thighs",name:"2 Boneless Chicken Thighs",cat:"dips_extras",kcal:353,fat:18.6,sat:4.8,carbs:0.1,sugars:0.1,fibre:0.7,protein:42.8,salt:1.1 },
+    { id:"beanie_patty",name:"Beanie Patty",cat:"dips_extras",kcal:261,fat:12.7,sat:3.6,carbs:19.6,sugars:1.2,fibre:7.9,protein:13.3,salt:1.5 },
+    { id:"cheddar_cheese",name:"Cheddar Cheese",cat:"dips_extras",kcal:79,fat:6.3,sat:3.7,carbs:0.7,sugars:0,fibre:0,protein:4.8,salt:0.3 },
+    { id:"chilli_jam",name:"Chilli Jam",cat:"dips_extras",sauce:true,kcal:61,fat:0,sat:0,carbs:16.3,sugars:13.4,fibre:0.3,protein:0.2,salt:0.2 },
+    { id:"extra_hot_peri_peri_sauce",name:"Extra Hot PERi-PERi Sauce",cat:"dips_extras",sauce:true,kcal:9,fat:0.2,sat:0,carbs:1.1,sugars:0.9,fibre:0.7,protein:0.3,salt:0.9 },
+    { id:"garlic_peri_peri_sauce",name:"Garlic PERi-PERi Sauce",cat:"dips_extras",sauce:true,kcal:10,fat:0.6,sat:0.1,carbs:0.8,sugars:0.8,fibre:0.3,protein:0.2,salt:1 },
+    { id:"garlic_perinaise",name:"Garlic PERinaise",cat:"dips_extras",sauce:true,kcal:176,fat:15.8,sat:9.1,carbs:4.4,sugars:4.1,fibre:0.3,protein:4.2,salt:1.1 },
+    { id:"grilled_chicken_breast",name:"Grilled Chicken Breast",cat:"dips_extras",kcal:138,fat:2.6,sat:0.6,carbs:0.1,sugars:0.1,fibre:0.5,protein:28.6,salt:0.7 },
+    { id:"grilled_halloumi_cheese",name:"Grilled Halloumi Cheese",cat:"dips_extras",kcal:267,fat:23.8,sat:9.1,carbs:1.3,sugars:1.3,fibre:0,protein:11.9,salt:1.1 },
+    { id:"grilled_pineapple",name:"Grilled Pineapple",cat:"dips_extras",kcal:39,fat:0.1,sat:0,carbs:8.9,sugars:7.6,fibre:0.6,protein:0.2,salt:0 },
+    { id:"herby_pickle_bowl",name:"Herby Pickle Bowl",cat:"dips_extras",kcal:33,fat:0.3,sat:0.1,carbs:7,sugars:5.5,fibre:1.4,protein:1.4,salt:1.3 },
+    { id:"hot_peri_peri_sauce",name:"Hot PERi-PERi Sauce",cat:"dips_extras",sauce:true,kcal:9,fat:0.6,sat:0.1,carbs:0.5,sugars:0.4,fibre:0.5,protein:0.2,salt:1.2 },
+    { id:"lemon_herb_peri_peri_sauce",name:"Lemon & Herb PERi-PERi Sauce",cat:"dips_extras",sauce:true,kcal:8,fat:0.7,sat:0.1,carbs:0.2,sugars:0.2,fibre:0.4,protein:0.1,salt:0.5 },
+    { id:"mayonnaise",name:"Mayonnaise",cat:"dips_extras",sauce:true,kcal:90,fat:9,sat:2.6,carbs:2.3,sugars:0.7,fibre:0.2,protein:0.2,salt:0.3 },
+    { id:"medium_peri_peri_sauce",name:"Medium PERi-PERi Sauce",cat:"dips_extras",sauce:true,kcal:9,fat:0.7,sat:0.1,carbs:0.2,sugars:0.2,fibre:0.7,protein:0.1,salt:1.2 },
+    { id:"peri_chicken_gravy",name:"PERi-Chicken Gravy",cat:"dips_extras",sauce:true,kcal:39,fat:1,sat:0.2,carbs:5.5,sugars:1.2,fibre:0.5,protein:2,salt:1.2 },
+    { id:"peri_honey",name:"PERi-Honey",cat:"dips_extras",sauce:true,kcal:132,fat:0,sat:0,carbs:35.5,sugars:33.3,fibre:0,protein:0,salt:0 },
+    { id:"peri_peri_drizzle",name:"PERi-PERi Drizzle",cat:"dips_extras",sauce:true,kcal:97,fat:10.3,sat:1.5,carbs:0.9,sugars:0.3,fibre:0.4,protein:0.3,salt:0.8 },
+    { id:"peri_peri_salt",name:"PERi-PERi Salt",cat:"dips_extras",sauce:true,kcal:114,fat:2.4,sat:0.4,carbs:22.3,sugars:9.5,fibre:5.2,protein:3.2,salt:37.5 },
+    { id:"peri_plant_fillet",name:"PERi-Plant Fillet",cat:"dips_extras",kcal:100,fat:4.9,sat:1,carbs:3.5,sugars:0.1,fibre:5.3,protein:7.8,salt:0.6 },
+    { id:"perinaise",name:"PERinaise",cat:"dips_extras",sauce:true,kcal:159,fat:14.3,sat:1.1,carbs:7,sugars:5.1,fibre:0.1,protein:0.3,salt:1.3 },
+    { id:"perinaise_mild",name:"PERinaise Mild",cat:"dips_extras",sauce:true,kcal:46,fat:4.2,sat:0.3,carbs:2,sugars:1.5,fibre:0.1,protein:0.1,salt:0.4 },
+    { id:"portuguese_roll",name:"Portuguese Roll",cat:"dips_extras",kcal:269,fat:6.2,sat:3.9,carbs:50.4,sugars:1.6,fibre:2.1,protein:5.4,salt:0.9 },
+    { id:"toasted_pitta",name:"Toasted Pitta",cat:"dips_extras",kcal:246,fat:5.6,sat:3.4,carbs:40.8,sugars:1.9,fibre:1.9,protein:7.1,salt:0.7 },
+    { id:"tortilla_wrap",name:"Tortilla Wrap",cat:"dips_extras",kcal:275,fat:7.2,sat:3,carbs:43.7,sugars:2.4,fibre:4.1,protein:6.8,salt:0.6 },
+    { id:"bottomless_soft_swirl_tub",name:"Bottomless Soft Swirl Tub",cat:"desserts",kcal:189,fat:8.9,sat:2.3,carbs:21.3,sugars:21.2,fibre:0,protein:5.3,salt:0.2 },
+    { id:"choc_a_lot_cake",name:"Choc-A-Lot Cake",cat:"desserts",kcal:425,fat:24.8,sat:10.2,carbs:59.8,sugars:50,fibre:0.5,protein:4.6,salt:1.1 },
+    { id:"four_pastel_de_natas",name:"Four Pastel de Natas",cat:"desserts",kcal:896,fat:44.8,sat:28.8,carbs:105.6,sugars:64,fibre:4,protein:12.4,salt:0.8 },
+    { id:"gooey_caramel_cheesecake",name:"Gooey Caramel Cheesecake",cat:"desserts",kcal:464,fat:29.2,sat:18.5,carbs:36.3,sugars:28.1,fibre:1,protein:13.7,salt:0.2 },
+    { id:"mango_gelado",name:"Mango Gelado",cat:"desserts",kcal:93,fat:0,sat:0,carbs:23.3,sugars:18,fibre:1.7,protein:0,salt:0.2 },
+    { id:"one_pastel_de_nata",name:"One Pastel de Nata",cat:"desserts",kcal:224,fat:11.2,sat:7.2,carbs:26.4,sugars:16,fibre:1,protein:3.1,salt:0.2 },
+    { id:"ultimate_chocolate_brownie",name:"Ultimate Chocolate Brownie",cat:"desserts",kcal:635,fat:32.1,sat:20,carbs:78,sugars:63,fibre:1.8,protein:8.3,salt:0.3 },
+    { id:"ultimate_chocolate_brownie_2",name:"Ultimate Chocolate Brownie",cat:"desserts",kcal:453,fat:21.7,sat:12,carbs:58,sugars:44,fibre:1.6,protein:5.5,salt:0.1 },
+  ],
+};
+// __NANDOS_DATA_END__
+
+// __WAGAMAMA_DATA_START__ (generiert via: node wagamama-update.js aus data/wagamama-raw.json — nicht von Hand editieren)
+// Quelle: wagamama.com Produkt-Popups (Screenshots vom User, Batch-Workflow) · Stand 2026-06-12 · 21 Items
+const WAGA = {
+  cats: [
+    { id:"sides",name:"sides",on:true },
+    { id:"donburi",name:"donburi",on:true },
+    { id:"ramen",name:"ramen",on:true },
+    { id:"teppanyaki",name:"teppanyaki",on:true },
+    { id:"salads",name:"salads",on:true },
+  ],
+  items: [
+    { id:"wok_fried_greens",name:"wok-fried greens",cat:"sides",kcal:163,fat:10.4,sat:0.7,carbs:11.6,sugars:6.3,fibre:3.3,protein:4.1,salt:1.3 },
+    { id:"tea_stained_egg",name:"tea-stained egg",cat:"sides",kcal:69,fat:3.4,sat:1.1,carbs:2,sugars:0,fibre:0,protein:7.7,salt:0.2 },
+    { id:"beef_brisket_teriyaki_donburi",name:"beef brisket teriyaki donburi",cat:"donburi",kcal:818,fat:26.1,sat:4.3,carbs:110.3,sugars:18.8,fibre:8,protein:37.1,salt:4.8 },
+    { id:"chicken_thigh_teriyaki_donburi",name:"chicken thigh teriyaki donburi",cat:"donburi",kcal:808,fat:24.6,sat:4.4,carbs:108.2,sugars:17.5,fibre:8.4,protein:40,salt:4.1 },
+    { id:"grilled_duck_donburi",name:"grilled duck donburi",cat:"donburi",kcal:1085,fat:43.8,sat:9.7,carbs:119.9,sugars:25.3,fibre:8.9,protein:53.9,salt:6 },
+    { id:"pulled_shiitake_donburi",name:"pulled shiitake donburi",cat:"donburi",kcal:951,fat:32.4,sat:11,carbs:135.3,sugars:25.6,fibre:24.7,protein:29.6,salt:6.5 },
+    { id:"tantanmen_beef_brisket_ramen",name:"tantanmen beef brisket ramen",cat:"ramen",kcal:713,fat:29.5,sat:8.2,carbs:74.7,sugars:8.2,fibre:3.7,protein:36.5,salt:6.6 },
+    { id:"grilled_chicken_ramen",name:"grilled chicken ramen",cat:"ramen",kcal:490,fat:5.9,sat:1.3,carbs:68.1,sugars:4.9,fibre:3.8,protein:40.9,salt:5.1 },
+    { id:"chilli_chicken_ramen",name:"chilli chicken ramen",cat:"ramen",kcal:575,fat:6.6,sat:1.4,carbs:86,sugars:19.4,fibre:6.4,protein:43.4,salt:5.7 },
+    { id:"kare_burosu_ramen",name:"kare burosu ramen",cat:"ramen",kcal:706,fat:21.9,sat:3.9,carbs:94.8,sugars:11,fibre:12.8,protein:30,salt:5.1 },
+    { id:"saku_saku_duck_soba",name:"saku saku duck soba",cat:"teppanyaki",kcal:933,fat:43.4,sat:4.7,carbs:88.3,sugars:22.7,fibre:4.7,protein:46.5,salt:5.1 },
+    { id:"katsu_udon",name:"katsu udon",cat:"teppanyaki",kcal:848,fat:37.8,sat:5.1,carbs:101.2,sugars:21,fibre:13,protein:21,salt:3.2 },
+    { id:"chicken_prawn_yaki_soba",name:"chicken + prawn yaki soba",cat:"teppanyaki",kcal:804,fat:37.2,sat:4.7,carbs:73.6,sugars:7.9,fibre:6.1,protein:37.5,salt:3.7 },
+    { id:"yasai_yaki_soba_mushroom",name:"yasai yaki soba | mushroom",cat:"teppanyaki",kcal:768,fat:34.6,sat:3.8,carbs:80.5,sugars:12.1,fibre:6.5,protein:28.2,salt:3.8 },
+    { id:"yasai_yaki_soba_rice_noodles",name:"yasai yaki soba | rice noodles",cat:"teppanyaki",kcal:660,fat:24.8,sat:2.2,carbs:87.3,sugars:11.8,fibre:5.9,protein:16.9,salt:2.6 },
+    { id:"yasai_yaki_soba_udon",name:"yasai yaki soba | udon",cat:"teppanyaki",kcal:638,fat:18.4,sat:1.6,carbs:87.1,sugars:14,fibre:10.1,protein:22.6,salt:3.2 },
+    { id:"steak_teriyaki_soba",name:"steak teriyaki soba",cat:"teppanyaki",kcal:864,fat:35.8,sat:3.3,carbs:84.9,sugars:18.4,fibre:5.8,protein:49.5,salt:3.8 },
+    { id:"salmon_teriyaki_soba",name:"salmon teriyaki soba",cat:"teppanyaki",kcal:994,fat:52.7,sat:6.1,carbs:83.3,sugars:17.4,fibre:5.5,protein:45.5,salt:4.6 },
+    { id:"chicken_teriyaki_soba",name:"chicken teriyaki soba",cat:"teppanyaki",kcal:803,fat:32.2,sat:3.3,carbs:83.3,sugars:17.8,fibre:5.7,protein:44,salt:3.4 },
+    { id:"chicken_prawn_yaki_udon",name:"chicken + prawn yaki udon",cat:"teppanyaki",kcal:728,fat:25.6,sat:3.8,carbs:78.5,sugars:8.7,fibre:9.9,protein:40.3,salt:3.3 },
+    { id:"thai_beef_salad",name:"thai beef salad",cat:"salads",kcal:496,fat:23.3,sat:3.2,carbs:27.7,sugars:20.3,fibre:4.9,protein:41,salt:3.5 },
+  ],
+};
+// __WAGAMAMA_DATA_END__
+
+// Urban Greens (London) — Quelle: "Allergen guide 2026" PDF (data/UrbanGreens-AllergenMatrix.pdf),
+// gegengeprüft mit data/UrbanGreens_Nutrition.xlsx. NUR Build Your Own (Salad/Tray)!
+// Fertige Salads & Trays sind KOMPLETT entfernt (User-Entscheidung 12.06.2026: "wir machen immer BYO" —
+// die Fertig-Werte waren ohne Dressing/Green Base bzw. mit Deliveroo-Inkonsistenzen zu unsicher).
+// ACHTUNG: Quelle liefert NUR kcal/Protein/Fat/Carbs — sat/sugars/fibre/salt fehlen (= 0 in den Daten,
+// UG-Detail-Panel blendet die Fibre/Salt-Bars deshalb aus).
+// Deliveroo-Namen ≠ Guide-Namen bei: Red Rice [Cold]=Camargue Red Rice, Spiced Grains [Warm]=UG Spiced
+// Grains, Chicken=Chicken Breast, Avocado Half=Avocado, Shaved Parmesan=Parmesan, UG Hummus Scoop=Hummus.
+const UG = {
+  greens: [
+    { id:"leafy_greens",name:"Leafy Greens",kcal:7,protein:0,fat:0,carbs:0 },
+    { id:"cabbage_mix",name:"Cabbage Mix",kcal:72,protein:2,fat:4,carbs:5 },
+  ],
+  carbs: [
+    { id:"quinoa",name:"Quinoa",kcal:161,protein:6,fat:4,carbs:22 },
+    { id:"red_rice",name:"Red Rice [Cold]",kcal:121,protein:3,fat:2,carbs:23 },
+    { id:"glass_noodles",name:"Sesame Glass Noodles",kcal:91,protein:0,fat:2,carbs:19 },
+    { id:"spiced_grains",name:"Spiced Grains [Warm]",kcal:158,protein:4,fat:3,carbs:27 },
+    // "Red Rice [Warm]" (218 kcal lt. Deliveroo) AUSGESCHLOSSEN: keine Makros im Nutrition Guide
+  ],
+  prots: [
+    { id:"chicken",name:"Chicken",kcal:103,protein:22,fat:2,carbs:0 },
+    { id:"pulled_beef_brisket",name:"Pulled Beef Brisket",kcal:166,protein:24,fat:8,carbs:0 },
+    { id:"cajun_tempeh",name:"Cajun-Spiced Tempeh",kcal:138,protein:17,fat:1,carbs:0 },
+    { id:"shrimp",name:"Shrimp",kcal:82,protein:17,fat:1,carbs:0 },
+    { id:"hot_smoked_salmon",name:"Hot Smoked Salmon",kcal:140,protein:19,fat:7,carbs:1 },
+    { id:"honey_dijon_chicken",name:"Honey Dijon Chicken [Warm]",kcal:90,protein:15,fat:3,carbs:0 },
+    { id:"pulled_chilli_brisket",name:"Pulled Chilli Brisket [Warm]",kcal:132,protein:17,fat:5,carbs:5 },
+    { id:"harissa_chickpeas",name:"Harissa Chickpeas [Warm]",kcal:134,protein:5,fat:7,carbs:10 },
+    // Avocado Whole = exakt 2× Avocado (115/2/15/9) aus dem Guide — Deliveroo-kcal 230 bestätigt das
+    { id:"avocado_whole",name:"Avocado Whole",kcal:230,protein:4,fat:30,carbs:18,noExtra:true },
+    // AUSGESCHLOSSEN (keine Makros im Guide): Piri Piri Chicken (148), Piri Piri Shrimp (94), Lemon & Herb Chicken (209)
+  ],
+  veg: [
+    { id:"avocado",name:"Avocado",kcal:115,protein:2,fat:15,carbs:9 },
+    { id:"beansprouts",name:"Beansprouts",kcal:6,protein:0,fat:0,carbs:1 },
+    { id:"cherry_tomatoes",name:"Cherry Tomatoes",kcal:13,protein:0,fat:0,carbs:2 },
+    { id:"cucumber",name:"Cucumber",kcal:16,protein:1,fat:1,carbs:1,noExtra:true },
+    { id:"edamame",name:"Edamame",kcal:63,protein:5,fat:2,carbs:4 },
+    { id:"red_peppers",name:"Red Peppers",kcal:9,protein:0,fat:2,carbs:0 },
+    { id:"kale",name:"Kale",kcal:20,protein:1,fat:2,carbs:1 },
+    { id:"sesame_soy_broccoli",name:"Sesame Soy Broccoli",kcal:47,protein:2,fat:3,carbs:2 },
+    { id:"tajin_sweetcorn",name:"Tajin Sweetcorn",kcal:59,protein:2,fat:1,carbs:9 },
+    { id:"pickled_cabbage",name:"Pickled Cabbage",kcal:33,protein:0,fat:0,carbs:8 },
+    { id:"ginger_pickled_carrots",name:"Ginger Pickled Carrots",kcal:25,protein:0,fat:0,carbs:6 },
+    { id:"pickled_chillies",name:"Pickled Chillies",kcal:21,protein:0,fat:0,carbs:5 },
+    { id:"pickled_onions",name:"Pickled Onions",kcal:36,protein:0,fat:0,carbs:8 },
+    { id:"kimchi",name:"Kimchi",kcal:36,protein:0,fat:0,carbs:6 },
+  ],
+  tops: [
+    // User-Ausschlüsse (bewusst, "hasse ich"): Coriander, Mint, Parsley
+    { id:"cashews",name:"Cashews",kcal:71,protein:3,fat:6,carbs:2 },
+    { id:"hazelnuts",name:"Hazelnuts",kcal:81,protein:2,fat:8,carbs:1 },
+    { id:"sunflower_pumpkin_seeds",name:"Sunflower and Pumpkin Seeds",kcal:90,protein:4,fat:7,carbs:2 },
+    { id:"sesame_seeds",name:"Sesame Seeds",kcal:62,protein:2,fat:6,carbs:0 },
+    { id:"toasted_peanuts",name:"Toasted Peanuts",kcal:93,protein:5,fat:8,carbs:2 },
+    { id:"tortilla_chips",name:"Tortilla Chips",kcal:51,protein:1,fat:3,carbs:6 },
+  ],
+  dress: [
+    // User-Ausschluss (bewusst): Olive Oil. AUSGESCHLOSSEN mangels Makros: Piri Piri Caesar Dressing (268)
+    { id:"basil_pesto",name:"Basil Pesto Dressing",kcal:160,protein:1,fat:16,carbs:4 },
+    { id:"caesar",name:"Caesar Dressing",kcal:284,protein:4,fat:30,carbs:1 },
+    { id:"gochujang_miso",name:"Gochujang Miso Dressing",kcal:209,protein:1,fat:21,carbs:5 },
+    { id:"habanero_lime",name:"Habanero Lime Dressing",kcal:343,protein:0.4,fat:37.7,carbs:0.4 },
+    { id:"sriracha_lime",name:"Sriracha Lime Dressing",kcal:147,protein:1,fat:13,carbs:6 },
+    { id:"thai_peanut",name:"Thai Peanut Dressing",kcal:173,protein:5,fat:14,carbs:6 },
+  ],
+  scoops: [
+    { id:"tzatziki_scoop",name:"Tzatziki Scoop",kcal:31,protein:3,fat:2,carbs:1 },
+    { id:"sambal_feta_scoop",name:"Sambal Feta Scoop",kcal:74,protein:6,fat:5,carbs:1 },
+    { id:"whipped_miso_tofu_scoop",name:"Whipped Miso Tofu Scoop",kcal:27,protein:2,fat:1,carbs:2 },
+    { id:"ug_hummus_scoop",name:"UG Hummus Scoop",kcal:76,protein:3,fat:5,carbs:4 },
+    { id:"beetroot_hummus_scoop",name:"Beetroot Hummus Scoop",kcal:48,protein:2,fat:2,carbs:4 },
+    { id:"sweet_potato_hummus_scoop",name:"Sweet Potato Hummus Scoop",kcal:101,protein:3,fat:8,carbs:3 },
+    { id:"crumbled_feta",name:"Crumbled Feta",kcal:20,protein:1,fat:2,carbs:0 },
+    { id:"avocado_half",name:"Avocado Half",kcal:115,protein:2,fat:15,carbs:9 },
+    { id:"shaved_parmesan",name:"Shaved Parmesan",kcal:61,protein:5,fat:6,carbs:0 },
+  ],
+};
+
+const KEYS = ["kcal","fat","sat","carbs","sugars","fibre","protein","salt"];
+
+// singleItems (Salads) werden NIE multipliziert: Footlong = ×2 für alles AUSSER Salads
+function sumN(items, mult, singleItems) {
+  const b = {}; KEYS.forEach(k => b[k] = 0);
+  items.forEach(it => { if(it) KEYS.forEach(k => b[k] += (it[k]||0)*mult); });
+  (singleItems||[]).forEach(it => { if(it) KEYS.forEach(k => b[k] += (it[k]||0)); });
+  KEYS.forEach(k => b[k] = Math.round(b[k]*10)/10);
+  return b;
+}
+
+function score(a, t, mode, p) {
+  let s = 0;
+  if(mode==="macros") {
+    if(t.protein>0) s += Math.abs(a.protein-t.protein)/Math.max(t.protein,1)*3;
+    if(t.carbs>0) s += Math.abs(a.carbs-t.carbs)/Math.max(t.carbs,1)*2;
+    if(t.fat>0) s += Math.abs(a.fat-t.fat)/Math.max(t.fat,1)*2;
+  } else {
+    if(t.kcal>0) s += Math.abs(a.kcal-t.kcal)/Math.max(t.kcal,1)*4;
+    const pr=a.protein*4/Math.max(a.kcal,1), cr=a.carbs*4/Math.max(a.kcal,1), fr=a.fat*9/Math.max(a.kcal,1);
+    if(p.hp) s-=pr*2; if(p.lp) s+=pr*1.5;
+    if(p.hc) s-=cr*1.5; if(p.lc) s+=cr*2;
+    if(p.hf) s-=fr*1.5; if(p.lf) s+=fr*2;
+  }
+  if(t.fibMin!=null&&a.fibre<t.fibMin) s+=(t.fibMin-a.fibre)*0.5;
+  if(t.fibMax!=null&&a.fibre>t.fibMax) s+=(a.fibre-t.fibMax)*0.5;
+  if(t.sMin!=null&&a.salt<t.sMin) s+=(t.sMin-a.salt)*0.3;
+  if(t.sMax!=null&&a.salt>t.sMax) s+=(a.salt-t.sMax)*0.3;
+  return s;
+}
+
+// "Sort by": sortiert die Top-20-Kandidaten des Optimizers nach Accuracy EINER Dimension
+// (|Ist − Ziel|, Tie-Breaker: Gesamt-Score). sortBy="score" = unverändert (Optimizer-Reihenfolge).
+function sortResults(arr, sortBy, tgts) {
+  if(sortBy==="score")return arr;
+  const tgt=tgts[sortBy]||0;
+  return [...arr].sort((a,b)=>
+    Math.abs(a.nutrition[sortBy]-tgt)-Math.abs(b.nutrition[sortBy]-tgt)||a.score-b.score);
+}
+
+// Standard salad = all except jalapenos, sweetcorn, olives
+const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
+const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
+
+function optimize(t, mode, p, noSauce, noCheese, lockedBread, sz) {
+  const m = sz==="footlong"?2:1;
+  const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : D.cheeses;
+  const br = lockedBread ? D.breads.filter(b=>b.id===lockedBread) : D.breads;
+  const R = [];
+  for(const b of br) for(const pr of D.proteins) for(const c of ch) {
+    const base=[b,pr,c], bn=sumN(base,m,STD_SALAD), bs=score(bn,t,mode,p);
+    R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
+    for(let i=0;i<D.extras.length;i++){
+      const n1=sumN([...base,D.extras[i]],m,STD_SALAD), s1=score(n1,t,mode,p);
+      if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[D.extras[i]],sauces:[],nutrition:n1,score:s1});
+      for(let j=i+1;j<D.extras.length;j++){
+        const n2=sumN([...base,D.extras[i],D.extras[j]],m,STD_SALAD), s2=score(n2,t,mode,p);
+        if(s2<bs+0.3) R.push({bread:b,protein:pr,cheese:c,extras:[D.extras[i],D.extras[j]],sauces:[],nutrition:n2,score:s2});
+      }
+    }
+    if(!noSauce&&bs<3) for(const sc of D.sauces){
+      const ns=sumN([...base,sc],m,STD_SALAD);
+      R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[sc],nutrition:ns,score:score(ns,t,mode,p)});
+    }
+  }
+  R.sort((a,b)=>a.score-b.score);
+  return R.slice(0,20);
+}
+
+// Farmer J: Custom Fieldtray = Main × Base × (0–2 Sides). Sets laufen als fertige Alternativen mit.
+// freeOnly=true: keine bezahlten Add-ons (Toppings / Sauce-Dip-Topping) vorschlagen.
+function fjSideCombos() {
+  const out=[[]];
+  for(let i=0;i<FJ.sides.length;i++){
+    out.push([FJ.sides[i]]);
+    for(let j=i+1;j<FJ.sides.length;j++) out.push([FJ.sides[i],FJ.sides[j]]);
+  }
+  return out;
+}
+function optimizeFJ(t, mode, p, freeOnly) {
+  const R=[], combos=fjSideCombos();
+  for(const mn of FJ.mains) for(const ba of FJ.bases) for(const sides of combos) {
+    const base=[mn,ba,...sides], bn=sumN(base,1), bs=score(bn,t,mode,p);
+    R.push({main:mn,fjBase:ba,sides,tops:[],sdt:[],nutrition:bn,score:bs});
+    if(!freeOnly){
+      for(const x of FJ.toppings){
+        const n1=sumN([...base,x],1), s1=score(n1,t,mode,p);
+        if(s1<bs+0.3) R.push({main:mn,fjBase:ba,sides,tops:[x],sdt:[],nutrition:n1,score:s1});
+      }
+      for(const x of FJ.sdt){
+        const n1=sumN([...base,x],1), s1=score(n1,t,mode,p);
+        if(s1<bs+0.3) R.push({main:mn,fjBase:ba,sides,tops:[],sdt:[x],nutrition:n1,score:s1});
+      }
+    }
+  }
+  for(const st of FJ.sets){
+    const n=sumN([st],1);
+    R.push({set:st,sides:[],tops:[],sdt:[],nutrition:n,score:score(n,t,mode,p)});
+  }
+  R.sort((a,b)=>a.score-b.score);
+  return R.slice(0,20);
+}
+
+// Itsu: à la carte — kombiniert 1 bis maxN Items aus aktiven Kategorien, Duplikate erlaubt (z.B. 2× Gyoza).
+// Triples per Beam-Suche (Erweiterung der besten 80 Paare), damit es auch mit allen Kategorien schnell bleibt.
+function itsuLabel(items){
+  const counts={};items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
+  const seen=new Set();
+  return items.filter(x=>{if(seen.has(x.id))return false;seen.add(x.id);return true;})
+    .map(x=>(counts[x.id]>1?counts[x.id]+"× ":"")+x.name).join(" + ");
+}
+// Getränke sind IMMER ausgeschlossen (drink:true-Kategorien). Der Schalter "No soups, desserts, snacks etc."
+// nimmt zusätzlich healthy soups, hot noodles und desserts & snacks komplett raus.
+const ITSU_DRINK_CATS=new Set(ITSU.cats.filter(c=>c.drink).map(c=>c.id));
+const ITSU_LIGHT_CATS=new Set(["healthy_soups","hot_noodles","desserts_snacks"]);
+// Gemeinsamer À-la-carte-Kern (Itsu, Pret, Nando's, Wagamama): Singles + Paare voll, Triples per Beam
+// (beste 80 Paare). maxN=Infinity (∞-Chip): Stufe 4+ erweitert die besten Kombos so lange um je 1 Item,
+// wie sich der Score verbessert — über dem Ziel verschlechtern Zusätze, die Suche stirbt natürlich aus.
+function alaCarteCombos(t, mode, p, pool, maxN) {
+  const R=[];
+  const byScore=(a,b)=>a.score-b.score;
+  for(const x of pool){const n=sumN([x],1);R.push({items:[x],nutrition:n,score:score(n,t,mode,p)});}
+  if(maxN>=2){
+    const pairs=[];
+    for(let i=0;i<pool.length;i++)for(let j=i;j<pool.length;j++){
+      const items=[pool[i],pool[j]],n=sumN(items,1);
+      const r={items,nutrition:n,score:score(n,t,mode,p)};
+      R.push(r);pairs.push(r);
+    }
+    if(maxN>=3){
+      pairs.sort(byScore);
+      const seen=new Set();
+      let frontier=[];
+      for(const pr of pairs.slice(0,80))for(const x of pool){
+        const items=[...pr.items,x];
+        const key=items.map(y=>y.id).sort().join("|");
+        if(seen.has(key))continue;seen.add(key);
+        const n=sumN(items,1);
+        const r={items,nutrition:n,score:score(n,t,mode,p)};
+        R.push(r);frontier.push(r);
+      }
+      let depth=3;
+      while(depth<maxN&&depth<12&&frontier.length){ // harte Obergrenze 12 Items als Sicherheitsnetz
+        frontier.sort(byScore);frontier=frontier.slice(0,80);
+        const next=[];
+        for(const pr of frontier)for(const x of pool){
+          const items=[...pr.items,x];
+          const key=items.map(y=>y.id).sort().join("|");
+          if(seen.has(key))continue;seen.add(key);
+          const n=sumN(items,1);
+          const s=score(n,t,mode,p);
+          if(s<pr.score){const r={items,nutrition:n,score:s};R.push(r);next.push(r);}
+        }
+        frontier=next;depth++;
+      }
+    }
+  }
+  R.sort(byScore);
+  return R.slice(0,20);
+}
+function optimizeItsu(t, mode, p, activeCats, maxN, noSoupsEtc) {
+  const pool=ITSU.items.filter(x=>activeCats[x.cat]&&!ITSU_DRINK_CATS.has(x.cat)&&!(noSoupsEtc&&ITSU_LIGHT_CATS.has(x.cat)));
+  return alaCarteCombos(t,mode,p,pool,maxN);
+}
+
+// Pret: Getränke IMMER ausgeschlossen. Schalter-Vorrang: "Salads and protein pots only" > "only relevant
+// items, no bullshit" (rel-Whitelist aus pret-update.js) > Kategorie-Chips.
+const PRET_DRINK_CATS=new Set(PRET.cats.filter(c=>c.drink).map(c=>c.id));
+const PRET_SALADS_CAT="salads_and_protein_pots";
+function optimizePret(t, mode, p, activeCats, maxN, onlyRel, saladsOnly) {
+  const pool=PRET.items.filter(x=>{
+    if(PRET_DRINK_CATS.has(x.cat))return false;
+    if(saladsOnly)return x.cat===PRET_SALADS_CAT;
+    if(onlyRel)return !!x.rel;
+    return activeCats[x.cat];
+  });
+  return alaCarteCombos(t,mode,p,pool,maxN);
+}
+
+// Nando's: Drinks sind gar nicht erst in den Daten (User-Vorgabe). Schalter "No desserts, Lunch Fix &
+// platters" nimmt Desserts + The Lunch Fix + Sharing Platters raus.
+const NANDOS_SWITCH_CATS=new Set(["desserts","the_lunch_fix","sharing_platters"]);
+// Schalter "No sauces": Items mit sauce:true (Dips/Saucen, geflaggt in nandos-update.js) fliegen raus
+function optimizeNandos(t, mode, p, activeCats, maxN, noDesserts, noSauces) {
+  const pool=NANDOS.items.filter(x=>activeCats[x.cat]&&!(noDesserts&&NANDOS_SWITCH_CATS.has(x.cat))&&!(noSauces&&x.sauce));
+  return alaCarteCombos(t,mode,p,pool,maxN);
+}
+
+// Wagamama: à la carte wie Itsu/Pret/Nando's. Datenbestand wächst per Copy-Paste-Batches vom User
+// (data/wagamama-raw.json → node wagamama-update.js). Schalter "No Ramen" schließt die ramen-Kategorie aus.
+function optimizeWaga(t, mode, p, activeCats, maxN, noRamen) {
+  const pool=WAGA.items.filter(x=>activeCats[x.cat]&&!(noRamen&&x.cat==="ramen"));
+  return alaCarteCombos(t,mode,p,pool,maxN);
+}
+
+// Urban Greens: NUR Build Your Own (Salad/Tray), fertige Gerichte bewusst entfernt.
+// BYO Salad: Green Base (oder keine) + Carb Base (oder keine) + Protein (oder keins) + GENAU 3 Veg/Pickles
+// + GENAU 2 Toppings (außer "No nuts" → 0) + 0–1 Dressing ("No Dressing" erzwingt 0, auch Extra-Dressings)
+// + optional 1 Extra-Protein + optional bis 2 Extras. BYO Tray: ohne Green Base/Standard-Dressing,
+// dafür PFLICHT-Scoop (genau 1). Beam-Suche: pro Stufe bleiben nur die besten Kandidaten (heuristisch).
+const UG_VEG_TRIPLES=(()=>{const v=UG.veg,out=[];
+  for(let i=0;i<v.length;i++)for(let j=i+1;j<v.length;j++)for(let k=j+1;k<v.length;k++)out.push([v[i],v[j],v[k]]);
+  return out;})();
+function optimizeUG(t, mode, p, ugMode, noNuts, noDress) {
+  // BYO Salad und BYO Tray als getrennte Beam-Pipelines (ugMode "salad" | "tray").
+  // Performance: alles über vorberechnete kcal/P/F/C-Summen; _s = ungerundete Laufsumme,
+  // nutrition = gerundete Anzeige-Kopie (sat/sugars/fibre/salt = 0, keine Daten im Guide).
+  const R1=v=>Math.round(v*10)/10;
+  const mac=arr=>{const s={kcal:0,protein:0,fat:0,carbs:0};for(const x of arr)if(x){s.kcal+=x.kcal;s.protein+=x.protein;s.fat+=x.fat;s.carbs+=x.carbs;}return s;};
+  const addM=(a,b)=>({kcal:a.kcal+b.kcal,protein:a.protein+b.protein,fat:a.fat+b.fat,carbs:a.carbs+b.carbs});
+  const toN=s=>({kcal:R1(s.kcal),fat:R1(s.fat),sat:0,carbs:R1(s.carbs),sugars:0,fibre:0,protein:R1(s.protein),salt:0});
+  const fin=(r,s)=>{r._s=s;r.nutrition=toN(s);r.score=score(r.nutrition,t,mode,p);return r;};
+  const byScore=(a,b)=>a.score-b.score;
+  const tripleSums=UG_VEG_TRIPLES.map(mac);
+  // Toppings: GENAU 2 (Deliveroo Pflicht) — außer "No nuts" (dann 0, User-Vorgabe)
+  const pairs=[],pairSums=[];
+  for(let i=0;i<UG.tops.length;i++)for(let j=i+1;j<UG.tops.length;j++){
+    pairs.push([UG.tops[i],UG.tops[j]]);pairSums.push(mac([UG.tops[i],UG.tops[j]]));
+  }
+  const addTops=(cands,keep)=>{
+    if(noNuts)return cands;
+    const next=[];
+    for(const r of cands)for(let pi=0;pi<pairs.length;pi++)
+      next.push(fin({...r,tops:pairs[pi]},addM(r._s,pairSums[pi])));
+    next.sort(byScore);return next.slice(0,keep);
+  };
+  // Extra-Protein: Deliveroo-Liste ohne Avocado Whole (noExtra-Flag)
+  const xprots=UG.prots.filter(x=>!x.noExtra);
+  const xpSums=xprots.map(x=>mac([x]));
+  const addProt2=cands=>{
+    const next=[...cands];
+    for(const r of cands.slice(0,300))for(let pi=0;pi<xprots.length;pi++){
+      const v=fin({...r,prot2:xprots[pi]},addM(r._s,xpSums[pi]));
+      if(v.score<r.score)next.push(v);
+    }
+    next.sort(byScore);return next.slice(0,400);
+  };
+  // Extras (alle "Any ...?"-Schritte): Extra-Veg (ohne Cucumber, + Leafy Greens), Scoops/Premiums,
+  // Toppings (außer "No nuts"), Extra-Dressings (außer "No Dressing") — bis 2, nur bei Verbesserung
+  const addExtras=cands=>{
+    const pool=[
+      {it:UG.greens[0],kind:"veg"},
+      ...UG.veg.filter(x=>!x.noExtra).map(x=>({it:x,kind:"veg"})),
+      ...UG.scoops.map(x=>({it:x,kind:"scoop"})),
+      ...(noNuts?[]:UG.tops.map(x=>({it:x,kind:"top"}))),
+      ...(noDress?[]:UG.dress.map(x=>({it:x,kind:"dressing"}))),
+    ].map(e=>({...e,sum:mac([e.it])}));
+    const next=[...cands];
+    for(const r of cands.slice(0,100))for(let i=0;i<pool.length;i++){
+      const v=fin({...r,extras:[pool[i]]},addM(r._s,pool[i].sum));
+      if(v.score>=r.score)continue;
+      next.push(v);
+      for(let j=i;j<pool.length;j++){
+        const v2=fin({...v,extras:[pool[i],pool[j]]},addM(v._s,pool[j].sum));
+        if(v2.score<v.score)next.push(v2);
+      }
+    }
+    next.sort(byScore);return next;
+  };
+  // ── ugMode "tray" — BYO Tray: Carb Base + Protein + 3 Veg → 1 Scoop (PFLICHT) → 2 Toppings;
+  // kein Green-Base-Schritt, kein Standard-Dressing (Dressings nur über "Any Extra Dressing?" = Extras) ──
+  if(ugMode==="tray"){
+    let tray=[];
+    for(const c of [...UG.carbs,null]) for(const pr of [...UG.prots,null]){
+      const bs=mac([c,pr]);
+      for(let ti=0;ti<UG_VEG_TRIPLES.length;ti++)
+        tray.push(fin({kind:"tray",green:null,carb:c,prot:pr,veg:UG_VEG_TRIPLES[ti],scoop:null,prot2:null,tops:[],dress:null,extras:[]},addM(bs,tripleSums[ti])));
+    }
+    tray.sort(byScore);tray=tray.slice(0,700);
+    const sSums=UG.scoops.map(x=>mac([x]));
+    const next=[];
+    for(const r of tray)for(let si=0;si<UG.scoops.length;si++)
+      next.push(fin({...r,scoop:UG.scoops[si]},addM(r._s,sSums[si])));
+    next.sort(byScore);tray=next.slice(0,600);
+    tray=addTops(tray,500);
+    tray=addProt2(tray);
+    tray=addExtras(tray);
+    return tray.slice(0,20);
+  }
+  // ── ugMode "salad" — BYO Salad: Green Base + Carb Base + Protein + 3 Veg → 2 Toppings → 0–1 Dressing ──
+  let sal=[];
+  for(const g of [...UG.greens,null]) for(const c of [...UG.carbs,null]) for(const pr of [...UG.prots,null]){
+    const bs=mac([g,c,pr]);
+    for(let ti=0;ti<UG_VEG_TRIPLES.length;ti++)
+      sal.push(fin({kind:"salad",green:g,carb:c,prot:pr,veg:UG_VEG_TRIPLES[ti],scoop:null,prot2:null,tops:[],dress:null,extras:[]},addM(bs,tripleSums[ti])));
+  }
+  sal.sort(byScore);sal=sal.slice(0,800);
+  sal=addTops(sal,600);
+  if(!noDress){
+    const dSums=UG.dress.map(d=>mac([d]));
+    const next=[];
+    for(const r of sal){
+      next.push(r);
+      for(let di=0;di<UG.dress.length;di++)next.push(fin({...r,dress:UG.dress[di]},addM(r._s,dSums[di])));
+    }
+    next.sort(byScore);sal=next.slice(0,500);
+  }
+  sal=addProt2(sal);
+  sal=addExtras(sal);
+  return sal.slice(0,20);
+}
+
+// ── Styles ──
+const S = {
+  font: "'DM Sans',sans-serif",
+  mono: "'DM Mono',monospace",
+  green: "#009743",
+  bg: "#0d0d0d",
+};
+
+function Chip({label,active,onClick,small}) {
+  return h("button",{onClick,style:{
+    padding:small?"4px 9px":"6px 13px",borderRadius:6,
+    border:`1px solid ${active?S.green:"#3a3a3a"}`,
+    background:active?"rgba(0,151,67,0.15)":"transparent",
+    color:active?"#4ade80":"#999",fontSize:small?11:12,
+    cursor:"pointer",fontFamily:S.mono,transition:"all .15s",
+  }},label);
+}
+
+function NumIn({label,value,onChange,placeholder,unit,min=0}) {
+  return h("div",{style:{flex:1,minWidth:80}},
+    h("label",{style:{display:"block",fontSize:10,color:"#777",marginBottom:3,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},label),
+    h("div",{style:{position:"relative"}},
+      h("input",{type:"number",value,onChange:e=>onChange(e.target.value===""?"":Number(e.target.value)),
+        placeholder,min,style:{width:"100%",padding:"9px 10px",paddingRight:unit?30:10,
+        background:"#1a1a1a",border:"1px solid #333",borderRadius:6,color:"#fff",fontSize:14,
+        fontFamily:S.mono,outline:"none",boxSizing:"border-box"}}),
+      unit&&h("span",{style:{position:"absolute",right:8,top:"50%",transform:"translateY(-50%)",fontSize:10,color:"#555"}},unit)
+    )
+  );
+}
+
+function MacroBar({label,value,target,color,unit="g"}) {
+  const pct=target>0?Math.min((value/target)*100,150):0;
+  const diff=target>0?value-target:0;
+  return h("div",{style:{marginBottom:6}},
+    h("div",{style:{display:"flex",justifyContent:"space-between",fontSize:11,fontFamily:S.mono,color:"#b0b0b0",marginBottom:2}},
+      h("span",null,label),
+      h("span",null,
+        h("span",{style:{color:"#fff",fontWeight:600}},value,unit),
+        target>0&&h("span",{style:{color:diff>0?"#ff6b6b":"#51cf66",marginLeft:4}},"(",diff>0?"+":"",Math.round(diff),unit,")")
+      )
+    ),
+    target>0&&h("div",{style:{height:4,background:"#2a2a2a",borderRadius:2,overflow:"hidden"}},
+      h("div",{style:{height:"100%",width:`${Math.min(pct,100)}%`,background:color,borderRadius:2,transition:"width .4s"}})
+    )
+  );
+}
+
+function App() {
+  const [resto,setResto]=useState("subway");
+  const [mode,setMode]=useState("macros");
+  const [sortBy,setSortBy]=useState("score");
+  const [subSize,setSz]=useState("six");
+  const [tP,setTP]=useState(30);
+  const [tC,setTC]=useState(45);
+  const [tF,setTF]=useState(12);
+  const [tK,setTK]=useState(450);
+  const [prefs,setPr]=useState({hp:true,lp:false,hc:false,lc:false,hf:false,lf:true});
+  const [showAdv,setAdv]=useState(false);
+  const [fibMin,setFibMin]=useState("");
+  const [fibMax,setFibMax]=useState("");
+  const [sMin,setSMin]=useState("");
+  const [sMax,setSMax]=useState("");
+  const [noSauce,setNS]=useState(true);
+  const [noCheese,setNC]=useState(true);
+  const [lockedBread,setLB]=useState("wholegrain");
+  const [sel,setSel]=useState(null);
+  const [mSal,setMSal]=useState({});
+  const [mSau,setMSau]=useState({});
+  const [mSea,setMSea]=useState({});
+  const [mExt,setMExt]=useState({});
+  // Farmer J
+  const [freeOnly,setFO]=useState(true);
+  const [showSets,setShowSets]=useState(false);
+  const [selF,setSelF]=useState(null);
+  const [fTop,setFTop]=useState({});
+  const [fSdt,setFSdt]=useState({});
+  // Itsu
+  const [itsuCats,setIC]=useState(()=>{const o={};ITSU.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxIt,setMaxIt]=useState(3);
+  const [noSoupsEtc,setNSE]=useState(false);
+  const [selI,setSelI]=useState(null);
+  // Pret
+  const [pretCats,setPC]=useState(()=>{const o={};PRET.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxP,setMaxP]=useState(3);
+  const [onlyRel,setOR]=useState(false);
+  const [saladsOnly,setSO]=useState(false);
+  const [selP,setSelP]=useState(null);
+  // Nando's
+  const [nanCats,setNAC]=useState(()=>{const o={};NANDOS.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxNa,setMaxNa]=useState(3);
+  const [noDess,setND]=useState(false);
+  const [nanNoSauce,setNNS]=useState(false);
+  const [selN,setSelN]=useState(null);
+  // Urban Greens
+  const [ugMode,setUgMode]=useState("salad");
+  const [noNuts,setNoNuts]=useState(false);
+  const [noDressUG,setNoDressUG]=useState(false);
+  const [selU,setSelU]=useState(null);
+  // Wagamama
+  const [wagCats,setWC]=useState(()=>{const o={};WAGA.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxW,setMaxW]=useState(3);
+  const [noRamen,setNR]=useState(false);
+  const [selW,setSelW]=useState(null);
+
+  // Helper: default salad state
+  const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
+
+  const toggleP=k=>{
+    const opp={hp:"lp",lp:"hp",hc:"lc",lc:"hc",hf:"lf",lf:"hf"};
+    setPr(p=>({...p,[k]:!p[k],...(p[k]?{}:{[opp[k]]:false})}));
+  };
+
+  const targets=useMemo(()=>{
+    const t={protein:0,carbs:0,fat:0,kcal:0,fibMin:null,fibMax:null,sMin:null,sMax:null};
+    if(mode==="macros"){t.protein=tP||0;t.carbs=tC||0;t.fat=tF||0;t.kcal=t.protein*4+t.carbs*4+t.fat*9;}
+    else{t.kcal=tK||0;}
+    if(fibMin!=="")t.fibMin=Number(fibMin);if(fibMax!=="")t.fibMax=Number(fibMax);
+    if(sMin!=="")t.sMin=Number(sMin);if(sMax!=="")t.sMax=Number(sMax);
+    return t;
+  },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
+
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,lockedBread,subSize),[targets,mode,prefs,noSauce,noCheese,lockedBread,subSize]);
+  const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
+  const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc]);
+  const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
+  const resultsNandos=useMemo(()=>optimizeNandos(targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce),[targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce]);
+  const resultsUG=useMemo(()=>resto==="ug"?optimizeUG(targets,mode,prefs,ugMode,noNuts,noDressUG):[],[resto,targets,mode,prefs,ugMode,noNuts,noDressUG]);
+  const resultsWaga=useMemo(()=>optimizeWaga(targets,mode,prefs,wagCats,maxW,noRamen),[targets,mode,prefs,wagCats,maxW,noRamen]);
+  // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's & Wagamama (gemeinsame Card- und Panel-Renderer)
+  const AC=resto==="itsu"?{D:ITSU,sel:selI,setSel:setSelI,res:resultsItsu,maxN:maxIt}
+         :resto==="pret"?{D:PRET,sel:selP,setSel:setSelP,res:resultsPret,maxN:maxP}
+         :resto==="nandos"?{D:NANDOS,sel:selN,setSel:setSelN,res:resultsNandos,maxN:maxNa}
+         :resto==="wagamama"?{D:WAGA,sel:selW,setSel:setSelW,res:resultsWaga,maxN:maxW}:null;
+
+  const selTotal=useMemo(()=>{
+    if(!sel)return null;
+    const m=subSize==="footlong"?2:1;
+    const items=[sel.bread,sel.protein,sel.cheese,...sel.extras,...sel.sauces];
+    if(mExt["__double_meat"])items.push(sel.protein);
+    if(mExt["__double_cheese"]&&sel.cheese.id!=="none")items.push(sel.cheese);
+    D.extras.forEach(e=>{if(mExt[e.id])items.push(e);});
+    D.sauces.forEach(s=>{if(mSau[s.id])items.push(s);});
+    D.seasonings.forEach(s=>{if(mSea[s.id])items.push(s);});
+    const saladItems=D.salads.filter(s=>mSal[s.id]);
+    return sumN(items,m,saladItems);
+  },[sel,mSal,mSau,mSea,mExt,subSize]);
+
+  const selFTotal=useMemo(()=>{
+    if(!selF)return null;
+    if(selF.set)return sumN([selF.set],1);
+    const items=[selF.main,selF.fjBase,...selF.sides,...selF.tops,...selF.sdt];
+    FJ.toppings.forEach(x=>{if(fTop[x.id])items.push(x);});
+    FJ.sdt.forEach(x=>{if(fSdt[x.id])items.push(x);});
+    return sumN(items,1);
+  },[selF,fTop,fSdt]);
+
+  const autoK=mode==="macros"?(tP||0)*4+(tC||0)*4+(tF||0)*9:tK;
+
+  // Sort by: im Kalorien-Modus gibt es keine Makro-Ziele → Protein/Carbs/Fat fallen auf Score zurück
+  const effSort=(mode==="macros"||sortBy==="score"||sortBy==="kcal")?sortBy:"score";
+  const sortTgts={kcal:mode==="macros"?autoK:(tK||0),protein:tP||0,carbs:tC||0,fat:tF||0};
+
+  const btn=(v,l,cur,fn)=>h("button",{onClick:()=>fn(v),style:{
+    flex:1,padding:"11px 0",borderRadius:8,
+    border:cur===v?"1px solid "+S.green:"1px solid #2a2a2a",
+    background:cur===v?"rgba(0,151,67,0.1)":"#151515",
+    color:cur===v?"#4ade80":"#888",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:S.font,
+  }},l);
+
+  return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
+
+    // Header
+    h("div",{style:{background:resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+      h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
+      h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Finde die optimale Bestellung für deine Ziele")
+    ),
+
+    h("div",{style:{padding:"16px 16px 0"}},
+
+      // Mode (vor der Restaurant-Wahl: Ziele bleiben beim Wechsel erhalten)
+      h("div",{style:{display:"flex",gap:8,marginBottom:16}},
+        btn("macros","Makros eingeben",mode,setMode),
+        btn("calories","Kalorien + Präferenzen",mode,setMode)
+      ),
+
+      // Input
+      h("div",{style:{background:"#151515",borderRadius:12,padding:16,marginBottom:16,border:"1px solid #222"}},
+        mode==="macros"?h("div",null,
+          h("div",{style:{display:"flex",gap:10,marginBottom:10}},
+            h(NumIn,{label:"Protein",value:tP,onChange:setTP,placeholder:"30",unit:"g"}),
+            h(NumIn,{label:"Carbs",value:tC,onChange:setTC,placeholder:"45",unit:"g"}),
+            h(NumIn,{label:"Fat",value:tF,onChange:setTF,placeholder:"12",unit:"g"})
+          ),
+          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"inkl. Standard-Salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (ohne Fibre/Salt-Daten)":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
+        ):h("div",null,
+          h("div",{style:{marginBottom:12}},h(NumIn,{label:"Kalorien-Ziel",value:tK,onChange:setTK,placeholder:"450",unit:"kcal"})),
+          h("div",{style:{fontSize:10,color:"#666",marginBottom:8,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Makro-Präferenzen"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:6}},
+            ...[["hp","High Protein"],["lp","Low Protein"],["hc","High Carb"],["lc","Low Carb"],["hf","High Fat"],["lf","Low Fat"]].map(([k,l])=>
+              h(Chip,{key:k,label:l,active:prefs[k],onClick:()=>toggleP(k)}))
+          )
+        )
+      ),
+
+      // Fibre/Salt Constraints (gehören zu den Zielen)
+      h("div",{style:{marginTop:-8,marginBottom:12}},
+        h("button",{onClick:()=>setAdv(!showAdv),style:{background:"none",border:"none",color:"#666",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},
+          showAdv?"Weniger ▴":"Fibre / Salt ▾")
+      ),
+
+      showAdv&&h("div",{style:{background:"#151515",borderRadius:12,padding:16,marginBottom:16,border:"1px solid #222"}},
+        h("div",{style:{display:"flex",gap:10,marginBottom:10}},
+          h(NumIn,{label:"Fibre Min",value:fibMin,onChange:setFibMin,placeholder:"–",unit:"g"}),
+          h(NumIn,{label:"Fibre Max",value:fibMax,onChange:setFibMax,placeholder:"–",unit:"g"})
+        ),
+        h("div",{style:{display:"flex",gap:10}},
+          h(NumIn,{label:"Salt Min",value:sMin,onChange:setSMin,placeholder:"–",unit:"g"}),
+          h(NumIn,{label:"Salt Max",value:sMax,onChange:setSMax,placeholder:"–",unit:"g"})
+        )
+      ),
+
+      // Restaurant
+      h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
+        btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto)
+      ),
+
+      // Size (nur Subway)
+      resto==="subway"&&h("div",{style:{display:"flex",gap:8,marginBottom:16}},
+        btn("six","6 Inch",subSize,setSz),btn("footlong","Footlong",subSize,setSz)
+      ),
+
+      // Bread selector (nur Subway)
+      resto==="subway"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Brot"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+          h(Chip,{label:"Alle (Optimizer wählt)",active:!lockedBread,onClick:()=>setLB(null),small:true}),
+          ...D.breads.map(b=>h(Chip,{key:b.id,label:b.name,active:lockedBread===b.id,onClick:()=>setLB(b.id),small:true}))
+        )
+      ),
+
+      // Itsu: Kategorien + Anzahl Items
+      resto==="itsu"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...ITSU.cats.filter(c=>!c.drink).map(c=>h(Chip,{key:c.id,label:c.name,active:!!itsuCats[c.id],
+            onClick:()=>setIC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{display:"flex",gap:5}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxIt===n,onClick:()=>setMaxIt(n),small:true}))
+        )
+      ),
+
+      // Pret: Kategorien + Anzahl Items
+      resto==="pret"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...PRET.cats.filter(c=>!c.drink).map(c=>h(Chip,{key:c.id,label:c.name,active:!!pretCats[c.id],
+            onClick:()=>setPC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{display:"flex",gap:5}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxP===n,onClick:()=>setMaxP(n),small:true}))
+        )
+      ),
+
+      // Nando's: Kategorien + Anzahl Items
+      resto==="nandos"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...NANDOS.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!nanCats[c.id],
+            onClick:()=>setNAC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{display:"flex",gap:5}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxNa===n,onClick:()=>setMaxNa(n),small:true}))
+        )
+      ),
+
+      // Wagamama: Kategorien + Anzahl Items
+      resto==="wagamama"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Kategorien"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...WAGA.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!wagCats[c.id],
+            onClick:()=>setWC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. Items pro Bestellung"),
+        h("div",{style:{display:"flex",gap:5}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxW===n,onClick:()=>setMaxW(n),small:true}))
+        )
+      ),
+
+      // Urban Greens: Modus (nur Build Your Own — fertige Gerichte bewusst entfernt)
+      resto==="ug"&&h("div",{style:{display:"flex",gap:8,marginBottom:16}},
+        btn("salad","BYO Salad",ugMode,setUgMode),
+        btn("tray","BYO Tray",ugMode,setUgMode)
+      ),
+
+      // Checkboxes
+      h("div",{style:{display:"flex",gap:16,marginBottom:16,alignItems:"center",flexWrap:"wrap"}},
+        resto==="itsu"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noSoupsEtc,onChange:e=>setNSE(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No soups, desserts, snacks etc."),
+        resto==="ug"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noNuts,onChange:e=>setNoNuts(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No nuts"),
+        resto==="ug"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noDressUG,onChange:e=>setNoDressUG(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Dressing"),
+        resto==="pret"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:onlyRel,onChange:e=>setOR(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only relevant items, no bullshit"),
+        resto==="pret"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:saladsOnly,onChange:e=>setSO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Salads and protein pots only"),
+        resto==="nandos"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noDess,onChange:e=>setND(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No desserts, Lunch Fix & platters"),
+        resto==="nandos"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:nanNoSauce,onChange:e=>setNNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauces"),
+        resto==="wagamama"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noRamen,onChange:e=>setNR(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Ramen"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noCheese,onChange:e=>setNC(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Kein Käse"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noSauce,onChange:e=>setNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Keine Sauce"),
+        resto==="farmerj"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Nur Gratis-Items")
+      ),
+
+      // Results header + Sort by (Accuracy-Sortierung)
+      h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top Ergebnisse"),
+        h("div",{style:{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}},
+          h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Sort by"),
+          h(Chip,{label:"Score",small:true,active:sortBy==="score",onClick:()=>setSortBy("score")}),
+          h(Chip,{label:"Kalorien",small:true,active:sortBy==="kcal",onClick:()=>setSortBy("kcal")}),
+          ...(mode==="macros"?[
+            h(Chip,{key:"sp",label:"Protein",small:true,active:sortBy==="protein",onClick:()=>setSortBy("protein")}),
+            h(Chip,{key:"sc",label:"Carbs",small:true,active:sortBy==="carbs",onClick:()=>setSortBy("carbs")}),
+            h(Chip,{key:"sf",label:"Fat",small:true,active:sortBy==="fat",onClick:()=>setSortBy("fat")}),
+          ]:[])
+        )
+      ),
+
+      // Results list
+      h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
+        ...sortResults(resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
+          if(resto==="ug"){
+            const isSelU=selU===r;
+            const title=(r.prot?r.prot.name:"Ohne Protein")+(r.prot2?" + "+r.prot2.name:"");
+            const sub=(r.kind==="tray"?"BYO Tray · ":"BYO Salad · ")
+               +[...(r.kind==="salad"?[r.green?r.green.name:"keine Green Base"]:[]),
+                  (r.carb?r.carb.name:"keine Carb Base"),
+                  r.veg.map(v=>v.name).join(", ")].join(" · ")
+               +(r.scoop?" · "+r.scoop.name:"")
+               +(r.tops.length?" · +"+r.tops.map(x=>x.name).join(", +"):"")
+               +(r.dress?" · "+r.dress.name:"")
+               +(r.extras.length?" · +"+r.extras.map(e=>e.it.name).join(", +"):"");
+            return h("button",{key:i,onClick:()=>setSelU(isSelU?null:r),style:{
+              background:isSelU?"rgba(0,151,67,0.08)":"#151515",
+              border:isSelU?"1px solid "+S.green:"1px solid #222",
+              borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+            }},
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}},
+                h("div",null,
+                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},title),
+                  h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},sub)
+                ),
+                h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
+                  r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+              ),
+              h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
+                h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g")
+              )
+            );
+          }
+          if(AC){
+            const isSelI=AC.sel===r;
+            const cats=[...new Set(r.items.map(x=>{const c=AC.D.cats.find(y=>y.id===x.cat);return c?c.name:x.cat;}))];
+            return h("button",{key:i,onClick:()=>AC.setSel(isSelI?null:r),style:{
+              background:isSelI?"rgba(0,151,67,0.08)":"#151515",
+              border:isSelI?"1px solid "+S.green:"1px solid #222",
+              borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+            }},
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}},
+                h("div",null,
+                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},itsuLabel(r.items)),
+                  h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
+                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · "))
+                ),
+                h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
+                  r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+              ),
+              h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
+                h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
+                h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
+                h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
+              )
+            );
+          }
+          if(resto==="farmerj"){
+            const isSelF=selF===r;
+            return h("button",{key:i,onClick:()=>{setSelF(isSelF?null:r);setFTop({});setFSdt({});},style:{
+              background:isSelF?"rgba(0,151,67,0.08)":"#151515",
+              border:isSelF?"1px solid "+S.green:"1px solid #222",
+              borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+            }},
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}},
+                h("div",null,
+                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},r.set?r.set.name:r.main.name),
+                  h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
+                    r.set?"Set · "+r.set.group:
+                    r.fjBase.name
+                    +(r.sides.length>0?" · "+r.sides.map(s=>s.name).join(" + "):" · keine Sides")
+                    +(r.tops.length>0?" · +"+r.tops.map(x=>x.name).join(", +"):"")
+                    +(r.sdt.length>0?" · +"+r.sdt.map(x=>x.name).join(", +"):"")
+                  )
+                ),
+                h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
+                  r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+              ),
+              h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
+                h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
+                h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
+                h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
+              )
+            );
+          }
+          const isSel=sel===r;
+          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt({});},style:{
+            background:isSel?"rgba(0,151,67,0.08)":"#151515",
+            border:isSel?"1px solid "+S.green:"1px solid #222",
+            borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+          }},
+            h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}},
+              h("div",null,
+                h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},r.protein.name),
+                h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
+                  r.bread.name,
+                  r.cheese.id!=="none"&&" · "+r.cheese.name,
+                  r.extras.length>0&&" · +"+r.extras.map(e=>e.name).join(", +"),
+                  r.sauces.length>0&&" · "+r.sauces.map(s=>s.name).join(", ")
+                )
+              ),
+              h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
+                r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+            ),
+            h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+              h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
+              h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+              h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
+              h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
+              h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
+            )
+          );
+        })
+      ),
+
+      // Set-Browser (Farmer J): alle Sets & Salate direkt durchsuchen
+      resto==="farmerj"&&h("div",{style:{marginBottom:20}},
+        h("button",{onClick:()=>setShowSets(!showSets),style:{background:"none",border:"none",color:"#666",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},
+          showSets?"Sets & Salate ausblenden ▴":"Alle Sets & Salate durchsuchen ▾"),
+        showSets&&h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginTop:10}},
+          ...[["Fieldtray","Set Fieldtrays"],["Fieldbowl","Set Fieldbowls"],["Salat Solo","The Salad, Solo"]].flatMap(([g,label])=>[
+            h("div",{key:"hdr_"+g,style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginTop:6}},label),
+            ...FJ.sets.filter(s=>s.group===g).map(st=>{
+              const isSelSet=!!(selF&&selF.set&&selF.set.id===st.id);
+              return h("button",{key:st.id,onClick:()=>{setSelF(isSelSet?null:{set:st,sides:[],tops:[],sdt:[],nutrition:sumN([st],1),score:0});setFTop({});setFSdt({});},style:{
+                background:isSelSet?"rgba(0,151,67,0.08)":"#151515",
+                border:isSelSet?"1px solid "+S.green:"1px solid #222",
+                borderRadius:10,padding:"10px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+              }},
+                h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:4}},
+                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff"}},st.name),
+                  h("div",{style:{fontSize:14,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},st.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+                ),
+                h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+                  h("span",{style:{color:"#60a5fa"}},"P "+st.protein+"g"),
+                  h("span",{style:{color:"#fbbf24"}},"C "+st.carbs+"g"),
+                  h("span",{style:{color:"#f87171"}},"F "+st.fat+"g"),
+                  h("span",{style:{color:"#a78bfa"}},"Fib "+st.fibre+"g"),
+                  h("span",{style:{color:"#999"}},"Salt "+st.salt+"g")
+                )
+              );
+            })
+          ])
+        )
+      ),
+
+      // Detail panel (Subway)
+      resto==="subway"&&sel&&selTotal&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
+        h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},sel.protein.name),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},
+          sel.bread.name," · ",subSize==="footlong"?"Footlong":"6 Inch",
+          sel.cheese.id!=="none"&&" · "+sel.cheese.name),
+
+        // Macro bars
+        h("div",{style:{marginBottom:16}},
+          h(MacroBar,{label:"Kalorien",value:selTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:selTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:selTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:selTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:selTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:selTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+        ),
+
+        // Extras
+        h("div",{style:{marginBottom:12}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Extras hinzufügen"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)).map(e=>
+              h(Chip,{key:e.id,label:e.name+" (+"+e.kcal+")",small:true,active:!!mExt[e.id],
+                onClick:()=>setMExt(p=>({...p,[e.id]:!p[e.id]}))})
+            ),
+            h(Chip,{key:"dm",label:"Double Meat (+"+sel.protein.kcal*(subSize==="footlong"?2:1)+")",small:true,
+              active:!!mExt["__double_meat"],onClick:()=>setMExt(p=>({...p,"__double_meat":!p["__double_meat"]}))}),
+            sel.cheese.id!=="none"&&h(Chip,{key:"dc",label:"Double Cheese (+"+sel.cheese.kcal*(subSize==="footlong"?2:1)+")",small:true,
+              active:!!mExt["__double_cheese"],onClick:()=>setMExt(p=>({...p,"__double_cheese":!p["__double_cheese"]}))})
+          )
+        ),
+
+        // Salad
+        h("div",{style:{marginBottom:12}},
+          h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}},
+            h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Salad"),
+            h("button",{onClick:()=>{
+              const std={};D.salads.forEach(s=>{if(!["jalapenos","sweetcorn","olives"].includes(s.id))std[s.id]=true;});setMSal(std);
+            },style:{padding:"5px 12px",borderRadius:6,fontSize:11,fontWeight:600,background:S.green,border:"none",color:"#fff",cursor:"pointer",fontFamily:S.font}},"✦ Mein Standard")
+          ),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...D.salads.map(s=>h(Chip,{key:s.id,label:s.name,small:true,active:!!mSal[s.id],
+              onClick:()=>setMSal(p=>({...p,[s.id]:!p[s.id]}))}))
+          )
+        ),
+
+        // Sauces
+        !noSauce&&h("div",{style:{marginBottom:12}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Saucen (max 2)"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...D.sauces.filter(s=>!sel.sauces.find(x=>x.id===s.id)).map(s=>{
+              const cnt=Object.values(mSau).filter(Boolean).length+sel.sauces.length;
+              const act=!!mSau[s.id];
+              return h(Chip,{key:s.id,label:s.name,small:true,active:act,
+                onClick:()=>{if(!act&&cnt>=2)return;setMSau(p=>({...p,[s.id]:!p[s.id]}));}});
+            })
+          )
+        ),
+
+        // Seasonings
+        h("div",{style:{marginBottom:16}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Seasonings"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...D.seasonings.map(s=>h(Chip,{key:s.id,label:s.name+" (+"+s.kcal+")",small:true,active:!!mSea[s.id],
+              onClick:()=>setMSea(p=>({...p,[s.id]:!p[s.id]}))}))
+          )
+        ),
+
+        // Order guide
+        (()=>{
+          const aE=[...(sel.extras||[]),...D.extras.filter(e=>mExt[e.id])];
+          const aS=[...(sel.sauces||[]),...D.sauces.filter(s=>mSau[s.id])];
+          const aSal=D.salads.filter(s=>mSal[s.id]);
+          const aSea=D.seasonings.filter(s=>mSea[s.id]);
+          const dm=!!mExt["__double_meat"],dc=!!mExt["__double_cheese"];
+          const steps=[
+            {l:"Sub",v:sel.protein.name},{l:"Größe",v:subSize==="footlong"?"Footlong":"6 Inch"},
+            {l:"Brot",v:sel.bread.name},
+            {l:"Käse",v:sel.cheese.id==="none"?"Kein Käse":sel.cheese.name},
+            {l:"Extras",v:[dm&&"Double Meat",dc&&"Double Cheese",...aE.map(e=>e.name)].filter(Boolean).join(", ")||"–"},
+            {l:"Salad",v:aSal.map(s=>s.name).join(", ")||"–"},
+            {l:"Sauce",v:noSauce?"Keine":(aS.map(s=>s.name).join(", ")||"–")},
+            {l:"Seasonings",v:aSea.map(s=>s.name).join(", ")||"–"},
+          ];
+          return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
+            h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
+              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+            ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
+              h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
+              h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
+              h("span",{style:{fontSize:12,color:"#e0e0e0",fontWeight:500,fontFamily:S.font}},st.v)
+            ))
+          );
+        })()
+      ),
+
+      // Detail panel (Farmer J)
+      resto==="farmerj"&&selF&&selFTotal&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
+        h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},selF.set?selF.set.name:selF.main.name),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},
+          selF.set?"Set · "+selF.set.group:
+          selF.fjBase.name+(selF.sides.length>0?" · "+selF.sides.map(s=>s.name).join(" + "):" · keine Sides")),
+
+        // Macro bars
+        h("div",{style:{marginBottom:16}},
+          h(MacroBar,{label:"Kalorien",value:selFTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:selFTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:selFTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:selFTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:selFTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:selFTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+        ),
+
+        // Toppings (nur Custom Builds)
+        !selF.set&&h("div",{style:{marginBottom:12}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Toppings (bezahlt)"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...FJ.toppings.filter(x=>!selF.tops.find(y=>y.id===x.id)).map(x=>
+              h(Chip,{key:x.id,label:x.name+" (+"+x.kcal+")",small:true,active:!!fTop[x.id],
+                onClick:()=>setFTop(p=>({...p,[x.id]:!p[x.id]}))})
+            )
+          )
+        ),
+
+        // Sauce, Dip or Topping (max 1, nur Custom Builds)
+        !selF.set&&h("div",{style:{marginBottom:16}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Sauce / Dip / Topping (bezahlt, max 1)"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...FJ.sdt.filter(x=>!selF.sdt.find(y=>y.id===x.id)).map(x=>{
+              const cnt=Object.values(fSdt).filter(Boolean).length+selF.sdt.length;
+              const act=!!fSdt[x.id];
+              return h(Chip,{key:x.id,label:x.name+" (+"+x.kcal+")",small:true,active:act,
+                onClick:()=>{if(!act&&cnt>=1)return;setFSdt(p=>({...p,[x.id]:!p[x.id]}));}});
+            })
+          )
+        ),
+
+        // Order guide (Farmer J)
+        (()=>{
+          const box=(steps)=>h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
+            h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
+              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+            ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
+              h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
+              h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
+              h("span",{style:{fontSize:12,color:"#e0e0e0",fontWeight:500,fontFamily:S.font}},st.v)
+            ))
+          );
+          if(selF.set) return box([
+            {l:"Kategorie",v:"Set "+selF.set.group},
+            {l:"Item",v:selF.set.name},
+          ]);
+          const aT=[...selF.tops,...FJ.toppings.filter(x=>fTop[x.id])];
+          const aS=[...selF.sdt,...FJ.sdt.filter(x=>fSdt[x.id])];
+          return box([
+            {l:"Typ",v:"Custom Fieldtray"},
+            {l:"Main",v:selF.main.name},
+            {l:"Base",v:selF.fjBase.name},
+            {l:"Sides (2 frei)",v:selF.sides.map(s=>s.name).join(", ")||"–"},
+            {l:"Topping",v:aT.map(x=>x.name).join(", ")||"–"},
+            {l:"Sauce/Dip",v:aS.map(x=>x.name).join(", ")||"–"},
+          ]);
+        })()
+      ),
+
+      // Detail panel (à la carte: Itsu & Pret)
+      AC&&AC.sel&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
+        h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},itsuLabel(AC.sel.items)),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},"à la carte · "+AC.sel.items.length+(AC.sel.items.length===1?" Item":" Items")),
+
+        // Macro bars
+        h("div",{style:{marginBottom:16}},
+          h(MacroBar,{label:"Kalorien",value:AC.sel.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:AC.sel.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:AC.sel.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:AC.sel.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:AC.sel.nutrition.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:AC.sel.nutrition.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+        ),
+
+        // Einzelne Items mit kcal
+        h("div",{style:{marginBottom:16}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Items"),
+          ...AC.sel.items.map((x,xi)=>h("div",{key:xi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:xi<AC.sel.items.length-1?"1px solid #1f1f1f":"none"}},
+            h("span",{style:{color:"#e0e0e0"}},x.name),
+            h("span",{style:{color:"#999",fontFamily:S.mono}},x.kcal+" kcal · P "+x.protein+"g")
+          ))
+        ),
+
+        // Order guide (à la carte)
+        (()=>{
+          const counts={};AC.sel.items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
+          const uniq=[];const seenIds=new Set();
+          AC.sel.items.forEach(x=>{if(!seenIds.has(x.id)){seenIds.add(x.id);uniq.push(x);}});
+          const steps=uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name}));
+          return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
+            h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
+              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+            ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
+              h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
+              h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
+              h("span",{style:{fontSize:12,color:"#e0e0e0",fontWeight:500,fontFamily:S.font}},st.v)
+            ))
+          );
+        })()
+      ),
+
+      // Detail panel (Urban Greens)
+      resto==="ug"&&selU&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
+        h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},
+          (selU.prot?selU.prot.name:"Ohne Protein")+(selU.prot2?" + "+selU.prot2.name:"")),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},
+          selU.kind==="tray"?"Build Your Own Tray":"Build Your Own Salad"),
+
+        // Macro bars (UG hat keine Fibre/Salt-Daten)
+        h("div",{style:{marginBottom:16}},
+          h(MacroBar,{label:"Kalorien",value:selU.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:selU.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:selU.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:selU.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"})
+        ),
+
+        // Komponenten
+        h("div",{style:{marginBottom:16}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Komponenten"),
+          ...[["Green Base",selU.green?[selU.green]:[]],["Carb Base",selU.carb?[selU.carb]:[]],
+              ["Protein",selU.prot?[selU.prot]:[]],["Extra Protein",selU.prot2?[selU.prot2]:[]],
+              ["Veg & Pickles",selU.veg],["Scoop / Premium",selU.scoop?[selU.scoop]:[]],
+              ["Toppings",selU.tops],["Dressing",selU.dress?[selU.dress]:[]],
+              ["Extras",selU.extras.map(e=>e.it)]].filter(([l,arr])=>arr.length).map(([l,arr],gi)=>
+            h("div",{key:gi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:"1px solid #1f1f1f"}},
+              h("span",{style:{color:"#777",fontFamily:S.mono,fontSize:10,minWidth:90}},l),
+              h("span",{style:{color:"#e0e0e0",textAlign:"right",flex:1}},arr.map(x=>x.name+" ("+x.kcal+")").join(", "))
+            ))
+        ),
+
+        // Order guide (Urban Greens, Deliveroo-Schritte)
+        (()=>{
+          const box=(steps)=>h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
+            h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
+              h("span",{style:{fontSize:13}},"📋")," Bestellanleitung (Deliveroo)"),
+            ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
+              h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
+              h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:100}},st.l),
+              h("span",{style:{fontSize:12,color:"#e0e0e0",fontWeight:500,fontFamily:S.font}},st.v)
+            ))
+          );
+          const xVeg=selU.extras.filter(e=>e.kind==="veg").map(e=>e.it.name);
+          const xDress=selU.extras.filter(e=>e.kind==="dressing").map(e=>e.it.name);
+          const xScoop=selU.extras.filter(e=>e.kind==="scoop"||e.kind==="top").map(e=>e.it.name);
+          if(selU.kind==="tray") return box([
+            {l:"Gericht",v:"BYO Tray"},
+            {l:"Carb Base",v:selU.carb?selU.carb.name:"No Carb Base"},
+            {l:"Protein",v:selU.prot?selU.prot.name:"No Protein"},
+            {l:"Extra Protein?",v:selU.prot2?selU.prot2.name:"–"},
+            {l:"3 Veg or Pickles",v:selU.veg.map(v=>v.name).join(", ")},
+            {l:"Extra Veg/Pickles?",v:xVeg.join(", ")||"–"},
+            {l:"Scoop/Premium",v:selU.scoop?selU.scoop.name:"–"},
+            {l:"2 Toppings",v:selU.tops.length?selU.tops.map(x=>x.name).join(", "):"–"},
+            {l:"Extra Dressing?",v:xDress.join(", ")||"–"},
+            {l:"Extra Scoops etc.?",v:xScoop.join(", ")||"–"},
+          ]);
+          return box([
+            {l:"Gericht",v:"BYO Salad"},
+            {l:"Green Base",v:selU.green?selU.green.name:"No Green Base"},
+            {l:"Carb Base",v:selU.carb?selU.carb.name:"No Carb Base"},
+            {l:"Protein",v:selU.prot?selU.prot.name:"No Protein"},
+            {l:"Extra Protein?",v:selU.prot2?selU.prot2.name:"–"},
+            {l:"3 Veg or Pickles",v:selU.veg.map(v=>v.name).join(", ")},
+            {l:"Extra Veg/Pickles?",v:xVeg.join(", ")||"–"},
+            {l:"2 Toppings",v:selU.tops.length?selU.tops.map(x=>x.name).join(", "):"–"},
+            {l:"Dressing",v:selU.dress?selU.dress.name:"–"},
+            {l:"Extra Dressing?",v:xDress.join(", ")||"–"},
+            {l:"Extra Scoops etc.?",v:xScoop.join(", ")||"–"},
+          ]);
+        })()
+      ),
+
+      // Footer
+      h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
+        resto==="subway"?"Daten: Subway UK & ROI Jan 2026":resto==="farmerj"?"Daten: farmerj.com · Stand Juni 2026":resto==="itsu"?"Daten: itsu.com · Stand Juni 2026":resto==="pret"?"Daten: pret.co.uk · Stand Juni 2026":resto==="nandos"?"Daten: nandos.co.uk · Stand Juni 2026":resto==="wagamama"?"Daten: wagamama.com · Stand Juni 2026 (Screenshot-Batches)":"Daten: Urban Greens Allergen Guide 2026 · nur kcal/P/F/C")
+    )
+  );
+}
+
+ReactDOM.render(React.createElement(App), document.getElementById("root"));
+</script>
+</body>
+</html>

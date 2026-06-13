@@ -1,0 +1,4161 @@
+{
+  "_meta": {
+    "source": "pret.co.uk/en-GB/pret-delivers/menu (__NEXT_DATA__, alles auf einer Seite)",
+    "crawled": "2026-06-10",
+    "note": "Nährwerte perServing als Strings wie auf der Website. Re-Crawl: node pret-crawl.js"
+  },
+  "categories": [
+    "Bundles",
+    "Breakfast platters",
+    "Lunch platters",
+    "Grazing platters",
+    "Sweet platters",
+    "Snacks platters",
+    "Bakery",
+    "Breakfast baguettes",
+    "Sandwiches",
+    "Baguettes",
+    "Wraps and flatbreads",
+    "Rye rolls",
+    "Salads and protein pots",
+    "Little Pret Stars",
+    "Fruit",
+    "Sweet pots",
+    "Sweet treats",
+    "Snacks",
+    "Cold drinks"
+  ],
+  "items": [
+    {
+      "sku": "UKPDB003",
+      "name": "Breakfast Bundle",
+      "categories": [
+        "Bundles"
+      ],
+      "kcal": null,
+      "fat": null,
+      "sat": null,
+      "carbs": null,
+      "sugars": null,
+      "fibre": null,
+      "protein": null,
+      "salt": null,
+      "averageWeightG": null,
+      "price": 114.45,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UKPDB001",
+      "name": "Classic Lunch Bundle",
+      "categories": [
+        "Bundles"
+      ],
+      "kcal": null,
+      "fat": null,
+      "sat": null,
+      "carbs": null,
+      "sugars": null,
+      "fibre": null,
+      "protein": null,
+      "salt": null,
+      "averageWeightG": null,
+      "price": 153,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020516",
+      "name": "Classic Breakfast Bowl Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "2703",
+      "fat": "105.2",
+      "sat": "47.3",
+      "carbs": "334.4",
+      "sugars": "230.7",
+      "fibre": "38.5",
+      "protein": "85.3",
+      "salt": "1.62",
+      "averageWeightG": 1585.72,
+      "price": 38,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Pistachio Nuts",
+        "Oats",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK007707",
+      "name": "Breakfast Baguette Selection Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "3608",
+      "fat": "145.9",
+      "sat": "30.6",
+      "carbs": "402.4",
+      "sugars": "23.6",
+      "fibre": "24.9",
+      "protein": "159",
+      "salt": "20.71",
+      "averageWeightG": 1502.9,
+      "price": 40,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK020517",
+      "name": "Five Berry & Bircher Bowl Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "2698",
+      "fat": "86.5",
+      "sat": "31.3",
+      "carbs": "354.1",
+      "sugars": "268.4",
+      "fibre": "32.7",
+      "protein": "109.4",
+      "salt": "2.51",
+      "averageWeightG": 1681.6,
+      "price": 35,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Pistachio Nuts",
+        "Oats",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020650",
+      "name": "Pret's Fruit Pot Platter",
+      "categories": [
+        "Breakfast platters",
+        "Lunch platters"
+      ],
+      "kcal": "638",
+      "fat": "7.7",
+      "sat": "1.3",
+      "carbs": "124.4",
+      "sugars": "121.8",
+      "fibre": "16.2",
+      "protein": "9.6",
+      "salt": "0.12",
+      "averageWeightG": 1280,
+      "price": 25,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK020606",
+      "name": "Pret's Mixed Breakfast Ciabatta Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "3334",
+      "fat": "155.6",
+      "sat": "54.4",
+      "carbs": "308.3",
+      "sugars": "39.6",
+      "fibre": "26.3",
+      "protein": "161.9",
+      "salt": "16.01",
+      "averageWeightG": 1376.4,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020463",
+      "name": "Pret's Premium Pastries Platter",
+      "categories": [
+        "Breakfast platters",
+        "Sweet platters"
+      ],
+      "kcal": "4862",
+      "fat": "247.9",
+      "sat": "159.8",
+      "carbs": "550.6",
+      "sugars": "243.3",
+      "fibre": "39",
+      "protein": "87.7",
+      "salt": "9.83",
+      "averageWeightG": 1212,
+      "price": 38,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020604",
+      "name": "Pret's Veggie Breakfast Ciabatta Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "2978",
+      "fat": "118.9",
+      "sat": "36.3",
+      "carbs": "323.4",
+      "sugars": "51.1",
+      "fibre": "33.8",
+      "protein": "136.6",
+      "salt": "16.99",
+      "averageWeightG": 1644.8,
+      "price": 45,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK008117",
+      "name": "Sweet Pastry Selection Box",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "4672",
+      "fat": "268",
+      "sat": "160.8",
+      "carbs": "454.2",
+      "sugars": "146.5",
+      "fibre": "34.5",
+      "protein": "93.7",
+      "salt": "2.12",
+      "averageWeightG": 1130,
+      "price": 38,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020605",
+      "name": "Triple Bacon Ciabatta Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "2575",
+      "fat": "90.6",
+      "sat": "37.4",
+      "carbs": "285.8",
+      "sugars": "20",
+      "fibre": "17.8",
+      "protein": "145.2",
+      "salt": "10.87",
+      "averageWeightG": 944,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020608",
+      "name": "Triple Sausage Ciabatta Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "3753",
+      "fat": "206.9",
+      "sat": "81",
+      "carbs": "302.3",
+      "sugars": "29.6",
+      "fibre": "23.7",
+      "protein": "158.7",
+      "salt": "15.56",
+      "averageWeightG": 1184,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020607",
+      "name": "Ultimate Breakfast Ciabatta Platter",
+      "categories": [
+        "Breakfast platters"
+      ],
+      "kcal": "4023",
+      "fat": "203.4",
+      "sat": "62.8",
+      "carbs": "327.4",
+      "sugars": "57",
+      "fibre": "30.3",
+      "protein": "205.4",
+      "salt": "20.5",
+      "averageWeightG": 1732.8,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK007731",
+      "name": "All Time Classics Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "2247",
+      "fat": "99.7",
+      "sat": "31.5",
+      "carbs": "213.9",
+      "sugars": "12.8",
+      "fibre": "18.9",
+      "protein": "114",
+      "salt": "12.75",
+      "averageWeightG": 935.44,
+      "price": 38,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK007733",
+      "name": "Baguette Selection Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "3453",
+      "fat": "147.6",
+      "sat": "34",
+      "carbs": "359.3",
+      "sugars": "37.3",
+      "fibre": "24.7",
+      "protein": "159.5",
+      "salt": "18.07",
+      "averageWeightG": 1367.02,
+      "price": 38,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Milk",
+        "Mustard"
+      ]
+    },
+    {
+      "sku": "UK008474",
+      "name": "Best of Pret Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "2296",
+      "fat": "102.2",
+      "sat": "23.2",
+      "carbs": "228.5",
+      "sugars": "25.7",
+      "fibre": "22.1",
+      "protein": "104.4",
+      "salt": "10.07",
+      "averageWeightG": 1051.92,
+      "price": 38,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020985",
+      "name": "Butternut & Humous Mezze Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "1618",
+      "fat": "69.5",
+      "sat": "8.8",
+      "carbs": "163.5",
+      "sugars": "50.9",
+      "fibre": "56.5",
+      "protein": "56.3",
+      "salt": "6.18",
+      "averageWeightG": 1447.75,
+      "price": 45,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame"
+      ]
+    },
+    {
+      "sku": "UK020220",
+      "name": "Chef's Italian Chicken Salad Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "2430",
+      "fat": "186.9",
+      "sat": "27.1",
+      "carbs": "55.5",
+      "sugars": "47.4",
+      "fibre": "15.8",
+      "protein": "123.6",
+      "salt": "11.03",
+      "averageWeightG": 1527.3,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Pistachio Nuts",
+        "Egg",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020407",
+      "name": "Kids Ham Triangles Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "1730",
+      "fat": "41.8",
+      "sat": "22.6",
+      "carbs": "244.7",
+      "sugars": "13.2",
+      "fibre": "21.3",
+      "protein": "83.2",
+      "salt": "10.3",
+      "averageWeightG": 708,
+      "price": 15,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020462",
+      "name": "Kids Mixed Triangles Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "2077",
+      "fat": "69.1",
+      "sat": "25.5",
+      "carbs": "251.7",
+      "sugars": "17.5",
+      "fibre": "22.4",
+      "protein": "100.9",
+      "salt": "9.14",
+      "averageWeightG": 929.16,
+      "price": 15,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020809",
+      "name": "Mac & Cheese Hot Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "3349",
+      "fat": "170.2",
+      "sat": "105.8",
+      "carbs": "272.4",
+      "sugars": "36.6",
+      "fibre": "30.1",
+      "protein": "166.8",
+      "salt": "14.62",
+      "averageWeightG": 2163.36,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020415",
+      "name": "Pret's Classic Salad Wrap Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "3620",
+      "fat": "147",
+      "sat": "25",
+      "carbs": "375.8",
+      "sugars": "85.3",
+      "fibre": "33.5",
+      "protein": "181.8",
+      "salt": "20.03",
+      "averageWeightG": 1889.6,
+      "price": 38,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020644",
+      "name": "Pret's Flatbread Selection Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "3805",
+      "fat": "121.3",
+      "sat": "24",
+      "carbs": "495.2",
+      "sugars": "117.7",
+      "fibre": "66.7",
+      "protein": "149.9",
+      "salt": "14.74",
+      "averageWeightG": 2081.64,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Sulphites"
+      ]
+    },
+    {
+      "sku": "UK020162",
+      "name": "Pret's Simple Vegan Friendly Mix Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "2254",
+      "fat": "101.6",
+      "sat": "16.6",
+      "carbs": "257.2",
+      "sugars": "32",
+      "fibre": "40.5",
+      "protein": "57.5",
+      "salt": "7.83",
+      "averageWeightG": 1075.18,
+      "price": 20,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame",
+        "Barley",
+        "Wheat",
+        "Pine Nuts"
+      ]
+    },
+    {
+      "sku": "UK020414",
+      "name": "Pret's Veggie Salad Wrap Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "3471",
+      "fat": "139.8",
+      "sat": "25.1",
+      "carbs": "428.2",
+      "sugars": "93.6",
+      "fibre": "75",
+      "protein": "87.6",
+      "salt": "10.55",
+      "averageWeightG": 1982.2,
+      "price": 38,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Wheat",
+        "Rye",
+        "Sesame",
+        "Cereals Containing Gluten"
+      ]
+    },
+    {
+      "sku": "UK020160",
+      "name": "Rye Roll Selection Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "3372",
+      "fat": "137.2",
+      "sat": "35.6",
+      "carbs": "380.4",
+      "sugars": "70.8",
+      "fibre": "33.2",
+      "protein": "137.4",
+      "salt": "15.57",
+      "averageWeightG": 1410.48,
+      "price": 40,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Milk",
+        "Mustard"
+      ]
+    },
+    {
+      "sku": "UK020409",
+      "name": "Tuna Nicoise Salad Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "1429",
+      "fat": "89.7",
+      "sat": "13.4",
+      "carbs": "34.1",
+      "sugars": "27.9",
+      "fibre": "6.1",
+      "protein": "118.4",
+      "salt": "7.87",
+      "averageWeightG": 1196.56,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK020007",
+      "name": "Veggie Selection Platter",
+      "categories": [
+        "Lunch platters"
+      ],
+      "kcal": "2209",
+      "fat": "96.2",
+      "sat": "28.6",
+      "carbs": "242.7",
+      "sugars": "36.1",
+      "fibre": "24.6",
+      "protein": "80.8",
+      "salt": "9.23",
+      "averageWeightG": 1022.44,
+      "price": 35,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020656",
+      "name": "Charcuterie Platter",
+      "categories": [
+        "Grazing platters"
+      ],
+      "kcal": "2592",
+      "fat": "119.4",
+      "sat": "61.1",
+      "carbs": "216.8",
+      "sugars": "59.4",
+      "fibre": "22.5",
+      "protein": "151.4",
+      "salt": "27.09",
+      "averageWeightG": 1440.2,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020655",
+      "name": "Pret's Ploughman’s Platter",
+      "categories": [
+        "Grazing platters"
+      ],
+      "kcal": "2699",
+      "fat": "136.5",
+      "sat": "85.7",
+      "carbs": "224.7",
+      "sugars": "59.5",
+      "fibre": "22.1",
+      "protein": "131.9",
+      "salt": "11.29",
+      "averageWeightG": 1188,
+      "price": 50,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK001221",
+      "name": "Brownie Bag",
+      "categories": [
+        "Sweet platters"
+      ],
+      "kcal": "1455",
+      "fat": "88.5",
+      "sat": "54",
+      "carbs": "140.1",
+      "sugars": "130.5",
+      "fibre": "9.6",
+      "protein": "19.8",
+      "salt": "0.31",
+      "averageWeightG": 300,
+      "price": 15,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK004485",
+      "name": "Chocolate Chunk Cookie Bag",
+      "categories": [
+        "Sweet platters"
+      ],
+      "kcal": "1625",
+      "fat": "61.9",
+      "sat": "37.5",
+      "carbs": "240.2",
+      "sugars": "132.6",
+      "fibre": "11.8",
+      "protein": "20.9",
+      "salt": "2.01",
+      "averageWeightG": 380,
+      "price": 15,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005178",
+      "name": "Love Bar Bag",
+      "categories": [
+        "Sweet platters"
+      ],
+      "kcal": "1630",
+      "fat": "85.7",
+      "sat": "42.7",
+      "carbs": "189.3",
+      "sugars": "108.5",
+      "fibre": "11.2",
+      "protein": "19.6",
+      "salt": "2.13",
+      "averageWeightG": 350,
+      "price": 15,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Pistachio Nuts",
+        "Oats",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020277",
+      "name": "Pastel De Nata Platter",
+      "categories": [
+        "Sweet platters"
+      ],
+      "kcal": "942",
+      "fat": "37.4",
+      "sat": "24.1",
+      "carbs": "127.1",
+      "sugars": "70.6",
+      "fibre": "13.3",
+      "protein": "17.6",
+      "salt": "2.01",
+      "averageWeightG": 360,
+      "price": 18,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020008",
+      "name": "Pret's Bar Platter",
+      "categories": [
+        "Sweet platters"
+      ],
+      "kcal": "1699",
+      "fat": "101.7",
+      "sat": "60.2",
+      "carbs": "171.2",
+      "sugars": "112.9",
+      "fibre": "14.5",
+      "protein": "17.4",
+      "salt": "1.22",
+      "averageWeightG": 330,
+      "price": 18,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Pistachio Nuts",
+        "Oats",
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020623",
+      "name": "Crisp Selection Platter",
+      "categories": [
+        "Snacks platters"
+      ],
+      "kcal": "1672",
+      "fat": "99.2",
+      "sat": "8.4",
+      "carbs": "169.4",
+      "sugars": "5",
+      "fibre": "14.3",
+      "protein": "18.3",
+      "salt": "3.86",
+      "averageWeightG": 320,
+      "price": 15,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020624",
+      "name": "Popcorn Selection Platter",
+      "categories": [
+        "Snacks platters"
+      ],
+      "kcal": "877",
+      "fat": "48.8",
+      "sat": "3.5",
+      "carbs": "88.1",
+      "sugars": "16.5",
+      "fibre": "17.6",
+      "protein": "12.7",
+      "salt": "2.04",
+      "averageWeightG": 177,
+      "price": 12,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK020622",
+      "name": "Snacking Selection Platter",
+      "categories": [
+        "Snacks platters"
+      ],
+      "kcal": "3680",
+      "fat": "196.9",
+      "sat": "47.4",
+      "carbs": "409",
+      "sugars": "164",
+      "fibre": "35.7",
+      "protein": "50.3",
+      "salt": "4.51",
+      "averageWeightG": 736,
+      "price": 45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK000765",
+      "name": "All Butter Croissant",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "291",
+      "fat": "16.8",
+      "sat": "11.5",
+      "carbs": "27.5",
+      "sugars": "4.5",
+      "fibre": "1.6",
+      "protein": "6.5",
+      "salt": "0.68",
+      "averageWeightG": 71,
+      "price": 2.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005667",
+      "name": "Almond Croissant",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "382",
+      "fat": "21.1",
+      "sat": "10.7",
+      "carbs": "38.9",
+      "sugars": "14.3",
+      "fibre": "2.6",
+      "protein": "7.8",
+      "salt": "0.53",
+      "averageWeightG": 90,
+      "price": 3.4,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK004340",
+      "name": "Chocolate Chunk Cookie",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "329",
+      "fat": "12.5",
+      "sat": "7.4",
+      "carbs": "48.9",
+      "sugars": "25.2",
+      "fibre": "2.1",
+      "protein": "4.1",
+      "salt": "0.41",
+      "averageWeightG": 76,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005671",
+      "name": "Chocolate Croissant",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "350",
+      "fat": "20.6",
+      "sat": "12.3",
+      "carbs": "33.4",
+      "sugars": "15.6",
+      "fibre": "3.7",
+      "protein": "5.9",
+      "salt": "0.41",
+      "averageWeightG": 86,
+      "price": 3.4,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006927",
+      "name": "Cinnamon Danish",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "413",
+      "fat": "20.9",
+      "sat": "13.2",
+      "carbs": "48.3",
+      "sugars": "24.1",
+      "fibre": "2.5",
+      "protein": "6.7",
+      "salt": "1.01",
+      "averageWeightG": 111,
+      "price": 3.4,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006929",
+      "name": "Dark Choc & Almond Butter Cookie",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "370",
+      "fat": "14.9",
+      "sat": "7.5",
+      "carbs": "50.9",
+      "sugars": "30.6",
+      "fibre": "4",
+      "protein": "6.2",
+      "salt": "0.63",
+      "averageWeightG": 86,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Almonds",
+        "Wheat"
+      ]
+    },
+    {
+      "sku": "UK001755",
+      "name": "Double Berry Muffin",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "441",
+      "fat": "21.6",
+      "sat": "2.5",
+      "carbs": "53.4",
+      "sugars": "30.5",
+      "fibre": "3.5",
+      "protein": "6.6",
+      "salt": "0.72",
+      "averageWeightG": 124,
+      "price": 3.4,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006082",
+      "name": "Fruit, Oat & Spelt Cookie",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "339",
+      "fat": "13.2",
+      "sat": "7.4",
+      "carbs": "48.2",
+      "sugars": "48.2",
+      "fibre": "2.9",
+      "protein": "5.5",
+      "salt": "0.27",
+      "averageWeightG": 84,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Oats",
+        "Spelt (Wheat)",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005705",
+      "name": "Pain aux Raisins",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "358",
+      "fat": "14.4",
+      "sat": "9.1",
+      "carbs": "49",
+      "sugars": "21.4",
+      "fibre": "2.5",
+      "protein": "7",
+      "salt": "0.85",
+      "averageWeightG": 121,
+      "price": 3.4,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020430",
+      "name": "Pret's Chocolate Brownie Swirl",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "417",
+      "fat": "20.8",
+      "sat": "13.3",
+      "carbs": "47.9",
+      "sugars": "22.9",
+      "fibre": "3.5",
+      "protein": "7.8",
+      "salt": "0.79",
+      "averageWeightG": 105,
+      "price": 3.9,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020433",
+      "name": "Spiced Apple & Pecan Muffin",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "502",
+      "fat": "28.8",
+      "sat": "2.6",
+      "carbs": "52",
+      "sugars": "28.8",
+      "fibre": "2.9",
+      "protein": "7.1",
+      "salt": "0.73",
+      "averageWeightG": 116,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Pecan Nuts",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK007692",
+      "name": "Very Berry Croissant",
+      "categories": [
+        "Bakery"
+      ],
+      "kcal": "299",
+      "fat": "12.2",
+      "sat": "7.4",
+      "carbs": "41.7",
+      "sugars": "21.9",
+      "fibre": "2.3",
+      "protein": "4.4",
+      "salt": "0.56",
+      "averageWeightG": 88,
+      "price": 3.4,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Wheat"
+      ]
+    },
+    {
+      "sku": "UK006825",
+      "name": "Bacon & Egg Mayo Breakfast Baguette",
+      "categories": [
+        "Breakfast baguettes"
+      ],
+      "kcal": "357",
+      "fat": "14.5",
+      "sat": "3.7",
+      "carbs": "38.8",
+      "sugars": "1.5",
+      "fibre": "1.9",
+      "protein": "16.8",
+      "salt": "1.98",
+      "averageWeightG": 139,
+      "price": 4.7,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK007489",
+      "name": "Avo & Egg Mayo Breakfast Baguette",
+      "categories": [
+        "Breakfast baguettes"
+      ],
+      "kcal": "347",
+      "fat": "15",
+      "sat": "3.2",
+      "carbs": "39.1",
+      "sugars": "1.7",
+      "fibre": "3.2",
+      "protein": "12.3",
+      "salt": "2.09",
+      "averageWeightG": 152,
+      "price": 4.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK001044",
+      "name": "Roasted Tomato & Egg Mayo Breakfast Baguette",
+      "categories": [
+        "Breakfast baguettes"
+      ],
+      "kcal": "361",
+      "fat": "14.3",
+      "sat": "2.3",
+      "carbs": "42.3",
+      "sugars": "5.2",
+      "fibre": "3.2",
+      "protein": "14.1",
+      "salt": "1.88",
+      "averageWeightG": 153.5,
+      "price": 4.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK001341",
+      "name": "Smoked Salmon & Egg Mayo Breakfast Baguette",
+      "categories": [
+        "Breakfast baguettes"
+      ],
+      "kcal": "352",
+      "fat": "13.7",
+      "sat": "2.6",
+      "carbs": "38.7",
+      "sugars": "1.5",
+      "fibre": "1.9",
+      "protein": "17.5",
+      "salt": "2.14",
+      "averageWeightG": 149,
+      "price": 5.1,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK020989",
+      "name": "All-Day Breakfast Triple",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "729",
+      "fat": "35.7",
+      "sat": "9.7",
+      "carbs": "66.7",
+      "sugars": "5.9",
+      "fibre": "6.3",
+      "protein": "32.2",
+      "salt": "3.57",
+      "averageWeightG": 307.54,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK020107",
+      "name": "Chicken Salad",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "529",
+      "fat": "29.3",
+      "sat": "7.9",
+      "carbs": "42.7",
+      "sugars": "3.1",
+      "fibre": "3.8",
+      "protein": "21.8",
+      "salt": "2.22",
+      "averageWeightG": 213.72,
+      "price": 4.85,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK000809",
+      "name": "Chicken, Avocado & Basil",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "488",
+      "fat": "23.3",
+      "sat": "4.7",
+      "carbs": "43.5",
+      "sugars": "3.4",
+      "fibre": "6",
+      "protein": "23.2",
+      "salt": "2.07",
+      "averageWeightG": 239.62,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006827",
+      "name": "Classic Super Club",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "542",
+      "fat": "27.8",
+      "sat": "4.8",
+      "carbs": "43.6",
+      "sugars": "3.9",
+      "fibre": "4.1",
+      "protein": "27.1",
+      "salt": "2.91",
+      "averageWeightG": 233.1,
+      "price": 5.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK020216",
+      "name": "Crayfish & Rocket",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "384",
+      "fat": "13.3",
+      "sat": "1.1",
+      "carbs": "42.7",
+      "sugars": "2.6",
+      "fibre": "3.7",
+      "protein": "21.4",
+      "salt": "2.27",
+      "averageWeightG": 196.72,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Crustacean",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK020781",
+      "name": "Egg Florentine",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "459",
+      "fat": "19.2",
+      "sat": "5.9",
+      "carbs": "45.5",
+      "sugars": "3.6",
+      "fibre": "4.7",
+      "protein": "23.7",
+      "salt": "1.84",
+      "averageWeightG": 242.48,
+      "price": 4.2,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020873",
+      "name": "Everyday Triple",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "650",
+      "fat": "28",
+      "sat": "4.6",
+      "carbs": "65.1",
+      "sugars": "4.7",
+      "fibre": "5.7",
+      "protein": "31.5",
+      "salt": "2.92",
+      "averageWeightG": 294.1,
+      "price": 6.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK000698",
+      "name": "Free-Range Egg Mayo",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "379",
+      "fat": "14.3",
+      "sat": "2.8",
+      "carbs": "43.3",
+      "sugars": "2.1",
+      "fibre": "3.8",
+      "protein": "17.3",
+      "salt": "1.52",
+      "averageWeightG": 175,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK006440",
+      "name": "Ham & Cheese",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "531",
+      "fat": "25.8",
+      "sat": "15.8",
+      "carbs": "42.7",
+      "sugars": "2.5",
+      "fibre": "3.9",
+      "protein": "30",
+      "salt": "3.61",
+      "averageWeightG": 194.62,
+      "price": 4.7,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK001531",
+      "name": "Mature Cheddar & Pret Pickle",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "508",
+      "fat": "23",
+      "sat": "9.4",
+      "carbs": "54.7",
+      "sugars": "12.9",
+      "fibre": "4.8",
+      "protein": "18.2",
+      "salt": "2.16",
+      "averageWeightG": 224.1,
+      "price": 4.9,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK000716",
+      "name": "Scottish Smoked Salmon",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "416",
+      "fat": "17.4",
+      "sat": "5.3",
+      "carbs": "40.8",
+      "sugars": "2.3",
+      "fibre": "3.4",
+      "protein": "22.2",
+      "salt": "3.19",
+      "averageWeightG": 157.72,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006783",
+      "name": "Tuna & Cucumber",
+      "categories": [
+        "Sandwiches"
+      ],
+      "kcal": "379",
+      "fat": "13.9",
+      "sat": "1.6",
+      "carbs": "43.3",
+      "sugars": "3.4",
+      "fibre": "3.5",
+      "protein": "18.5",
+      "salt": "1.42",
+      "averageWeightG": 180.1,
+      "price": 3.7,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK020333",
+      "name": "Avo, Olive & Toms Half Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "281",
+      "fat": "14.6",
+      "sat": "2.5",
+      "carbs": "28.7",
+      "sugars": "2.9",
+      "fibre": "4.4",
+      "protein": "6.5",
+      "salt": "0.82",
+      "averageWeightG": 118.38,
+      "price": 3.25,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Pine Nuts"
+      ]
+    },
+    {
+      "sku": "UK006207",
+      "name": "Avo, Olive & Toms Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "562",
+      "fat": "29.3",
+      "sat": "5.1",
+      "carbs": "57.3",
+      "sugars": "5.7",
+      "fibre": "8.8",
+      "protein": "13",
+      "salt": "1.65",
+      "averageWeightG": 236.75,
+      "price": 6.25,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Pine Nuts"
+      ]
+    },
+    {
+      "sku": "UK001040",
+      "name": "Brie, Tomato & Basil Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "439",
+      "fat": "15.2",
+      "sat": "10.1",
+      "carbs": "56.2",
+      "sugars": "3.6",
+      "fibre": "3.3",
+      "protein": "17.6",
+      "salt": "2.14",
+      "averageWeightG": 188.48,
+      "price": 5.65,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020342",
+      "name": "Chicken Caesar & Bacon Half Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "302",
+      "fat": "14.2",
+      "sat": "2.6",
+      "carbs": "27.2",
+      "sugars": "1.6",
+      "fibre": "2.2",
+      "protein": "15.2",
+      "salt": "1.35",
+      "averageWeightG": 109,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006823",
+      "name": "Chicken Caesar Bacon Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "604",
+      "fat": "28.4",
+      "sat": "5.2",
+      "carbs": "54.4",
+      "sugars": "3.2",
+      "fibre": "4.4",
+      "protein": "30.5",
+      "salt": "2.71",
+      "averageWeightG": 218,
+      "price": 6.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020023",
+      "name": "Chicken Salad Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "595",
+      "fat": "29.5",
+      "sat": "7.9",
+      "carbs": "57",
+      "sugars": "3.2",
+      "fibre": "2.8",
+      "protein": "24",
+      "salt": "2.98",
+      "averageWeightG": 224.5,
+      "price": 5.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK021285",
+      "name": "Chicken Satay Half Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "269",
+      "fat": "8.8",
+      "sat": "1.6",
+      "carbs": "32.4",
+      "sugars": "4.9",
+      "fibre": "2.2",
+      "protein": "13.8",
+      "salt": "1.67",
+      "averageWeightG": 120.25,
+      "price": 3.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK003546",
+      "name": "Italian Prosciutto Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "546",
+      "fat": "24.7",
+      "sat": "5.9",
+      "carbs": "54.3",
+      "sugars": "3.8",
+      "fibre": "4.8",
+      "protein": "24.1",
+      "salt": "3.59",
+      "averageWeightG": 220,
+      "price": 6.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020335",
+      "name": "Italian Prosciutto Half Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "274",
+      "fat": "12.4",
+      "sat": "3",
+      "carbs": "27.2",
+      "sugars": "1.9",
+      "fibre": "2.4",
+      "protein": "12.1",
+      "salt": "1.8",
+      "averageWeightG": 110.24,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005266",
+      "name": "Jambon Beurre",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "331",
+      "fat": "11.4",
+      "sat": "6.8",
+      "carbs": "40.3",
+      "sugars": "1.5",
+      "fibre": "3",
+      "protein": "15.4",
+      "salt": "2.54",
+      "averageWeightG": 147,
+      "price": 3.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020975",
+      "name": "Kimchi BLT Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "536",
+      "fat": "21.8",
+      "sat": "11.6",
+      "carbs": "58.2",
+      "sugars": "3.8",
+      "fibre": "3.7",
+      "protein": "24.7",
+      "salt": "3.64",
+      "averageWeightG": 247.88,
+      "price": 7.5,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK003816",
+      "name": "Pole & Line Caught Tuna Half Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "257",
+      "fat": "9.6",
+      "sat": "1.1",
+      "carbs": "29.4",
+      "sugars": "2",
+      "fibre": "1.3",
+      "protein": "12.6",
+      "salt": "1.23",
+      "averageWeightG": 115.16,
+      "price": 2.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK001921",
+      "name": "Posh Cheddar & Pickle Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "643",
+      "fat": "28.5",
+      "sat": "9.8",
+      "carbs": "71.9",
+      "sugars": "18.6",
+      "fibre": "6.6",
+      "protein": "21.4",
+      "salt": "2.82",
+      "averageWeightG": 231.62,
+      "price": 5.99,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK003824",
+      "name": "Posh Cheddar & Pickle Half Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "322",
+      "fat": "14.3",
+      "sat": "4.9",
+      "carbs": "36",
+      "sugars": "9.3",
+      "fibre": "3.3",
+      "protein": "10.7",
+      "salt": "1.41",
+      "averageWeightG": 116.7,
+      "price": 3.25,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020642",
+      "name": "Pret's Chicken Satay Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "537",
+      "fat": "17.6",
+      "sat": "3.2",
+      "carbs": "64.8",
+      "sugars": "9.9",
+      "fibre": "4.4",
+      "protein": "27.6",
+      "salt": "3.34",
+      "averageWeightG": 240.5,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020336",
+      "name": "Slim Ham &  Grevé Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "298",
+      "fat": "13",
+      "sat": "4.2",
+      "carbs": "28.7",
+      "sugars": "1.6",
+      "fibre": "1.7",
+      "protein": "15.7",
+      "salt": "1.93",
+      "averageWeightG": 111.25,
+      "price": 3.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Mustard"
+      ]
+    },
+    {
+      "sku": "UK020379",
+      "name": "Smoked Salmon, Egg Mayo & Avo Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "552",
+      "fat": "24.9",
+      "sat": "4.9",
+      "carbs": "54.6",
+      "sugars": "2.4",
+      "fibre": "5.7",
+      "protein": "24.6",
+      "salt": "2.86",
+      "averageWeightG": 239.62,
+      "price": 6.5,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK000962",
+      "name": "Tuna Mayo Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "515",
+      "fat": "19.3",
+      "sat": "2.2",
+      "carbs": "58.8",
+      "sugars": "4.1",
+      "fibre": "2.6",
+      "protein": "25.2",
+      "salt": "2.46",
+      "averageWeightG": 230.32,
+      "price": 5.5,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK000682",
+      "name": "Wiltshire Cured Ham & Grevé Baguette",
+      "categories": [
+        "Baguettes"
+      ],
+      "kcal": "596",
+      "fat": "25.9",
+      "sat": "8.3",
+      "carbs": "57.4",
+      "sugars": "3.2",
+      "fibre": "3.4",
+      "protein": "31.5",
+      "salt": "3.85",
+      "averageWeightG": 222.5,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Mustard"
+      ]
+    },
+    {
+      "sku": "UK001501",
+      "name": "Avo & Herb Wrap",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "500",
+      "fat": "30.5",
+      "sat": "6.7",
+      "carbs": "40.8",
+      "sugars": "3.9",
+      "fibre": "6.7",
+      "protein": "12.3",
+      "salt": "1.31",
+      "averageWeightG": 247.4,
+      "price": 5.8,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Pine Nuts"
+      ]
+    },
+    {
+      "sku": "UK020002",
+      "name": "Chicken Pesto & Rocket Wrap",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "516",
+      "fat": "29.4",
+      "sat": "3.6",
+      "carbs": "39",
+      "sugars": "3.2",
+      "fibre": "3.6",
+      "protein": "22",
+      "salt": "2.01",
+      "averageWeightG": 213.11,
+      "price": 5.5,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Pine Nuts"
+      ]
+    },
+    {
+      "sku": "UK020422",
+      "name": "Falafel, Avo & Chipotle Flatbread",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "505",
+      "fat": "20",
+      "sat": "4.3",
+      "carbs": "66.1",
+      "sugars": "15.4",
+      "fibre": "8.9",
+      "protein": "10.6",
+      "salt": "1.26",
+      "averageWeightG": 265.53,
+      "price": 6.15,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Wheat",
+        "Sulphites"
+      ]
+    },
+    {
+      "sku": "UK020919",
+      "name": "Falafel, Avo & Chipotle Half Flatbread",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "252",
+      "fat": "10",
+      "sat": "2.1",
+      "carbs": "33",
+      "sugars": "7.7",
+      "fibre": "4.4",
+      "protein": "5.3",
+      "salt": "0.63",
+      "averageWeightG": 132.76,
+      "price": 3.5,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Wheat",
+        "Sulphites"
+      ]
+    },
+    {
+      "sku": "UK007579",
+      "name": "Hoisin Duck Wrap",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "444",
+      "fat": "17.5",
+      "sat": "2.8",
+      "carbs": "48.6",
+      "sugars": "12.5",
+      "fibre": "3.8",
+      "protein": "21",
+      "salt": "2.61",
+      "averageWeightG": 222.7,
+      "price": 5.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK007506",
+      "name": "Humous & Chipotle Wrap",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "396",
+      "fat": "14",
+      "sat": "1.9",
+      "carbs": "50.3",
+      "sugars": "10.9",
+      "fibre": "10.1",
+      "protein": "12",
+      "salt": "1.28",
+      "averageWeightG": 246.03,
+      "price": 5.8,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame",
+        "Rye",
+        "Wheat"
+      ]
+    },
+    {
+      "sku": "UK020421",
+      "name": "Mediterranean Style Tuna Flatbread",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "508",
+      "fat": "23",
+      "sat": "2.7",
+      "carbs": "50.3",
+      "sugars": "7.9",
+      "fibre": "3.8",
+      "protein": "23",
+      "salt": "1.99",
+      "averageWeightG": 264.51,
+      "price": 5.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK020394",
+      "name": "Pret's Chicken Satay Wrap",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "461",
+      "fat": "19.2",
+      "sat": "3.5",
+      "carbs": "45.3",
+      "sugars": "8.8",
+      "fibre": "4.6",
+      "protein": "24.4",
+      "salt": "2.39",
+      "averageWeightG": 249.7,
+      "price": 5.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020424",
+      "name": "Shawarma Spiced Chicken Flatbread",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "446",
+      "fat": "10.3",
+      "sat": "1.7",
+      "carbs": "57.7",
+      "sugars": "14",
+      "fibre": "7.8",
+      "protein": "26.8",
+      "salt": "2.42",
+      "averageWeightG": 254.88,
+      "price": 6.15,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat"
+      ]
+    },
+    {
+      "sku": "UK020918",
+      "name": "Shawarma Spiced Chicken Half Flatbread",
+      "categories": [
+        "Wraps and flatbreads"
+      ],
+      "kcal": "223",
+      "fat": "5.1",
+      "sat": "0.9",
+      "carbs": "28.9",
+      "sugars": "7",
+      "fibre": "3.9",
+      "protein": "13.4",
+      "salt": "1.21",
+      "averageWeightG": 127.44,
+      "price": 3.5,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Sesame",
+        "Wheat"
+      ]
+    },
+    {
+      "sku": "UK020522",
+      "name": "Falafel, Avo & Slaw Rye Roll",
+      "categories": [
+        "Rye rolls"
+      ],
+      "kcal": "431",
+      "fat": "14",
+      "sat": "2.4",
+      "carbs": "61.3",
+      "sugars": "15",
+      "fibre": "8.5",
+      "protein": "10.6",
+      "salt": "1.83",
+      "averageWeightG": 211,
+      "price": 6.25,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Barley",
+        "Rye",
+        "Wheat"
+      ]
+    },
+    {
+      "sku": "UK008518",
+      "name": "New Yorker Rye Roll",
+      "categories": [
+        "Rye rolls"
+      ],
+      "kcal": "401",
+      "fat": "13.9",
+      "sat": "3.2",
+      "carbs": "48.8",
+      "sugars": "9.8",
+      "fibre": "4.5",
+      "protein": "17.8",
+      "salt": "1.86",
+      "averageWeightG": 177.5,
+      "price": 5.99,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Mustard"
+      ]
+    },
+    {
+      "sku": "UK008517",
+      "name": "Scandi Style Salmon Rye Roll",
+      "categories": [
+        "Rye rolls"
+      ],
+      "kcal": "392",
+      "fat": "15.7",
+      "sat": "1.9",
+      "carbs": "44.7",
+      "sugars": "7.3",
+      "fibre": "3.8",
+      "protein": "15.9",
+      "salt": "2.1",
+      "averageWeightG": 171.7,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Rye",
+        "Wheat",
+        "Egg",
+        "Fish",
+        "Mustard",
+        "Sulphites"
+      ]
+    },
+    {
+      "sku": "UK020521",
+      "name": "Scottish Smoked Salmon & Dill Rye Roll",
+      "categories": [
+        "Rye rolls"
+      ],
+      "kcal": "359",
+      "fat": "11.4",
+      "sat": "3",
+      "carbs": "44.4",
+      "sugars": "7.3",
+      "fibre": "3.8",
+      "protein": "18",
+      "salt": "2.32",
+      "averageWeightG": 169.66,
+      "price": 6.25,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Barley",
+        "Rye",
+        "Fish",
+        "Milk",
+        "Cereals Containing Gluten"
+      ]
+    },
+    {
+      "sku": "UK020267",
+      "name": "Soup Baguette with Butter",
+      "categories": [
+        "Rye rolls"
+      ],
+      "kcal": "241",
+      "fat": "7.3",
+      "sat": "4.7",
+      "carbs": "36.6",
+      "sugars": "1.5",
+      "fibre": "1.6",
+      "protein": "6.5",
+      "salt": "1.01",
+      "averageWeightG": 74,
+      "price": 1.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020038",
+      "name": "Soup Roll with Butter",
+      "categories": [
+        "Rye rolls"
+      ],
+      "kcal": "278",
+      "fat": "7.9",
+      "sat": "4.7",
+      "carbs": "42.4",
+      "sugars": "5.5",
+      "fibre": "3.4",
+      "protein": "7.6",
+      "salt": "0.91",
+      "averageWeightG": 95,
+      "price": 1.7,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Rye",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020900",
+      "name": "Butternut & Humous Mezze Bowl",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "379",
+      "fat": "15.4",
+      "sat": "2",
+      "carbs": "41",
+      "sugars": "11.7",
+      "fibre": "12.7",
+      "protein": "12.7",
+      "salt": "1.37",
+      "averageWeightG": 330.75,
+      "price": 8.3,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame"
+      ]
+    },
+    {
+      "sku": "UK006282",
+      "name": "Chef's Italian Chicken Salad",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "526",
+      "fat": "41.2",
+      "sat": "5.9",
+      "carbs": "12",
+      "sugars": "10.3",
+      "fibre": "3.2",
+      "protein": "25.3",
+      "salt": "2.3",
+      "averageWeightG": 312.7,
+      "price": 8.3,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Pistachio Nuts",
+        "Egg",
+        "Fish",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020979",
+      "name": "Chicken & Edamame Protein Pot",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "173",
+      "fat": "4.4",
+      "sat": "1",
+      "carbs": "6.6",
+      "sugars": "0.5",
+      "fibre": "2.5",
+      "protein": "25.5",
+      "salt": "1.17",
+      "averageWeightG": 125,
+      "price": 3.95,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK021061",
+      "name": "Chicken & Greens Protein Plate",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "285",
+      "fat": "9",
+      "sat": "2.1",
+      "carbs": "14.6",
+      "sugars": "9.2",
+      "fibre": "4.3",
+      "protein": "34.2",
+      "salt": "2.85",
+      "averageWeightG": 272.45,
+      "price": 8.95,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Egg",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020779",
+      "name": "Chipotle Chicken",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "709",
+      "fat": "32",
+      "sat": "8.9",
+      "carbs": "48.4",
+      "sugars": "13.6",
+      "fibre": "13.9",
+      "protein": "50.1",
+      "salt": "2.53",
+      "averageWeightG": 533.1,
+      "price": 12.95,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Milk",
+        "Sulphites"
+      ]
+    },
+    {
+      "sku": "UK005381",
+      "name": "Egg & Spinach Protein Pot",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "103",
+      "fat": "5.3",
+      "sat": "1.5",
+      "carbs": "2.3",
+      "sugars": "0.2",
+      "fibre": "0.3",
+      "protein": "11.4",
+      "salt": "0.57",
+      "averageWeightG": 98.6,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK020980",
+      "name": "Korean BBQ Tofu",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "449",
+      "fat": "15.4",
+      "sat": "10",
+      "carbs": "51",
+      "sugars": "21",
+      "fibre": "10.4",
+      "protein": "21.5",
+      "salt": "3.27",
+      "averageWeightG": 451,
+      "price": 11.95,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020977",
+      "name": "Miso Chicken Rice Bowl",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "385",
+      "fat": "14.5",
+      "sat": "1.8",
+      "carbs": "34.3",
+      "sugars": "17.5",
+      "fibre": "7.1",
+      "protein": "26.6",
+      "salt": "2.98",
+      "averageWeightG": 321.65,
+      "price": 8.3,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020776",
+      "name": "Miso Salmon",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "761",
+      "fat": "47.1",
+      "sat": "7.1",
+      "carbs": "43.4",
+      "sugars": "16.5",
+      "fibre": "12.8",
+      "protein": "36",
+      "salt": "3.16",
+      "averageWeightG": 510.4,
+      "price": 14.95,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Fish",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020974",
+      "name": "Roasted Salmon & Mango Protein Plate",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "402",
+      "fat": "26",
+      "sat": "5",
+      "carbs": "13.6",
+      "sugars": "9.4",
+      "fibre": "5",
+      "protein": "26",
+      "salt": "1.81",
+      "averageWeightG": 304.42,
+      "price": 10.45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Fish",
+        "Soya",
+        "Sulphites"
+      ]
+    },
+    {
+      "sku": "UK020778",
+      "name": "Shawarma Chicken",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "608",
+      "fat": "28.3",
+      "sat": "3.9",
+      "carbs": "32",
+      "sugars": "14",
+      "fibre": "13.7",
+      "protein": "49.7",
+      "salt": "2.49",
+      "averageWeightG": 451.8,
+      "price": 12.95,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Pistachio Nuts",
+        "Sesame",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK021060",
+      "name": "Smoked Salmon & Egg Protein Plate",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "413",
+      "fat": "27.3",
+      "sat": "5.6",
+      "carbs": "7.7",
+      "sugars": "1.9",
+      "fibre": "3.9",
+      "protein": "32",
+      "salt": "3.09",
+      "averageWeightG": 290,
+      "price": 9.45,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Egg",
+        "Fish",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK006483",
+      "name": "Tuna Nicoise Salad",
+      "categories": [
+        "Salads and protein pots"
+      ],
+      "kcal": "357",
+      "fat": "22.4",
+      "sat": "3.4",
+      "carbs": "8.5",
+      "sugars": "7",
+      "fibre": "1.5",
+      "protein": "29.6",
+      "salt": "1.97",
+      "averageWeightG": 299.14,
+      "price": 7.1,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Egg",
+        "Fish"
+      ]
+    },
+    {
+      "sku": "UK020429",
+      "name": "Kids Cheese & Tomato Triangles",
+      "categories": [
+        "Little Pret Stars"
+      ],
+      "kcal": "369",
+      "fat": "12.9",
+      "sat": "7.5",
+      "carbs": "43.2",
+      "sugars": "3.9",
+      "fibre": "4.1",
+      "protein": "17.9",
+      "salt": "1.25",
+      "averageWeightG": 174.48,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020370",
+      "name": "Kids' Ham Triangles",
+      "categories": [
+        "Little Pret Stars"
+      ],
+      "kcal": "288",
+      "fat": "7",
+      "sat": "3.8",
+      "carbs": "40.8",
+      "sugars": "2.2",
+      "fibre": "3.5",
+      "protein": "13.9",
+      "salt": "1.72",
+      "averageWeightG": 118,
+      "price": 3.1,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Barley",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020374",
+      "name": "Kids' Humous & Cucumber Bowl",
+      "categories": [
+        "Little Pret Stars"
+      ],
+      "kcal": "74",
+      "fat": "4.9",
+      "sat": "0.6",
+      "carbs": "3.4",
+      "sugars": "1",
+      "fibre": "2.6",
+      "protein": "2.7",
+      "salt": "0.17",
+      "averageWeightG": 89.4,
+      "price": 1.9,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Sesame"
+      ]
+    },
+    {
+      "sku": "UK001528",
+      "name": "Apple",
+      "categories": [
+        "Fruit"
+      ],
+      "kcal": "85",
+      "fat": "0.2",
+      "sat": "0",
+      "carbs": "18.9",
+      "sugars": "18.9",
+      "fibre": "2.9",
+      "protein": "0.6",
+      "salt": "0.02",
+      "averageWeightG": 160,
+      "price": 1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK000831",
+      "name": "Banana",
+      "categories": [
+        "Fruit"
+      ],
+      "kcal": "76",
+      "fat": "0.2",
+      "sat": "0.1",
+      "carbs": "17.2",
+      "sugars": "13.4",
+      "fibre": "1",
+      "protein": "0.9",
+      "salt": "0",
+      "averageWeightG": 74,
+      "price": 1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK020164",
+      "name": "Fruit Salad",
+      "categories": [
+        "Fruit"
+      ],
+      "kcal": "107",
+      "fat": "0.4",
+      "sat": "0",
+      "carbs": "22.7",
+      "sugars": "22.7",
+      "fibre": "3.1",
+      "protein": "1.3",
+      "salt": "0.02",
+      "averageWeightG": 225,
+      "price": 4.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK005229",
+      "name": "Mango & Lime",
+      "categories": [
+        "Fruit"
+      ],
+      "kcal": "72",
+      "fat": "0.9",
+      "sat": "0.1",
+      "carbs": "14.1",
+      "sugars": "13.8",
+      "fibre": "1.5",
+      "protein": "1",
+      "salt": "0.01",
+      "averageWeightG": 150,
+      "price": 3.99,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK020165",
+      "name": "Super Fruit",
+      "categories": [
+        "Fruit"
+      ],
+      "kcal": "88",
+      "fat": "1",
+      "sat": "0.2",
+      "carbs": "17",
+      "sugars": "16.7",
+      "fibre": "2.5",
+      "protein": "1.4",
+      "salt": "0.01",
+      "averageWeightG": 170,
+      "price": 4.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK006718",
+      "name": "Acai & Almond Butter Bowl",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "340",
+      "fat": "13.3",
+      "sat": "1.7",
+      "carbs": "43.4",
+      "sugars": "29.4",
+      "fibre": "6.8",
+      "protein": "8.4",
+      "salt": "0.22",
+      "averageWeightG": 186.64,
+      "price": 4.7,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Almonds",
+        "Oats"
+      ]
+    },
+    {
+      "sku": "UK006210",
+      "name": "Bircher Muesli",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "338",
+      "fat": "11.3",
+      "sat": "4.2",
+      "carbs": "43.2",
+      "sugars": "35.7",
+      "fibre": "3.3",
+      "protein": "14.2",
+      "salt": "0.28",
+      "averageWeightG": 213.8,
+      "price": 4.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Pistachio Nuts",
+        "Oats",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020510",
+      "name": "Blueberry Balance Bowl",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "318",
+      "fat": "13.6",
+      "sat": "9.3",
+      "carbs": "33.8",
+      "sugars": "20",
+      "fibre": "4.2",
+      "protein": "12.9",
+      "salt": "0.2",
+      "averageWeightG": 218,
+      "price": 4.99,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Oats",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005963",
+      "name": "Chocolate Moose",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "394",
+      "fat": "30.4",
+      "sat": "18.9",
+      "carbs": "25.4",
+      "sugars": "21.6",
+      "fibre": "1.8",
+      "protein": "3.8",
+      "salt": "0.07",
+      "averageWeightG": 100,
+      "price": 4.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK005773",
+      "name": "Five Berry Bowl",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "337",
+      "fat": "10.3",
+      "sat": "3.7",
+      "carbs": "45.3",
+      "sugars": "31.4",
+      "fibre": "4.8",
+      "protein": "13.2",
+      "salt": "0.34",
+      "averageWeightG": 206.6,
+      "price": 3.99,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Oats",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020129",
+      "name": "Mango & Banana Sunshine Bowl",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "347",
+      "fat": "14",
+      "sat": "8.2",
+      "carbs": "46.1",
+      "sugars": "29.5",
+      "fibre": "4.8",
+      "protein": "6.8",
+      "salt": "0.09",
+      "averageWeightG": 166.42,
+      "price": 4.9,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Oats"
+      ]
+    },
+    {
+      "sku": "UK020376",
+      "name": "The Big Apple Bowl",
+      "categories": [
+        "Sweet pots"
+      ],
+      "kcal": "306",
+      "fat": "8.8",
+      "sat": "3.4",
+      "carbs": "42.9",
+      "sugars": "33.1",
+      "fibre": "3.6",
+      "protein": "11.9",
+      "salt": "0.26",
+      "averageWeightG": 193.93,
+      "price": 4.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Oats",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK003339",
+      "name": "Choc Bar",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "380",
+      "fat": "23.5",
+      "sat": "14.1",
+      "carbs": "37.3",
+      "sugars": "22.7",
+      "fibre": "3.1",
+      "protein": "3.1",
+      "salt": "0.32",
+      "averageWeightG": 70,
+      "price": 3.5,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK004206",
+      "name": "Chocolate Brownie Bar",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "321",
+      "fat": "19.9",
+      "sat": "12.4",
+      "carbs": "30",
+      "sugars": "25.3",
+      "fibre": "2.8",
+      "protein": "4",
+      "salt": "0.1",
+      "averageWeightG": 65,
+      "price": 3.5,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK006446",
+      "name": "Chocolatey Coconut Bite",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "210",
+      "fat": "18",
+      "sat": "15.3",
+      "carbs": "7.8",
+      "sugars": "5.8",
+      "fibre": "4.8",
+      "protein": "1.7",
+      "salt": "0.06",
+      "averageWeightG": 34,
+      "price": 2.9,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK007204",
+      "name": "Dark Chocolate Salted Almonds",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "215",
+      "fat": "15.1",
+      "sat": "5.3",
+      "carbs": "12.4",
+      "sugars": "7.9",
+      "fibre": "3.5",
+      "protein": "5.5",
+      "salt": "0.2",
+      "averageWeightG": 38,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": [
+        "Almonds",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020420",
+      "name": "Dark Chocolate with Sea Salt",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "172",
+      "fat": "12.9",
+      "sat": "7.8",
+      "carbs": "9.5",
+      "sugars": "8.3",
+      "fibre": "3.9",
+      "protein": "2.7",
+      "salt": "0",
+      "averageWeightG": 30,
+      "price": 2.25,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK001813",
+      "name": "Love Bar",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "348",
+      "fat": "18",
+      "sat": "9",
+      "carbs": "41.2",
+      "sugars": "20.8",
+      "fibre": "3",
+      "protein": "3.8",
+      "salt": "0.4",
+      "averageWeightG": 70,
+      "price": 3.5,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Pistachio Nuts",
+        "Oats",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020531",
+      "name": "Love Stack",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "447",
+      "fat": "23.1",
+      "sat": "11.5",
+      "carbs": "52.9",
+      "sugars": "26.7",
+      "fibre": "3.9",
+      "protein": "4.9",
+      "salt": "0.52",
+      "averageWeightG": 90,
+      "price": 4.45,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Oats",
+        "Soya",
+        "Milk",
+        "Almonds",
+        "Pistachio Nuts",
+        "Nuts",
+        "Cereals Containing Gluten"
+      ]
+    },
+    {
+      "sku": "UK020419",
+      "name": "Milk Chocolate Bar",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "172",
+      "fat": "11.8",
+      "sat": "7.2",
+      "carbs": "13.3",
+      "sugars": "13",
+      "fibre": "1.6",
+      "protein": "2.3",
+      "salt": "0",
+      "averageWeightG": 30,
+      "price": 2.25,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK020533",
+      "name": "Nutty Pistachio & Almond Loaf Cake",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "604",
+      "fat": "45.5",
+      "sat": "17.9",
+      "carbs": "34.7",
+      "sugars": "32.8",
+      "fibre": "3.1",
+      "protein": "12.3",
+      "salt": "0.94",
+      "averageWeightG": 130,
+      "price": 3.99,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Pistachio Nuts",
+        "Egg",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK005559",
+      "name": "Popcorn Bar",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "176",
+      "fat": "8.9",
+      "sat": "5.1",
+      "carbs": "21.8",
+      "sugars": "12.5",
+      "fibre": "0.8",
+      "protein": "1.7",
+      "salt": "0.13",
+      "averageWeightG": 34,
+      "price": 3.5,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK001653",
+      "name": "Pret Bar",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "279",
+      "fat": "13.4",
+      "sat": "7",
+      "carbs": "34.6",
+      "sugars": "22.4",
+      "fibre": "2.6",
+      "protein": "4",
+      "salt": "0.11",
+      "averageWeightG": 64,
+      "price": 3.5,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Oats",
+        "Wheat",
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK020534",
+      "name": "Zingy Lemon & Almond Loaf Cake",
+      "categories": [
+        "Sweet treats"
+      ],
+      "kcal": "592",
+      "fat": "41.2",
+      "sat": "14.8",
+      "carbs": "44.7",
+      "sugars": "42.3",
+      "fibre": "2.6",
+      "protein": "9.4",
+      "salt": "0.85",
+      "averageWeightG": 135,
+      "price": 3.99,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Egg",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK003038",
+      "name": "Salt & Cider Vinegar Crisps",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "206",
+      "fat": "12.2",
+      "sat": "0.9",
+      "carbs": "21.3",
+      "sugars": "0.4",
+      "fibre": "1.7",
+      "protein": "1.9",
+      "salt": "0.65",
+      "averageWeightG": 40,
+      "price": 2.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK004735",
+      "name": "Cranberries in Coats",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "235",
+      "fat": "9.5",
+      "sat": "5.5",
+      "carbs": "36.5",
+      "sugars": "31",
+      "fibre": "0.8",
+      "protein": "0.5",
+      "salt": "0.1",
+      "averageWeightG": 50,
+      "price": 3.1,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK005993",
+      "name": "Dark Chocolate Corn Cakes",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "82",
+      "fat": "3.7",
+      "sat": "2.2",
+      "carbs": "10.4",
+      "sugars": "4.4",
+      "fibre": "0.8",
+      "protein": "1.2",
+      "salt": "0.01",
+      "averageWeightG": 17,
+      "price": 2.9,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK003039",
+      "name": "Mature Cheddar & Red Onion Crisps",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "210",
+      "fat": "12.7",
+      "sat": "1",
+      "carbs": "20.5",
+      "sugars": "1",
+      "fibre": "1.8",
+      "protein": "2.6",
+      "salt": "0.53",
+      "averageWeightG": 40,
+      "price": 2.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Milk"
+      ]
+    },
+    {
+      "sku": "UK006936",
+      "name": "Nuts, Fruit, Chocolate",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "196",
+      "fat": "12.8",
+      "sat": "2",
+      "carbs": "13.4",
+      "sugars": "10.1",
+      "fibre": "2.2",
+      "protein": "5.7",
+      "salt": "0.01",
+      "averageWeightG": 35,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Almonds",
+        "Milk",
+        "Soya"
+      ]
+    },
+    {
+      "sku": "UK005296",
+      "name": "Pret A Mango",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "118",
+      "fat": "0.4",
+      "sat": "0.1",
+      "carbs": "26.9",
+      "sugars": "17.5",
+      "fibre": "1.8",
+      "protein": "0.7",
+      "salt": "0",
+      "averageWeightG": 35,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK004165",
+      "name": "Pret's Gingerbread Biscuit Godfrey",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "200",
+      "fat": "6.3",
+      "sat": "2.8",
+      "carbs": "33.2",
+      "sugars": "17.5",
+      "fibre": "0.7",
+      "protein": "2.1",
+      "salt": "0.34",
+      "averageWeightG": 43,
+      "price": 2.5,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": [
+        "Wheat",
+        "Egg"
+      ]
+    },
+    {
+      "sku": "UK004019",
+      "name": "Salted Popcorn",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "136",
+      "fat": "6.9",
+      "sat": "0.5",
+      "carbs": "14.2",
+      "sugars": "0.1",
+      "fibre": "3.5",
+      "protein": "2.5",
+      "salt": "0.44",
+      "averageWeightG": 29,
+      "price": 2.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK003037",
+      "name": "Sea Salt Crisps",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "213",
+      "fat": "12.4",
+      "sat": "1.4",
+      "carbs": "22",
+      "sugars": "0.2",
+      "fibre": "1.7",
+      "protein": "2.4",
+      "salt": "0.36",
+      "averageWeightG": 40,
+      "price": 2.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK006813",
+      "name": "Smoky Chipotle Crisps",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "208",
+      "fat": "12.4",
+      "sat": "0.9",
+      "carbs": "21",
+      "sugars": "0.9",
+      "fibre": "1.9",
+      "protein": "2.2",
+      "salt": "0.39",
+      "averageWeightG": 40,
+      "price": 2.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK004255",
+      "name": "Sweet & Salt Popcorn",
+      "categories": [
+        "Snacks"
+      ],
+      "kcal": "157",
+      "fat": "9.3",
+      "sat": "0.7",
+      "carbs": "15.2",
+      "sugars": "5.4",
+      "fibre": "2.4",
+      "protein": "1.7",
+      "salt": "0.24",
+      "averageWeightG": 30,
+      "price": 2.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK005781",
+      "name": "Apple Juice",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "126",
+      "fat": "0.2",
+      "sat": "0.1",
+      "carbs": "30.7",
+      "sugars": "28.2",
+      "fibre": "0",
+      "protein": "0.3",
+      "salt": "0",
+      "averageWeightG": 250,
+      "price": 3.6,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK001022",
+      "name": "Coke Bottle",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "212",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "53",
+      "sugars": "53",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 500,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK000823",
+      "name": "Coke Can",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "140",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "35",
+      "sugars": "35",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 2.4,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK006710",
+      "name": "Coke Zero Bottle",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 500,
+      "price": 3,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK006676",
+      "name": "Coke Zero Can",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 2.3,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK006363",
+      "name": "Cranberry, Raspberry & Pomegranate Pret Still",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "115",
+      "fat": "1.1",
+      "sat": "0.3",
+      "carbs": "24.5",
+      "sugars": "24.5",
+      "fibre": "2.6",
+      "protein": "0.5",
+      "salt": "0",
+      "averageWeightG": 511,
+      "price": 3.6,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK001286",
+      "name": "Diet Coke Bottle",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 500,
+      "price": 3,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK000783",
+      "name": "Diet Coke Can",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 2.3,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK008509",
+      "name": "Easy Greens",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "35",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "8.8",
+      "sugars": "7",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0.11",
+      "averageWeightG": 200,
+      "price": 5.8,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK007681",
+      "name": "Ginger Kombucha",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "45",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "11.2",
+      "sugars": "11.2",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 250,
+      "price": 3.8,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK005840",
+      "name": "Ginger Shot",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "55",
+      "fat": "0.3",
+      "sat": "0.1",
+      "carbs": "11.4",
+      "sugars": "9.7",
+      "fibre": "1.8",
+      "protein": "0.8",
+      "salt": "0.11",
+      "averageWeightG": 110,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK006608",
+      "name": "Hot Shot",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "27",
+      "fat": "0.2",
+      "sat": "0",
+      "carbs": "5.2",
+      "sugars": "3.7",
+      "fibre": "1.4",
+      "protein": "0.4",
+      "salt": "0.02",
+      "averageWeightG": 110,
+      "price": 3.7,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK005783",
+      "name": "Orange Juice",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "63",
+      "fat": "0.3",
+      "sat": "0",
+      "carbs": "13.5",
+      "sugars": "12.6",
+      "fibre": "0.7",
+      "protein": "1.2",
+      "salt": "0.01",
+      "averageWeightG": 150,
+      "price": 3.6,
+      "vegetarian": true,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020923",
+      "name": "poppi Lemon Lime",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "26",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "4.9",
+      "sugars": "4.6",
+      "fibre": "3",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020925",
+      "name": "poppi Orange",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "26",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "4.9",
+      "sugars": "4.3",
+      "fibre": "3",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020924",
+      "name": "poppi Raspberry Rose",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "27",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "4.9",
+      "sugars": "3.6",
+      "fibre": "3.6",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020909",
+      "name": "poppi Strawberry & Lemon",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "27",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "5.3",
+      "sugars": "4.3",
+      "fibre": "3",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020922",
+      "name": "poppi Wild Berry",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "24",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "4.6",
+      "sugars": "4.3",
+      "fibre": "3",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.75,
+      "vegetarian": false,
+      "vegan": false,
+      "allergens": []
+    },
+    {
+      "sku": "UK020350",
+      "name": "Pret Sparkling Water 500ml",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 500,
+      "price": 2.2,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK020347",
+      "name": "Pret Still Water 500ml",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0.07",
+      "averageWeightG": 500,
+      "price": 2.2,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK020348",
+      "name": "Pret Still Water 750ml",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "0",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0.1",
+      "averageWeightG": 750,
+      "price": 2.99,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK007676",
+      "name": "Pret's Rhubarb Lemonade",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "107",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "26.7",
+      "sugars": "26.7",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0.03",
+      "averageWeightG": 330,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK007673",
+      "name": "Pret's Sparkling Apple Fizz",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "104",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "26.1",
+      "sugars": "25.1",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0.13",
+      "averageWeightG": 330,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK007674",
+      "name": "Pret's Sparkling Ginger Beer",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "119",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "29.7",
+      "sugars": "29.4",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK007675",
+      "name": "Pret's Sparkling Grape & Elderflower",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "98",
+      "fat": "0",
+      "sat": "0",
+      "carbs": "24.4",
+      "sugars": "24.4",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "averageWeightG": 330,
+      "price": 3.1,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    },
+    {
+      "sku": "UK005788",
+      "name": "Vitamin Volcano",
+      "categories": [
+        "Cold drinks"
+      ],
+      "kcal": "137",
+      "fat": "0.2",
+      "sat": "0.1",
+      "carbs": "30.5",
+      "sugars": "29.5",
+      "fibre": "3.2",
+      "protein": "1.5",
+      "salt": "0.18",
+      "averageWeightG": 250,
+      "price": 4.3,
+      "vegetarian": true,
+      "vegan": true,
+      "allergens": []
+    }
+  ]
+}

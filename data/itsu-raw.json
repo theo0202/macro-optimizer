@@ -1,0 +1,3035 @@
+{
+  "_meta": {
+    "source": "itsu.com (__NUXT__-Daten der Produktseiten)",
+    "crawled": "2026-06-10",
+    "note": "Rohdaten, Werte pro Serving als Strings wie auf der Website. Re-Crawl: node itsu-crawl.js"
+  },
+  "categories": [
+    "healthy soups",
+    "gyoza & bao",
+    "rice'bowls",
+    "hot noodles",
+    "sushi & poké",
+    "desserts & snacks",
+    "breakfast ",
+    "cold drinks",
+    "hot & iced drinks"
+  ],
+  "items": [
+    {
+      "name": "miso soup",
+      "url": "/menu/soups/hot-miso-soup-120925/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "32",
+      "fat": "1.2",
+      "fat_saturated": "0.2",
+      "carbs": "3.7",
+      "sugars": "1.1",
+      "fibre": "1.2",
+      "protein": "2.8",
+      "salt": "1.8",
+      "allergens": [
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Crustaceans",
+        "Molluscs",
+        "Celery",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "spicy miso soup",
+      "url": "/menu/soups/hot-spicy-miso-soup-120925/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "72",
+      "fat": "2",
+      "fat_saturated": "0.5",
+      "carbs": "9.3",
+      "sugars": "3.5",
+      "fibre": "1",
+      "protein": "4.4",
+      "salt": "3.15",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Crustaceans",
+        "Molluscs",
+        "Celery"
+      ]
+    },
+    {
+      "name": "loaded chicken miso soup",
+      "url": "/menu/soups/hot-chargrilled-chicken-miso-soup-120925/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "137",
+      "fat": "3.9",
+      "fat_saturated": "1",
+      "carbs": "3.7",
+      "sugars": "1.1",
+      "fibre": "1.2",
+      "protein": "22.9",
+      "salt": "2.983",
+      "allergens": [
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Crustaceans",
+        "Molluscs",
+        "Celery",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "king prawn miso soup",
+      "url": "/menu/soups/hot-king-prawn-miso-soup-120925/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "101",
+      "fat": "1.8",
+      "fat_saturated": "0.3",
+      "carbs": "4.7",
+      "sugars": "1.4",
+      "fibre": "1.8",
+      "protein": "18",
+      "salt": "3.625",
+      "allergens": [
+        "Crustaceans",
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Molluscs",
+        "Celery",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "detox miso noodle soup",
+      "url": "/menu/soups/hot-detox-miso-noodle-soup-120925/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "190",
+      "fat": "3.1",
+      "fat_saturated": "0.4",
+      "carbs": "31.5",
+      "sugars": "3.5",
+      "fibre": "4.3",
+      "protein": "6.9",
+      "salt": "3.235",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Crustaceans",
+        "Molluscs",
+        "Celery",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "chicken noodle soup",
+      "url": "/menu/soups/hot-chicken-noodle-soup-120925/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "285",
+      "fat": "8.3",
+      "fat_saturated": "1.6",
+      "carbs": "34.6",
+      "sugars": "2",
+      "fibre": "4.8",
+      "protein": "15.6",
+      "salt": "2.695",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "famous coconut chicken soup",
+      "url": "/menu/soups/hot-soup-coconut-chicken-270326/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "379",
+      "fat": "20.8",
+      "fat_saturated": "12.9",
+      "carbs": "28.2",
+      "sugars": "6.8",
+      "fibre": "5.5",
+      "protein": "17",
+      "salt": "2.875",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "veggie'balls & coconut soup",
+      "url": "/menu/soups/hot-veggie-meatball-and-coconut-soup-270326/",
+      "categories": [
+        "healthy soups"
+      ],
+      "calories": "421",
+      "fat": "21.3",
+      "fat_saturated": "13.6",
+      "carbs": "41.5",
+      "sugars": "11.4",
+      "fibre": "9.6",
+      "protein": "10.9",
+      "salt": "3.35",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "chicken & spring onion gyoza",
+      "url": "/menu/gyoza-and-bao/hot-side-chicken-gyoza/",
+      "categories": [
+        "gyoza & bao"
+      ],
+      "calories": "251",
+      "fat": "7",
+      "fat_saturated": "1.9",
+      "carbs": "32.6",
+      "sugars": "4",
+      "fibre": "2.1",
+      "protein": "13.2",
+      "salt": "1.3",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Fish",
+        "Crustaceans",
+        "Molluscs",
+        "Egg",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "vegetable fusion gyoza",
+      "url": "/menu/gyoza-and-bao/hot-side-vegetable-gyoza/",
+      "categories": [
+        "gyoza & bao"
+      ],
+      "calories": "234",
+      "fat": "4.1",
+      "fat_saturated": "0.6",
+      "carbs": "39.5",
+      "sugars": "5.1",
+      "fibre": "4.4",
+      "protein": "7.7",
+      "salt": "2.415",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Fish",
+        "Crustaceans",
+        "Molluscs",
+        "Egg",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "hoisin duck bao buns",
+      "url": "/hot-side-hoisin-duck-bao-buns-090126/",
+      "categories": [
+        "gyoza & bao"
+      ],
+      "calories": "302",
+      "fat": "5.9",
+      "fat_saturated": "1.5",
+      "carbs": "48.6",
+      "sugars": "10.7",
+      "fibre": "3.2",
+      "protein": "11.6",
+      "salt": "1.485",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya",
+        "Sulphur Dioxide"
+      ],
+      "may_contain": [
+        "Fish",
+        "Crustaceans",
+        "Molluscs",
+        "Egg",
+        "Celery",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "Thai salmon curry",
+      "url": "/menu/rice-bowls/hot-salmon-thai-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "736",
+      "fat": "37.84",
+      "fat_saturated": "15.9",
+      "carbs": "62.6",
+      "sugars": "6.9",
+      "fibre": "12.66",
+      "protein": "29.82",
+      "salt": "2.403",
+      "allergens": [
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "Thai king prawn curry",
+      "url": "/menu/rice-bowls/hot-king-prawns-thai-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "623",
+      "fat": "26.3",
+      "fat_saturated": "15.75",
+      "carbs": "57.25",
+      "sugars": "6.3",
+      "fibre": "13.79",
+      "protein": "32.21",
+      "salt": "2.49",
+      "allergens": [
+        "Sesame",
+        "Crustaceans",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "Thai chicken curry",
+      "url": "/menu/rice-bowls/hot-chicken-thai-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "657",
+      "fat": "33.6",
+      "fat_saturated": "18.2",
+      "carbs": "44.7",
+      "sugars": "3.1",
+      "fibre": "12.1",
+      "protein": "37.7",
+      "salt": "4.233",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little Thai chicken curry",
+      "url": "/menu/rice-bowls/hot-midi-chicken-thai-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "335",
+      "fat": "14.2",
+      "fat_saturated": "8.6",
+      "carbs": "30",
+      "sugars": "2.4",
+      "fibre": "6.3",
+      "protein": "18.5",
+      "salt": "2.168",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "Thai veggie'balls curry",
+      "url": "/menu/rice-bowls/hot-rice-bowl-veggie-balls-thai-270326/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "519",
+      "fat": "35.3",
+      "fat_saturated": "21.8",
+      "carbs": "67.7",
+      "sugars": "11.9",
+      "fibre": "22.9",
+      "protein": "25",
+      "salt": "5.42",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little Thai veggie'balls curry",
+      "url": "/menu/rice-bowls/hot-midi-thai-veggie-ball-rice-bowl-270326/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "378",
+      "fat": "15.2",
+      "fat_saturated": "8.6",
+      "carbs": "42.1",
+      "sugars": "6.8",
+      "fibre": "11",
+      "protein": "12.5",
+      "salt": "2.375",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "grilled katsu chicken curry",
+      "url": "/menu/rice-bowls/hot-rice-bowl-klean-katsu-chicken-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "507",
+      "fat": "17.8",
+      "fat_saturated": "7.9",
+      "carbs": "51.7",
+      "sugars": "2.8",
+      "fibre": "9.2",
+      "protein": "30.2",
+      "salt": "3.925",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little grilled katsu chicken curry",
+      "url": "/menu/rice-bowls/hot-midi-klean-katsu-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "263",
+      "fat": "6.6",
+      "fat_saturated": "2.7",
+      "carbs": "30.2",
+      "sugars": "1.2",
+      "fibre": "5",
+      "protein": "18.2",
+      "salt": "2.21",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "double chicken teriyaki",
+      "url": "/menu/rice-bowls/hot-rice-bowl-double-chicken-teriyaki-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "625",
+      "fat": "19.7",
+      "fat_saturated": "4.4",
+      "carbs": "56",
+      "sugars": "11.4",
+      "fibre": "10.6",
+      "protein": "50.9",
+      "salt": "3.668",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "chicken teriyaki",
+      "url": "/menu/rice-bowls/hot-rice-bowl-chicken-teriyaki-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "485",
+      "fat": "13.2",
+      "fat_saturated": "2.7",
+      "carbs": "56",
+      "sugars": "11.4",
+      "fibre": "10.2",
+      "protein": "30.3",
+      "salt": "2.918",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little chicken teriyaki",
+      "url": "/menu/rice-bowls/hot-midi-chicken-teriyaki-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "252",
+      "fat": "4.6",
+      "fat_saturated": "0.9",
+      "carbs": "33.6",
+      "sugars": "5.1",
+      "fibre": "5.9",
+      "protein": "15.9",
+      "salt": "1.723",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "spicy chicken teriyaki",
+      "url": "/menu/rice-bowls/hot-spicy-chicken-teriyaki-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "525",
+      "fat": "14.5",
+      "fat_saturated": "2.8",
+      "carbs": "61.9",
+      "sugars": "15.2",
+      "fibre": "9.4",
+      "protein": "32.1",
+      "salt": "4.043",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little spicy chicken teriyaki",
+      "url": "/menu/rice-bowls/hot-midi-spicy-chicken-teriyaki-rice-bowl-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "292",
+      "fat": "5.1",
+      "fat_saturated": "1",
+      "carbs": "40.7",
+      "sugars": "8",
+      "fibre": "5.9",
+      "protein": "17.5",
+      "salt": "1.723",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "veggie'balls teriyaki",
+      "url": "/menu/rice-bowls/hot-rice-bowl-veggie-balls-teriyaki-270326/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "521",
+      "fat": "14.8",
+      "fat_saturated": "1.8",
+      "carbs": "63.7",
+      "sugars": "18.8",
+      "fibre": "20.5",
+      "protein": "22.3",
+      "salt": "2.8",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little veggie'balls teriyaki",
+      "url": "/menu/rice-bowls/hot-midi-veggie-balls-teriyaki-rice-bowl-270326/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "294",
+      "fat": "7.6",
+      "fat_saturated": "1.2",
+      "carbs": "39.7",
+      "sugars": "8.7",
+      "fibre": "10.3",
+      "protein": "7.9",
+      "salt": "2.325",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "little rice & greens",
+      "url": "/menu/rice-bowls/hot-paradise-rice-with-greens-120925/",
+      "categories": [
+        "rice'bowls"
+      ],
+      "calories": "225",
+      "fat": "4.4",
+      "fat_saturated": "0.7",
+      "carbs": "37.5",
+      "sugars": "0.2",
+      "fibre": "3.2",
+      "protein": "7.4",
+      "salt": "0.203",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "Vitality glass noodle'bowl",
+      "url": "/menu/noodles/hot-chicken-vitality-bowl-270326/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "458",
+      "fat": "16.7",
+      "fat_saturated": "2.7",
+      "carbs": "65.8",
+      "sugars": "6.2",
+      "fibre": "4.3",
+      "protein": "10.1",
+      "salt": "4.95",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "chicken gyoza noodle'bowl",
+      "url": "/menu/noodles/hot-udon-bowl-chicken-gyoza-270326/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "468",
+      "fat": "10",
+      "fat_saturated": "1.9",
+      "carbs": "72.2",
+      "sugars": "19.8",
+      "fibre": "8.1",
+      "protein": "18.1",
+      "salt": "3.978",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "chilli chicken gyoza noodle'bowl",
+      "url": "/menu/noodles/hot-chicken-gyoza-udon-with-ssamjang-270326/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "507",
+      "fat": "10.6",
+      "fat_saturated": "2",
+      "carbs": "79.4",
+      "sugars": "24",
+      "fibre": "8.1",
+      "protein": "19.7",
+      "salt": "4.228",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Celery",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "veggie gyoza noodle'bowl",
+      "url": "/menu/noodles/hot-udon-bowl-veggie-gyoza-270326/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "489",
+      "fat": "11.1",
+      "fat_saturated": "1.2",
+      "carbs": "74.5",
+      "sugars": "16.5",
+      "fibre": "11.7",
+      "protein": "17.1",
+      "salt": "5.335",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "katsu curry noodles",
+      "url": "/menu/noodles/hot-stirfry-japanese-curry-120925/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "451",
+      "fat": "16.4",
+      "fat_saturated": "10.3",
+      "carbs": "57.5",
+      "sugars": "6",
+      "fibre": "10.9",
+      "protein": "13.1",
+      "salt": "2.365",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "Korean spicy noodles",
+      "url": "/menu/noodles/hot-stirfry-korean-noodles-120925/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "495",
+      "fat": "16",
+      "fat_saturated": "10.7",
+      "carbs": "66.8",
+      "sugars": "11.4",
+      "fibre": "12.2",
+      "protein": "14.6",
+      "salt": "4.418",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Celery",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "Thai noodles",
+      "url": "/menu/noodles/hot-stirfry-thai-120925/",
+      "categories": [
+        "hot noodles"
+      ],
+      "calories": "558",
+      "fat": "26.6",
+      "fat_saturated": "18.7",
+      "carbs": "58",
+      "sugars": "7.3",
+      "fibre": "11.8",
+      "protein": "15.7",
+      "salt": "2.55",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "tuna tartare poké",
+      "url": "/poke-tuna-poke-090126/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "684",
+      "fat": "12.8",
+      "fat_saturated": "2.9",
+      "carbs": "107.7",
+      "sugars": "22.2",
+      "fibre": "9.5",
+      "protein": "25.8",
+      "salt": "5.21",
+      "allergens": [
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "best of itsu",
+      "url": "/menu/sushi-and-poke/sushi-best-of-itsu-large-141125/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "510",
+      "fat": "12.7",
+      "fat_saturated": "2.6",
+      "carbs": "71.9",
+      "sugars": "13",
+      "fibre": "5.9",
+      "protein": "21.3",
+      "salt": "3.883",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Crustaceans",
+        "Egg",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Milk",
+        "Nuts",
+        "Molluscs",
+        "Celery",
+        "Lupin"
+      ]
+    },
+    {
+      "name": "tuna & salmon sushi",
+      "url": "/menu/sushi-and-poke/sushi-salmon-and-tuna-sushi-midi-270326/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "269",
+      "fat": "4.7",
+      "fat_saturated": "0.9",
+      "carbs": "38.8",
+      "sugars": "5.9",
+      "fibre": "2.7",
+      "protein": "14.9",
+      "salt": "2.143",
+      "allergens": [
+        "Gluten",
+        "Fish",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "tuna & salmon sashimi",
+      "url": "/menu/sushi-and-poke/sushi-salmon-and-tuna-sashimi-midi-270326/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "212",
+      "fat": "10.4",
+      "fat_saturated": "1.6",
+      "carbs": "3.7",
+      "sugars": "1.7",
+      "fibre": "5.4",
+      "protein": "23.6",
+      "salt": "1.655",
+      "allergens": [
+        "Gluten",
+        "Fish",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Crustaceans",
+        "Molluscs"
+      ]
+    },
+    {
+      "name": "spicy tuna dragon rolls",
+      "url": "/menu/sushi-and-poke/sushi-tuna-dragon-roll-120925/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "482",
+      "fat": "18.2",
+      "fat_saturated": "5.6",
+      "carbs": "59",
+      "sugars": "16",
+      "fibre": "6.5",
+      "protein": "30.2",
+      "salt": "2.553",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "salmon & avo dragon rolls ",
+      "url": "/menu/sushi-and-poke/salmon-avo-dragon-rolls/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "515",
+      "fat": "24.6",
+      "fat_saturated": "5.8",
+      "carbs": "53.5",
+      "sugars": "14.5",
+      "fibre": "5.5",
+      "protein": "13.6",
+      "salt": "2.865",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Egg",
+        "Soya"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "super salmon light",
+      "url": "/sushi-super-salmon-light-midi-141125/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "431",
+      "fat": "14.7",
+      "fat_saturated": "2.7",
+      "carbs": "53",
+      "sugars": "8.1",
+      "fibre": "4.6",
+      "protein": "17.6",
+      "salt": "2.765",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "avo baby rolls",
+      "url": "/menu/sushi-and-salads/sushi-avo-baby-rolls-midi/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "346",
+      "fat": "3.3",
+      "fat_saturated": "0.7",
+      "carbs": "71.3",
+      "sugars": "8.4",
+      "fibre": "3.3",
+      "protein": "6.2",
+      "salt": "1.398",
+      "allergens": [
+        "Gluten",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "sushi festival",
+      "url": "/menu/sushi-and-salads/sushi-sushi-festival-midi/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "510",
+      "fat": "8.8",
+      "fat_saturated": "1.6",
+      "carbs": "87.2",
+      "sugars": "3.9",
+      "fibre": "2.4",
+      "protein": "19.1",
+      "salt": "1.885",
+      "allergens": [
+        "Gluten",
+        "Fish",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "California rolls",
+      "url": "/sushi-california-rolls-midi-141125/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "336",
+      "fat": "16.1",
+      "fat_saturated": "2.4",
+      "carbs": "39.8",
+      "sugars": "5.6",
+      "fibre": "3.2",
+      "protein": "6.5",
+      "salt": "2.025",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Crustaceans",
+        "Egg",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Milk",
+        "Nuts",
+        "Molluscs",
+        "Celery",
+        "Lupin"
+      ]
+    },
+    {
+      "name": "salmon full house",
+      "url": "/sushi-salmon-full-house-large-141125/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "626",
+      "fat": "15.5",
+      "fat_saturated": "2.6",
+      "carbs": "87.4",
+      "sugars": "11.8",
+      "fibre": "6.4",
+      "protein": "31",
+      "salt": "4.923",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "itsu classics",
+      "url": "/sushi-itsu-classics-large-141125/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "591",
+      "fat": "19.3",
+      "fat_saturated": "3.3",
+      "carbs": "81.9",
+      "sugars": "10",
+      "fibre": "5.5",
+      "protein": "19.7",
+      "salt": "3.885",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Crustaceans",
+        "Egg",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Milk",
+        "Nuts",
+        "Molluscs",
+        "Celery",
+        "Lupin"
+      ]
+    },
+    {
+      "name": "salmon tartare poké",
+      "url": "/menu/sushi-and-poke/poke-salmon-tartare-poke-270326/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "545",
+      "fat": "13",
+      "fat_saturated": "2.1",
+      "carbs": "81.5",
+      "sugars": "4.3",
+      "fibre": "8.9",
+      "protein": "21.2",
+      "salt": "4.43",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Crustaceans",
+        "Molluscs",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "chargrilled chicken poké",
+      "url": "/menu/sushi-and-salads/poke-chargrilled-chicken-poke-300525/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "641",
+      "fat": "15.9",
+      "fat_saturated": "3.8",
+      "carbs": "90.7",
+      "sugars": "5.6",
+      "fibre": "7.3",
+      "protein": "29.7",
+      "salt": "3.625",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "poached salmon poké",
+      "url": "/menu/sushi-and-salads/poke-poached-salmon-poke-300525/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "571",
+      "fat": "18.2",
+      "fat_saturated": "3.3",
+      "carbs": "73.4",
+      "sugars": "6",
+      "fibre": "6.4",
+      "protein": "25.3",
+      "salt": "2.62",
+      "allergens": [
+        "Sesame",
+        "Fish",
+        "Soya"
+      ],
+      "may_contain": [
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "edamame",
+      "url": "/menu/sushi-and-poke/side-edamame-cup/",
+      "categories": [
+        "sushi & poké"
+      ],
+      "calories": "132",
+      "fat": "4.9",
+      "fat_saturated": "0.6",
+      "carbs": "3.4",
+      "sugars": "0.2",
+      "fibre": "17.4",
+      "protein": "10",
+      "salt": "2.35",
+      "allergens": [
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "Japanese prawn crackers",
+      "url": "/menu/desserts-and-snacks/snacks-katsu-prawn-crackers/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "97",
+      "fat": "5.3",
+      "fat_saturated": "0.4",
+      "carbs": "12",
+      "sugars": "1.9",
+      "fibre": "0.5",
+      "protein": "0.5",
+      "salt": "0.58",
+      "allergens": [
+        "Milk",
+        "Crustaceans"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "original prawn crackers",
+      "url": "/menu/desserts-and-snacks/snacks-original-prawn-crackers/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "96",
+      "fat": "5",
+      "fat_saturated": "0.4",
+      "carbs": "12",
+      "sugars": "1.3",
+      "fibre": "0.1",
+      "protein": "0.2",
+      "salt": "0.47",
+      "allergens": [
+        "Gluten",
+        "Crustaceans",
+        "Soya"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "Thai prawn crackers",
+      "url": "/menu/desserts-and-snacks/snacks-thai-prawn-crackers/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "97",
+      "fat": "5.2",
+      "fat_saturated": "0.4",
+      "carbs": "12",
+      "sugars": "1.7",
+      "fibre": "0.1",
+      "protein": "0.2",
+      "salt": "0.4",
+      "allergens": [
+        "Gluten",
+        "Crustaceans",
+        "Soya"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "Chinese prawn crackers ",
+      "url": "/menu/desserts-and-snacks/snacks-chinese-prawn-crackers/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "97",
+      "fat": "5.3",
+      "fat_saturated": "0.4",
+      "carbs": "12",
+      "sugars": "1.8",
+      "fibre": "0.2",
+      "protein": "0.2",
+      "salt": "0.46",
+      "allergens": [
+        "Crustaceans"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "crispy seaweed thins sea salt",
+      "url": "/menu/desserts-and-snacks/snacks-sea-salt-seaweed-thins/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "23",
+      "fat": "1.5",
+      "fat_saturated": "0.2",
+      "carbs": "0.4",
+      "sugars": "0.1",
+      "fibre": "1.2",
+      "protein": "1.4",
+      "salt": "0.24",
+      "allergens": [],
+      "may_contain": [
+        "Sesame",
+        "Soya",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "crispy seaweed thins sweet soy",
+      "url": "/menu/desserts-and-snacks/snacks-sweet-soy-seaweed-thins/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "24",
+      "fat": "1.6",
+      "fat_saturated": "0.3",
+      "carbs": "0.5",
+      "sugars": "0.1",
+      "fibre": "1.1",
+      "protein": "1.3",
+      "salt": "0.14",
+      "allergens": [
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": [
+        "Mustard"
+      ]
+    },
+    {
+      "name": "crispy seaweed thins wasabi",
+      "url": "/menu/desserts-and-snacks/snacks-wasabi-seaweed-thins/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "22",
+      "fat": "1.4",
+      "fat_saturated": "0.2",
+      "carbs": "0.6",
+      "sugars": "0",
+      "fibre": "0.7",
+      "protein": "1.6",
+      "salt": "0.325",
+      "allergens": [
+        "Sesame",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Soya"
+      ]
+    },
+    {
+      "name": "milk chocolate corn cakes",
+      "url": "/menu/desserts-and-snacks/snacks-milk-chocolate-corn-cakes/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "166",
+      "fat": "7.2",
+      "fat_saturated": "4.4",
+      "carbs": "22",
+      "sugars": "10.4",
+      "fibre": "0.6",
+      "protein": "2.4",
+      "salt": "0.06",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Nuts"
+      ]
+    },
+    {
+      "name": "dark chocolate corn cakes",
+      "url": "/menu/desserts-and-snacks/snacks-dark-chocolate-corn-cakes/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "168",
+      "fat": "7.9",
+      "fat_saturated": "4.8",
+      "carbs": "22",
+      "sugars": "10.6",
+      "fibre": "1.4",
+      "protein": "2.2",
+      "salt": "0.04",
+      "allergens": [
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Nuts"
+      ]
+    },
+    {
+      "name": "salted caramel corn cakes",
+      "url": "/menu/desserts-and-snacks/snacks-salted-caramel-corn-cakes/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "166",
+      "fat": "7.4",
+      "fat_saturated": "4.4",
+      "carbs": "22",
+      "sugars": "10.4",
+      "fibre": "0.6",
+      "protein": "2.2",
+      "salt": "0.36",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Nuts"
+      ]
+    },
+    {
+      "name": "about half a mango",
+      "url": "/menu/desserts-and-snacks/snacks-about-half-a-mango-160925/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "140",
+      "fat": "0.4",
+      "fat_saturated": "0.2",
+      "carbs": "31",
+      "sugars": "24",
+      "fibre": "3.9",
+      "protein": "1.2",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": [
+        "Nuts",
+        "Peanuts",
+        "Sesame"
+      ]
+    },
+    {
+      "name": "lemon baked pistachios",
+      "url": "/menu/desserts-and-snacks/snacks-lemon-baked-pistachios/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "233",
+      "fat": "19",
+      "fat_saturated": "2.4",
+      "carbs": "2.2",
+      "sugars": "2.2",
+      "fibre": "6.8",
+      "protein": "10",
+      "salt": "1.355",
+      "allergens": [
+        "Nuts"
+      ],
+      "may_contain": [
+        "Gluten",
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "60% dark chocolate moons",
+      "url": "/menu/desserts-and-snacks/snacks-dark-chocolate-moons/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "214",
+      "fat": "14",
+      "fat_saturated": "8.8",
+      "carbs": "17",
+      "sugars": "15",
+      "fibre": "3.9",
+      "protein": "3",
+      "salt": "0",
+      "allergens": [
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Nuts",
+        "Peanuts",
+        "Sesame",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "umami roasted almonds",
+      "url": "/menu/desserts-and-snacks/snacks-proteinplenty-tamari-almonds/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "247",
+      "fat": "20",
+      "fat_saturated": "1.6",
+      "carbs": "3",
+      "sugars": "1.9",
+      "fibre": "4.4",
+      "protein": "11",
+      "salt": "0.82",
+      "allergens": [
+        "Nuts"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "sweet chilli toasted cashews",
+      "url": "/menu/desserts-and-snacks/snacks-sweet-chilli-toasted-cashews/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "236",
+      "fat": "17",
+      "fat_saturated": "3.4",
+      "carbs": "12",
+      "sugars": "2.9",
+      "fibre": "1.2",
+      "protein": "7.2",
+      "salt": "0.71",
+      "allergens": [
+        "Nuts"
+      ],
+      "may_contain": [
+        "Milk",
+        "Gluten",
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "sushi style nori’crunch",
+      "url": "/menu/desserts-and-snacks/snacks-sushi-style-noricrunch/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "80",
+      "fat": "0.1",
+      "fat_saturated": "0.1",
+      "carbs": "18",
+      "sugars": "0.9",
+      "fibre": "0.2",
+      "protein": "1.4",
+      "salt": "0.38",
+      "allergens": [
+        "Gluten",
+        "Soya"
+      ],
+      "may_contain": [
+        "Milk",
+        "Nuts",
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "angelic almonds",
+      "url": "/menu/desserts-and-snacks/snacks-angelic-almonds/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "261",
+      "fat": "19",
+      "fat_saturated": "6.8",
+      "carbs": "15",
+      "sugars": "15",
+      "fibre": "2.1",
+      "protein": "5.4",
+      "salt": "0.13",
+      "allergens": [
+        "Milk",
+        "Nuts",
+        "Soya"
+      ],
+      "may_contain": [
+        "Gluten",
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "chocolate edamame",
+      "url": "/menu/desserts-and-snacks/snacks-chocolate-edamame/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "167",
+      "fat": "8.4",
+      "fat_saturated": "4.2",
+      "carbs": "14",
+      "sugars": "9.8",
+      "fibre": "3.5",
+      "protein": "7.4",
+      "salt": "0.18",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Egg",
+        "Celery",
+        "Mustard",
+        "Sulphur Dioxide",
+        "Milk",
+        "Gluten",
+        "Nuts",
+        "Peanuts",
+        "Sesame"
+      ]
+    },
+    {
+      "name": "mixed fruit'cup",
+      "url": "/dessert-mixed-fruit-cup-090126/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "85",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "19",
+      "sugars": "18",
+      "fibre": "1.8",
+      "protein": "1",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "chocolate ganache mochi",
+      "url": "/dessert-chocolate-mochi-141125/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "230",
+      "fat": "9.6",
+      "fat_saturated": "5.6",
+      "carbs": "34",
+      "sugars": "24",
+      "fibre": "0",
+      "protein": "2.4",
+      "salt": "0.08",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Nuts",
+        "Peanuts",
+        "Sesame",
+        "Egg"
+      ]
+    },
+    {
+      "name": "mango cheesecake mochi",
+      "url": "/dessert-mango-cheesecake-mochi-141125/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "208",
+      "fat": "8.4",
+      "fat_saturated": "5.2",
+      "carbs": "36",
+      "sugars": "28",
+      "fibre": "0",
+      "protein": "2.2",
+      "salt": "0.24",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Egg",
+        "Nuts",
+        "Peanuts"
+      ]
+    },
+    {
+      "name": "raspberry & white chocolate cheesecake mochi",
+      "url": "/dessert-raspberry-cheesecake-mochi-141125/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "208",
+      "fat": "8.4",
+      "fat_saturated": "5.2",
+      "carbs": "36",
+      "sugars": "28",
+      "fibre": "0",
+      "protein": "2.2",
+      "salt": "0.24",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Egg",
+        "Nuts",
+        "Peanuts"
+      ]
+    },
+    {
+      "name": "chocolate mousse",
+      "url": "/menu/desserts-and-snacks/dessert-chocolate-mousse/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "248",
+      "fat": "20.6",
+      "fat_saturated": "12.6",
+      "carbs": "12.7",
+      "sugars": "11.8",
+      "fibre": "2",
+      "protein": "2",
+      "salt": "0.175",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Nuts",
+        "Peanuts"
+      ]
+    },
+    {
+      "name": "white chocolate dream",
+      "url": "/menu/desserts-and-snacks/dessert-white-chocolate-dream/",
+      "categories": [
+        "desserts & snacks"
+      ],
+      "calories": "292",
+      "fat": "20.7",
+      "fat_saturated": "12.9",
+      "carbs": "24",
+      "sugars": "23.2",
+      "fibre": "0.2",
+      "protein": "2.2",
+      "salt": "0.5",
+      "allergens": [
+        "Milk",
+        "Soya"
+      ],
+      "may_contain": [
+        "Gluten",
+        "Nuts",
+        "Peanuts",
+        "Egg"
+      ]
+    },
+    {
+      "name": "little sausages egg'pot",
+      "url": "/menu/breakfast/little-sausages-eggpot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "277",
+      "fat": "13.9",
+      "fat_saturated": "4.3",
+      "carbs": "24.4",
+      "sugars": "2.4",
+      "fibre": "1.9",
+      "protein": "15",
+      "salt": "1.678",
+      "allergens": [
+        "Gluten",
+        "Egg",
+        "Soya",
+        "Sulphur Dioxide"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "roasted bacon egg'pot",
+      "url": "/menu/breakfast/roasted-bacon-eggpot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "205",
+      "fat": "8.5",
+      "fat_saturated": "2.3",
+      "carbs": "20.5",
+      "sugars": "3.2",
+      "fibre": "1.9",
+      "protein": "11.9",
+      "salt": "0.925",
+      "allergens": [
+        "Egg",
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "smoked salmon & avo egg'pot",
+      "url": "/menu/breakfast/salmon-avo-eggpot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "208",
+      "fat": "15.2",
+      "fat_saturated": "3.7",
+      "carbs": "4.6",
+      "sugars": "0.8",
+      "fibre": "2.9",
+      "protein": "14.9",
+      "salt": "0.38",
+      "allergens": [
+        "Fish",
+        "Egg",
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame",
+        "Celery",
+        "Mustard"
+      ]
+    },
+    {
+      "name": "soy roasted seeds egg'pot",
+      "url": "/menu/breakfast/soy-roasted-seeds-eggpot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "88",
+      "fat": "5.9",
+      "fat_saturated": "1.4",
+      "carbs": "2.8",
+      "sugars": "0.5",
+      "fibre": "0.8",
+      "protein": "7.6",
+      "salt": "0.275",
+      "allergens": [
+        "Egg",
+        "Soya"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "spinach & avo egg'pot",
+      "url": "/menu/breakfast/spinach-avo-eggpot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "195",
+      "fat": "14.3",
+      "fat_saturated": "3.6",
+      "carbs": "7.1",
+      "sugars": "2.3",
+      "fibre": "3.5",
+      "protein": "16.2",
+      "salt": "0.553",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Celery"
+      ]
+    },
+    {
+      "name": "spinach & seeds egg'pot",
+      "url": "/menu/breakfast/spinach-seeds-eggpot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "198",
+      "fat": "6.7",
+      "fat_saturated": "1.8",
+      "carbs": "24",
+      "sugars": "4.8",
+      "fibre": "3",
+      "protein": "16.6",
+      "salt": "1.165",
+      "allergens": [
+        "Gluten",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Mustard"
+      ],
+      "may_contain": [
+        "Celery"
+      ]
+    },
+    {
+      "name": "porridge with fresh blueberries",
+      "url": "/menu/breakfast/blueberry-porridge/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "215",
+      "fat": "6.3",
+      "fat_saturated": "3.4",
+      "carbs": "29.4",
+      "sugars": "11.4",
+      "fibre": "3.1",
+      "protein": "8.1",
+      "salt": "0.13",
+      "allergens": [
+        "Milk"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "porridge with fresh blueberries & superseeds",
+      "url": "/menu/breakfast/blueberry-seeds-porridge/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "323",
+      "fat": "14.1",
+      "fat_saturated": "5.1",
+      "carbs": "36.1",
+      "sugars": "14.7",
+      "fibre": "4.9",
+      "protein": "11.4",
+      "salt": "0.145",
+      "allergens": [
+        "Milk",
+        "Sesame",
+        "Soya"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "porridge with agave",
+      "url": "/menu/breakfast/porridge-with-agave/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "185",
+      "fat": "6.2",
+      "fat_saturated": "3.4",
+      "carbs": "22.7",
+      "sugars": "6.1",
+      "fibre": "2.5",
+      "protein": "7.8",
+      "salt": "0.125",
+      "allergens": [
+        "Milk"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "raspberry yoghurt pot",
+      "url": "/menu/breakfast/raspberry-yoghurt-pot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "323",
+      "fat": "17.3",
+      "fat_saturated": "12.2",
+      "carbs": "30.4",
+      "sugars": "21.1",
+      "fibre": "3.6",
+      "protein": "10.4",
+      "salt": "0.353",
+      "allergens": [
+        "Milk",
+        "Gluten",
+        "Nuts"
+      ],
+      "may_contain": [
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "mango yoghurt pot",
+      "url": "/menu/breakfast/mango-yoghurt-pot/",
+      "categories": [
+        "breakfast "
+      ],
+      "calories": "327",
+      "fat": "17.6",
+      "fat_saturated": "12.1",
+      "carbs": "30.8",
+      "sugars": "20.6",
+      "fibre": "3.4",
+      "protein": "10.5",
+      "salt": "0.348",
+      "allergens": [
+        "Milk",
+        "Gluten",
+        "Nuts"
+      ],
+      "may_contain": [
+        "Peanuts",
+        "Sesame",
+        "Egg",
+        "Soya",
+        "Sulphur Dioxide"
+      ]
+    },
+    {
+      "name": "itsu still water",
+      "url": "/menu/drinks-itsu-still-water-nd/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "0",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "itsu sparkling water",
+      "url": "/menu/hot-and-cold-drinks/sparklingwater/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "0",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "still water - refill flask",
+      "url": "/menu/drinks-itsu-still-water-refill/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "0",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "sparkling refill flask",
+      "url": "/menu/cold-drinks/drinks-itsu-sparkling-water-refill/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "0",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "raspberry & dragon fruit zen'water can",
+      "url": "/menu/hot-and-cold-drinks/drinks-raspberry-and-dragon-fruit-zenwater/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "10",
+      "fat": "0.5",
+      "fat_saturated": "0.1",
+      "carbs": "0.5",
+      "sugars": "0.5",
+      "fibre": "0.5",
+      "protein": "0.5",
+      "salt": "0.01",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "cucumber & mint zen'water can",
+      "url": "/menu/hot-and-cold-drinks/drinks-can-zen-cucumber-and-mint-2024/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "3",
+      "fat": "0.5",
+      "fat_saturated": "0.1",
+      "carbs": "0.5",
+      "sugars": "0.5",
+      "fibre": "0.5",
+      "protein": "0.5",
+      "salt": "0.01",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "peach & lychee zen'water can",
+      "url": "/menu/cold-drinks/drinks-can-zen-water-peach-lychee-2024/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "9",
+      "fat": "0.5",
+      "fat_saturated": "0.1",
+      "carbs": "0.5",
+      "sugars": "0.5",
+      "fibre": "0.5",
+      "protein": "0.5",
+      "salt": "0.01",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "ginger & lime zen'water can",
+      "url": "/menu/cold-drinks/drinks-can-zen-water-ginger-and-lime-2024/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "7",
+      "fat": "0.5",
+      "fat_saturated": "0.1",
+      "carbs": "0.5",
+      "sugars": "0.5",
+      "fibre": "0.5",
+      "protein": "0.5",
+      "salt": "0.01",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "peach & lychee zen'water bottle",
+      "url": "/drinks-peach-lychee-zen-water/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "3",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "lemon & yuzu zen'water can",
+      "url": "/menu/cold-drinks/drinks-can-zen-water-lemon-yuzu-2024/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "6",
+      "fat": "0.5",
+      "fat_saturated": "0.1",
+      "carbs": "0.5",
+      "sugars": "0.5",
+      "fibre": "0.5",
+      "protein": "0.5",
+      "salt": "0.01",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "hot mango Shot",
+      "url": "/menu/hot-and-cold-drinks/drinks-moju-hot-mango-shot/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "29",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "6",
+      "sugars": "6",
+      "fibre": "1",
+      "protein": "0",
+      "salt": "0.006",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "ginger shot",
+      "url": "/menu/hot-and-cold-drinks/mojugingershot/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "28",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "5.9",
+      "sugars": "5.2",
+      "fibre": "0.8",
+      "protein": "0.5",
+      "salt": "0.015",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "aloe vera",
+      "url": "/menu/hot-and-cold-drinks/aloeverawater/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "45",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "11.5",
+      "sugars": "11.5",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "raspberry & elderflower kombucha",
+      "url": "/menu/desserts-and-snacks/drinks-raspberry-and-elderflower-kombucha/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "18",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "3.5",
+      "sugars": "3.4",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "fiery ginger kombucha",
+      "url": "/menu/desserts-and-snacks/drinks-fiery-ginger-kombucha/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "17",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "3.3",
+      "sugars": "3.3",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "coca cola zero sugar",
+      "url": "/menu/cold-drinks/cocacolacanzero/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0.66",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "diet coke",
+      "url": "/menu/drinks-coca-cola-can-diet/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "coca cola",
+      "url": "/menu/drinks-coca-cola-can-regular/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "139",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "35",
+      "sugars": "35",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": []
+    },
+    {
+      "name": "asahi",
+      "url": "/menu/cold-drinks/alcohol-asahi/",
+      "categories": [
+        "cold drinks"
+      ],
+      "calories": "135",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "9.2",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "1",
+      "salt": "0",
+      "allergens": [
+        "Gluten"
+      ],
+      "may_contain": []
+    },
+    {
+      "name": "iced matcha latte",
+      "url": "/menu/hot-iced-drinks/iced-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "10",
+      "fat": "0.2",
+      "fat_saturated": "0",
+      "carbs": "1.2",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0.9",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced vanilla matcha latte",
+      "url": "/menu/hot-iced-drinks/iced-vanilla-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "66",
+      "fat": "0.1",
+      "fat_saturated": "0",
+      "carbs": "15.4",
+      "sugars": "14.4",
+      "fibre": "0",
+      "protein": "1.2",
+      "salt": "0.005",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced blueberry matcha latte",
+      "url": "/menu/hot-iced-drinks/iced-blueberry-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "62",
+      "fat": "0.1",
+      "fat_saturated": "0",
+      "carbs": "14.1",
+      "sugars": "13.1",
+      "fibre": "0",
+      "protein": "0.7",
+      "salt": "0.005",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced salted caramel matcha latte",
+      "url": "/menu/hot-iced-drinks/iced-salted-caramel-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "65",
+      "fat": "0.1",
+      "fat_saturated": "0",
+      "carbs": "15.1",
+      "sugars": "14.1",
+      "fibre": "0",
+      "protein": "0.8",
+      "salt": "0.328",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "matcha latte",
+      "url": "/menu/hot-iced-drinks/matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "10",
+      "fat": "0.2",
+      "fat_saturated": "0",
+      "carbs": "1.2",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0.9",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "vanilla matcha latte",
+      "url": "/menu/hot-iced-drinks/vanilla-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "66",
+      "fat": "0.1",
+      "fat_saturated": "0",
+      "carbs": "15.4",
+      "sugars": "14.4",
+      "fibre": "0",
+      "protein": "0.8",
+      "salt": "0.005",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "salted caramel matcha latte",
+      "url": "/menu/hot-iced-drinks/salted-caramel-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "62",
+      "fat": "0.1",
+      "fat_saturated": "0",
+      "carbs": "14.1",
+      "sugars": "13.1",
+      "fibre": "0",
+      "protein": "0.7",
+      "salt": "0.005",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "blueberry matcha latte",
+      "url": "/menu/hot-iced-drinks/blueberry-matcha-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "65",
+      "fat": "0.1",
+      "fat_saturated": "0",
+      "carbs": "14.7",
+      "sugars": "13.7",
+      "fibre": "0",
+      "protein": "0.8",
+      "salt": "0.005",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced latte",
+      "url": "/menu/hot-iced-drinks/iced-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0.2",
+      "sugars": "0.2",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced vanilla latte",
+      "url": "/menu/hot-iced-drinks/iced-vanilla-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "87",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "21.6",
+      "sugars": "21.7",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0.008",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced salted caramel latte",
+      "url": "/menu/hot-iced-drinks/iced-salted-caramel-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "86",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "21.3",
+      "sugars": "21.3",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0.488",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced blueberry latte",
+      "url": "/menu/hot-iced-drinks/iced-blueberry-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "83",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "20.1",
+      "sugars": "20.1",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0.005",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "iced americano",
+      "url": "/menu/hot-iced-drinks/iced-americano/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0.2",
+      "sugars": "0.2",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "latte",
+      "url": "/menu/hot-iced-drinks/latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0.2",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "vanilla latte",
+      "url": "/menu/hot-iced-drinks/vanilla-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "85",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "21.2",
+      "sugars": "21.1",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "salted caramel latte",
+      "url": "/menu/hot-iced-drinks/salted-caramel-latte/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "86",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "21.3",
+      "sugars": "21.3",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0.488",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "flat white",
+      "url": "/menu/hot-iced-drinks/flat-white/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0.2",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "cappucino",
+      "url": "/menu/hot-iced-drinks/cappucino/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "1",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0",
+      "sugars": "0.2",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "vanilla cappuccino",
+      "url": "/menu/hot-iced-drinks/vanilla-cappuccino/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "85",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "21.2",
+      "sugars": "21.1",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "salted caramel cappuccino",
+      "url": "/menu/hot-iced-drinks/salted-caramel-cappuccino/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "86",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "21.3",
+      "sugars": "21.3",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0.488",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "americano",
+      "url": "/menu/hot-iced-drinks/americano/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "2",
+      "fat": "0.1",
+      "fat_saturated": "0.1",
+      "carbs": "0.6",
+      "sugars": "0.6",
+      "fibre": "0",
+      "protein": "0.2",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "espresso",
+      "url": "/menu/hot-iced-drinks/espresso/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "2",
+      "fat": "0.1",
+      "fat_saturated": "0.1",
+      "carbs": "0.6",
+      "sugars": "0.6",
+      "fibre": "0",
+      "protein": "0.2",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "English breakfast tea",
+      "url": "/menu/hot-iced-drinks/english-breakfast-tea/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "3",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0.5",
+      "sugars": "0",
+      "fibre": "0",
+      "protein": "0",
+      "salt": "0",
+      "allergens": [
+        "Milk",
+        "Gluten"
+      ],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "green tea",
+      "url": "/menu/hot-iced-drinks/green-tea/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "2",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0.5",
+      "sugars": "0.2",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "jasmine green tea",
+      "url": "/menu/hot-iced-drinks/hot-drinks-jasmine-tea/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "2",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0.5",
+      "sugars": "0.1",
+      "fibre": "0",
+      "protein": "0.1",
+      "salt": "0",
+      "allergens": [],
+      "may_contain": [
+        "Sesame"
+      ]
+    },
+    {
+      "name": "peppermint tea",
+      "url": "/menu/hot-iced-drinks/peppermint-tea/",
+      "categories": [
+        "hot & iced drinks"
+      ],
+      "calories": "3",
+      "fat": "0",
+      "fat_saturated": "0",
+      "carbs": "0.72",
+      "sugars": "0.06",
+      "fibre": "0",
+      "protein": "0.08",
+      "salt": "0.06",
+      "allergens": [],
+      "may_contain": [
+        "Sesame"
+      ]
+    }
+  ],
+  "skipped": []
+}

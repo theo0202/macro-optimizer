@@ -1,0 +1,16 @@
+# Backup-Archiv (Original-ZIP, nicht nötig im Repo)
+Dateien Claude Code/
+
+# Maschinen-lokale Claude-Code-Einstellungen
+.claude/settings.local.json
+
+# Temporärdateien
+*.tmp
+
+# OS-Cruft
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Node (falls je Dependencies dazukommen)
+node_modules/

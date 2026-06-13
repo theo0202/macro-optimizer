@@ -1,0 +1,77 @@
+{
+  "_meta": {
+    "source": "Subway UK & ROI Nutritional Information January 2026",
+    "note": "All values per 6-inch serving. For footlong: double all values EXCEPT salads.",
+    "excluded": ["Vegan CheeZe", "Bacon (Streaky)", "Tuna (Lite Mayo)", "HP Brown Sauce", "Yogurt Mint & Garlic", "Shawarma Spiced Chicken"]
+  },
+  "breads": [
+    { "id": "hearty_italian", "name": "Hearty Italian", "servingG": 75, "kcal": 206, "fat": 2.2, "sat": 0.4, "carbs": 39, "sugars": 4.3, "fibre": 2, "protein": 7.4, "salt": 0.6 },
+    { "id": "honey_oat", "name": "Honey & Oat", "servingG": 85, "kcal": 192, "fat": 1.5, "sat": 0.2, "carbs": 33, "sugars": 4.7, "fibre": 5, "protein": 8.6, "salt": 0.56 },
+    { "id": "herbs_cheese", "name": "Italian Herbs & Cheese", "servingG": 101, "kcal": 283, "fat": 6, "sat": 4, "carbs": 44, "sugars": 5, "fibre": 3, "protein": 12, "salt": 0.7 },
+    { "id": "italian_white", "name": "Italian White", "servingG": 70, "kcal": 190, "fat": 2.1, "sat": 0, "carbs": 36, "sugars": 4.2, "fibre": 2.1, "protein": 7, "salt": 0.6 },
+    { "id": "wholegrain", "name": "Wholegrain", "servingG": 76, "kcal": 157, "fat": 0.8, "sat": 0.2, "carbs": 27, "sugars": 1.4, "fibre": 4.4, "protein": 7.5, "salt": 0.56 },
+    { "id": "gluten_free", "name": "Gluten-Free", "servingG": 110, "kcal": 294, "fat": 6.6, "sat": 0.6, "carbs": 53, "sugars": 1.2, "fibre": 3.7, "protein": 3.3, "salt": 1.0 }
+  ],
+  "proteins": [
+    { "id": "roast_chicken", "name": "Roast Chicken Breast", "servingG": 71, "kcal": 85, "fat": 1, "sat": 0.5, "carbs": 1, "sugars": 1.4, "fibre": 0, "protein": 16, "salt": 0.9 },
+    { "id": "chicken_tikka", "name": "Chicken Tikka", "servingG": 71, "kcal": 89, "fat": 1.4, "sat": 0.4, "carbs": 2, "sugars": 0.9, "fibre": 0, "protein": 18, "salt": 0.6 },
+    { "id": "rotisserie_chicken", "name": "Rotisserie-Style Chicken", "servingG": 56, "kcal": 71, "fat": 2, "sat": 0.3, "carbs": 0, "sugars": 0.1, "fibre": 0, "protein": 12, "salt": 0.5 },
+    { "id": "breaded_chicken", "name": "Breaded Chicken", "servingG": 85, "kcal": 176, "fat": 7, "sat": 1, "carbs": 14.3, "sugars": 2.7, "fibre": 0.7, "protein": 14, "salt": 0.8 },
+    { "id": "ham", "name": "Ham", "servingG": 28, "kcal": 34, "fat": 1, "sat": 0.3, "carbs": 1, "sugars": 0.4, "fibre": 0.3, "protein": 5, "salt": 0.5 },
+    { "id": "turkey", "name": "Turkey Breast", "servingG": 38, "kcal": 38, "fat": 0.6, "sat": 0.1, "carbs": 0, "sugars": 0.4, "fibre": 0.2, "protein": 8, "salt": 0.6 },
+    { "id": "meatball_marinara", "name": "Meatball Marinara", "servingG": 137, "kcal": 193, "fat": 10, "sat": 3.1, "carbs": 10, "sugars": 6.4, "fibre": 2.9, "protein": 13, "salt": 1 },
+    { "id": "philly_steak", "name": "Philly Steak", "servingG": 71, "kcal": 86, "fat": 1.4, "sat": 0.4, "carbs": 8, "sugars": 3.9, "fibre": 0.7, "protein": 11, "salt": 0.7 },
+    { "id": "spiced_plant", "name": "Spiced Plant Patty", "servingG": 85, "kcal": 169, "fat": 9, "sat": 0.8, "carbs": 10, "sugars": 1.6, "fibre": 2.7, "protein": 11, "salt": 1 },
+    { "id": "lincolnshire_sausage", "name": "Lincolnshire Sausage", "servingG": 50, "kcal": 121, "fat": 9, "sat": 3, "carbs": 3, "sugars": 0.3, "fibre": 0.5, "protein": 7, "salt": 0.7 },
+    { "id": "falafel", "name": "Falafel Bites", "servingG": 90, "kcal": 226, "fat": 13, "sat": 1.1, "carbs": 26, "sugars": 1.4, "fibre": 12, "protein": 6.5, "salt": 1.2 },
+    { "id": "pepperoni_main", "name": "Pepperoni", "servingG": 18, "kcal": 73, "fat": 6.3, "sat": 2.2, "carbs": 1, "sugars": 0, "fibre": 0, "protein": 3.6, "salt": 0.7 },
+    { "id": "salami_main", "name": "Salami", "servingG": 18, "kcal": 73, "fat": 6.3, "sat": 2.3, "carbs": 1, "sugars": 0, "fibre": 0, "protein": 4, "salt": 0.7 }
+  ],
+  "cheeses": [
+    { "id": "none", "name": "No Cheese", "servingG": 0, "kcal": 0, "fat": 0, "sat": 0, "carbs": 0, "sugars": 0, "fibre": 0, "protein": 0, "salt": 0 },
+    { "id": "american", "name": "American-style Cheese", "servingG": 12, "kcal": 42, "fat": 3.5, "sat": 2.2, "carbs": 0.4, "sugars": 0.4, "fibre": 0, "protein": 2.3, "salt": 0.3 },
+    { "id": "mozzarella_cheddar", "name": "Mozzarella & Cheddar", "servingG": 14, "kcal": 45, "fat": 3.4, "sat": 2.2, "carbs": 0.6, "sugars": 0.1, "fibre": 0, "protein": 3.2, "salt": 0.2 }
+  ],
+  "extras": [
+    { "id": "turkey_rashers", "name": "Turkey Rashers", "servingG": 19, "kcal": 29, "fat": 1, "sat": 0.3, "carbs": 0, "sugars": 0, "fibre": 0, "protein": 4.8, "salt": 0.4 },
+    { "id": "pepperoni_extra", "name": "Pepperoni", "servingG": 18, "kcal": 73, "fat": 6.3, "sat": 2.2, "carbs": 1, "sugars": 0, "fibre": 0, "protein": 3.6, "salt": 0.7 },
+    { "id": "hash_browns", "name": "Hash Browns", "servingG": 111, "kcal": 184, "fat": 11, "sat": 0.8, "carbs": 22, "sugars": 1.1, "fibre": 2.3, "protein": 2.4, "salt": 0.8 },
+    { "id": "chicken_strips", "name": "Chicken Strips", "servingG": 71, "kcal": 85, "fat": 1, "sat": 0.5, "carbs": 1, "sugars": 1.4, "fibre": 0, "protein": 16, "salt": 0.9 },
+    { "id": "turkey_ham", "name": "Turkey Ham", "servingG": 28, "kcal": 29, "fat": 1.1, "sat": 0.4, "carbs": 0, "sugars": 0.1, "fibre": 0.1, "protein": 3.9, "salt": 0.5 },
+    { "id": "poached_egg", "name": "Poached Egg", "servingG": 50, "kcal": 62, "fat": 3.6, "sat": 1.2, "carbs": 0.9, "sugars": 0.2, "fibre": 0.4, "protein": 6.5, "salt": 0.2 },
+    { "id": "salami_extra", "name": "Salami", "servingG": 18, "kcal": 73, "fat": 6.3, "sat": 2.3, "carbs": 1, "sugars": 0, "fibre": 0, "protein": 4, "salt": 0.7 },
+    { "id": "breaded_chicken_extra", "name": "Breaded Chicken", "servingG": 85, "kcal": 176, "fat": 7, "sat": 1, "carbs": 14.3, "sugars": 2.7, "fibre": 0.7, "protein": 14, "salt": 0.8 },
+    { "id": "smashed_falafel", "name": "Smashed Falafel", "servingG": 90, "kcal": 226, "fat": 13, "sat": 1.1, "carbs": 26, "sugars": 1.4, "fibre": 12, "protein": 6.5, "salt": 1.2 },
+    { "id": "philly_steak_extra", "name": "Philly-Style Steak", "servingG": 71, "kcal": 86, "fat": 1.4, "sat": 0.4, "carbs": 8, "sugars": 3.9, "fibre": 0.7, "protein": 11, "salt": 0.7 },
+    { "id": "chicken_tikka_extra", "name": "Chicken Tikka", "servingG": 71, "kcal": 89, "fat": 1.4, "sat": 0.4, "carbs": 2, "sugars": 0.9, "fibre": 0, "protein": 18, "salt": 0.6 }
+  ],
+  "salads": [
+    { "id": "lettuce", "name": "Lettuce", "servingG": 14, "kcal": 2, "fat": 0, "sat": 0, "carbs": 0.2, "sugars": 0.2, "fibre": 0.2, "protein": 0.2, "salt": 0 },
+    { "id": "tomatoes", "name": "Tomatoes", "servingG": 30, "kcal": 5, "fat": 0, "sat": 0, "carbs": 0.8, "sugars": 0.8, "fibre": 0.4, "protein": 0.3, "salt": 0 },
+    { "id": "cucumber", "name": "Cucumber", "servingG": 18, "kcal": 3, "fat": 0, "sat": 0, "carbs": 0.6, "sugars": 0.3, "fibre": 0.1, "protein": 0.1, "salt": 0 },
+    { "id": "pickles", "name": "Pickles", "servingG": 7.5, "kcal": 1, "fat": 0, "sat": 0, "carbs": 0.1, "sugars": 0, "fibre": 0.1, "protein": 0, "salt": 0.2 },
+    { "id": "peppers", "name": "Peppers", "servingG": 12, "kcal": 3, "fat": 0, "sat": 0, "carbs": 0.5, "sugars": 0.3, "fibre": 0.2, "protein": 0.1, "salt": 0 },
+    { "id": "olives", "name": "Olives", "servingG": 3, "kcal": 3, "fat": 0, "sat": 0, "carbs": 0, "sugars": 0, "fibre": 0.1, "protein": 0, "salt": 0.1 },
+    { "id": "red_onions", "name": "Red Onions", "servingG": 7, "kcal": 3, "fat": 0, "sat": 0, "carbs": 0.6, "sugars": 0.4, "fibre": 0.1, "protein": 0.1, "salt": 0 },
+    { "id": "jalapenos", "name": "Jalapeños", "servingG": 7, "kcal": 1, "fat": 0, "sat": 0, "carbs": 0.1, "sugars": 0.1, "fibre": 0.1, "protein": 0, "salt": 0.3 },
+    { "id": "sweetcorn", "name": "Sweetcorn", "servingG": 7, "kcal": 6, "fat": 0, "sat": 0, "carbs": 0.8, "sugars": 0.4, "fibre": 0.3, "protein": 0.2, "salt": 0 }
+  ],
+  "sauces": [
+    { "id": "sweet_chilli", "name": "Sweet Chilli", "servingG": 14, "kcal": 30, "fat": 0, "sat": 0, "carbs": 7.5, "sugars": 6.5, "fibre": 0, "protein": 0, "salt": 0.2 },
+    { "id": "chipotle_sw", "name": "Chipotle Southwest", "servingG": 14, "kcal": 58, "fat": 5.8, "sat": 0.4, "carbs": 1.2, "sugars": 0.6, "fibre": 0.1, "protein": 0.1, "salt": 0.2 },
+    { "id": "sweet_onion", "name": "Sweet Onion", "servingG": 14, "kcal": 23, "fat": 0.1, "sat": 0, "carbs": 5.6, "sugars": 4.8, "fibre": 0.1, "protein": 0.1, "salt": 0.1 },
+    { "id": "honey_mustard", "name": "Honey Mustard", "servingG": 14, "kcal": 29, "fat": 1.9, "sat": 0.1, "carbs": 2.7, "sugars": 2.3, "fibre": 0.2, "protein": 0.3, "salt": 0.2 },
+    { "id": "ketchup", "name": "Ketchup", "servingG": 14, "kcal": 14, "fat": 0, "sat": 0, "carbs": 3.2, "sugars": 3.2, "fibre": 0, "protein": 0.2, "salt": 0.3 },
+    { "id": "xspy_chipotle", "name": "X-Spy Chipotle", "servingG": 14, "kcal": 60, "fat": 6.1, "sat": 0.5, "carbs": 1.1, "sugars": 0.7, "fibre": 0.1, "protein": 0.2, "salt": 0.3 },
+    { "id": "garlic_herb", "name": "Garlic & Herb", "servingG": 14, "kcal": 80, "fat": 8.4, "sat": 0.6, "carbs": 0.9, "sugars": 0.4, "fibre": 0, "protein": 0, "salt": 0.1 },
+    { "id": "teriyaki", "name": "Teriyaki", "servingG": 14, "kcal": 24, "fat": 0, "sat": 0, "carbs": 5.6, "sugars": 4.1, "fibre": 0, "protein": 0.4, "salt": 0.5 },
+    { "id": "lite_mayo", "name": "Lite Mayo", "servingG": 14, "kcal": 46, "fat": 4.9, "sat": 0.3, "carbs": 0.6, "sugars": 0.6, "fibre": 0, "protein": 0, "salt": 0.2 },
+    { "id": "bbq", "name": "BBQ Sauce", "servingG": 14, "kcal": 24, "fat": 0.1, "sat": 0, "carbs": 5.8, "sugars": 5.2, "fibre": 0.1, "protein": 0.1, "salt": 0.2 }
+  ],
+  "seasonings": [
+    { "id": "sea_salt", "name": "Sea Salt", "servingG": 1, "kcal": 0, "fat": 0, "sat": 0, "carbs": 0, "sugars": 0, "fibre": 0, "protein": 0, "salt": 0.4 },
+    { "id": "mixed_pepper", "name": "Mixed Peppercorns", "servingG": 1, "kcal": 3, "fat": 0, "sat": 0, "carbs": 0.4, "sugars": 0, "fibre": 0.2, "protein": 0.1, "salt": 0 },
+    { "id": "crispy_onions", "name": "Crispy Onions", "servingG": 7, "kcal": 41, "fat": 3, "sat": 1, "carbs": 2.9, "sugars": 0.6, "fibre": 0.3, "protein": 0.4, "salt": 0 }
+  ],
+  "standard_salad_ids": ["lettuce", "tomatoes", "cucumber", "pickles", "peppers", "red_onions"]
+}

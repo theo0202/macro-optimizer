@@ -1,0 +1,5130 @@
+{
+  "_meta": {
+    "source": "api.nandos.services/menu-v2 (GraphQL der Order-App), Restaurant: liverpool-street-station, Markt: UK",
+    "crawled": "2026-06-11",
+    "note": "Nährwerte in mg (fatMg etc.), energyKcal direkt; size = DEFAULT/REGULAR/LARGE. Re-Crawl: node nandos-crawl.js"
+  },
+  "sections": [
+    {
+      "id": "section:extra-hot-meal-deals",
+      "name": "The Lunch Fix",
+      "items": [
+        {
+          "slug": "the-big-caesar",
+          "name": "The Big Caesar",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 649,
+              "fatMg": 27700,
+              "saturatesMg": 5100,
+              "totalCarbsMg": 63200,
+              "sugarsMg": 5700,
+              "fibreMg": 6300,
+              "proteinMg": 29500,
+              "saltMg": 1900
+            }
+          ]
+        },
+        {
+          "slug": "sol-bowl",
+          "name": "Sol Bowl",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "With 3 Chicken Wings",
+              "kind": "WITH_THREE_CHICKEN_WINGS",
+              "pence": 995
+            },
+            {
+              "name": "With Pulled Chicken",
+              "kind": "WITH_PULLED_CHICKEN",
+              "pence": 995
+            },
+            {
+              "name": "With Halloumi Sticks",
+              "kind": "WITH_HALLOUMI_STICKS",
+              "pence": 995
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 995
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 583,
+              "fatMg": 31500,
+              "saturatesMg": 2300,
+              "totalCarbsMg": 63000,
+              "sugarsMg": 15200,
+              "fibreMg": 8100,
+              "proteinMg": 7200,
+              "saltMg": 3400
+            }
+          ]
+        },
+        {
+          "slug": "hearty-bowl",
+          "name": "Hearty Bowl",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "With 3 Chicken Wings",
+              "kind": "WITH_THREE_CHICKEN_WINGS",
+              "pence": 995
+            },
+            {
+              "name": "With Pulled Chicken",
+              "kind": "WITH_PULLED_CHICKEN",
+              "pence": 995
+            },
+            {
+              "name": "With Halloumi Sticks",
+              "kind": "WITH_HALLOUMI_STICKS",
+              "pence": 995
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 995
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 432,
+              "fatMg": 22900,
+              "saturatesMg": 2200,
+              "totalCarbsMg": 44300,
+              "sugarsMg": 14100,
+              "fibreMg": 11400,
+              "proteinMg": 9300,
+              "saltMg": 2600
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:starters",
+      "name": "Starters",
+      "items": [
+        {
+          "slug": "take-your-pick",
+          "name": "Dare to share",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "With Three Starters",
+              "kind": "WITH_THREE_STARTERS",
+              "pence": 1225
+            },
+            {
+              "name": "With Three Starters",
+              "kind": "WITH_THREE_STARTERS",
+              "pence": 1450
+            }
+          ],
+          "factsForPortionSizes": []
+        },
+        {
+          "slug": "halloumi-sticks-dip",
+          "name": "Halloumi Sticks & Chilli Jam",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 458,
+              "fatMg": 32000,
+              "saturatesMg": 16600,
+              "totalCarbsMg": 15900,
+              "sugarsMg": 12600,
+              "fibreMg": 400,
+              "proteinMg": 26700,
+              "saltMg": 2300
+            }
+          ]
+        },
+        {
+          "slug": "halloumi-sticks-honey",
+          "name": "Halloumi Sticks & PERi-Honey",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 526,
+              "fatMg": 32000,
+              "saturatesMg": 16600,
+              "totalCarbsMg": 35600,
+              "sugarsMg": 33600,
+              "fibreMg": 0,
+              "proteinMg": 26200,
+              "saltMg": 2200
+            }
+          ]
+        },
+        {
+          "slug": "houmous-with-pe-ri-pe-ri-drizzle",
+          "name": "Houmous with PERi-PERi Drizzle",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 792,
+              "fatMg": 32600,
+              "saturatesMg": 4300,
+              "totalCarbsMg": 98700,
+              "sugarsMg": 4200,
+              "fibreMg": 14300,
+              "proteinMg": 25000,
+              "saltMg": 2900
+            }
+          ]
+        },
+        {
+          "slug": "sweet-potato-wedges-with-garlic-pe-rinaise",
+          "name": "Sweet Potato Wedges",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 398,
+              "fatMg": 22800,
+              "saturatesMg": 10000,
+              "totalCarbsMg": 43600,
+              "sugarsMg": 24400,
+              "fibreMg": 6000,
+              "proteinMg": 7600,
+              "saltMg": 1500
+            }
+          ]
+        },
+        {
+          "slug": "cheesy-garlic-pitta",
+          "name": "Cheesy Garlic Pitta",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 596,
+              "fatMg": 31600,
+              "saturatesMg": 12200,
+              "totalCarbsMg": 61700,
+              "sugarsMg": 15400,
+              "fibreMg": 3300,
+              "proteinMg": 17800,
+              "saltMg": 1800
+            }
+          ]
+        },
+        {
+          "slug": "spicy-mixed-olives",
+          "name": "Spicy Mixed Olives",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 495
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 138,
+              "fatMg": 13500,
+              "saturatesMg": 1400,
+              "totalCarbsMg": 4700,
+              "sugarsMg": 0,
+              "fibreMg": 3900,
+              "proteinMg": 1200,
+              "saltMg": 4600
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-pe-ri-nuts",
+          "name": "PERi-PERi Nuts",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 495
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 793,
+              "fatMg": 67400,
+              "saturatesMg": 8800,
+              "totalCarbsMg": 14800,
+              "sugarsMg": 5900,
+              "fibreMg": 9000,
+              "proteinMg": 27300,
+              "saltMg": 1200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:pe-ri-pe-ri-chicken",
+      "name": "PERi-PERi Chicken",
+      "items": [
+        {
+          "slug": "4-boneless-chicken-thighs",
+          "name": "4 Boneless Chicken Thighs",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1025
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1200
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1675
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1925
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 706,
+              "fatMg": 37200,
+              "saturatesMg": 9600,
+              "totalCarbsMg": 300,
+              "sugarsMg": 300,
+              "fibreMg": 1400,
+              "proteinMg": 85500,
+              "saltMg": 2100
+            }
+          ]
+        },
+        {
+          "slug": "chicken-butterfly",
+          "name": "Chicken Butterfly",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1025
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1200
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1675
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1925
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 332,
+              "fatMg": 10100,
+              "saturatesMg": 2300,
+              "totalCarbsMg": 200,
+              "sugarsMg": 200,
+              "fibreMg": 1500,
+              "proteinMg": 59400,
+              "saltMg": 1300
+            }
+          ]
+        },
+        {
+          "slug": "1-2-chicken",
+          "name": "1/2 Chicken",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 925
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1095
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1575
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1820
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 579,
+              "fatMg": 29100,
+              "saturatesMg": 8000,
+              "totalCarbsMg": 600,
+              "sugarsMg": 0,
+              "fibreMg": 1400,
+              "proteinMg": 78700,
+              "saltMg": 1700
+            }
+          ]
+        },
+        {
+          "slug": "1-4-chicken",
+          "name": "1/4 Chicken",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 700
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1245
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 289,
+              "fatMg": 14500,
+              "saturatesMg": 4000,
+              "totalCarbsMg": 300,
+              "sugarsMg": 0,
+              "fibreMg": 700,
+              "proteinMg": 39300,
+              "saltMg": 900
+            }
+          ]
+        },
+        {
+          "slug": "whole-chicken",
+          "name": "Whole Chicken",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1725
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1995
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1159,
+              "fatMg": 58000,
+              "saturatesMg": 16300,
+              "totalCarbsMg": 1100,
+              "sugarsMg": 600,
+              "fibreMg": 3000,
+              "proteinMg": 157600,
+              "saltMg": 3500
+            }
+          ]
+        },
+        {
+          "slug": "10-chicken-wings",
+          "name": "10 Chicken Wings",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1300
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1550
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1950
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2275
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 786,
+              "fatMg": 39400,
+              "saturatesMg": 9400,
+              "totalCarbsMg": 900,
+              "sugarsMg": 400,
+              "fibreMg": 2500,
+              "proteinMg": 106400,
+              "saltMg": 4400
+            }
+          ]
+        },
+        {
+          "slug": "5-chicken-wings",
+          "name": "5 Chicken Wings",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 775
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 950
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1425
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1675
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 393,
+              "fatMg": 19700,
+              "saturatesMg": 4700,
+              "totalCarbsMg": 400,
+              "sugarsMg": 200,
+              "fibreMg": 1200,
+              "proteinMg": 53200,
+              "saltMg": 2200
+            }
+          ]
+        },
+        {
+          "slug": "3-chicken-wings",
+          "name": "3 Chicken Wings",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 700
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1245
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 236,
+              "fatMg": 11800,
+              "saturatesMg": 2800,
+              "totalCarbsMg": 300,
+              "sugarsMg": 100,
+              "fibreMg": 700,
+              "proteinMg": 31900,
+              "saltMg": 1300
+            }
+          ]
+        },
+        {
+          "slug": "10-wing-roulette",
+          "name": "Wing Roulette",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1300
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1550
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 893,
+              "fatMg": 48100,
+              "saturatesMg": 10200,
+              "totalCarbsMg": 7500,
+              "sugarsMg": 5200,
+              "fibreMg": 3700,
+              "proteinMg": 107100,
+              "saltMg": 6500
+            }
+          ]
+        },
+        {
+          "slug": "10-saucy-wings",
+          "name": "10 Extra Saucy Wings",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1350
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1625
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2000
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 958,
+              "fatMg": 49500,
+              "saturatesMg": 10400,
+              "totalCarbsMg": 19800,
+              "sugarsMg": 17400,
+              "fibreMg": 3100,
+              "proteinMg": 107400,
+              "saltMg": 5300
+            }
+          ]
+        },
+        {
+          "slug": "5-saucy-wings",
+          "name": "5 Extra Saucy Wings",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 825
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1000
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1725
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 513,
+              "fatMg": 27800,
+              "saturatesMg": 5500,
+              "totalCarbsMg": 11400,
+              "sugarsMg": 9800,
+              "fibreMg": 1600,
+              "proteinMg": 53900,
+              "saltMg": 2800
+            }
+          ]
+        },
+        {
+          "slug": "3-saucy-wings",
+          "name": "3 Extra Saucy Wings",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 625
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 750
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1275
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1475
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 299,
+              "fatMg": 15900,
+              "saturatesMg": 3200,
+              "totalCarbsMg": 6400,
+              "sugarsMg": 5600,
+              "fibreMg": 900,
+              "proteinMg": 32300,
+              "saltMg": 1600
+            }
+          ]
+        },
+        {
+          "slug": "chicken-livers-portuguese-roll",
+          "name": "Chicken Livers & Rustic Portuguese Roll",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1095
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1625
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1820
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 653,
+              "fatMg": 32600,
+              "saturatesMg": 12600,
+              "totalCarbsMg": 54100,
+              "sugarsMg": 2900,
+              "fibreMg": 3400,
+              "proteinMg": 38200,
+              "saltMg": 2900
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:burgers-pittas-wraps",
+      "name": "Burgers, Pittas, Wraps",
+      "items": [
+        {
+          "slug": "butterfly-burger",
+          "name": "Butterfly Burger",
+          "subsection": "Burgers",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1450
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1745
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1945
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1950
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2175
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 651,
+              "fatMg": 19500,
+              "saturatesMg": 3500,
+              "totalCarbsMg": 55300,
+              "sugarsMg": 6800,
+              "fibreMg": 4400,
+              "proteinMg": 65200,
+              "saltMg": 3000
+            }
+          ]
+        },
+        {
+          "slug": "sunset-burger",
+          "name": "Sunset Burger",
+          "subsection": "Burgers",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1050
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1250
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1500
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1750
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1975
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 725,
+              "fatMg": 30400,
+              "saturatesMg": 10200,
+              "totalCarbsMg": 60800,
+              "sugarsMg": 8500,
+              "fibreMg": 2500,
+              "proteinMg": 53400,
+              "saltMg": 2400
+            }
+          ]
+        },
+        {
+          "slug": "garlic-churrasco-burger",
+          "name": "Garlic Churrasco Burger",
+          "subsection": "Burgers",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1125
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1295
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1575
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1775
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1795
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2020
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 787,
+              "fatMg": 39900,
+              "saturatesMg": 12000,
+              "totalCarbsMg": 55300,
+              "sugarsMg": 5000,
+              "fibreMg": 3900,
+              "proteinMg": 49000,
+              "saltMg": 2400
+            }
+          ]
+        },
+        {
+          "slug": "grilled-chicken-burger",
+          "name": "Grilled Chicken Burger",
+          "subsection": "Burgers",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 443,
+              "fatMg": 8900,
+              "saturatesMg": 2000,
+              "totalCarbsMg": 55100,
+              "sugarsMg": 4600,
+              "fibreMg": 3400,
+              "proteinMg": 34800,
+              "saltMg": 1900
+            }
+          ]
+        },
+        {
+          "slug": "double-chicken-burger",
+          "name": "Double Chicken Burger",
+          "subsection": "Burgers",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1450
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1745
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1945
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1950
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2175
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 581,
+              "fatMg": 11500,
+              "saturatesMg": 2600,
+              "totalCarbsMg": 55200,
+              "sugarsMg": 4700,
+              "fibreMg": 3800,
+              "proteinMg": 63300,
+              "saltMg": 2700
+            }
+          ]
+        },
+        {
+          "slug": "grilled-chicken-wrap",
+          "name": "Grilled Chicken Wrap",
+          "subsection": "Wraps",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 521,
+              "fatMg": 16400,
+              "saturatesMg": 4200,
+              "totalCarbsMg": 54800,
+              "sugarsMg": 10000,
+              "fibreMg": 5400,
+              "proteinMg": 36700,
+              "saltMg": 1700
+            }
+          ]
+        },
+        {
+          "slug": "double-chicken-wrap",
+          "name": "Double Chicken Wrap",
+          "subsection": "Wraps",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1450
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1745
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1945
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1950
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2175
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 748,
+              "fatMg": 29000,
+              "saturatesMg": 5400,
+              "totalCarbsMg": 54900,
+              "sugarsMg": 10100,
+              "fibreMg": 5900,
+              "proteinMg": 65300,
+              "saltMg": 2400
+            }
+          ]
+        },
+        {
+          "slug": "fino-pitta",
+          "name": "Fino Pitta",
+          "subsection": "Pittas",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1050
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1250
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1500
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1750
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1975
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 841,
+              "fatMg": 40100,
+              "saturatesMg": 15200,
+              "totalCarbsMg": 58300,
+              "sugarsMg": 14600,
+              "fibreMg": 3800,
+              "proteinMg": 62100,
+              "saltMg": 3300
+            }
+          ]
+        },
+        {
+          "slug": "grilled-chicken-pitta",
+          "name": "Grilled Chicken Pitta",
+          "subsection": "Pittas",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 508,
+              "fatMg": 19100,
+              "saturatesMg": 3700,
+              "totalCarbsMg": 50200,
+              "sugarsMg": 5900,
+              "fibreMg": 1900,
+              "proteinMg": 36400,
+              "saltMg": 1900
+            }
+          ]
+        },
+        {
+          "slug": "double-chicken-pitta",
+          "name": "Double Chicken Pitta",
+          "subsection": "Pittas",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1450
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1745
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1945
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1950
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 2175
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 691,
+              "fatMg": 26700,
+              "saturatesMg": 4500,
+              "totalCarbsMg": 50300,
+              "sugarsMg": 6000,
+              "fibreMg": 2600,
+              "proteinMg": 65000,
+              "saltMg": 2600
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:salads",
+      "name": "Salads & Bowls",
+      "items": [
+        {
+          "slug": "spicy-rice-bowl",
+          "name": "Spicy Rice Bowl",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 995
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1175
+            },
+            {
+              "name": "With Pulled Chicken",
+              "kind": "WITH_PULLED_CHICKEN",
+              "pence": 1415
+            },
+            {
+              "name": "With Chicken Breast",
+              "kind": "WITH_CHICKEN_BREAST",
+              "pence": 1415
+            },
+            {
+              "name": "With Beanie Patty",
+              "kind": "WITH_BEANIE_PATTY",
+              "pence": 1415
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 1415
+            },
+            {
+              "name": "With Chicken Thighs",
+              "kind": "WITH_CHICKEN_THIGHS",
+              "pence": 1520
+            },
+            {
+              "name": "With Pulled Chicken",
+              "kind": "WITH_PULLED_CHICKEN",
+              "pence": 1650
+            },
+            {
+              "name": "With Chicken Breast",
+              "kind": "WITH_CHICKEN_BREAST",
+              "pence": 1650
+            },
+            {
+              "name": "With Beanie Patty",
+              "kind": "WITH_BEANIE_PATTY",
+              "pence": 1650
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 1650
+            },
+            {
+              "name": "With Chicken Thighs",
+              "kind": "WITH_CHICKEN_THIGHS",
+              "pence": 1775
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 600,
+              "fatMg": 31700,
+              "saturatesMg": 3500,
+              "totalCarbsMg": 21500,
+              "sugarsMg": 8300,
+              "fibreMg": 3600,
+              "proteinMg": 15100,
+              "saltMg": 3600
+            }
+          ]
+        },
+        {
+          "slug": "mediterranean-salad",
+          "name": "Mediterranean Salad",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 950
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1095
+            },
+            {
+              "name": "With Chicken Breast",
+              "kind": "WITH_CHICKEN_BREAST",
+              "pence": 1370
+            },
+            {
+              "name": "With Beanie Patty",
+              "kind": "WITH_BEANIE_PATTY",
+              "pence": 1370
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 1370
+            },
+            {
+              "name": "With Chicken Thighs",
+              "kind": "WITH_CHICKEN_THIGHS",
+              "pence": 1475
+            },
+            {
+              "name": "With Chicken Breast",
+              "kind": "WITH_CHICKEN_BREAST",
+              "pence": 1570
+            },
+            {
+              "name": "With Beanie Patty",
+              "kind": "WITH_BEANIE_PATTY",
+              "pence": 1570
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 1570
+            },
+            {
+              "name": "With Chicken Thighs",
+              "kind": "WITH_CHICKEN_THIGHS",
+              "pence": 1695
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 360,
+              "fatMg": 28300,
+              "saturatesMg": 5600,
+              "totalCarbsMg": 14900,
+              "sugarsMg": 12000,
+              "fibreMg": 4900,
+              "proteinMg": 7400,
+              "saltMg": 3900
+            }
+          ]
+        },
+        {
+          "slug": "caesar-salad",
+          "name": "Caesar Salad",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 950
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1095
+            },
+            {
+              "name": "With Chicken Breast",
+              "kind": "WITH_CHICKEN_BREAST",
+              "pence": 1370
+            },
+            {
+              "name": "With Beanie Patty",
+              "kind": "WITH_BEANIE_PATTY",
+              "pence": 1370
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 1370
+            },
+            {
+              "name": "With Chicken Thighs",
+              "kind": "WITH_CHICKEN_THIGHS",
+              "pence": 1475
+            },
+            {
+              "name": "With Chicken Breast",
+              "kind": "WITH_CHICKEN_BREAST",
+              "pence": 1570
+            },
+            {
+              "name": "With Beanie Patty",
+              "kind": "WITH_BEANIE_PATTY",
+              "pence": 1570
+            },
+            {
+              "name": "With PERi-Plant",
+              "kind": "WITH_PERI_PLANT",
+              "pence": 1570
+            },
+            {
+              "name": "With Chicken Thighs",
+              "kind": "WITH_CHICKEN_THIGHS",
+              "pence": 1695
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 473,
+              "fatMg": 39600,
+              "saturatesMg": 7400,
+              "totalCarbsMg": 14900,
+              "sugarsMg": 3500,
+              "fibreMg": 1200,
+              "proteinMg": 12800,
+              "saltMg": 1500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:sharing-platters",
+      "name": "Sharing Platters",
+      "items": [
+        {
+          "slug": "full-platter",
+          "name": "Full Platter",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 2925
+            },
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 3425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1159,
+              "fatMg": 58000,
+              "saturatesMg": 16300,
+              "totalCarbsMg": 1100,
+              "sugarsMg": 600,
+              "fibreMg": 3000,
+              "proteinMg": 157600,
+              "saltMg": 3500
+            }
+          ]
+        },
+        {
+          "slug": "boneless-platter",
+          "name": "Boneless Platter",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 3025
+            },
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 3550
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1037,
+              "fatMg": 47200,
+              "saturatesMg": 11900,
+              "totalCarbsMg": 500,
+              "sugarsMg": 500,
+              "fibreMg": 3000,
+              "proteinMg": 144900,
+              "saltMg": 3500
+            }
+          ]
+        },
+        {
+          "slug": "all-in-platter",
+          "name": "All-in Platter",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 3725
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1157,
+              "fatMg": 58100,
+              "saturatesMg": 16000,
+              "totalCarbsMg": 1100,
+              "sugarsMg": 0,
+              "fibreMg": 2900,
+              "proteinMg": 157300,
+              "saltMg": 3400
+            }
+          ]
+        },
+        {
+          "slug": "family-platter",
+          "name": "Family Platter",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "+5 large sides and 2 bastes",
+              "kind": "WITH_FIVE_LARGE_SIDES_AND_TWO_BASTES",
+              "pence": 5995
+            },
+            {
+              "name": "+5 large sides and 2 bastes",
+              "kind": "WITH_FIVE_LARGE_SIDES_AND_TWO_BASTES",
+              "pence": 6900
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 2317,
+              "fatMg": 116000,
+              "saturatesMg": 32500,
+              "totalCarbsMg": 2300,
+              "sugarsMg": 1100,
+              "fibreMg": 6000,
+              "proteinMg": 315200,
+              "saltMg": 6900
+            }
+          ]
+        },
+        {
+          "slug": "xl-wing-platter",
+          "name": "XL Wing Platter",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 2950
+            },
+            {
+              "name": "+2 large or 4 regular sides",
+              "kind": "WITH_TWO_LARGE_OR_FOUR_REGULAR_SIDES",
+              "pence": 3425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1176,
+              "fatMg": 58800,
+              "saturatesMg": 14200,
+              "totalCarbsMg": 1100,
+              "sugarsMg": 0,
+              "fibreMg": 3700,
+              "proteinMg": 159600,
+              "saltMg": 6800
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:veggie",
+      "name": "Veggie",
+      "items": [
+        {
+          "slug": "the-big-cheese",
+          "name": "The Big Cheese",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 950
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1095
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1400
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1595
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1600
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1820
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 748,
+              "fatMg": 45400,
+              "saturatesMg": 20400,
+              "totalCarbsMg": 60600,
+              "sugarsMg": 8600,
+              "fibreMg": 3400,
+              "proteinMg": 27600,
+              "saltMg": 3500
+            }
+          ]
+        },
+        {
+          "slug": "the-great-imitator-wrap",
+          "name": "The Great Imitator Wrap",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 493,
+              "fatMg": 19500,
+              "saturatesMg": 8000,
+              "totalCarbsMg": 57700,
+              "sugarsMg": 10200,
+              "fibreMg": 10300,
+              "proteinMg": 17400,
+              "saltMg": 1800
+            }
+          ]
+        },
+        {
+          "slug": "beanie-wrap",
+          "name": "Beanie Wrap",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 644,
+              "fatMg": 26500,
+              "saturatesMg": 7200,
+              "totalCarbsMg": 37000,
+              "sugarsMg": 10700,
+              "fibreMg": 11300,
+              "proteinMg": 21500,
+              "saltMg": 2400
+            }
+          ]
+        },
+        {
+          "slug": "beanie-burger",
+          "name": "Beanie Burger",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 562,
+              "fatMg": 19200,
+              "saturatesMg": 5500,
+              "totalCarbsMg": 83500,
+              "sugarsMg": 6900,
+              "fibreMg": 9300,
+              "proteinMg": 19500,
+              "saltMg": 2600
+            }
+          ]
+        },
+        {
+          "slug": "beanie-pitta",
+          "name": "Beanie Pitta",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 975
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1325
+            },
+            {
+              "name": "+1 regular side",
+              "kind": "WITH_ONE_REGULAR_SIDE",
+              "pence": 1475
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1525
+            },
+            {
+              "name": "+2 regular sides",
+              "kind": "WITH_TWO_REGULAR_SIDES",
+              "pence": 1700
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 632,
+              "fatMg": 29200,
+              "saturatesMg": 6700,
+              "totalCarbsMg": 76500,
+              "sugarsMg": 6600,
+              "fibreMg": 2600,
+              "proteinMg": 21200,
+              "saltMg": 2600
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:nandinos-kids",
+      "name": "Nandinos (Kids)",
+      "items": [
+        {
+          "slug": "nandino-burger",
+          "name": "Nandino Burger",
+          "subsection": "Mains",
+          "priceList": [
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 695
+            },
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 795
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 285,
+              "fatMg": 6000,
+              "saturatesMg": 1600,
+              "totalCarbsMg": 27500,
+              "sugarsMg": 3000,
+              "fibreMg": 1600,
+              "proteinMg": 31400,
+              "saltMg": 1400
+            }
+          ]
+        },
+        {
+          "slug": "chicken-breast-fillet",
+          "name": "Chicken Breast",
+          "subsection": "Mains",
+          "priceList": [
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 695
+            },
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 795
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 138,
+              "fatMg": 2600,
+              "saturatesMg": 600,
+              "totalCarbsMg": 100,
+              "sugarsMg": 100,
+              "fibreMg": 500,
+              "proteinMg": 28600,
+              "saltMg": 700
+            }
+          ]
+        },
+        {
+          "slug": "nandinos-mac-and-cheese",
+          "name": "Mac & Cheese",
+          "subsection": "Mains",
+          "priceList": [
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 695
+            },
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 795
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 435,
+              "fatMg": 21900,
+              "saturatesMg": 13100,
+              "totalCarbsMg": 40500,
+              "sugarsMg": 2500,
+              "fibreMg": 0,
+              "proteinMg": 20500,
+              "saltMg": 1500
+            }
+          ]
+        },
+        {
+          "slug": "nandinos-3-chicken-wings",
+          "name": "3 Chicken Wings",
+          "subsection": "Mains",
+          "priceList": [
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 695
+            },
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 795
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 235,
+              "fatMg": 11800,
+              "saturatesMg": 2800,
+              "totalCarbsMg": 200,
+              "sugarsMg": 0,
+              "fibreMg": 700,
+              "proteinMg": 31900,
+              "saltMg": 1400
+            }
+          ]
+        },
+        {
+          "slug": "little-pitta",
+          "name": "Little Pitta",
+          "subsection": "Mains",
+          "priceList": [
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 695
+            },
+            {
+              "name": "Nandinos Meal",
+              "kind": "NANDINOS_MAIN",
+              "pence": 795
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 302,
+              "fatMg": 7800,
+              "saturatesMg": 1800,
+              "totalCarbsMg": 24700,
+              "sugarsMg": 4500,
+              "fibreMg": 1600,
+              "proteinMg": 32500,
+              "saltMg": 1400
+            }
+          ]
+        },
+        {
+          "slug": "soft-swirl-tub",
+          "name": "Bottomless Soft Swirl Tub",
+          "subsection": "Dessert OR Drink",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 189,
+              "fatMg": 8900,
+              "saturatesMg": 2300,
+              "totalCarbsMg": 21300,
+              "sugarsMg": 21200,
+              "fibreMg": 0,
+              "proteinMg": 5300,
+              "saltMg": 200
+            }
+          ]
+        },
+        {
+          "slug": "cloudy-apple-juice",
+          "name": "Pip Organic Cloudy Apple Juice",
+          "subsection": "Dessert OR Drink",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 275
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 77,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 18500,
+              "sugarsMg": 17600,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "pineapple-mango-smoothie",
+          "name": "Pip Organic Pineapple & Mango Smoothie",
+          "subsection": "Dessert OR Drink",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 275
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 95,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 22500,
+              "sugarsMg": 21400,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:sides",
+      "name": "Sides",
+      "items": [
+        {
+          "slug": "fully-loaded-chips",
+          "name": "Fully Loaded Chips",
+          "subsection": "Sharing Sides",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 950
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1075
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1102,
+              "fatMg": 55000,
+              "saturatesMg": 11000,
+              "totalCarbsMg": 114600,
+              "sugarsMg": 7000,
+              "fibreMg": 4500,
+              "proteinMg": 37500,
+              "saltMg": 4500
+            }
+          ]
+        },
+        {
+          "slug": "rostinas",
+          "name": "Rostinas",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 625
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 447,
+              "fatMg": 26300,
+              "saturatesMg": 5400,
+              "totalCarbsMg": 51400,
+              "sugarsMg": 1500,
+              "fibreMg": 6600,
+              "proteinMg": 4600,
+              "saltMg": 3000
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-mac-and-cheese",
+          "name": "PERi-Mac & Cheese",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 625
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 494,
+              "fatMg": 25500,
+              "saturatesMg": 14000,
+              "totalCarbsMg": 46000,
+              "sugarsMg": 2700,
+              "fibreMg": 200,
+              "proteinMg": 21000,
+              "saltMg": 1700
+            }
+          ]
+        },
+        {
+          "slug": "charred-corn",
+          "name": "Charred Corn",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 600
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 255,
+              "fatMg": 12600,
+              "saturatesMg": 900,
+              "totalCarbsMg": 27400,
+              "sugarsMg": 11700,
+              "fibreMg": 800,
+              "proteinMg": 4900,
+              "saltMg": 800
+            }
+          ]
+        },
+        {
+          "slug": "portuguese-tomato-salad",
+          "name": "Portuguese Tomato Salad",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 600
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 137,
+              "fatMg": 7800,
+              "saturatesMg": 900,
+              "totalCarbsMg": 13900,
+              "sugarsMg": 12100,
+              "fibreMg": 3100,
+              "proteinMg": 2900,
+              "saltMg": 900
+            }
+          ]
+        },
+        {
+          "slug": "hearty-grains",
+          "name": "Hearty Grains",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 245,
+              "fatMg": 12100,
+              "saturatesMg": 1100,
+              "totalCarbsMg": 25400,
+              "sugarsMg": 3200,
+              "fibreMg": 6300,
+              "proteinMg": 5300,
+              "saltMg": 1300
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 441,
+              "fatMg": 19100,
+              "saturatesMg": 1600,
+              "totalCarbsMg": 50000,
+              "sugarsMg": 6000,
+              "fibreMg": 12600,
+              "proteinMg": 10500,
+              "saltMg": 2500
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-salted-chips",
+          "name": "PERi-Salted Chips",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 450,
+              "fatMg": 18000,
+              "saturatesMg": 1400,
+              "totalCarbsMg": 68900,
+              "sugarsMg": 700,
+              "fibreMg": 7300,
+              "proteinMg": 6600,
+              "saltMg": 1900
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 1123,
+              "fatMg": 45100,
+              "saturatesMg": 3600,
+              "totalCarbsMg": 172200,
+              "sugarsMg": 1800,
+              "fibreMg": 18100,
+              "proteinMg": 16500,
+              "saltMg": 4400
+            }
+          ]
+        },
+        {
+          "slug": "chips",
+          "name": "Chips",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 448,
+              "fatMg": 18000,
+              "saturatesMg": 1400,
+              "totalCarbsMg": 68600,
+              "sugarsMg": 600,
+              "fibreMg": 7200,
+              "proteinMg": 6600,
+              "saltMg": 1300
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 1120,
+              "fatMg": 45000,
+              "saturatesMg": 3600,
+              "totalCarbsMg": 171500,
+              "sugarsMg": 1500,
+              "fibreMg": 18000,
+              "proteinMg": 16400,
+              "saltMg": 3300
+            }
+          ]
+        },
+        {
+          "slug": "garlic-bread",
+          "name": "Garlic Bread",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 372,
+              "fatMg": 16100,
+              "saturatesMg": 4100,
+              "totalCarbsMg": 51900,
+              "sugarsMg": 600,
+              "fibreMg": 2300,
+              "proteinMg": 5900,
+              "saltMg": 1000
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 743,
+              "fatMg": 32200,
+              "saturatesMg": 8200,
+              "totalCarbsMg": 103900,
+              "sugarsMg": 1200,
+              "fibreMg": 4700,
+              "proteinMg": 11800,
+              "saltMg": 2000
+            }
+          ]
+        },
+        {
+          "slug": "spicy-rice",
+          "name": "Spicy Rice",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 246,
+              "fatMg": 6000,
+              "saturatesMg": 500,
+              "totalCarbsMg": 42200,
+              "sugarsMg": 1200,
+              "fibreMg": 3900,
+              "proteinMg": 3800,
+              "saltMg": 1700
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 492,
+              "fatMg": 12000,
+              "saturatesMg": 900,
+              "totalCarbsMg": 84300,
+              "sugarsMg": 2400,
+              "fibreMg": 7800,
+              "proteinMg": 7500,
+              "saltMg": 3300
+            }
+          ]
+        },
+        {
+          "slug": "coleslaw",
+          "name": "Coleslaw",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 233,
+              "fatMg": 21200,
+              "saturatesMg": 1500,
+              "totalCarbsMg": 8100,
+              "sugarsMg": 6900,
+              "fibreMg": 2000,
+              "proteinMg": 1200,
+              "saltMg": 800
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 465,
+              "fatMg": 42300,
+              "saturatesMg": 3000,
+              "totalCarbsMg": 16200,
+              "sugarsMg": 13800,
+              "fibreMg": 3900,
+              "proteinMg": 2400,
+              "saltMg": 1500
+            }
+          ]
+        },
+        {
+          "slug": "creamy-mash",
+          "name": "Creamy Mash",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 308,
+              "fatMg": 22000,
+              "saturatesMg": 13400,
+              "totalCarbsMg": 25400,
+              "sugarsMg": 600,
+              "fibreMg": 1800,
+              "proteinMg": 2800,
+              "saltMg": 1200
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 616,
+              "fatMg": 44000,
+              "saturatesMg": 26800,
+              "totalCarbsMg": 50800,
+              "sugarsMg": 1200,
+              "fibreMg": 3600,
+              "proteinMg": 5600,
+              "saltMg": 2400
+            }
+          ]
+        },
+        {
+          "slug": "corn-on-the-cob",
+          "name": "Corn on the Cob",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 137,
+              "fatMg": 7000,
+              "saturatesMg": 3700,
+              "totalCarbsMg": 21000,
+              "sugarsMg": 4600,
+              "fibreMg": 2000,
+              "proteinMg": 3300,
+              "saltMg": 200
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 273,
+              "fatMg": 14000,
+              "saturatesMg": 7400,
+              "totalCarbsMg": 42000,
+              "sugarsMg": 9100,
+              "fibreMg": 4000,
+              "proteinMg": 6700,
+              "saltMg": 300
+            }
+          ]
+        },
+        {
+          "slug": "long-stem-broccoli",
+          "name": "Tenderstem® Broccoli",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 32,
+              "fatMg": 1500,
+              "saturatesMg": 100,
+              "totalCarbsMg": 3700,
+              "sugarsMg": 300,
+              "fibreMg": 2200,
+              "proteinMg": 2100,
+              "saltMg": 600
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 65,
+              "fatMg": 3100,
+              "saturatesMg": 200,
+              "totalCarbsMg": 7300,
+              "sugarsMg": 500,
+              "fibreMg": 4400,
+              "proteinMg": 4300,
+              "saltMg": 1200
+            }
+          ]
+        },
+        {
+          "slug": "macho-peas",
+          "name": "Macho Peas",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 155,
+              "fatMg": 8300,
+              "saturatesMg": 1200,
+              "totalCarbsMg": 17900,
+              "sugarsMg": 3400,
+              "fibreMg": 10000,
+              "proteinMg": 7100,
+              "saltMg": 1200
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 310,
+              "fatMg": 16500,
+              "saturatesMg": 2400,
+              "totalCarbsMg": 35800,
+              "sugarsMg": 6900,
+              "fibreMg": 20000,
+              "proteinMg": 14100,
+              "saltMg": 2500
+            }
+          ]
+        },
+        {
+          "slug": "rainbow-slaw",
+          "name": "Rainbow Slaw",
+          "subsection": "Sides",
+          "priceList": [
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 450
+            },
+            {
+              "name": "Regular",
+              "kind": "REGULAR_SIDE",
+              "pence": 500
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 750
+            },
+            {
+              "name": "Large",
+              "kind": "LARGE_SIDE",
+              "pence": 850
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "REGULAR",
+              "energyKcal": 132,
+              "fatMg": 11600,
+              "saturatesMg": 1400,
+              "totalCarbsMg": 7400,
+              "sugarsMg": 4200,
+              "fibreMg": 500,
+              "proteinMg": 1800,
+              "saltMg": 500
+            },
+            {
+              "size": "LARGE",
+              "energyKcal": 263,
+              "fatMg": 23100,
+              "saturatesMg": 2800,
+              "totalCarbsMg": 14800,
+              "sugarsMg": 8300,
+              "fibreMg": 900,
+              "proteinMg": 3600,
+              "saltMg": 900
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:extras",
+      "name": "Dips & Extras",
+      "items": [
+        {
+          "slug": "herby-pickles-extra",
+          "name": "Herby Pickle Bowl",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 275
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 33,
+              "fatMg": 300,
+              "saturatesMg": 100,
+              "totalCarbsMg": 7000,
+              "sugarsMg": 5500,
+              "fibreMg": 1400,
+              "proteinMg": 1400,
+              "saltMg": 1300
+            }
+          ]
+        },
+        {
+          "slug": "grilled-halloumi-cheese",
+          "name": "Grilled Halloumi Cheese",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 275
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 267,
+              "fatMg": 23800,
+              "saturatesMg": 9100,
+              "totalCarbsMg": 1300,
+              "sugarsMg": 1300,
+              "fibreMg": 0,
+              "proteinMg": 11900,
+              "saltMg": 1100
+            }
+          ]
+        },
+        {
+          "slug": "2-chicken-thighs-extra",
+          "name": "2 Boneless Chicken Thighs",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 600
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 353,
+              "fatMg": 18600,
+              "saturatesMg": 4800,
+              "totalCarbsMg": 100,
+              "sugarsMg": 100,
+              "fibreMg": 700,
+              "proteinMg": 42800,
+              "saltMg": 1100
+            }
+          ]
+        },
+        {
+          "slug": "cheddar-cheese",
+          "name": "Cheddar Cheese",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 100
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 79,
+              "fatMg": 6300,
+              "saturatesMg": 3700,
+              "totalCarbsMg": 700,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 4800,
+              "saltMg": 300
+            }
+          ]
+        },
+        {
+          "slug": "chicken-breast-extra",
+          "name": "Grilled Chicken Breast",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 420
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 138,
+              "fatMg": 2600,
+              "saturatesMg": 600,
+              "totalCarbsMg": 100,
+              "sugarsMg": 100,
+              "fibreMg": 500,
+              "proteinMg": 28600,
+              "saltMg": 700
+            }
+          ]
+        },
+        {
+          "slug": "pineapple",
+          "name": "Grilled Pineapple",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 100
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 39,
+              "fatMg": 100,
+              "saturatesMg": 0,
+              "totalCarbsMg": 8900,
+              "sugarsMg": 7600,
+              "fibreMg": 600,
+              "proteinMg": 200,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "1-2-avocado",
+          "name": "1/2 Avocado",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 165,
+              "fatMg": 16800,
+              "saturatesMg": 3500,
+              "totalCarbsMg": 1700,
+              "sugarsMg": 500,
+              "fibreMg": 2900,
+              "proteinMg": 1700,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-pe-ri-drizzle",
+          "name": "PERi-PERi Drizzle",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 150
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 97,
+              "fatMg": 10300,
+              "saturatesMg": 1500,
+              "totalCarbsMg": 900,
+              "sugarsMg": 300,
+              "fibreMg": 400,
+              "proteinMg": 300,
+              "saltMg": 800
+            }
+          ]
+        },
+        {
+          "slug": "beanie-patty-extra",
+          "name": "Beanie Patty",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 420
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 261,
+              "fatMg": 12700,
+              "saturatesMg": 3600,
+              "totalCarbsMg": 19600,
+              "sugarsMg": 1200,
+              "fibreMg": 7900,
+              "proteinMg": 13300,
+              "saltMg": 1500
+            }
+          ]
+        },
+        {
+          "slug": "per-plant-strips-extra",
+          "name": "PERi-Plant Fillet",
+          "subsection": "Extras",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 420
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 100,
+              "fatMg": 4900,
+              "saturatesMg": 1000,
+              "totalCarbsMg": 3500,
+              "sugarsMg": 100,
+              "fibreMg": 5300,
+              "proteinMg": 7800,
+              "saltMg": 600
+            }
+          ]
+        },
+        {
+          "slug": "pe-rinaise",
+          "name": "PERinaise",
+          "subsection": "Dips",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 150
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 159,
+              "fatMg": 14300,
+              "saturatesMg": 1100,
+              "totalCarbsMg": 7000,
+              "sugarsMg": 5100,
+              "fibreMg": 100,
+              "proteinMg": 300,
+              "saltMg": 1300
+            }
+          ]
+        },
+        {
+          "slug": "garlic-pe-rinaise",
+          "name": "Garlic PERinaise",
+          "subsection": "Dips",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 150
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 176,
+              "fatMg": 15800,
+              "saturatesMg": 9100,
+              "totalCarbsMg": 4400,
+              "sugarsMg": 4100,
+              "fibreMg": 300,
+              "proteinMg": 4200,
+              "saltMg": 1100
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-chicken-gravy",
+          "name": "PERi-Chicken Gravy",
+          "subsection": "Dips",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 39,
+              "fatMg": 1000,
+              "saturatesMg": 200,
+              "totalCarbsMg": 5500,
+              "sugarsMg": 1200,
+              "fibreMg": 500,
+              "proteinMg": 2000,
+              "saltMg": 1200
+            }
+          ]
+        },
+        {
+          "slug": "chilli-jam",
+          "name": "Chilli Jam",
+          "subsection": "Dips",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 150
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 61,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 16300,
+              "sugarsMg": 13400,
+              "fibreMg": 300,
+              "proteinMg": 200,
+              "saltMg": 200
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-honey",
+          "name": "PERi-Honey",
+          "subsection": "Dips",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 175
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 132,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 35500,
+              "sugarsMg": 33300,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "mayonnaise",
+          "name": "Mayonnaise",
+          "subsection": "Dips",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 35
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 90,
+              "fatMg": 9000,
+              "saturatesMg": 2600,
+              "totalCarbsMg": 2300,
+              "sugarsMg": 700,
+              "fibreMg": 200,
+              "proteinMg": 200,
+              "saltMg": 300
+            }
+          ]
+        },
+        {
+          "slug": "toasted-pitta-bread-with-butter",
+          "name": "Toasted Pitta",
+          "subsection": "Bread",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 100
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 246,
+              "fatMg": 5600,
+              "saturatesMg": 3400,
+              "totalCarbsMg": 40800,
+              "sugarsMg": 1900,
+              "fibreMg": 1900,
+              "proteinMg": 7100,
+              "saltMg": 700
+            }
+          ]
+        },
+        {
+          "slug": "portuguese-roll",
+          "name": "Portuguese Roll",
+          "subsection": "Bread",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 100
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 269,
+              "fatMg": 6200,
+              "saturatesMg": 3900,
+              "totalCarbsMg": 50400,
+              "sugarsMg": 1600,
+              "fibreMg": 2100,
+              "proteinMg": 5400,
+              "saltMg": 900
+            }
+          ]
+        },
+        {
+          "slug": "lemon-herb-wrap",
+          "name": "Tortilla Wrap",
+          "subsection": "Bread",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 100
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 125
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 275,
+              "fatMg": 7200,
+              "saturatesMg": 3000,
+              "totalCarbsMg": 43700,
+              "sugarsMg": 2400,
+              "fibreMg": 4100,
+              "proteinMg": 6800,
+              "saltMg": 600
+            }
+          ]
+        },
+        {
+          "slug": "medium-pe-ri-pe-ri-sauce",
+          "name": "Medium PERi-PERi Sauce",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 260
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 9,
+              "fatMg": 700,
+              "saturatesMg": 100,
+              "totalCarbsMg": 200,
+              "sugarsMg": 200,
+              "fibreMg": 700,
+              "proteinMg": 100,
+              "saltMg": 1200
+            }
+          ]
+        },
+        {
+          "slug": "garlic-pe-ri-pe-ri-sauce",
+          "name": "Garlic PERi-PERi Sauce",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 260
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 10,
+              "fatMg": 600,
+              "saturatesMg": 100,
+              "totalCarbsMg": 800,
+              "sugarsMg": 800,
+              "fibreMg": 300,
+              "proteinMg": 200,
+              "saltMg": 1000
+            }
+          ]
+        },
+        {
+          "slug": "hot-pe-ri-pe-ri-sauce",
+          "name": "Hot PERi-PERi Sauce",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 260
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 9,
+              "fatMg": 600,
+              "saturatesMg": 100,
+              "totalCarbsMg": 500,
+              "sugarsMg": 400,
+              "fibreMg": 500,
+              "proteinMg": 200,
+              "saltMg": 1200
+            }
+          ]
+        },
+        {
+          "slug": "lemon-herb-pe-ri-pe-ri-sauce",
+          "name": "Lemon & Herb PERi-PERi Sauce",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 260
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 8,
+              "fatMg": 700,
+              "saturatesMg": 100,
+              "totalCarbsMg": 200,
+              "sugarsMg": 200,
+              "fibreMg": 400,
+              "proteinMg": 100,
+              "saltMg": 500
+            }
+          ]
+        },
+        {
+          "slug": "extra-hot-pe-ri-pe-ri-sauce",
+          "name": "Extra Hot PERi-PERi Sauce",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 225
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 260
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 9,
+              "fatMg": 200,
+              "saturatesMg": 0,
+              "totalCarbsMg": 1100,
+              "sugarsMg": 900,
+              "fibreMg": 700,
+              "proteinMg": 300,
+              "saltMg": 900
+            }
+          ]
+        },
+        {
+          "slug": "pe-rinaise-mild",
+          "name": "PERinaise Mild",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 190
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 235
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 46,
+              "fatMg": 4200,
+              "saturatesMg": 300,
+              "totalCarbsMg": 2000,
+              "sugarsMg": 1500,
+              "fibreMg": 100,
+              "proteinMg": 100,
+              "saltMg": 400
+            }
+          ]
+        },
+        {
+          "slug": "pe-ri-salt",
+          "name": "PERi-PERi Salt",
+          "subsection": "Bottles",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 250
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 300
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 114,
+              "fatMg": 2400,
+              "saturatesMg": 400,
+              "totalCarbsMg": 22300,
+              "sugarsMg": 9500,
+              "fibreMg": 5200,
+              "proteinMg": 3200,
+              "saltMg": 37500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:drinks",
+      "name": "Drinks",
+      "items": [
+        {
+          "slug": "bottomless-coca-cola",
+          "name": "Coca-Cola Classic",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 126,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 31800,
+              "sugarsMg": 31800,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "bottomless-diet-coke",
+          "name": "Bottomless Diet Coke",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "bottomless-dr-pepper",
+          "name": "Bottomless Dr Pepper Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 2,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "bottomless-coke-zero",
+          "name": "Bottomless Coke Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 1,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "bottomless-sprite-zero",
+          "name": "Bottomless Sprite Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 3,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "bottomless-fanta-zero",
+          "name": "Bottomless Fanta Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 9,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 1500,
+              "sugarsMg": 1500,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "rubro-new-countertop-bottomless",
+          "name": "Bottomless RUBRO Peach Iced Tea",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 51,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 13500,
+              "sugarsMg": 13500,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "cloudy-lemonade",
+          "name": "Cloudy Lemonade",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 450
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 51,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 12900,
+              "sugarsMg": 12900,
+              "fibreMg": 0,
+              "proteinMg": 300,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "coca-cola-bottle",
+          "name": "Bottle of Coca-Cola",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 210,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 53000,
+              "sugarsMg": 53000,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "coke-zero-bottle",
+          "name": "Bottle of Coke Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 2,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "dr-pepper-bottle",
+          "name": "Bottle of Dr Pepper Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 3,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "fanta-zero-bottle",
+          "name": "Bottle of Fanta Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 15,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 2500,
+              "sugarsMg": 2500,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "diet-coke-bottle",
+          "name": "Bottle of Diet Coke",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 2,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "sprite-zero-bottle",
+          "name": "Bottle of Sprite Zero",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 295
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 5,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "still-water",
+          "name": "Still Water",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 0,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "sparkling-water",
+          "name": "Sparkling Water",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 350
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 0,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "karma-drinks-gingerella",
+          "name": "Karma Drinks Gingerella",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 60,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 14400,
+              "sugarsMg": 14400,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "rubro-peach",
+          "name": "RUBRO Peach Iced Tea",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 51,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 13500,
+              "sugarsMg": 13500,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "rubro-berry",
+          "name": "RUBRO Berry Iced Tea",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 51,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 13500,
+              "sugarsMg": 13500,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "rubro-lemon",
+          "name": "RUBRO Lemon Iced Tea",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 425
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 51,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 13500,
+              "sugarsMg": 13500,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "momo-kombucha",
+          "name": "MOMO Elderflower Kombucha",
+          "subsection": "Soft Drinks",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 495
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 63,
+              "fatMg": 300,
+              "saturatesMg": 300,
+              "totalCarbsMg": 9200,
+              "sugarsMg": 9200,
+              "fibreMg": 3300,
+              "proteinMg": 300,
+              "saltMg": 300
+            }
+          ]
+        },
+        {
+          "slug": "bero-golden-pils",
+          "name": "BERO Kingston Golden Pils",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 450
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 83,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 16500,
+              "sugarsMg": 5600,
+              "fibreMg": 0,
+              "proteinMg": 1000,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "sxollie-cider",
+          "name": "Sxollie Cider",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 595
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 289,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 30300,
+              "sugarsMg": 22000,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "freedom-pils",
+          "name": "Freedom Pils",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 119,
+              "fatMg": 300,
+              "saturatesMg": 300,
+              "totalCarbsMg": 8600,
+              "sugarsMg": 300,
+              "fibreMg": 1700,
+              "proteinMg": 1300,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "camden-pale-ale",
+          "name": "Camden Pale Ale",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 122,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 11600,
+              "sugarsMg": 1700,
+              "fibreMg": 0,
+              "proteinMg": 1000,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "beavertown-lazer-crush",
+          "name": "Beavertown Lazer Crush Alcohol Free IPA",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 450
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 525
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 89,
+              "fatMg": 300,
+              "saturatesMg": 300,
+              "totalCarbsMg": 19500,
+              "sugarsMg": 9900,
+              "fibreMg": 0,
+              "proteinMg": 1000,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "sagres-draught-half-pint",
+          "name": "Sagres Draught Half Pint",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 395
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 111,
+              "fatMg": 300,
+              "saturatesMg": 300,
+              "totalCarbsMg": 8800,
+              "sugarsMg": 600,
+              "fibreMg": 900,
+              "proteinMg": 600,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "sagres-draught-pint",
+          "name": "Sagres Draught Pint",
+          "subsection": "Beer & Cider",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 725
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 222,
+              "fatMg": 600,
+              "saturatesMg": 600,
+              "totalCarbsMg": 17600,
+              "sugarsMg": 1100,
+              "fibreMg": 1700,
+              "proteinMg": 1100,
+              "saltMg": 100
+            }
+          ]
+        },
+        {
+          "slug": "spier-chardonnay",
+          "name": "Spier Chardonnay (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "125ml",
+              "kind": "WINE125ML",
+              "pence": 425
+            },
+            {
+              "name": "175ml",
+              "kind": "WINE175ML",
+              "pence": 700
+            },
+            {
+              "name": "250ml",
+              "kind": "WINE250ML",
+              "pence": 825
+            },
+            {
+              "name": "Bottle",
+              "kind": "WINE_BOTTLE",
+              "pence": 2195
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 185,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 7500,
+              "sugarsMg": 7500,
+              "fibreMg": 0,
+              "proteinMg": 300,
+              "saltMg": 100
+            }
+          ]
+        },
+        {
+          "slug": "spier-sauvignon-blanc",
+          "name": "Spier Sauvignon Blanc (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 725
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 775
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 190,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 800,
+              "sugarsMg": 800,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "creative-block-2",
+          "name": "Creative Block 2 (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 3150
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 3325
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 585,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 1500,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "spier-merlot",
+          "name": "Spier Merlot (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 725
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 775
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 203,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 2000,
+              "sugarsMg": 2000,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "spier-cabernet-sauvignon",
+          "name": "Spier Cabernet Sauvignon (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "125ml",
+              "kind": "WINE125ML",
+              "pence": 425
+            },
+            {
+              "name": "175ml",
+              "kind": "WINE175ML",
+              "pence": 700
+            },
+            {
+              "name": "250ml",
+              "kind": "WINE250ML",
+              "pence": 825
+            },
+            {
+              "name": "Bottle",
+              "kind": "WINE_BOTTLE",
+              "pence": 2195
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 200,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 700,
+              "sugarsMg": 700,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "creative-block-5",
+          "name": "Creative Block 5 (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 3150
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 3325
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "BOTTLE",
+              "energyKcal": 638,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 1500,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "spier-rose",
+          "name": "Spier Rose (South Africa)",
+          "subsection": "Wine",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 725
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 775
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 188,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 500,
+              "sugarsMg": 0,
+              "fibreMg": 0,
+              "proteinMg": 0,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "tropical-crush",
+          "name": "Tropical Crush",
+          "subsection": "Crushes",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 450
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 246,
+              "fatMg": 1800,
+              "saturatesMg": 1200,
+              "totalCarbsMg": 0,
+              "sugarsMg": 56700,
+              "fibreMg": 300,
+              "proteinMg": 1800,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "pink-berry-crush",
+          "name": "Pink Berry Crush",
+          "subsection": "Crushes",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 450
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 234,
+              "fatMg": 300,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 54300,
+              "fibreMg": 2100,
+              "proteinMg": 300,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "savanna-beach",
+          "name": "Savanna Beach",
+          "subsection": "Frozen Cocktails",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 222,
+              "fatMg": 1200,
+              "saturatesMg": 800,
+              "totalCarbsMg": 0,
+              "sugarsMg": 37800,
+              "fibreMg": 200,
+              "proteinMg": 1200,
+              "saltMg": 0
+            }
+          ]
+        },
+        {
+          "slug": "strawberry-sunset",
+          "name": "Strawberry Sunset",
+          "subsection": "Frozen Cocktails",
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 875
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 214,
+              "fatMg": 200,
+              "saturatesMg": 0,
+              "totalCarbsMg": 0,
+              "sugarsMg": 36200,
+              "fibreMg": 1400,
+              "proteinMg": 200,
+              "saltMg": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "section:desserts",
+      "name": "Desserts",
+      "items": [
+        {
+          "slug": "ultimate-chocolate-brownie-gelado",
+          "name": "Ultimate Chocolate Brownie",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 635,
+              "fatMg": 32100,
+              "saturatesMg": 20000,
+              "totalCarbsMg": 78000,
+              "sugarsMg": 63000,
+              "fibreMg": 1800,
+              "proteinMg": 8300,
+              "saltMg": 300
+            }
+          ]
+        },
+        {
+          "slug": "ultimate-chocolate-brownie",
+          "name": "Ultimate Chocolate Brownie",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 475
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 575
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 453,
+              "fatMg": 21700,
+              "saturatesMg": 12000,
+              "totalCarbsMg": 58000,
+              "sugarsMg": 44000,
+              "fibreMg": 1600,
+              "proteinMg": 5500,
+              "saltMg": 100
+            }
+          ]
+        },
+        {
+          "slug": "soft-swirl-tub",
+          "name": "Bottomless Soft Swirl Tub",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 189,
+              "fatMg": 8900,
+              "saturatesMg": 2300,
+              "totalCarbsMg": 21300,
+              "sugarsMg": 21200,
+              "fibreMg": 0,
+              "proteinMg": 5300,
+              "saltMg": 200
+            }
+          ]
+        },
+        {
+          "slug": "choc-a-lot-cake",
+          "name": "Choc-A-Lot Cake",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 625
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 425,
+              "fatMg": 24800,
+              "saturatesMg": 10200,
+              "totalCarbsMg": 59800,
+              "sugarsMg": 50000,
+              "fibreMg": 500,
+              "proteinMg": 4600,
+              "saltMg": 1100
+            }
+          ]
+        },
+        {
+          "slug": "gooey-caramel-cheesecake",
+          "name": "Gooey Caramel Cheesecake",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 550
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 625
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 464,
+              "fatMg": 29200,
+              "saturatesMg": 18500,
+              "totalCarbsMg": 36300,
+              "sugarsMg": 28100,
+              "fibreMg": 1000,
+              "proteinMg": 13700,
+              "saltMg": 200
+            }
+          ]
+        },
+        {
+          "slug": "one-pastel-de-nata",
+          "name": "One Pastel de Nata",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 275
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 325
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 224,
+              "fatMg": 11200,
+              "saturatesMg": 7200,
+              "totalCarbsMg": 26400,
+              "sugarsMg": 16000,
+              "fibreMg": 1000,
+              "proteinMg": 3100,
+              "saltMg": 200
+            }
+          ]
+        },
+        {
+          "slug": "four-pastel-de-nata",
+          "name": "Four Pastel de Natas",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 900
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 1095
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 896,
+              "fatMg": 44800,
+              "saturatesMg": 28800,
+              "totalCarbsMg": 105600,
+              "sugarsMg": 64000,
+              "fibreMg": 4000,
+              "proteinMg": 12400,
+              "saltMg": 800
+            }
+          ]
+        },
+        {
+          "slug": "mango-gelado",
+          "name": "Mango Gelado",
+          "subsection": null,
+          "priceList": [
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 375
+            },
+            {
+              "name": "On its own",
+              "kind": "ON_ITS_OWN",
+              "pence": 395
+            }
+          ],
+          "factsForPortionSizes": [
+            {
+              "size": "DEFAULT",
+              "energyKcal": 93,
+              "fatMg": 0,
+              "saturatesMg": 0,
+              "totalCarbsMg": 23300,
+              "sugarsMg": 18000,
+              "fibreMg": 1700,
+              "proteinMg": 0,
+              "saltMg": 200
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

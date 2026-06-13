@@ -1,0 +1,541 @@
+{
+  "_meta": {
+    "source": "Urban Greens 'Allergen guide 2026' PDF (data/UrbanGreens-AllergenMatrix.pdf), gegengeprüft mit data/UrbanGreens_Nutrition.xlsx; Deliveroo-Flow: data/UrbanGreens-Deliveroo-Screenshots.pdf",
+    "note": "NUR kcal/protein/fat/carbs verfügbar. NUR Build Your Own — fertige Salads & Trays bewusst entfernt (User-Entscheidung 12.06.2026, Werte standen ohne Dressing/Green Base bzw. waren nicht zerlegbar; Originalwerte siehe PDF/Excel).",
+    "generated": "node export-urbangreens.js (aus index.html UG-Objekt)"
+  },
+  "order_rules_salad": [
+    {
+      "step": 1,
+      "name": "Choose a Green Base",
+      "quantity": "1 oder keine",
+      "options": "greens"
+    },
+    {
+      "step": 2,
+      "name": "Choose a Carb Base",
+      "quantity": "1 oder keine",
+      "options": "carbs"
+    },
+    {
+      "step": 3,
+      "name": "Choose a Protein",
+      "quantity": "1 oder keins",
+      "options": "prots"
+    },
+    {
+      "step": 4,
+      "name": "Add Extra Protein?",
+      "quantity": "0-1",
+      "options": "prots ohne Avocado Whole (noExtra)"
+    },
+    {
+      "step": 5,
+      "name": "Choose 3 Veg or Pickles",
+      "quantity": "genau 3",
+      "options": "veg"
+    },
+    {
+      "step": 6,
+      "name": "Any Extra Veg or Pickles?",
+      "quantity": "beliebig",
+      "options": "Leafy Greens + veg ohne Cucumber (noExtra)"
+    },
+    {
+      "step": 7,
+      "name": "Choose 2 Toppings",
+      "quantity": "genau 2 (0 bei 'No nuts')",
+      "options": "tops"
+    },
+    {
+      "step": 8,
+      "name": "Choose a Dressing",
+      "quantity": "0-1 (optional; 0 bei 'No Dressing')",
+      "options": "dress"
+    },
+    {
+      "step": 9,
+      "name": "Any Extra Dressing?",
+      "quantity": "beliebig",
+      "options": "dress"
+    },
+    {
+      "step": 10,
+      "name": "Any extra Scoops, Premiums or Toppings?",
+      "quantity": "beliebig",
+      "options": "scoops + tops"
+    }
+  ],
+  "order_rules_tray": [
+    {
+      "step": 1,
+      "name": "Choose a Carb Base",
+      "quantity": "1 oder keine",
+      "options": "carbs"
+    },
+    {
+      "step": 2,
+      "name": "Choose a Protein",
+      "quantity": "1 oder keins",
+      "options": "prots"
+    },
+    {
+      "step": 3,
+      "name": "Add Extra Protein?",
+      "quantity": "0-1",
+      "options": "prots ohne Avocado Whole (noExtra)"
+    },
+    {
+      "step": 4,
+      "name": "Choose 3 Veg or Pickles",
+      "quantity": "genau 3",
+      "options": "veg"
+    },
+    {
+      "step": 5,
+      "name": "Any Extra Veg or Pickles?",
+      "quantity": "beliebig",
+      "options": "Leafy Greens + veg ohne Cucumber (noExtra)"
+    },
+    {
+      "step": 6,
+      "name": "Choose a Scoop or Premium Add On",
+      "quantity": "PFLICHT, genau 1",
+      "options": "scoops"
+    },
+    {
+      "step": 7,
+      "name": "Choose 2 Toppings",
+      "quantity": "genau 2 (0 bei 'No nuts')",
+      "options": "tops"
+    },
+    {
+      "step": 8,
+      "name": "Any Extra Dressing?",
+      "quantity": "beliebig",
+      "options": "dress"
+    },
+    {
+      "step": 9,
+      "name": "Any extra Scoops, Premiums or Toppings?",
+      "quantity": "beliebig",
+      "options": "scoops + tops"
+    }
+  ],
+  "greens": [
+    {
+      "id": "leafy_greens",
+      "name": "Leafy Greens",
+      "kcal": 7,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 0
+    },
+    {
+      "id": "cabbage_mix",
+      "name": "Cabbage Mix",
+      "kcal": 72,
+      "protein": 2,
+      "fat": 4,
+      "carbs": 5
+    }
+  ],
+  "carbs": [
+    {
+      "id": "quinoa",
+      "name": "Quinoa",
+      "kcal": 161,
+      "protein": 6,
+      "fat": 4,
+      "carbs": 22
+    },
+    {
+      "id": "red_rice",
+      "name": "Red Rice [Cold]",
+      "kcal": 121,
+      "protein": 3,
+      "fat": 2,
+      "carbs": 23
+    },
+    {
+      "id": "glass_noodles",
+      "name": "Sesame Glass Noodles",
+      "kcal": 91,
+      "protein": 0,
+      "fat": 2,
+      "carbs": 19
+    },
+    {
+      "id": "spiced_grains",
+      "name": "Spiced Grains [Warm]",
+      "kcal": 158,
+      "protein": 4,
+      "fat": 3,
+      "carbs": 27
+    }
+  ],
+  "prots": [
+    {
+      "id": "chicken",
+      "name": "Chicken",
+      "kcal": 103,
+      "protein": 22,
+      "fat": 2,
+      "carbs": 0
+    },
+    {
+      "id": "pulled_beef_brisket",
+      "name": "Pulled Beef Brisket",
+      "kcal": 166,
+      "protein": 24,
+      "fat": 8,
+      "carbs": 0
+    },
+    {
+      "id": "cajun_tempeh",
+      "name": "Cajun-Spiced Tempeh",
+      "kcal": 138,
+      "protein": 17,
+      "fat": 1,
+      "carbs": 0
+    },
+    {
+      "id": "shrimp",
+      "name": "Shrimp",
+      "kcal": 82,
+      "protein": 17,
+      "fat": 1,
+      "carbs": 0
+    },
+    {
+      "id": "hot_smoked_salmon",
+      "name": "Hot Smoked Salmon",
+      "kcal": 140,
+      "protein": 19,
+      "fat": 7,
+      "carbs": 1
+    },
+    {
+      "id": "honey_dijon_chicken",
+      "name": "Honey Dijon Chicken [Warm]",
+      "kcal": 90,
+      "protein": 15,
+      "fat": 3,
+      "carbs": 0
+    },
+    {
+      "id": "pulled_chilli_brisket",
+      "name": "Pulled Chilli Brisket [Warm]",
+      "kcal": 132,
+      "protein": 17,
+      "fat": 5,
+      "carbs": 5
+    },
+    {
+      "id": "harissa_chickpeas",
+      "name": "Harissa Chickpeas [Warm]",
+      "kcal": 134,
+      "protein": 5,
+      "fat": 7,
+      "carbs": 10
+    },
+    {
+      "id": "avocado_whole",
+      "name": "Avocado Whole",
+      "kcal": 230,
+      "protein": 4,
+      "fat": 30,
+      "carbs": 18,
+      "noExtra": true
+    }
+  ],
+  "veg": [
+    {
+      "id": "avocado",
+      "name": "Avocado",
+      "kcal": 115,
+      "protein": 2,
+      "fat": 15,
+      "carbs": 9
+    },
+    {
+      "id": "beansprouts",
+      "name": "Beansprouts",
+      "kcal": 6,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 1
+    },
+    {
+      "id": "cherry_tomatoes",
+      "name": "Cherry Tomatoes",
+      "kcal": 13,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 2
+    },
+    {
+      "id": "cucumber",
+      "name": "Cucumber",
+      "kcal": 16,
+      "protein": 1,
+      "fat": 1,
+      "carbs": 1,
+      "noExtra": true
+    },
+    {
+      "id": "edamame",
+      "name": "Edamame",
+      "kcal": 63,
+      "protein": 5,
+      "fat": 2,
+      "carbs": 4
+    },
+    {
+      "id": "red_peppers",
+      "name": "Red Peppers",
+      "kcal": 9,
+      "protein": 0,
+      "fat": 2,
+      "carbs": 0
+    },
+    {
+      "id": "kale",
+      "name": "Kale",
+      "kcal": 20,
+      "protein": 1,
+      "fat": 2,
+      "carbs": 1
+    },
+    {
+      "id": "sesame_soy_broccoli",
+      "name": "Sesame Soy Broccoli",
+      "kcal": 47,
+      "protein": 2,
+      "fat": 3,
+      "carbs": 2
+    },
+    {
+      "id": "tajin_sweetcorn",
+      "name": "Tajin Sweetcorn",
+      "kcal": 59,
+      "protein": 2,
+      "fat": 1,
+      "carbs": 9
+    },
+    {
+      "id": "pickled_cabbage",
+      "name": "Pickled Cabbage",
+      "kcal": 33,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 8
+    },
+    {
+      "id": "ginger_pickled_carrots",
+      "name": "Ginger Pickled Carrots",
+      "kcal": 25,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 6
+    },
+    {
+      "id": "pickled_chillies",
+      "name": "Pickled Chillies",
+      "kcal": 21,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 5
+    },
+    {
+      "id": "pickled_onions",
+      "name": "Pickled Onions",
+      "kcal": 36,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 8
+    },
+    {
+      "id": "kimchi",
+      "name": "Kimchi",
+      "kcal": 36,
+      "protein": 0,
+      "fat": 0,
+      "carbs": 6
+    }
+  ],
+  "tops": [
+    {
+      "id": "cashews",
+      "name": "Cashews",
+      "kcal": 71,
+      "protein": 3,
+      "fat": 6,
+      "carbs": 2
+    },
+    {
+      "id": "hazelnuts",
+      "name": "Hazelnuts",
+      "kcal": 81,
+      "protein": 2,
+      "fat": 8,
+      "carbs": 1
+    },
+    {
+      "id": "sunflower_pumpkin_seeds",
+      "name": "Sunflower and Pumpkin Seeds",
+      "kcal": 90,
+      "protein": 4,
+      "fat": 7,
+      "carbs": 2
+    },
+    {
+      "id": "sesame_seeds",
+      "name": "Sesame Seeds",
+      "kcal": 62,
+      "protein": 2,
+      "fat": 6,
+      "carbs": 0
+    },
+    {
+      "id": "toasted_peanuts",
+      "name": "Toasted Peanuts",
+      "kcal": 93,
+      "protein": 5,
+      "fat": 8,
+      "carbs": 2
+    },
+    {
+      "id": "tortilla_chips",
+      "name": "Tortilla Chips",
+      "kcal": 51,
+      "protein": 1,
+      "fat": 3,
+      "carbs": 6
+    }
+  ],
+  "dress": [
+    {
+      "id": "basil_pesto",
+      "name": "Basil Pesto Dressing",
+      "kcal": 160,
+      "protein": 1,
+      "fat": 16,
+      "carbs": 4
+    },
+    {
+      "id": "caesar",
+      "name": "Caesar Dressing",
+      "kcal": 284,
+      "protein": 4,
+      "fat": 30,
+      "carbs": 1
+    },
+    {
+      "id": "gochujang_miso",
+      "name": "Gochujang Miso Dressing",
+      "kcal": 209,
+      "protein": 1,
+      "fat": 21,
+      "carbs": 5
+    },
+    {
+      "id": "habanero_lime",
+      "name": "Habanero Lime Dressing",
+      "kcal": 343,
+      "protein": 0.4,
+      "fat": 37.7,
+      "carbs": 0.4
+    },
+    {
+      "id": "sriracha_lime",
+      "name": "Sriracha Lime Dressing",
+      "kcal": 147,
+      "protein": 1,
+      "fat": 13,
+      "carbs": 6
+    },
+    {
+      "id": "thai_peanut",
+      "name": "Thai Peanut Dressing",
+      "kcal": 173,
+      "protein": 5,
+      "fat": 14,
+      "carbs": 6
+    }
+  ],
+  "scoops": [
+    {
+      "id": "tzatziki_scoop",
+      "name": "Tzatziki Scoop",
+      "kcal": 31,
+      "protein": 3,
+      "fat": 2,
+      "carbs": 1
+    },
+    {
+      "id": "sambal_feta_scoop",
+      "name": "Sambal Feta Scoop",
+      "kcal": 74,
+      "protein": 6,
+      "fat": 5,
+      "carbs": 1
+    },
+    {
+      "id": "whipped_miso_tofu_scoop",
+      "name": "Whipped Miso Tofu Scoop",
+      "kcal": 27,
+      "protein": 2,
+      "fat": 1,
+      "carbs": 2
+    },
+    {
+      "id": "ug_hummus_scoop",
+      "name": "UG Hummus Scoop",
+      "kcal": 76,
+      "protein": 3,
+      "fat": 5,
+      "carbs": 4
+    },
+    {
+      "id": "beetroot_hummus_scoop",
+      "name": "Beetroot Hummus Scoop",
+      "kcal": 48,
+      "protein": 2,
+      "fat": 2,
+      "carbs": 4
+    },
+    {
+      "id": "sweet_potato_hummus_scoop",
+      "name": "Sweet Potato Hummus Scoop",
+      "kcal": 101,
+      "protein": 3,
+      "fat": 8,
+      "carbs": 3
+    },
+    {
+      "id": "crumbled_feta",
+      "name": "Crumbled Feta",
+      "kcal": 20,
+      "protein": 1,
+      "fat": 2,
+      "carbs": 0
+    },
+    {
+      "id": "avocado_half",
+      "name": "Avocado Half",
+      "kcal": 115,
+      "protein": 2,
+      "fat": 15,
+      "carbs": 9
+    },
+    {
+      "id": "shaved_parmesan",
+      "name": "Shaved Parmesan",
+      "kcal": 61,
+      "protein": 5,
+      "fat": 6,
+      "carbs": 0
+    }
+  ]
+}
