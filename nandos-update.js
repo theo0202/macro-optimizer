@@ -13,12 +13,12 @@ const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().repla
 const SKIP_SECTIONS = new Set(["drinks"]);
 const SKIP_SUBSECTIONS = new Set(["Dessert OR Drink"]);
 const DEFAULT_OFF = new Set(["nandinos_kids"]);
-// Schalter "No wings / chicken livers": diese Items bekommen wings:true (alle Wings + Extra Saucy + Roulette + Livers).
-// "3 Chicken Wings" trifft PERi-PERi Chicken UND Nandinos. XL Wing Platter NICHT geflaggt (über Platter-Schalter abdeckbar).
+// Schalter "No wings / chicken livers": diese Items bekommen wings:true (alle Wings + Extra Saucy + Roulette + Livers + XL Wing Platter).
+// "3 Chicken Wings" trifft PERi-PERi Chicken UND Nandinos. XL Wing Platter ist ZUSÄTZLICH über den Platter-Schalter abdeckbar.
 const WINGS_NAMES = new Set([
   "10 Chicken Wings", "5 Chicken Wings", "3 Chicken Wings", "Wing Roulette",
   "10 Extra Saucy Wings", "5 Extra Saucy Wings", "3 Extra Saucy Wings",
-  "Chicken Livers & Rustic Portuguese Roll",
+  "Chicken Livers & Rustic Portuguese Roll", "XL Wing Platter",
 ].map(norm));
 const cap = s => s ? s.charAt(0) + s.slice(1).toLowerCase() : s;
 

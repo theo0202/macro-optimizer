@@ -8,7 +8,7 @@ const raw = JSON.parse(fs.readFileSync(__dirname + "/data/gdk-raw.json", "utf8")
 const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 const DEFAULT_OFF = new Set(["juniors"]); // Kids-Menü standardmäßig aus (wie Nando's Nandinos)
 const CAT_NAMES = { kebabs: "Kebabs", wraps: "Wraps", burritos: "Burritos", quesadillas: "Quesadillas",
-  rice_bowls: "Rice Bowls", boxes: "Boxes", juniors: "Juniors (Kids)" };
+  rice_bowls: "Rice Bowls", boxes: "Boxes", sides: "Sides", juniors: "Juniors (Kids)" };
 
 const catIds = [];
 for (const it of raw.items) { const c = slug(it.cat); if (!catIds.includes(c)) catIds.push(c); }

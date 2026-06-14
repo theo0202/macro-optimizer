@@ -520,7 +520,7 @@ const NANDOS = {
     { id:"boneless_platter",name:"Boneless Platter",cat:"sharing_platters",kcal:1037,fat:47.2,sat:11.9,carbs:0.5,sugars:0.5,fibre:3,protein:144.9,salt:3.5 },
     { id:"family_platter",name:"Family Platter",cat:"sharing_platters",kcal:2317,fat:116,sat:32.5,carbs:2.3,sugars:1.1,fibre:6,protein:315.2,salt:6.9 },
     { id:"full_platter",name:"Full Platter",cat:"sharing_platters",kcal:1159,fat:58,sat:16.3,carbs:1.1,sugars:0.6,fibre:3,protein:157.6,salt:3.5 },
-    { id:"xl_wing_platter",name:"XL Wing Platter",cat:"sharing_platters",kcal:1176,fat:58.8,sat:14.2,carbs:1.1,sugars:0,fibre:3.7,protein:159.6,salt:6.8 },
+    { id:"xl_wing_platter",name:"XL Wing Platter",cat:"sharing_platters",wings:true,kcal:1176,fat:58.8,sat:14.2,carbs:1.1,sugars:0,fibre:3.7,protein:159.6,salt:6.8 },
     { id:"beanie_burger",name:"Beanie Burger",cat:"veggie",kcal:562,fat:19.2,sat:5.5,carbs:83.5,sugars:6.9,fibre:9.3,protein:19.5,salt:2.6 },
     { id:"beanie_pitta",name:"Beanie Pitta",cat:"veggie",kcal:632,fat:29.2,sat:6.7,carbs:76.5,sugars:6.6,fibre:2.6,protein:21.2,salt:2.6 },
     { id:"beanie_wrap",name:"Beanie Wrap",cat:"veggie",kcal:644,fat:26.5,sat:7.2,carbs:37,sugars:10.7,fibre:11.3,protein:21.5,salt:2.4 },
@@ -633,7 +633,7 @@ const WAGA = {
 // __WAGAMAMA_DATA_END__
 
 // __GDK_DATA_START__ (generiert via: node gdk-update.js aus data/gdk-raw.json — nicht von Hand editieren)
-// Quelle: GDK offizielle Nährwerttabelle (Copy-Paste vom User) · Stand 2026-06-12 · 60 Items · 26 mit Sauce
+// Quelle: GDK offizielle Nährwerttabelle (Copy-Paste vom User) · Stand 2026-06-12 · 69 Items · 26 mit Sauce
 const GDK = {
   cats: [
     { id:"kebabs",name:"Kebabs",on:true },
@@ -642,6 +642,7 @@ const GDK = {
     { id:"quesadillas",name:"Quesadillas",on:true },
     { id:"rice_bowls",name:"Rice Bowls",on:true },
     { id:"boxes",name:"Boxes",on:true },
+    { id:"sides",name:"Sides",on:true },
     { id:"juniors",name:"Juniors (Kids)",on:false },
   ],
   items: [
@@ -694,6 +695,15 @@ const GDK = {
     { id:"large_gym_box_beef",name:"Large Gym Box Beef",cat:"boxes",kcal:692,fat:56.5,sat:24.4,carbs:18.1,sugars:8.8,fibre:17.3,protein:30,salt:3.43 },
     { id:"large_gym_box_chicken",name:"Large Gym Box Chicken",cat:"boxes",kcal:594,fat:35.9,sat:9.2,carbs:8.9,sugars:8,fibre:8.9,protein:56.8,salt:3.47 },
     { id:"large_gym_box_mixed_meat",name:"Large Gym Box Mixed Meat",cat:"boxes",kcal:643,fat:46.2,sat:16.8,carbs:13.5,sugars:8.4,fibre:13.1,protein:43.4,salt:3.45 },
+    { id:"fries_regular",name:"Fries (Regular)",cat:"sides",kcal:248,fat:9.7,sat:0.6,carbs:38.5,sugars:0.7,fibre:3.7,protein:4.1,salt:0.05 },
+    { id:"fries_large",name:"Fries (Large)",cat:"sides",kcal:342,fat:13.4,sat:0.9,carbs:53.1,sugars:1,fibre:5.1,protein:5.6,salt:0.07 },
+    { id:"flaming_fries_regular",name:"Flaming Fries (Regular)",cat:"sides",kcal:251,fat:9.9,sat:0.7,carbs:38.9,sugars:1,fibre:4.3,protein:4.5,salt:0.12 },
+    { id:"flaming_fries_large",name:"Flaming Fries (Large)",cat:"sides",kcal:345,fat:13.6,sat:0.9,carbs:53.5,sugars:1.3,fibre:5.7,protein:6,salt:0.13 },
+    { id:"doner_seasoned_fries_regular",name:"Doner Seasoned Fries (Regular)",cat:"sides",kcal:253,fat:9.8,sat:0.6,carbs:39.3,sugars:0.8,fibre:3.7,protein:4.3,salt:0.98 },
+    { id:"doner_seasoned_fries_large",name:"Doner Seasoned Fries (Large)",cat:"sides",kcal:349,fat:13.5,sat:0.9,carbs:54.3,sugars:1.1,fibre:5.1,protein:5.9,salt:1 },
+    { id:"chilli_cheese_bites",name:"Chilli Cheese Bites",cat:"sides",kcal:425,fat:29.3,sat:7.1,carbs:28.9,sugars:2.4,fibre:2,protein:10.5,salt:2.14 },
+    { id:"hash_brown_bites",name:"Hash Brown Bites",cat:"sides",kcal:305,fat:18.4,sat:1.5,carbs:29.3,sugars:2.9,fibre:3.2,protein:2.7,salt:1.23 },
+    { id:"hash_brown_bites_doner_seasoned",name:"Hash Brown Bites Doner Seasoned",cat:"sides",kcal:301,fat:18.5,sat:1.5,carbs:28.2,sugars:0.8,fibre:3.2,protein:2.9,salt:1.98 },
     { id:"og_jr_gdk_beef_with_sauce",name:"OG Jr GDK Beef (with sauce)",cat:"juniors",sauce:true,kcal:592,fat:28.9,sat:8.4,carbs:65.7,sugars:6.7,fibre:8.1,protein:19.5,salt:3.23 },
     { id:"og_jr_gdk_chicken_with_sauce",name:"OG Jr GDK Chicken (with sauce)",cat:"juniors",sauce:true,kcal:590,fat:24.5,sat:4.3,carbs:63.1,sugars:6.6,fibre:5.9,protein:30.3,salt:3.41 },
     { id:"og_jr_gdk_mixed_meat_with_sauce",name:"OG Jr GDK Mixed Meat (with sauce)",cat:"juniors",sauce:true,kcal:607,fat:28.1,sat:7,carbs:64.7,sugars:6.7,fibre:7.3,protein:25.6,salt:3.41 },
@@ -1163,7 +1173,7 @@ function App() {
   const [resto,setResto]=useState("subway");
   const [mode,setMode]=useState("macros");
   const [sortBy,setSortBy]=useState("score");
-  const [subSize,setSz]=useState("six");
+  const [subSize,setSz]=useState("footlong");
   const [tP,setTP]=useState(30);
   const [tC,setTC]=useState(45);
   const [tF,setTF]=useState(12);

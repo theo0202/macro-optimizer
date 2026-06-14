@@ -186,9 +186,9 @@ check("Nando's Sides-Portionssplit (Spicy Rice Large)", T.NANDOS.items.find(x =>
 check("Nando's: keine Drinks in den Daten", T.NANDOS.cats.every(c => c.id !== "drinks") && T.NANDOS.items.every(x => x.cat !== "drinks"), true);
 check("Nando's: 2022-Altlast 'Mixed Leaf Salad' weg", T.NANDOS.items.every(x => !x.id.startsWith("mixed_leaf")), true);
 // Wings/Livers sind jetzt in den Daten, aber wings:true geflaggt (Schalter "No wings / chicken livers")
-check("Nando's Wings/Livers geflaggt (9 Items)", T.NANDOS.items.filter(x => x.wings).length, 9);
+check("Nando's Wings/Livers geflaggt (10 Items, inkl. XL Wing Platter)", T.NANDOS.items.filter(x => x.wings).length, 10);
 check("Nando's Corn geflaggt (2 Items)", T.NANDOS.items.filter(x => x.corn).length, 2);
-check("Nando's XL Wing Platter NICHT als wings geflaggt", !T.NANDOS.items.find(x => x.id === "xl_wing_platter").wings, true);
+check("Nando's XL Wing Platter jetzt als wings geflaggt", !!T.NANDOS.items.find(x => x.id === "xl_wing_platter").wings, true);
 
 const nanAll = {};
 T.NANDOS.cats.forEach(c => nanAll[c.id] = true);
@@ -349,9 +349,13 @@ check("sortResults fat: aufsteigende |Ist−Ziel|", monotone(T.sortResults(srcRe
 check("sortResults mutiert Original nicht", srcRes[0].score <= srcRes[1].score, true);
 
 // ── German Doner Kebab (GDK, à la carte, Copy-Paste-Daten) ──
-check("GDK Items (60, Burrito Mix entfernt)", T.GDK.items.length, 60);
+check("GDK Items (69: 60 + 9 Sides)", T.GDK.items.length, 69);
 check("GDK Doner Burrito Mix entfernt (Datenfehler)", !T.GDK.items.find(x => x.id === "doner_burrito_mix"), true);
-check("GDK Kategorien (7)", T.GDK.cats.length, 7);
+check("GDK Sides-Kategorie (9 Items)", T.GDK.items.filter(x => x.cat === "sides").length, 9);
+check("GDK Fries (Large) kcal", T.GDK.items.find(x => x.id === "fries_large").kcal, 342);
+check("GDK Chilli Cheese Bites protein", T.GDK.items.find(x => x.id === "chilli_cheese_bites").protein, 10.5);
+check("GDK Sides ohne Sauce-Flag", T.GDK.items.filter(x => x.cat === "sides").every(x => !x.sauce), true);
+check("GDK Kategorien (8: + Sides)", T.GDK.cats.length, 8);
 check("GDK OG Kebab Beef with sauce kcal", T.GDK.items.find(x => x.id === "og_kebab_beef_with_sauce").kcal, 994);
 check("GDK OG Kebab Beef no sauce kcal", T.GDK.items.find(x => x.id === "og_kebab_beef_no_sauce").kcal, 744);
 check("GDK Juniors-Kategorie standardmäßig aus", T.GDK.cats.find(c => c.id === "juniors").on, false);

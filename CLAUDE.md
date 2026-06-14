@@ -67,7 +67,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - Stand Juni 2026: 21 Items aus 2 Batches; weitere folgen
 - **German Doner Kebab (GDK)**: offizielle Nährwerttabelle (per-Serving-Spalte) — KEIN Crawler, **User liefert Copy-Paste**
   - Workflow: Items in `data/gdk-raw.json` (Name, cat, `sauce:true` wenn Sauce drin, 8 Makros) → `node gdk-update.js` → GDK-Block (Marker `__GDK_DATA_START__`/`__GDK_DATA_END__`)
-  - 61 Items, 7 Kategorien (kebabs, wraps, burritos, quesadillas, rice_bowls, boxes, juniors); Juniors standardmäßig AUS (Kids-Menü, wie Nando's Nandinos)
+  - 69 Items, 8 Kategorien (kebabs, wraps, burritos, quesadillas, rice_bowls, boxes, sides, juniors); Juniors standardmäßig AUS (Kids-Menü, wie Nando's Nandinos). Sides (9 Items: Fries/Flaming/Doner-Seasoned je Regular+Large, Chilli Cheese Bites, Hash Brown Bites ±Doner Seasoned) per Copy-Paste-Batch nachgeliefert
   - `sauce:true` = Item enthält Sauce: alle "WITH SAUCE"-Varianten, plain Quesadilla (vs. "Doner Quesadilla … WITHOUT SAUCE"), alle Ketchup-Juniors. Schalter "No Sauce" filtert diese
   - "EXTRA HOT"-Junior-Varianten weggelassen (makro-identisch zur Curry-Version)
   - **DONER BURRITO MIX entfernt** (User-Entscheidung 12.06.2026): fat=12.4 war ein Tippfehler im GDK-Sheet (1175 kcal mit 12g Fett unmöglich, ~69 erwartet). Falls korrekter Wert nachkommt → wieder in gdk-raw.json aufnehmen
@@ -126,7 +126,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Schalter "No desserts, Lunch Fix & platters"**: schließt Desserts + The Lunch Fix + Sharing Platters aus (`NANDOS_SWITCH_CATS`)
 - **Schalter "No sauces"**: schließt alle 14 `sauce:true`-Items aus — die komplette "Dips"-Subsection (PERinaise, Garlic PERinaise, PERi-Chicken Gravy, Chilli Jam, PERi-Honey, Mayonnaise), die "Bottles"-Subsection (6 Flaschensaucen + PERi-PERi Salt) und PERi-PERi Drizzle. NICHT geflaggt: essbare Extras wie Halloumi, Grilled Pineapple, Brote
 - **Schalter "No grilled pineapple"**: schließt das Einzel-Item "Grilled Pineapple" (id `grilled_pineapple`) aus — Parameter `noPineapple` in optimizeNandos
-- **Schalter "No wings / chicken livers"**: schließt alle 9 `wings:true`-Items aus (10/5/3 Chicken Wings + 10/5/3 Extra Saucy Wings + Wing Roulette + Chicken Livers; "3 Chicken Wings" trifft PERi-PERi UND Nandinos). XL Wing Platter NICHT geflaggt. Geflaggt in nandos-update.js (`WINGS_NAMES`) — überlebt Re-Crawls. (Früher harter Ausschluss, jetzt Schalter — User-Wunsch 12.06.2026)
+- **Schalter "No wings / chicken livers"**: schließt alle 10 `wings:true`-Items aus (10/5/3 Chicken Wings + 10/5/3 Extra Saucy Wings + Wing Roulette + Chicken Livers + XL Wing Platter; "3 Chicken Wings" trifft PERi-PERi UND Nandinos). XL Wing Platter ist zusätzlich über den Platter-Schalter abdeckbar. Geflaggt in nandos-update.js (`WINGS_NAMES`) — überlebt Re-Crawls. (Früher harter Ausschluss, jetzt Schalter — User-Wunsch 12.06.2026)
 - **Schalter "No Corn on the Cob"**: schließt die 2 `corn:true`-Items aus (Corn on the Cob Regular/Large) — Name beginnt mit "Corn on the Cob"
 - Standard-Chips: alle an außer Nandinos (Kids)
 - Dips & Extras-Kategorie = Add-ons (Grilled Chicken Breast, Halloumi, 1/2 Avocado, Brote, Dips) — als Pool-Items nützlich für Makro-Feintuning
@@ -139,7 +139,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 
 ## Bestellablauf German Doner Kebab / GDK (à la carte)
 - Wie Itsu/Pret/Nando's/Wagamama: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`)
-- Kategorien (60 Items): Kebabs (12), Wraps (12), Burritos (3), Quesadillas (6), Rice Bowls (4), Boxes (12), Juniors/Kids (11) — "Doner Burrito Mix" wegen Datenfehler (fat=12.4) entfernt
+- Kategorien (69 Items): Kebabs (12), Wraps (12), Burritos (3), Quesadillas (6), Rice Bowls (4), Boxes (12), Sides (9: Fries/Flaming/Doner Seasoned je Reg+Large, Chilli Cheese Bites, Hash Brown Bites ±Doner Seasoned), Juniors/Kids (11) — "Doner Burrito Mix" wegen Datenfehler (fat=12.4) entfernt
 - **Schalter "No Sauce"**: schließt alle 26 `sauce:true`-Items aus (alle "with sauce"-Varianten, plain Quesadillas, Ketchup-Juniors) → die "no sauce"/"without sauce"-Varianten bleiben
 - **Schalter "No rice bowl"**: schließt die Kategorie rice_bowls aus
 - Standard-Chips: alle an außer Juniors (Kids); beide Schalter aus
@@ -182,6 +182,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 
 ## Standard-Defaults (beim App-Start)
 - **Restaurant**: Subway
+- **Größe**: Footlong (User-Wunsch 12.06.2026; 6 Inch wählbar)
 - **Brot**: Wholegrain (locked, kann aber gewechselt werden)
 - **Käse**: Kein Käse (Checkbox aktiv)
 - **Sauce**: Keine Sauce (Checkbox aktiv)
