@@ -1473,7 +1473,7 @@ function App() {
         ...sortResults(resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
           if(resto==="ug"){
             const isSelU=selU===r;
-            const title=(r.prot?r.prot.name:"Ohne Protein")+(r.prot2?" + "+r.prot2.name:"");
+            const title=(r.prot?r.prot.name:"No protein")+(r.prot2?" + "+r.prot2.name:"");
             const sub=(r.kind==="tray"?"BYO Tray · ":"BYO Salad · ")
                +[...(r.kind==="salad"?[r.green?r.green.name:"no green base"]:[]),
                   (r.carb?r.carb.name:"no carb base"),
@@ -1829,7 +1829,7 @@ function App() {
       // Detail panel (Urban Greens)
       resto==="ug"&&selU&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
         h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},
-          (selU.prot?selU.prot.name:"Ohne Protein")+(selU.prot2?" + "+selU.prot2.name:"")),
+          (selU.prot?selU.prot.name:"No protein")+(selU.prot2?" + "+selU.prot2.name:"")),
         h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},
           selU.kind==="tray"?"Build Your Own Tray":"Build Your Own Salad"),
 
