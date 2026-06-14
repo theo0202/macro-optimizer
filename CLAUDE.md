@@ -71,7 +71,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - `sauce:true` = Item enthält Sauce: alle "WITH SAUCE"-Varianten, plain Quesadilla (vs. "Doner Quesadilla … WITHOUT SAUCE"), alle Ketchup-Juniors. Schalter "No Sauce" filtert diese
   - "EXTRA HOT"-Junior-Varianten weggelassen (makro-identisch zur Curry-Version)
   - **DONER BURRITO MIX entfernt** (User-Entscheidung 12.06.2026): fat=12.4 war ein Tippfehler im GDK-Sheet (1175 kcal mit 12g Fett unmöglich, ~69 erwartet). Falls korrekter Wert nachkommt → wieder in gdk-raw.json aufnehmen
-  - **EXCLUDE-Listen in den Update-Skripten** (überleben Re-Crawls): itsu-update.js `EXCLUDE_NAMES` ("edamame" — plain Beilage, "chocolate edamame" bleibt), pret-update.js `EXCLUDE_NAMES` ("Apple", "Banana"), nandos-update.js `EXCLUDE_NAMES` (alle einzelnen Wings: 10/5/3 Chicken Wings + 10/5/3 Extra Saucy Wings + Wing Roulette + Chicken Livers & Rustic Portuguese Roll; "3 Chicken Wings" trifft PERi-PERi UND Nandinos; XL Wing Platter bleibt)
+  - **EXCLUDE-Listen in den Update-Skripten** (harte Ausschlüsse, überleben Re-Crawls): itsu-update.js `EXCLUDE_NAMES` ("edamame" — plain Beilage, "chocolate edamame" bleibt), pret-update.js `EXCLUDE_NAMES` ("Apple", "Banana"). Nando's Wings/Livers sind KEIN harter Ausschluss mehr, sondern `wings:true`-Flag (`WINGS_NAMES` in nandos-update.js) + Schalter "No wings / chicken livers"
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -108,8 +108,8 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Getränke (cold drinks, hot & iced drinks) sind IMMER ausgeschlossen** — `drink:true` in ITSU.cats, keine Chips dafür, Optimizer filtert sie hart raus
 - Im Optimizer standardmäßig aktiv: die 5 Food-Kategorien (soups, gyoza & bao, rice'bowls, hot noodles, sushi & poké); Desserts/Breakfast per Chip zuschaltbar
 - **Schalter "No soups, desserts, snacks etc."**: schließt zusätzlich healthy soups, hot noodles UND desserts & snacks aus (überstimmt die Chips) — für "richtige Mahlzeiten only" (rice'bowls, sushi & poké, gyoza & bao)
-- **Schalter "only sushi"**: Pool = nur Kategorie sushi & poké (`ITSU_SUSHI_CAT="sushi_poke"`, inkl. Poké-Bowls + Sashimi), überstimmt Chips
-- **Schalter "only sushi w/o sashimi"**: dasselbe ohne Sashimi-Items (Name enthält "sashimi", aktuell nur "tuna & salmon sashimi"); strenger, impliziert "only sushi". Beide standardmäßig AUS (enge Spezialmodi)
+- **Schalter "only sushi"**: Pool = Kategorie sushi & poké (`ITSU_SUSHI_CAT="sushi_poke"`) OHNE die 4 Poké-Bowls (Name deakzentuiert enthält "poke"), aber inkl. Sashimi; überstimmt Chips
+- **Schalter "only sushi w/o sashimi"**: dasselbe zusätzlich ohne Sashimi (Name enthält "sashimi", aktuell nur "tuna & salmon sashimi"); strenger, impliziert "only sushi". Beide standardmäßig AUS (enge Spezialmodi)
 
 ## Bestellablauf Pret (Deliveroo, à la carte)
 - Wie Itsu: 1–3 Items in den Warenkorb, Duplikate möglich; gleicher À-la-carte-Optimizer (`alaCarteCombos`)
@@ -126,6 +126,8 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Schalter "No desserts, Lunch Fix & platters"**: schließt Desserts + The Lunch Fix + Sharing Platters aus (`NANDOS_SWITCH_CATS`)
 - **Schalter "No sauces"**: schließt alle 14 `sauce:true`-Items aus — die komplette "Dips"-Subsection (PERinaise, Garlic PERinaise, PERi-Chicken Gravy, Chilli Jam, PERi-Honey, Mayonnaise), die "Bottles"-Subsection (6 Flaschensaucen + PERi-PERi Salt) und PERi-PERi Drizzle. NICHT geflaggt: essbare Extras wie Halloumi, Grilled Pineapple, Brote
 - **Schalter "No grilled pineapple"**: schließt das Einzel-Item "Grilled Pineapple" (id `grilled_pineapple`) aus — Parameter `noPineapple` in optimizeNandos
+- **Schalter "No wings / chicken livers"**: schließt alle 9 `wings:true`-Items aus (10/5/3 Chicken Wings + 10/5/3 Extra Saucy Wings + Wing Roulette + Chicken Livers; "3 Chicken Wings" trifft PERi-PERi UND Nandinos). XL Wing Platter NICHT geflaggt. Geflaggt in nandos-update.js (`WINGS_NAMES`) — überlebt Re-Crawls. (Früher harter Ausschluss, jetzt Schalter — User-Wunsch 12.06.2026)
+- **Schalter "No Corn on the Cob"**: schließt die 2 `corn:true`-Items aus (Corn on the Cob Regular/Large) — Name beginnt mit "Corn on the Cob"
 - Standard-Chips: alle an außer Nandinos (Kids)
 - Dips & Extras-Kategorie = Add-ons (Grilled Chicken Breast, Halloumi, 1/2 Avocado, Brote, Dips) — als Pool-Items nützlich für Makro-Feintuning
 
@@ -173,7 +175,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing".
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing".
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -189,7 +191,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Farmer J**: "Nur Gratis-Items" aktiv (keine bezahlten Toppings/Saucen in Vorschlägen)
 - **Itsu**: nur Food-Kategorien aktiv, max. 5 Items pro Bestellung, Schalter "No soups, desserts, snacks etc." AN, Getränke immer ignoriert
 - **Pret**: 8 Food-Kategorien aktiv, max. 5 Items, "only relevant items" AN + "Salads and protein pots only" AN (= nur Salads/Protein Pots), Getränke immer ignoriert
-- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 5 Items, alle 3 Schalter AN, Drinks nicht in den Daten
+- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 5 Items, alle 5 Schalter AN (No desserts/Lunch Fix/platters, No sauces, No grilled pineapple, No wings/chicken livers, No Corn on the Cob), Drinks nicht in den Daten
 - **Wagamama**: alle Kategorien aktiv, max. 5 Items, "No Ramen" AN
 - **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 5 Items, "No Sauce" + "No rice bowl" AN
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
@@ -251,7 +253,7 @@ Alle nutzen den gemeinsamen Kern `alaCarteCombos`:
 Pool-Bildung:
 - **Itsu**: "only sushi"/"w/o sashimi" → nur sushi_poke (ggf. ohne Sashimi), überstimmt alles; sonst aktive Chips MINUS Getränke (immer) MINUS soups/noodles/desserts (Schalter, `ITSU_LIGHT_CATS`)
 - **Pret**: Getränke immer raus; dann Vorrang: "Salads and protein pots only" > "only relevant items, no bullshit" (rel-Whitelist) > Chips
-- **Nando's**: aktive Chips MINUS Desserts/Sharing Platters (Schalter, `NANDOS_SWITCH_CATS`) MINUS Saucen (Schalter "No sauces", `sauce:true`); Drinks sind nicht in den Daten
+- **Nando's**: aktive Chips MINUS Desserts/Lunch Fix/Sharing Platters (`NANDOS_SWITCH_CATS`) MINUS Saucen (`sauce:true`) MINUS Grilled Pineapple MINUS Wings/Livers (`wings:true`) MINUS Corn (`corn:true`) — je nach Schalter; Drinks sind nicht in den Daten
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 

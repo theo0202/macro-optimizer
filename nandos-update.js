@@ -13,9 +13,9 @@ const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().repla
 const SKIP_SECTIONS = new Set(["drinks"]);
 const SKIP_SUBSECTIONS = new Set(["Dessert OR Drink"]);
 const DEFAULT_OFF = new Set(["nandinos_kids"]);
-// User-Ausschlüsse (NIEMALS vorschlagen): alle Wings + Extra Saucy Wings + Wing Roulette + Chicken Livers.
-// "3 Chicken Wings" trifft sowohl PERi-PERi Chicken als auch die Nandinos-Variante. XL Wing Platter bleibt (über Platter-Schalter abdeckbar).
-const EXCLUDE_NAMES = new Set([
+// Schalter "No wings / chicken livers": diese Items bekommen wings:true (alle Wings + Extra Saucy + Roulette + Livers).
+// "3 Chicken Wings" trifft PERi-PERi Chicken UND Nandinos. XL Wing Platter NICHT geflaggt (über Platter-Schalter abdeckbar).
+const WINGS_NAMES = new Set([
   "10 Chicken Wings", "5 Chicken Wings", "3 Chicken Wings", "Wing Roulette",
   "10 Extra Saucy Wings", "5 Extra Saucy Wings", "3 Extra Saucy Wings",
   "Chicken Livers & Rustic Portuguese Roll",
@@ -32,17 +32,18 @@ for (const s of raw.sections) {
   if (SKIP_SECTIONS.has(cat)) continue;
   for (const it of s.items) {
     if (SKIP_SUBSECTIONS.has(it.subsection)) { skipped.push(it.name + " (Kids Dessert/Drink)"); continue; }
-    if (EXCLUDE_NAMES.has(norm(it.name))) { skipped.push(it.name + " (User-Ausschluss)"); continue; }
     const facts = it.factsForPortionSizes.filter(f => f.energyKcal != null);
     if (!facts.length) { skipped.push(it.name + " (keine Nährwerte)"); continue; }
     const isSauce = it.subsection === "Dips" || it.subsection === "Bottles" || it.name === "PERi-PERi Drizzle";
+    const isWings = WINGS_NAMES.has(norm(it.name));            // Schalter "No wings / chicken livers"
+    const isCorn = norm(it.name).startsWith("corn on the cob"); // Schalter "No Corn on the Cob"
     facts.forEach((f, fi) => {
       const suffix = facts.length > 1 ? " (" + cap(f.size || "Portion " + (fi + 1)) + ")" : "";
       let id = slug(it.name + suffix);
       while (usedIds.has(id)) id += "_2";
       usedIds.add(id);
       items.push({
-        id, name: it.name + suffix, cat, sauce: isSauce,
+        id, name: it.name + suffix, cat, sauce: isSauce, wings: isWings, corn: isCorn,
         kcal: f.energyKcal || 0, fat: mg(f.fatMg), sat: mg(f.saturatesMg), carbs: mg(f.totalCarbsMg),
         sugars: mg(f.sugarsMg), fibre: mg(f.fibreMg), protein: mg(f.proteinMg), salt: mg(f.saltMg),
       });
@@ -67,7 +68,7 @@ for (const c of cats) lines.push(`    { id:${q(c.id)},name:${q(c.name)},on:${c.o
 lines.push("  ],");
 lines.push("  items: [");
 for (const x of items)
-  lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)}${x.sauce ? ",sauce:true" : ""},kcal:${x.kcal},fat:${x.fat},sat:${x.sat},carbs:${x.carbs},sugars:${x.sugars},fibre:${x.fibre},protein:${x.protein},salt:${x.salt} },`);
+  lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)}${x.sauce ? ",sauce:true" : ""}${x.wings ? ",wings:true" : ""}${x.corn ? ",corn:true" : ""},kcal:${x.kcal},fat:${x.fat},sat:${x.sat},carbs:${x.carbs},sugars:${x.sugars},fibre:${x.fibre},protein:${x.protein},salt:${x.salt} },`);
 lines.push("  ],");
 lines.push("};");
 lines.push("// __NANDOS_DATA_END__");
@@ -80,6 +81,7 @@ if (!re.test(html)) { console.error("NANDOS-Marker in index.html nicht gefunden"
 fs.writeFileSync(file, html.replace(re, block), "utf8");
 
 console.log(cats.length + " Kategorien, " + items.length + " Items (" + items.filter(x => x.sauce).length + " als Sauce geflaggt) -> index.html (NANDOS-Block)");
-console.log("Saucen: " + items.filter(x => x.sauce).map(x => x.name).join(" | "));
+console.log("Wings/Livers (wings:true, " + items.filter(x => x.wings).length + "): " + items.filter(x => x.wings).map(x => x.name).join(" | "));
+console.log("Corn (corn:true, " + items.filter(x => x.corn).length + "): " + items.filter(x => x.corn).map(x => x.name).join(" | "));
 for (const c of cats) console.log(`  ${c.on ? "[an] " : "[aus]"} ${c.name}: ${items.filter(x => x.cat === c.id).length}`);
 console.log("Übersprungen (" + skipped.length + "): " + skipped.join(" | "));

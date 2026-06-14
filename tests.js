@@ -127,18 +127,20 @@ const riNS = T.optimizeItsu(t4, "macros", {}, allCats, 3, true);
 check("Itsu Schalter filtert soups/noodles/desserts", riNS.every(r => r.items.every(x => !lightExcl.has(x.cat))), true);
 check("Itsu Schalter: trotzdem Ergebnisse", riNS.length > 0, true);
 
-// Schalter "only sushi": nur Kategorie sushi_poke
+// Schalter "only sushi": nur sushi_poke, OHNE Poké-Bowls (aber Sashimi erlaubt)
 const riSushi = T.optimizeItsu(t4, "macros", {}, allCats, 2, false, true, false);
 check("Itsu 'only sushi': nur sushi_poke-Kategorie", riSushi.every(r => r.items.every(x => x.cat === "sushi_poke")), true);
 check("Itsu 'only sushi': liefert Ergebnisse", riSushi.length > 0, true);
-// "only sushi" enthält Sashimi-Item grundsätzlich (über alle Kombis)
+check("Itsu 'only sushi': KEINE Poké-Bowls", riSushi.every(r => r.items.every(x => !/poké|poke/i.test(x.name))), true);
 check("Itsu 'only sushi': Sashimi erlaubt", riSushi.some(r => r.items.some(x => /sashimi/i.test(x.name))), true);
 
-// Schalter "only sushi w/o sashimi": sushi_poke minus Sashimi
+// Schalter "only sushi w/o sashimi": sushi_poke minus Poké minus Sashimi
 const riNoSashimi = T.optimizeItsu(t4, "macros", {}, allCats, 2, false, false, true);
 check("Itsu 'w/o sashimi': nur sushi_poke", riNoSashimi.every(r => r.items.every(x => x.cat === "sushi_poke")), true);
 check("Itsu 'w/o sashimi': kein Sashimi", riNoSashimi.every(r => r.items.every(x => !/sashimi/i.test(x.name))), true);
+check("Itsu 'w/o sashimi': keine Poké-Bowls", riNoSashimi.every(r => r.items.every(x => !/poké|poke/i.test(x.name))), true);
 check("Itsu Sashimi-Item existiert", !!T.ITSU.items.find(x => /sashimi/i.test(x.name)), true);
+check("Itsu Poké-Bowls existieren grundsätzlich", T.ITSU.items.filter(x => /poké|poke/i.test(x.name)).length >= 3, true);
 
 // ── Pret ──
 check("Pret Items vorhanden (>=120, re-crawl-stabil)", T.PRET.items.length >= 120, true);
@@ -183,11 +185,10 @@ check("Nando's Chicken Butterfly Protein (mg->g)", T.NANDOS.items.find(x => x.id
 check("Nando's Sides-Portionssplit (Spicy Rice Large)", T.NANDOS.items.find(x => x.id === "spicy_rice_large").kcal, 492);
 check("Nando's: keine Drinks in den Daten", T.NANDOS.cats.every(c => c.id !== "drinks") && T.NANDOS.items.every(x => x.cat !== "drinks"), true);
 check("Nando's: 2022-Altlast 'Mixed Leaf Salad' weg", T.NANDOS.items.every(x => !x.id.startsWith("mixed_leaf")), true);
-// User-Ausschlüsse: alle einzelnen Wings + Extra Saucy + Roulette + Chicken Livers (beide "3 Chicken Wings" weg)
-const nandosExcluded = ["10 Chicken Wings", "5 Chicken Wings", "3 Chicken Wings", "Wing Roulette",
-  "10 Extra Saucy Wings", "5 Extra Saucy Wings", "3 Extra Saucy Wings", "Chicken Livers & Rustic Portuguese Roll"];
-check("Nando's User-Ausschlüsse alle weg (8 Namen)", nandosExcluded.every(n => !T.NANDOS.items.find(x => x.name === n)), true);
-check("Nando's XL Wing Platter bleibt (nicht ausgeschlossen)", !!T.NANDOS.items.find(x => x.id === "xl_wing_platter"), true);
+// Wings/Livers sind jetzt in den Daten, aber wings:true geflaggt (Schalter "No wings / chicken livers")
+check("Nando's Wings/Livers geflaggt (9 Items)", T.NANDOS.items.filter(x => x.wings).length, 9);
+check("Nando's Corn geflaggt (2 Items)", T.NANDOS.items.filter(x => x.corn).length, 2);
+check("Nando's XL Wing Platter NICHT als wings geflaggt", !T.NANDOS.items.find(x => x.id === "xl_wing_platter").wings, true);
 
 const nanAll = {};
 T.NANDOS.cats.forEach(c => nanAll[c.id] = true);
@@ -228,6 +229,20 @@ const rnPine = T.optimizeNandos(tPine, "macros", {}, nanAll, 2, false, false, tr
 check("Nando's 'No grilled pineapple' filtert es raus", rnPine.every(r => r.items.every(x => x.id !== "grilled_pineapple")), true);
 const rnNoPineOff = T.optimizeNandos(tPine, "macros", {}, nanAll, 2, false, false, false);
 check("Nando's ohne Schalter: Pineapple erlaubt (Gegenprobe)", rnNoPineOff.some(r => r.items.some(x => x.id === "grilled_pineapple")), true);
+
+// Schalter "No wings / chicken livers": wings:true raus / an gelassen
+const tWing = { protein: 100, carbs: 5, fat: 40, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }; // nah an Wings (high protein)
+const rnNoWings = T.optimizeNandos(tWing, "macros", {}, nanAll, 2, false, false, false, true, false);
+check("Nando's 'No wings': keine wings:true-Items", rnNoWings.every(r => r.items.every(x => !x.wings)), true);
+const rnWingsOff = T.optimizeNandos(tWing, "macros", {}, nanAll, 2, false, false, false, false, false);
+check("Nando's ohne Schalter: Wings erlaubt (Gegenprobe)", rnWingsOff.some(r => r.items.some(x => x.wings)), true);
+
+// Schalter "No Corn on the Cob": corn:true raus / an gelassen
+const tCorn = { protein: 5, carbs: 25, fat: 9, kcal: 200, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rnNoCorn = T.optimizeNandos(tCorn, "macros", {}, nanAll, 2, false, false, false, false, true);
+check("Nando's 'No Corn': keine corn:true-Items", rnNoCorn.every(r => r.items.every(x => !x.corn)), true);
+const rnCornOff = T.optimizeNandos(tCorn, "macros", {}, nanAll, 2, false, false, false, false, false);
+check("Nando's ohne Schalter: Corn erlaubt (Gegenprobe)", rnCornOff.some(r => r.items.some(x => x.corn)), true);
 
 // ── Urban Greens (NUR Build Your Own — fertige Gerichte bewusst entfernt) ──
 check("UG: keine fertigen Gerichte mehr (nur BYO)", T.UG.pre === undefined, true);
