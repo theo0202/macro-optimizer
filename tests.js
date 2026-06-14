@@ -127,6 +127,19 @@ const riNS = T.optimizeItsu(t4, "macros", {}, allCats, 3, true);
 check("Itsu Schalter filtert soups/noodles/desserts", riNS.every(r => r.items.every(x => !lightExcl.has(x.cat))), true);
 check("Itsu Schalter: trotzdem Ergebnisse", riNS.length > 0, true);
 
+// Schalter "only sushi": nur Kategorie sushi_poke
+const riSushi = T.optimizeItsu(t4, "macros", {}, allCats, 2, false, true, false);
+check("Itsu 'only sushi': nur sushi_poke-Kategorie", riSushi.every(r => r.items.every(x => x.cat === "sushi_poke")), true);
+check("Itsu 'only sushi': liefert Ergebnisse", riSushi.length > 0, true);
+// "only sushi" enthält Sashimi-Item grundsätzlich (über alle Kombis)
+check("Itsu 'only sushi': Sashimi erlaubt", riSushi.some(r => r.items.some(x => /sashimi/i.test(x.name))), true);
+
+// Schalter "only sushi w/o sashimi": sushi_poke minus Sashimi
+const riNoSashimi = T.optimizeItsu(t4, "macros", {}, allCats, 2, false, false, true);
+check("Itsu 'w/o sashimi': nur sushi_poke", riNoSashimi.every(r => r.items.every(x => x.cat === "sushi_poke")), true);
+check("Itsu 'w/o sashimi': kein Sashimi", riNoSashimi.every(r => r.items.every(x => !/sashimi/i.test(x.name))), true);
+check("Itsu Sashimi-Item existiert", !!T.ITSU.items.find(x => /sashimi/i.test(x.name)), true);
+
 // ── Pret ──
 check("Pret Items vorhanden (>=120, re-crawl-stabil)", T.PRET.items.length >= 120, true);
 check("Pret Kategorien", T.PRET.cats.length, 13);
@@ -170,6 +183,11 @@ check("Nando's Chicken Butterfly Protein (mg->g)", T.NANDOS.items.find(x => x.id
 check("Nando's Sides-Portionssplit (Spicy Rice Large)", T.NANDOS.items.find(x => x.id === "spicy_rice_large").kcal, 492);
 check("Nando's: keine Drinks in den Daten", T.NANDOS.cats.every(c => c.id !== "drinks") && T.NANDOS.items.every(x => x.cat !== "drinks"), true);
 check("Nando's: 2022-Altlast 'Mixed Leaf Salad' weg", T.NANDOS.items.every(x => !x.id.startsWith("mixed_leaf")), true);
+// User-Ausschlüsse: alle einzelnen Wings + Extra Saucy + Roulette + Chicken Livers (beide "3 Chicken Wings" weg)
+const nandosExcluded = ["10 Chicken Wings", "5 Chicken Wings", "3 Chicken Wings", "Wing Roulette",
+  "10 Extra Saucy Wings", "5 Extra Saucy Wings", "3 Extra Saucy Wings", "Chicken Livers & Rustic Portuguese Roll"];
+check("Nando's User-Ausschlüsse alle weg (8 Namen)", nandosExcluded.every(n => !T.NANDOS.items.find(x => x.name === n)), true);
+check("Nando's XL Wing Platter bleibt (nicht ausgeschlossen)", !!T.NANDOS.items.find(x => x.id === "xl_wing_platter"), true);
 
 const nanAll = {};
 T.NANDOS.cats.forEach(c => nanAll[c.id] = true);

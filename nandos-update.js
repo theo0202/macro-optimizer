@@ -9,9 +9,17 @@ const fs = require("fs");
 const raw = JSON.parse(fs.readFileSync(__dirname + "/data/nandos-raw.json", "utf8"));
 
 const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").trim();
 const SKIP_SECTIONS = new Set(["drinks"]);
 const SKIP_SUBSECTIONS = new Set(["Dessert OR Drink"]);
 const DEFAULT_OFF = new Set(["nandinos_kids"]);
+// User-Ausschlüsse (NIEMALS vorschlagen): alle Wings + Extra Saucy Wings + Wing Roulette + Chicken Livers.
+// "3 Chicken Wings" trifft sowohl PERi-PERi Chicken als auch die Nandinos-Variante. XL Wing Platter bleibt (über Platter-Schalter abdeckbar).
+const EXCLUDE_NAMES = new Set([
+  "10 Chicken Wings", "5 Chicken Wings", "3 Chicken Wings", "Wing Roulette",
+  "10 Extra Saucy Wings", "5 Extra Saucy Wings", "3 Extra Saucy Wings",
+  "Chicken Livers & Rustic Portuguese Roll",
+].map(norm));
 const cap = s => s ? s.charAt(0) + s.slice(1).toLowerCase() : s;
 
 const mg = v => (v == null ? 0 : Math.round(v / 10) / 100); // mg -> g, 2 Dezimalstellen
@@ -24,6 +32,7 @@ for (const s of raw.sections) {
   if (SKIP_SECTIONS.has(cat)) continue;
   for (const it of s.items) {
     if (SKIP_SUBSECTIONS.has(it.subsection)) { skipped.push(it.name + " (Kids Dessert/Drink)"); continue; }
+    if (EXCLUDE_NAMES.has(norm(it.name))) { skipped.push(it.name + " (User-Ausschluss)"); continue; }
     const facts = it.factsForPortionSizes.filter(f => f.energyKcal != null);
     if (!facts.length) { skipped.push(it.name + " (keine Nährwerte)"); continue; }
     const isSauce = it.subsection === "Dips" || it.subsection === "Bottles" || it.name === "PERi-PERi Drizzle";
