@@ -1031,17 +1031,29 @@ function parseMacroScreenshot(ocrText) {
   const toInt = n => { const c = stripTh(n).replace(/[^\d]/g,""); return c==="" ? null : parseInt(c,10); };
   const lines = ocrText.split(/\r?\n/);
 
-  // 1) Makro-Paare "N / M g". Slash auch als | I l ) ] verlesbar; \s matcht \n (Paar darf umbrechen).
-  //    Trailing "g" (nicht "kcal"/"kg") schließt Meal-Rows aus. Erste 3 Treffer = Carbs, Protein, Fat.
-  const SEP = "[\\/|Il\\)\\]]", NUM = "\\d[\\d.,]*";
-  const pairSrc = "(" + NUM + ")\\s*" + SEP + "\\s*(" + NUM + ")\\s*g(?![a-z])";
-  const pairRe = new RegExp(pairSrc, "gi");
+  // 1) Makro-Paare. Pass A: "N <sep> M <unit>" — Trenner tolerant (/ | I l ) ], \s matcht \n), Unit klassifiziert.
+  //    Erste 3 Paare, deren Unit NICHT kcal/kj/kg ist (Meal-Rows + Gewicht raus) = Carbs, Protein, Fat.
+  //    Robust gegen fehlendes/verlesenes "g": die Übersicht-Makros stehen immer oben, kcal-Meal-Rows darunter.
+  const ENERGY = u => u === "kcal" || u === "kj" || u === "kg";
   const macros = []; let m;
-  while ((m = pairRe.exec(ocrText)) !== null) {
+  const reA = /(\d[\d.,]*)\s*[\/|Il)\]]\s*(\d[\d.,]*)\s*([a-z]{0,4})/gi;
+  while ((m = reA.exec(ocrText)) !== null) {
+    if (ENERGY((m[3] || "").toLowerCase())) continue;
     const eaten = toInt(m[1]), total = toInt(m[2]);
     if (eaten == null || total == null || total <= 0) continue;
     macros.push({ eaten, total });
     if (macros.length >= 3) break;
+  }
+  // Pass B (Fallback, falls der Slash ganz verschluckt wurde): "N <leerraum> M g" — durch das "g" verankert.
+  if (macros.length < 3) {
+    macros.length = 0;
+    const reB = /(\d[\d.,]*)\s+(\d[\d.,]*)\s*g(?![a-z])/gi;
+    while ((m = reB.exec(ocrText)) !== null) {
+      const eaten = toInt(m[1]), total = toInt(m[2]);
+      if (eaten == null || total == null || total <= 0) continue;
+      macros.push({ eaten, total });
+      if (macros.length >= 3) break;
+    }
   }
   if (macros.length < 3) return null;
   const carbs   = Math.max(0, macros[0].total - macros[0].eaten);
@@ -1050,7 +1062,7 @@ function parseMacroScreenshot(ocrText) {
   const computedKcal = carbs*4 + protein*4 + fat*9;
 
   // 2) "Übrig"-Kalorien — angezeigten Wert bevorzugen (Reihenfolge der Top-Zahlen: Gegessen, Übrig, Verbrannt).
-  const isMacroBar = ln => new RegExp(pairSrc, "i").test(ln);
+  const isMacroBar = ln => { const mm = /(\d[\d.,]*)\s*[\/|Il)\]]\s*(\d[\d.,]*)\s*([a-z]{0,4})/i.exec(ln); return !!mm && !ENERGY((mm[3] || "").toLowerCase()); };
   const isKcal = ln => /kcal/i.test(ln);
   const numsIn = ln => { const out=[], re=/\d[\d.,]*/g; let mm; while((mm=re.exec(ln))!==null){const v=toInt(mm[0]); if(v!=null)out.push(v);} return out; };
   const hasUbrig = ln => /(ubrig|obrig|\bbrig\b)/.test(norm(ln));
@@ -1111,7 +1123,7 @@ async function ocrMacroScreenshot(file, onProgress) {
   const { data } = await Tesseract.recognize(img, "deu", {
     logger: msg => { if (msg.status === "recognizing text" && onProgress) onProgress(msg.progress); }
   });
-  return parseMacroScreenshot(data.text);
+  return { text: data.text, parsed: parseMacroScreenshot(data.text) };
 }
 
 // Standard salad = all except jalapenos, sweetcorn, olives
@@ -1683,8 +1695,9 @@ function App() {
     if(!file)return;
     setImp({busy:true,msg:"Reading screenshot…",err:false});
     try{
-      const r=await ocrMacroScreenshot(file,p=>setImp({busy:true,msg:"Reading… "+Math.round(p*100)+"%",err:false}));
-      if(!r){setImp({busy:false,msg:"Couldn't find the macros — make sure the overview (with the macro bars) is visible, or enter them manually.",err:true});return;}
+      const {text,parsed:r}=await ocrMacroScreenshot(file,p=>setImp({busy:true,msg:"Reading… "+Math.round(p*100)+"%",err:false}));
+      try{console.log("[OCR text]\n"+text);}catch(e){}
+      if(!r){const snip=(text||"").replace(/\s+/g," ").trim().slice(0,180);setImp({busy:false,msg:"Couldn't read the macro bars. The scanner saw: \""+snip+"\" — try a clearer/cropped screenshot of the overview, or enter manually.",err:true});return;}
       setTC(r.carbs);setTP(r.protein);setTF(r.fat);setTK(r.kcal);
       setImp({busy:false,msg:"Imported  C "+r.carbs+" · P "+r.protein+" · F "+r.fat+" · "+r.kcal+" kcal"+(r.kcalComputed?" (kcal estimated)":""),err:false});
     }catch(err){
