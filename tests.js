@@ -615,7 +615,18 @@ const rAllCh = T.optimizeAll({ protein: 40, carbs: 70, fat: 18, kcal: 592, fibMi
 check("All: alle _resto-Werte gültig (inkl. chopstix)", rAllCh.every(r => RESTOS.includes(r._resto)), true);
 
 // ── Pepe's Piri Piri (à la carte + Add-Flavour-Mechanik) ──
-check("Pepes Items (67)", T.PEPES.items.length, 67);
+check("Pepes Items (51, Deliveroo-abgeglichen)", T.PEPES.items.length, 51);
+check("Pepes Kategorie-Counts (chicken18/burgers7/paneer6/sides15/sauces5)", ["chicken", "burgers", "paneer", "sides", "sauces"].map(c => T.PEPES.items.filter(x => x.cat === c).length).join(",") === "18,7,6,15,5", true);
+// Deliveroo-Abgleich (15.06.2026): nicht auf Deliveroo gefuehrte Items entfernt
+check("Pepes Deliveroo: keine Double-Burger/-Patties", !T.PEPES.items.find(x => /double/i.test(x.name)), true);
+check("Pepes Deliveroo: Burger-Singles umbenannt (kein '- Single')", !T.PEPES.items.find(x => /- single/i.test(x.name)), true);
+check("Pepes Deliveroo: keine 8er-Nuggets (nur 5er)", !T.PEPES.items.find(x => /nuggets - 8/i.test(x.name)), true);
+check("Pepes Deliveroo: keine Chimichurri Fries/Wedges", !T.PEPES.items.find(x => /chimichurri (fries|wedges)/i.test(x.name)), true);
+check("Pepes Deliveroo: keine Piri Piri Fries/Wedges/Onion Rings", !T.PEPES.items.find(x => /piri piri (fries|wedges|onion)/i.test(x.name)), true);
+check("Pepes Deliveroo: Gourmet Beef Burger bleibt", !!T.PEPES.items.find(x => x.name === "Gourmet Beef Burger"), true);
+check("Pepes Deliveroo: Chimichurri-Mayo-Dip bleibt (nicht mit Fries verwechselt)", !!T.PEPES.items.find(x => /Chimichurri Mayo/i.test(x.name)), true);
+check("Pepes Deliveroo: Piri Piri Pitta Bread bleibt", !!T.PEPES.items.find(x => x.name === "Piri Piri Pitta Bread"), true);
+check("Pepes Deliveroo: Onion Rings (Crispy) bleibt", !!T.PEPES.items.find(x => x.id === "onion_rings"), true);
 check("Pepes Flavours (7 inkl. Plain)", T.PEPES.flavours.length, 7);
 check("Pepes Plain existiert + 0 kcal", (() => { const pl = T.PEPES.flavours.find(f => f.id === "plain"); return pl && pl.kcal === 0 && pl.fat === 0 && pl.carbs === 0 && pl.protein === 0 && pl.salt === 0; })(), true);
 check("Pepes Kategorien (5)", T.PEPES.cats.length, 5);

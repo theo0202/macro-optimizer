@@ -97,9 +97,10 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - Validierung der Werte: `node verify-chopstix.js`
 - **Pepe's Piri Piri** (UK): offizielle Nährwerttabelle (per-Serving) — KEIN Crawler, **User liefert Copy-Paste**; Roh in `data/pepes-raw.json` (Quelle der Wahrheit). `node pepes-update.js` → PEPES-Block (Marker `__PEPES_DATA_START__`/`__PEPES_DATA_END__`)
   - **KEINE Ballaststoff-Spalte in der Quelle → `fibre:0` überall** (Fibre-Constraint/-Bar bleibt damit faktisch leer, wie bei UG). Sonst volle Makros (kcal/fat/sat/carbs/sugars/protein/salt)
-  - **Add-Flavour-Mechanik**: Items mit `flavourMl>0` (35 Items, z.B. die Chicken Strips mit 40 ml) tragen eine **Pflicht-Basting-Flavour**. 7 Flavours (**Plain** = 0 kcal/0 Makros, Lemon & Herb, Mango & Lime, Mild, Hot, Extra Hot, Extreme), Werte **per 10 ml** in `PEPES.flavours[]` (Plain steht an erster Stelle → auch der sichere Fallback in optimizePepes). Der Optimizer addiert `flavour × flavourMl/10` zur Item-Basis (Beispiel: Tender Strips 3 = Basis 100 kcal + Lemon&Herb 31×4 = 224 kcal; mit Plain bleibt es bei 100) und hängt den Flavour-Namen an. Flavour ist ein **globaler Selektor** (ein Chip für die ganze Bestellung), Default Lemon & Herb. **Schalter "No flavour"** (Default AN) erzwingt Plain und blendet die Flavour-Chips aus; Plain ist KEIN eigener Chip (nur über den Schalter erreichbar)
+  - **Add-Flavour-Mechanik**: Items mit `flavourMl>0` (29 Items, z.B. die Chicken Strips mit 40 ml) tragen eine **Pflicht-Basting-Flavour**. 7 Flavours (**Plain** = 0 kcal/0 Makros, Lemon & Herb, Mango & Lime, Mild, Hot, Extra Hot, Extreme), Werte **per 10 ml** in `PEPES.flavours[]` (Plain steht an erster Stelle → auch der sichere Fallback in optimizePepes). Der Optimizer addiert `flavour × flavourMl/10` zur Item-Basis (Beispiel: Tender Strips 3 = Basis 100 kcal + Lemon&Herb 31×4 = 224 kcal; mit Plain bleibt es bei 100) und hängt den Flavour-Namen an. Flavour ist ein **globaler Selektor** (ein Chip für die ganze Bestellung), Default Lemon & Herb. **Schalter "No flavour"** (Default AN) erzwingt Plain und blendet die Flavour-Chips aus; Plain ist KEIN eigener Chip (nur über den Schalter erreichbar)
   - **`sauce:true`** auf den 5 Mayo-/Dip-Saucen (Schalter "No sauce")
   - **AUSGESCHLOSSEN** (User-Vorgabe 15.06.2026): Pepe Wings, Half/Whole/Quarter Chicken (Knochen → im Office schlecht essbar/trackbar), alle Sauce-/Salt-Bottles (250 ml), Dark Chocolate Dip, Corn on the Cob. Außerdem die "Extra …"-Add-ons (nur kcal, keine vollen Makros). **Onion Rings Carbs 393→39.3 korrigiert** (offensichtlicher Tippfehler: 393 g Carbs unmöglich)
+  - **Deliveroo-Abgleich (15.06.2026)**: alle Items, die es auf der Deliveroo-Karte nicht gibt, entfernt → 67→51 Items. Raus: alle **Double-Burger/-Patties** (Deliveroo führt keine Doubles), **Chicken Nuggets 8er** (Deliveroo nur 5er = 268 kcal), **Chimichurri Fries** (L/R) + **Chimichurri Wedges**, **Piri Piri Fries** (L/R) + **Piri Piri Onion Rings** + **Piri Piri Wedges**. Die 7 Burger-Singles wurden in die Deliveroo-Namen umbenannt (Suffix "- Single" entfernt, da ohne Double sinnlos). **Chicken/Paneer Harissa Honey Melt** stehen zwar auf Deliveroo, sind aber NICHT aufgenommen (Deliveroo nennt nur Gesamt-kcal, keine vollen Makros → kein Schätzwert)
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -209,7 +210,7 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 
 ## Bestellablauf Pepe's Piri Piri (à la carte)
 - Wie Itsu/Pret/Nando's/Wagamama/GDK/TFC: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
-- Kategorien (5): Chicken (20), Burgers (14), Paneer (veg) (6), Sides (22), Sauces (5) — 67 Items
+- Kategorien (5): Chicken (18), Burgers (7), Paneer (veg) (6), Sides (15), Sauces (5) — 51 Items (Stand 15.06.2026 gegen die Deliveroo-Karte abgeglichen)
 - **Flavour-Chip** (Pflicht-Auswahl, global): einer von 6 Bastings (Lemon & Herb / Mango & Lime / Mild / Hot / Extra Hot / Extreme), Default Lemon & Herb. Wird auf ALLE `flavourMl>0`-Items angewandt (`flavour-per-10ml × flavourMl/10` additiv) — der gewählte Flavour-Name erscheint im Item-Namen ("Tender Strips - 3 (Lemon & Herb)"). Die Chips sind nur sichtbar, wenn "No flavour" AUS ist
 - **Schalter "No flavour"** (Default AN): erzwingt **Plain** (0 kcal/0 Makros — im Pepe's-Menü eine echte Flavour-Wahloption) und blendet die Flavour-Chips aus; der Item-Name bekommt dann "(Plain)". Plain ist nur über diesen Schalter wählbar, nicht als eigener Chip
 - **Schalter "No sauce"**: filtert alle 5 `sauce:true`-Mayo/Dips. Sonst nur Kategorie-Chips + Max-Items
@@ -436,7 +437,7 @@ Essen bestellen Claude Tool/
     ├── gdk-raw.json         ← GDK-Daten aus User-Copy-Paste (offizielle Nährwerttabelle, sauce-Flags)
     ├── atis-raw.json        ← Atis-Daten aus User-Screenshots (86 Items, portion/carb/doublePlate/seasonal-Flags) — Quelle der Wahrheit
     ├── tfc-raw.json         ← The-Fitness-Chef-Daten aus User-Copy-Paste (33 Items, size wl/ml/wg, sodium in mg)
-    ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (67 Items + 7 Flavours inkl. Plain, sauce/flavourMl-Flags, keine Ballaststoffe)
+    ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (51 Items, Deliveroo-abgeglichen, + 7 Flavours inkl. Plain, sauce/flavourMl-Flags, keine Ballaststoffe)
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
     ├── Farmer J _ Nutritional Info.xlsx ← Original-Erfassung Farmer J
     └── UKIandROINutritionalInformationJan2026.pdf ← Original-PDF Subway
