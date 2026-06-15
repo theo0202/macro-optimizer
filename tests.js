@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizeAll, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeAll, sortResults, parseMacroScreenshot };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -527,7 +527,7 @@ check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -613,6 +613,48 @@ check("Chopstix: Regular Box (2 Toppings) bei kleinem Ziel", rChLow.some(r => r.
 // All-restaurants: chopstix ist ein gültiger _resto-Wert
 const rAllCh = T.optimizeAll({ protein: 40, carbs: 70, fat: 18, kcal: 592, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
 check("All: alle _resto-Werte gültig (inkl. chopstix)", rAllCh.every(r => RESTOS.includes(r._resto)), true);
+
+// ── Pepe's Piri Piri (à la carte + Add-Flavour-Mechanik) ──
+check("Pepes Items (67)", T.PEPES.items.length, 67);
+check("Pepes Flavours (6)", T.PEPES.flavours.length, 6);
+check("Pepes Kategorien (5)", T.PEPES.cats.length, 5);
+check("Pepes Sauce-Items (5)", T.PEPES.items.filter(x => x.sauce).length, 5);
+check("Pepes ausgeschlossen: keine Wings/Whole/Quarter Chicken", !T.PEPES.items.find(x => /wings|whole chicken|1\/2 chicken|1\/4 chicken|pepe.?s original/i.test(x.name)), true);
+check("Pepes ausgeschlossen: keine Corn/Bottles/Extra-Add-ons", !T.PEPES.items.find(x => /corn on the cob|250 ml|salt bottle|^extra /i.test(x.name)), true);
+check("Pepes Onion Rings Carbs gefixt (39.3 statt 393)", T.PEPES.items.find(x => x.id === "onion_rings").carbs, 39.3);
+check("Pepes fibre=0 überall (keine Quelle)", T.PEPES.items.every(x => x.fibre === 0), true);
+check("Pepes Tender Strips 3 flavourMl=40", T.PEPES.items.find(x => x.id === "tender_strips_3").flavourMl, 40);
+
+const allPep = {}; T.PEPES.cats.forEach(c => allPep[c.id] = true);
+// Flavour-Mechanik: Tender Strips 3 (Basis 100 kcal, 40 ml) + Lemon & Herb (31/10ml × 4 = 124) = 224 kcal
+const tTS = { protein: 22.5, carbs: 7.5, fat: 11.4, kcal: 223, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rTSlh = T.optimizePepes(tTS, "macros", {}, allPep, 1, true, "lemon_herb");
+const tsLH = rTSlh.find(r => /Tender Strips - 3/.test(r.items[0].name));
+check("Pepes Flavour eingerechnet: Tender Strips 3 (Lemon & Herb) = 224 kcal", tsLH ? tsLH.nutrition.kcal : 0, 224);
+check("Pepes Flavour-Name im Item", tsLH ? /\(Lemon & Herb\)/.test(tsLH.items[0].name) : false, true);
+// anderer Flavour (Extreme 17/10ml × 4 = 68) -> 100 + 68 = 168
+const rTSex = T.optimizePepes({ protein: 22.5, carbs: 4, fat: 7, kcal: 168, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPep, 1, true, "extreme");
+const tsEx = rTSex.find(r => /Tender Strips - 3/.test(r.items[0].name));
+check("Pepes Flavour wechselt Makros: Tender Strips 3 (Extreme) = 168 kcal", tsEx ? tsEx.nutrition.kcal : 0, 168);
+
+const tPep = { protein: 40, carbs: 45, fat: 15, kcal: 555, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rPep = T.optimizePepes(tPep, "macros", {}, allPep, 3, true, "lemon_herb");
+let pepSum = true, pepLen = true;
+for (const r of rPep) {
+  const exp = Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10;
+  if (!approx(r.nutrition.kcal, exp)) pepSum = false;
+  if (r.items.length < 1 || r.items.length > 3) pepLen = false;
+}
+check("Pepes Nutrition == Summe (mit Flavour)", pepSum, true);
+check("Pepes 1–3 Items", pepLen, true);
+// No Sauce: keine sauce-Items; Gegenprobe ohne Schalter
+const rPepNoSauce = T.optimizePepes({ protein: 1, carbs: 5, fat: 20, kcal: 200, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPep, 2, true, "lemon_herb");
+check("Pepes 'No sauce': keine Mayo/Sauce-Items", rPepNoSauce.every(r => r.items.every(x => !/mayo|sauce/i.test(x.name))), true);
+const rPepSauce = T.optimizePepes({ protein: 1, carbs: 3, fat: 25, kcal: 230, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPep, 2, false, "lemon_herb");
+check("Pepes ohne 'No sauce': Mayo/Sauce möglich (Gegenprobe)", rPepSauce.some(r => r.items.some(x => /mayo|sauce/i.test(x.name))), true);
+// All-restaurants: pepes gültig
+const rAllPep = T.optimizeAll({ protein: 38, carbs: 40, fat: 14, kcal: 438, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
+check("All: alle _resto-Werte gültig (inkl. pepes)", rAllPep.every(r => RESTOS.includes(r._resto)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

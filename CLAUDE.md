@@ -1,7 +1,7 @@
-# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC + Chopstix)
+# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC + Chopstix + Pepe's)
 
 ## Projektübersicht
-Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) **The Fitness Chef / TFC** (UK, Meal-Prep) und **Chopstix Noodle Bar** (UK, Build-a-Box), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es einen **„All restaurants"-Tab** (ganz vorne in der Tab-Zeile), der restaurantsübergreifend die besten Bestellungen berechnet.
+Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) **The Fitness Chef / TFC** (UK, Meal-Prep), **Chopstix Noodle Bar** (UK, Build-a-Box) und **Pepe's Piri Piri** (UK), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es einen **„All restaurants"-Tab** (ganz vorne in der Tab-Zeile), der restaurantsübergreifend die besten Bestellungen berechnet.
 
 ## Deployment / Sync
 Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
@@ -30,6 +30,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - `node gdk-update.js` generiert den GDK-Block aus `data/gdk-raw.json` (KEIN Crawler — User liefert offizielle Nährwerttabelle als Copy-Paste)
 - `node atis-update.js` generiert den ATIS-Block aus `data/atis-raw.json` (KEIN Crawler — User liefert Screenshots; Skript mappt Screenshot- → Deliveroo-Namen)
 - `node tfc-update.js` generiert den TFC-Block aus `data/tfc-raw.json` (KEIN Crawler — User liefert Copy-Paste; Skript komponiert Größen-Namen + rechnet sodium→salt)
+- `node pepes-update.js` generiert den PEPES-Block aus `data/pepes-raw.json` (KEIN Crawler — User liefert offizielle Nährwerttabelle als Copy-Paste; Skript setzt fibre=0 + schreibt cats/flavours/items). Validierung: `node verify-pepes.js`
 - Preview-Server: `.claude/launch.json` → "macro-optimizer" (py -3 -m http.server 8321)
 
 ## Datenquellen
@@ -93,7 +94,12 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Chopstix Noodle Bar** (UK): offizielle Nährwerttabelle **V19 (April 2026)** — KEIN Crawler, **User liefert die Tabelle als Text** (PDF konnte das Read-Tool mangels Poppler nicht rendern). Daten handgepflegt im CHOPSTIX-Objekt in index.html, volle 8 Makros
   - Build-a-Box: 1 Base + N Toppings. Box-Größen: 2 Toppings = Regular, 3 Toppings = Large (Komponentengröße). Bases skalieren Small:Regular:Large = 1:1.25:1.5; Toppings Regular == Large (offiziell identisch) → ein Wert pro Topping
   - **AUSGESCHLOSSEN** (Datenprüfung + User): Pumpkin Katsu (kcal 215 vs. Makros ~170, einziger flacher Wert), Katsu Curry Sauce (gesättigt > Fett — kaputt in V19), 4-Topping/X-Large-Box (keine X-Large-Spalte in V19), Dips + Getränke. **Lektion**: Theodors erster Copy-Paste hatte bei Salt&Pepper Chicken die Carbs/Zucker aus Sweet&Sour kopiert (kcal passte nicht) — die offizielle V19 hat es korrekt (Carbs 14,8 g) → ein erneuter offizieller Abzug schlägt eine fehlerhafte Erst-Transkription
-  - **Chinese Chicken Curry**: kcal ~12 % über den Makros (Small 184 vs. ~161) — offizielle Tabelle, übernommen. Validierung: `node verify-chopstix.js`
+  - Validierung der Werte: `node verify-chopstix.js`
+- **Pepe's Piri Piri** (UK): offizielle Nährwerttabelle (per-Serving) — KEIN Crawler, **User liefert Copy-Paste**; Roh in `data/pepes-raw.json` (Quelle der Wahrheit). `node pepes-update.js` → PEPES-Block (Marker `__PEPES_DATA_START__`/`__PEPES_DATA_END__`)
+  - **KEINE Ballaststoff-Spalte in der Quelle → `fibre:0` überall** (Fibre-Constraint/-Bar bleibt damit faktisch leer, wie bei UG). Sonst volle Makros (kcal/fat/sat/carbs/sugars/protein/salt)
+  - **Add-Flavour-Mechanik**: Items mit `flavourMl>0` (35 Items, z.B. die Chicken Strips mit 40 ml) tragen eine **Pflicht-Basting-Flavour**. 6 Flavours (Lemon & Herb, Mango & Lime, Mild, Hot, Extra Hot, Extreme), Werte **per 10 ml** in `PEPES.flavours[]`. Der Optimizer addiert `flavour × flavourMl/10` zur Item-Basis (Beispiel: Tender Strips 3 = Basis 100 kcal + Lemon&Herb 31×4 = 224 kcal) und hängt den Flavour-Namen an. Flavour ist ein **globaler Selektor** (ein Chip für die ganze Bestellung), Default Lemon & Herb
+  - **`sauce:true`** auf den 5 Mayo-/Dip-Saucen (Schalter "No sauce")
+  - **AUSGESCHLOSSEN** (User-Vorgabe 15.06.2026): Pepe Wings, Half/Whole/Quarter Chicken (Knochen → im Office schlecht essbar/trackbar), alle Sauce-/Salt-Bottles (250 ml), Dark Chocolate Dip, Corn on the Cob. Außerdem die "Extra …"-Add-ons (nur kcal, keine vollen Makros). **Onion Rings Carbs 393→39.3 korrigiert** (offensichtlicher Tippfehler: 393 g Carbs unmöglich)
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -108,6 +114,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Atis**: BYO-Komponenten `ATIS.bases[]`, `ATIS.basesL[]`, `ATIS.mixed[]`, `ATIS.ingredients[]`, `ATIS.proteins[]`, `ATIS.sauces[]`, `ATIS.saucesL[]`, `ATIS.crunches[]`, `ATIS.addons[]` (volle 8 Makros; Flags `carb`/`doublePlate`/`seasonal`)
 - **The Fitness Chef**: `TFC.cats[]` + `TFC.items[]` (AC-Schema wie Itsu/Pret; Dishes zusätzlich `size`-Feld wl/ml/wg, Sides ohne)
 - **Chopstix**: `CHOPSTIX.bases[]` (je `reg`/`lg`-Größe mit 8 Makros) + `CHOPSTIX.toppings[]` (ein 8-Makro-Wert pro Topping, Regular=Large)
+- **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (6 Basting-Flavours, Werte per 10 ml)
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -200,6 +207,13 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - **AUSGESCHLOSSEN** (Datenprüfung + User-Entscheidung): Pumpkin Katsu (kcal 215 vs. Makros ~170, einziger flacher Wert ohne Größen), Katsu Curry Sauce (gesättigt > Fett, kaputt), Dips + Getränke, 4-Topping/X-Large-Box (keine X-Large-Daten in V19). Salt & Pepper Chicken war im ersten User-Paste falsch (Carbs/Zucker aus Sweet&Sour kopiert), in der offiziellen V19 korrekt (Carbs 14,8/9,8 g) → drin. Validierung: `node verify-chopstix.js`
 - Keine Schalter; Box-Nährwerte = Base[Größe] + Summe der Topping-Werte
 
+## Bestellablauf Pepe's Piri Piri (à la carte)
+- Wie Itsu/Pret/Nando's/Wagamama/GDK/TFC: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
+- Kategorien (5): Chicken (20), Burgers (14), Paneer (veg) (6), Sides (22), Sauces (5) — 67 Items
+- **Flavour-Chip** (Pflicht-Auswahl, global): einer von 6 Bastings (Lemon & Herb / Mango & Lime / Mild / Hot / Extra Hot / Extreme), Default Lemon & Herb. Wird auf ALLE `flavourMl>0`-Items angewandt (`flavour-per-10ml × flavourMl/10` additiv) — der gewählte Flavour-Name erscheint im Item-Namen ("Tender Strips - 3 (Lemon & Herb)")
+- **Schalter "No sauce"**: filtert alle 5 `sauce:true`-Mayo/Dips. Sonst nur Kategorie-Chips + Max-Items
+- Standard-Chips: alle an
+
 ## Bestellablauf Urban Greens (Deliveroo)
 Zwei Modi (Umschalt-Buttons): **"BYO Salad"** und **"BYO Tray"** — fertige Gerichte gibt es in der App NICHT (User-Entscheidung, siehe Datenquellen).
 (Getrennte Modi statt gemischter Ergebnisse: Salads dominieren Trays im Score fast immer, weil sie mehr Freiheitsgrade haben.)
@@ -231,7 +245,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish".
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce".
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -254,6 +268,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
 - **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
 - **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
+- **Pepe's**: alle Kategorien aktiv, max. 5 Items, Flavour = Lemon & Herb, "No sauce" AN
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -267,7 +282,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (**All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix)
+4. Restaurant-Tabs (**All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's)
 5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items + "No fish" (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
@@ -318,7 +333,7 @@ Button **"Import from screenshot"** (unter den Modus-Tabs, in beiden Modi sichtb
 3. Set Fieldtrays/Fieldbowls/Solo-Salate laufen als Einzel-Kandidaten mit
 4. Gleiche Score-Funktion, Top 20/Top 8 wie Subway
 
-### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`), GDK (`optimizeGDK`) und The Fitness Chef (`optimizeTFC`)
+### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`), GDK (`optimizeGDK`), The Fitness Chef (`optimizeTFC`) und Pepe's (`optimizePepes`)
 Alle nutzen den gemeinsamen Kern `alaCarteCombos`:
 1. Enumeriert alle Singles und Paare (Duplikate erlaubt, i<=j)
 2. Triples per Beam-Suche: nur Erweiterungen der besten 80 Paare (dedupliziert) — bleibt auch mit großem Pool flott
@@ -332,8 +347,9 @@ Pool-Bildung:
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 - **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
+- **Pepe's**: aktive Kategorie-Chips MINUS `sauce:true`-Items (Schalter "No sauce"). VOR `alaCarteCombos` wird der gewählte Flavour in jedes `flavourMl>0`-Item eingerechnet (Makros + Name) → der Optimizer sieht fertige, geflavourte Items
 
-UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
+UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
 ### Urban Greens (`optimizeUG`)
 - Modus "pre": 18 fertige Trays/Salads als Einzel-Kandidaten (wie FJ-Sets)
@@ -354,7 +370,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich 
 - Eigene Result-Form (`kind/box/nTop/base/tops`) → eigene Karte + eigenes Panel
 
 ### „All restaurants" (`optimizeAll`)
-- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings)
+- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + Flavour Lemon & Herb
 - Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 2 Treffer pro Restaurant** (sonst überschwemmt ein Restaurant mit ähnlichen Kombos die Liste), Top 20 → Top 8 angezeigt
 - Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
 - Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt
@@ -364,7 +380,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich 
 - **Subway**: Extras (inkl. Double Meat/Cheese), Salad togglen ("✦ Mein Standard"), Saucen (max 2), Seasonings
 - **Farmer J**: Toppings togglen, Sauce/Dip/Topping togglen (max 1, UI erzwingt das); bei Sets keine Add-ons
 - **Farmer J Set-Browser**: alle 13 Sets gruppiert (Set Fieldtrays / Set Fieldbowls / The Salad, Solo), Klick wählt das Set aus und öffnet das Detail-Panel
-- **À-la-carte-Familie (Itsu / Pret / Nando's / Wagamama / GDK / The Fitness Chef)** (gemeinsames Panel über AC-Alias): Item-Aufschlüsselung (kcal + Protein je Item), keine Add-ons; Bestellanleitung = Stückliste mit Mengen (z.B. "2× chicken gyoza", "1× Chicken Supreme (Weight Loss)")
+- **À-la-carte-Familie (Itsu / Pret / Nando's / Wagamama / GDK / The Fitness Chef / Pepe's)** (gemeinsames Panel über AC-Alias): Item-Aufschlüsselung (kcal + Protein je Item), keine Add-ons; Bestellanleitung = Stückliste mit Mengen (z.B. "2× chicken gyoza", "1× Chicken Supreme (Weight Loss)", "1× Tender Strips - 3 (Lemon & Herb)")
 - **Urban Greens**: Komponenten-Aufschlüsselung nach Gruppen + Bestellanleitung (Salad: 11 Schritte, Tray: 10, fertig: 2); KEINE Fibre/Salt-Bars (keine Daten); fertige Salads tragen den Hinweis "Werte ohne Dressing"
 - **Chopstix** (eigenes Panel, Build-a-Box): Komponenten (Base in Box-Größe + Toppings mit kcal) + Bestellanleitung (Box-Typ → Base → Toppings mit Mengen); volle Makro-Bars
 - **Atis** (eigenes Panel, Power Plate): Komponenten-Aufschlüsselung nach Gruppen (doublePlate-Items mit "×2" + verdoppeltem kcal) + Hinweis "×2 = double portion" + Bestellanleitung (8 Schritte); volle Makro-Bars
@@ -377,7 +393,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich 
 
 ## Design
 - Dark Mode (#0d0d0d Background)
-- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81), Chopstix-Header in Orange (#f97316→#9a3412). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
+- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81), Chopstix-Header in Orange (#f97316→#9a3412), Pepe's-Header in Gold→Rot (#f2b705→#c1121f). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
 - Fonts: DM Sans (UI), DM Mono (Zahlen/Labels)
 - iPhone-optimiert: safe-area-inset, touch-optimierte Buttons
 - PWA-fähig: apple-mobile-web-app-capable, Vollbild-Modus
@@ -401,6 +417,8 @@ Essen bestellen Claude Tool/
 ├── atis-update.js           ← Generiert ATIS-Block in index.html aus data/atis-raw.json (Screenshot→Deliveroo-Namen)
 ├── verify-atis.js           ← Sanity-Check der Atis-Rohdaten (Item-Counts + kcal-Plausibilität)
 ├── verify-chopstix.js       ← Sanity-Check der Chopstix V19-Werte (kcal↔Makros, gesättigt≤Fett, Größen-Skalierung)
+├── pepes-update.js          ← Generiert PEPES-Block in index.html aus data/pepes-raw.json (fibre=0, cats/flavours/items)
+├── verify-pepes.js          ← Sanity-Check der Pepe's-Werte (kcal↔Makros ohne Ballaststoffe, gesättigt≤Fett, Item-Counts)
 ├── tfc-update.js            ← Generiert TFC-Block in index.html aus data/tfc-raw.json (Größen-Namen + sodium→salt)
 ├── .claude/launch.json      ← Preview-Server-Konfiguration
 └── data/
@@ -417,6 +435,7 @@ Essen bestellen Claude Tool/
     ├── gdk-raw.json         ← GDK-Daten aus User-Copy-Paste (offizielle Nährwerttabelle, sauce-Flags)
     ├── atis-raw.json        ← Atis-Daten aus User-Screenshots (86 Items, portion/carb/doublePlate/seasonal-Flags) — Quelle der Wahrheit
     ├── tfc-raw.json         ← The-Fitness-Chef-Daten aus User-Copy-Paste (33 Items, size wl/ml/wg, sodium in mg)
+    ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (67 Items + 6 Flavours, sauce/flavourMl-Flags, keine Ballaststoffe)
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
     ├── Farmer J _ Nutritional Info.xlsx ← Original-Erfassung Farmer J
     └── UKIandROINutritionalInformationJan2026.pdf ← Original-PDF Subway
