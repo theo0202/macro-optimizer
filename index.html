@@ -1056,10 +1056,10 @@ function parseMacroScreenshot(ocrText) {
     }
   }
   if (macros.length < 3) return null;
-  const carbs   = Math.max(0, macros[0].total - macros[0].eaten);
-  const protein = Math.max(0, macros[1].total - macros[1].eaten);
-  const fat     = Math.max(0, macros[2].total - macros[2].eaten);
-  const computedKcal = carbs*4 + protein*4 + fat*9;
+  let carbs   = Math.max(0, macros[0].total - macros[0].eaten);
+  let protein = Math.max(0, macros[1].total - macros[1].eaten);
+  let fat     = Math.max(0, macros[2].total - macros[2].eaten);
+  let computedKcal = carbs*4 + protein*4 + fat*9;
 
   // 2) "Übrig"-Kalorien — angezeigten Wert bevorzugen (Reihenfolge der Top-Zahlen: Gegessen, Übrig, Verbrannt).
   const isMacroBar = ln => { const mm = /(\d[\d.,]*)\s*[\/|Il)\]]\s*(\d[\d.,]*)\s*([a-z]{0,4})/i.exec(ln); return !!mm && !ENERGY((mm[3] || "").toLowerCase()); };
@@ -1092,23 +1092,50 @@ function parseMacroScreenshot(ocrText) {
   else if (posKcal < 0.6*computedKcal && best != null && Math.abs(best-computedKcal) < Math.abs(posKcal-computedKcal)) kcal = best;
   else kcal = posKcal;
 
+  // 3) "g→9"-Korrektur: liest die OCR das Einheiten-"g" als "9" und hängt es an die Total-Zahl ("341 g" → "3419"),
+  //    explodiert das Total → unrealistische Restmakros. Wenn ein angezeigter Übrig-Wert vorliegt UND die Rest-kcal
+  //    absurd hoch sind, jedes Total mit/ohne Trailing-9 durchprobieren und die Kombi nehmen, deren Rest-kcal dem Übrig
+  //    am nächsten liegt. Greift NUR bei aufgeblähten Werten (>6000 kcal) — saubere/Ring-Split-Fälle bleiben unberührt.
+  if (!kcalComputed && computedKcal > 6000 && kcal > 0) {
+    const eat = macros.map(p => p.eaten);
+    const opt = macros.map(p => (p.total % 10 === 9 && p.total >= 20) ? [p.total, (p.total - 9) / 10] : [p.total]);
+    let bestC = null;
+    for (const a of opt[0]) for (const b of opt[1]) for (const c of opt[2]) {
+      const rr = [Math.max(0,a-eat[0]), Math.max(0,b-eat[1]), Math.max(0,c-eat[2])];
+      const d = Math.abs((rr[0]*4 + rr[1]*4 + rr[2]*9) - kcal);
+      if (bestC == null || d < bestC.d) bestC = { d, rr };
+    }
+    carbs = bestC.rr[0]; protein = bestC.rr[1]; fat = bestC.rr[2];
+    computedKcal = carbs*4 + protein*4 + fat*9;
+  }
+  // Plausibilitäts-Stopp: wenn die Rest-Makros trotzdem absurd zum angezeigten Übrig passen, lieber abbrechen
+  // als Müll eintragen (onImport zeigt dann den OCR-Text zur Diagnose).
+  if (!kcalComputed && kcal > 0 && computedKcal > kcal * 3 + 1500) return null;
+
   const r = { carbs, protein, fat, kcal };
   if (kcalComputed) r.kcalComputed = true;
   return r;
 }
 
-// Bild vor der OCR verkleinern (iOS-Speicherlimit + Tempo + bessere Genauigkeit); gibt Blob oder Original zurück.
+// Bild für die OCR aufbereiten: zu große Screenshots verkleinern (iOS-Speicher), KLEINE hochskalieren
+// (Makro-Balken-Schrift ist winzig → größere Glyphen = deutlich bessere Erkennung, weniger "g→9"-Fehler).
+// maxSide = Downscale-Obergrenze; kleiner als ~1700px → hoch auf ~2400px (Ziel). Gibt Blob oder Original zurück.
 function downscaleImage(file, maxSide) {
   return new Promise(resolve => {
     try {
       const url = URL.createObjectURL(file), im = new Image();
       im.onload = () => {
         URL.revokeObjectURL(url);
-        const mx = Math.max(im.width, im.height), scale = mx > maxSide ? maxSide/mx : 1;
-        if (scale >= 1) { resolve(file); return; }
+        const mx = Math.max(im.width, im.height);
+        let scale = 1;
+        if (mx > maxSide) scale = maxSide / mx;            // zu groß → runter
+        else if (mx < 1700) scale = Math.min(2.5, 2400 / mx); // klein → hoch (bessere OCR)
+        if (Math.abs(scale - 1) < 0.01) { resolve(file); return; }
         const cv = document.createElement("canvas");
         cv.width = Math.round(im.width*scale); cv.height = Math.round(im.height*scale);
-        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+        const ctx = cv.getContext("2d");
+        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(im, 0, 0, cv.width, cv.height);
         cv.toBlob(b => resolve(b || file), "image/png");
       };
       im.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
@@ -1119,7 +1146,7 @@ function downscaleImage(file, maxSide) {
 // OCR eines Screenshots → geparste Makros (oder null). Tesseract.js kommt per <script>-CDN als globales Tesseract.
 async function ocrMacroScreenshot(file, onProgress) {
   if (typeof Tesseract === "undefined") throw new Error("OCR library not loaded yet");
-  const img = await downscaleImage(file, 2000);
+  const img = await downscaleImage(file, 2600);
   const { data } = await Tesseract.recognize(img, "deu", {
     logger: msg => { if (msg.status === "recognizing text" && onProgress) onProgress(msg.progress); }
   });

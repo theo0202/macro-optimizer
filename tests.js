@@ -559,6 +559,9 @@ const OCR_CASES = [
   { name: "g_unit_dropped", t: "Gegessen Ubrig Verbrannt\n533 2.267 0\nKohlenhydrate 54 / 341\nEiweiss 52 / 184\nFett 9 / 69\nFruhstuck 533 / 840 kcal", e: { carbs: 287, protein: 132, fat: 60, kcal: 2267 } },
   // Slash von der OCR verschluckt (aber "g" da) -> Pass B (durch "g" verankert)
   { name: "slash_dropped_g_present", t: "Gegessen Ubrig Verbrannt\n533 2.267 0\nKohlenhydrate 54 341 g\nEiweiss 52 184 g\nFett 9 69 g\nFruhstuck 533 840 kcal", e: { carbs: 287, protein: 132, fat: 60, kcal: 2267 } },
+  // REALER FEHLER: OCR liest das Einheiten-"g" als "9" und haengt es ans Total ("341 g"->"3419", "184 g"->"1849")
+  // -> aufgeblaehte Restmakros (3365/1797). g->9-Korrektur muss via Uebrig (2267) auf 287/132/60 zurueckrechnen.
+  { name: "g_merged_as_9_recovery", t: "Gegessen Ubrig Verbrannt\n533 2.267 0\nKohlenhydrate 54 / 3419\nEiweiss 52 / 1849\nFett 9 / 69 g\nFruhstuck 533 / 840 kcal\nMittagessen 0 / 1.120 kcal", e: { carbs: 287, protein: 132, fat: 60, kcal: 2267 } },
 ];
 for (const c of OCR_CASES) {
   const r = T.parseMacroScreenshot(c.t) || {};
@@ -568,6 +571,8 @@ for (const c of OCR_CASES) {
 check("OCR parse: Müll-Text -> null", T.parseMacroScreenshot("hello world, nothing here") === null, true);
 check("OCR parse: non-string -> null", T.parseMacroScreenshot(null) === null, true);
 check("OCR parse: nur 2 Makros -> null", T.parseMacroScreenshot("54 / 341 g\n52 / 184 g") === null, true);
+// Plausibilitäts-Stopp: absurd aufgeblähte, nicht-korrigierbare Werte trotz Übrig -> null (kein Müll-Import)
+check("OCR parse: absurd + nicht korrigierbar -> null", T.parseMacroScreenshot("Gegessen Ubrig Verbrannt\n500 300 0\nKohlenhydrate 99 / 8888\nEiweiss 88 / 7777\nFett 77 / 6666") === null, true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
