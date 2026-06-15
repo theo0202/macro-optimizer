@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeAll, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizeAll, sortResults, parseMacroScreenshot };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -527,7 +527,7 @@ check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -577,6 +577,42 @@ check("OCR parse: non-string -> null", T.parseMacroScreenshot(null) === null, tr
 check("OCR parse: nur 2 Makros -> null", T.parseMacroScreenshot("54 / 341 g\n52 / 184 g") === null, true);
 // Plausibilitäts-Stopp: absurd aufgeblähte, nicht-korrigierbare Werte trotz Übrig -> null (kein Müll-Import)
 check("OCR parse: absurd + nicht korrigierbar -> null", T.parseMacroScreenshot("Gegessen Ubrig Verbrannt\n500 300 0\nKohlenhydrate 99 / 8888\nEiweiss 88 / 7777\nFett 77 / 6666") === null, true);
+
+// ── Chopstix Noodle Bar (Build-a-Box: Base + 2/3 Toppings) ──
+check("Chopstix Bases (3)", T.CHOPSTIX.bases.length, 3);
+check("Chopstix Toppings (10)", T.CHOPSTIX.toppings.length, 10);
+check("Chopstix Pumpkin Katsu ausgeschlossen", !T.CHOPSTIX.toppings.find(x => /pumpkin/i.test(x.name)), true);
+check("Chopstix Katsu-Sauce ausgeschlossen", !T.CHOPSTIX.toppings.find(x => /katsu/i.test(x.name)), true);
+check("Chopstix S&P Chicken drin (offiziell korrigiert)", !!T.CHOPSTIX.toppings.find(x => x.id === "sp_chicken"), true);
+check("Chopstix S&P Chicken Carbs 9.8 (nicht 17.9 Copy-Paste)", T.CHOPSTIX.toppings.find(x => x.id === "sp_chicken").carbs, 9.8);
+check("Chopstix Base skaliert (Regular != Large)", T.CHOPSTIX.bases[0].reg.kcal !== T.CHOPSTIX.bases[0].lg.kcal, true);
+check("Chopstix Egg Fried Rice Regular kcal", T.CHOPSTIX.bases.find(b => b.id === "egg_fried_rice").reg.kcal, 465);
+check("Chopstix Egg Fried Rice Large kcal", T.CHOPSTIX.bases.find(b => b.id === "egg_fried_rice").lg.kcal, 558);
+check("Chopstix Sweet&Sour Topping kcal", T.CHOPSTIX.toppings.find(t => t.id === "sweet_sour").kcal, 162);
+
+const tCh = { protein: 40, carbs: 60, fat: 20, kcal: 580, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rCh = T.optimizeChopstix(tCh, "macros", {});
+check("Chopstix liefert Ergebnisse (1..20)", rCh.length > 0 && rCh.length <= 20, true);
+let chStruct = true, chSum = true;
+for (const r of rCh) {
+  const okS = (r.box === "regular" && r.nTop === 2 && r.tops.length === 2) || (r.box === "large" && r.nTop === 3 && r.tops.length === 3);
+  if (!okS) chStruct = false;
+  const sz = r.box === "large" ? "lg" : "reg";
+  const exp = Math.round((r.base[sz].kcal + r.tops.reduce((s, t) => s + t.kcal, 0)) * 10) / 10;
+  if (!approx(r.nutrition.kcal, exp)) chSum = false;
+}
+check("Chopstix Box-Struktur (regular=2 / large=3 Toppings)", chStruct, true);
+check("Chopstix Nutrition == Base[Größe] + Toppings", chSum, true);
+check("Chopstix nach Score sortiert", rCh.every((r, i) => i === 0 || rCh[i - 1].score <= r.score), true);
+// beide Box-Größen grundsätzlich erreichbar
+const rChBig = T.optimizeChopstix({ protein: 60, carbs: 120, fat: 30, kcal: 990, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
+check("Chopstix: Large Box (3 Toppings) bei großem Ziel", rChBig.some(r => r.box === "large"), true);
+// niedriges Ziel -> Regular Box (2 Toppings) gewinnt (3 Toppings würden überschießen)
+const rChLow = T.optimizeChopstix({ protein: 18, carbs: 26, fat: 9, kcal: 257, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
+check("Chopstix: Regular Box (2 Toppings) bei kleinem Ziel", rChLow.some(r => r.box === "regular"), true);
+// All-restaurants: chopstix ist ein gültiger _resto-Wert
+const rAllCh = T.optimizeAll({ protein: 40, carbs: 70, fat: 18, kcal: 592, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
+check("All: alle _resto-Werte gültig (inkl. chopstix)", rAllCh.every(r => RESTOS.includes(r._resto)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

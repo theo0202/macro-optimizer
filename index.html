@@ -979,6 +979,38 @@ const UG = {
   ],
 };
 
+// Chopstix Noodle Bar — Build-a-Box: 1 Base + N Toppings. Quelle: offizielle Nährwerttabelle V19 (April 2026).
+// Box-Größen: 2 Toppings = "Regular Box" (Komponenten in Größe Regular), 3 Toppings = "Large Box" (Größe Large).
+// Bases skalieren Small:Regular:Large = 1:1.25:1.5; Toppings sind Regular == Large (offiziell identisch) → ein Wert pro Topping.
+// AUSGESCHLOSSEN (User-Entscheidung + Datenprüfung): Pumpkin Katsu Curry (kcal 215 vs. Makros ~170, einziger flacher Wert),
+// Katsu Curry Sauce (gesättigt > Fett, kaputt), 4-Topping/X-Large-Box (keine X-Large-Spalte in V19), Dips + Getränke.
+const CHOPSTIX = {
+  bases: [
+    { id:"veg_chow_mein", name:"Vegetable Chow Mein",
+      reg:{ kcal:308,fat:7.0,sat:0.7,carbs:54.3,sugars:0.3,fibre:4.5,protein:9.3,salt:2.70 },
+      lg: { kcal:369,fat:8.4,sat:0.8,carbs:65.1,sugars:0.3,fibre:5.4,protein:11.1,salt:3.24 } },
+    { id:"egg_fried_rice", name:"Egg Fried Rice",
+      reg:{ kcal:465,fat:7.3,sat:1.0,carbs:93.8,sugars:0.5,fibre:3.8,protein:8.0,salt:1.33 },
+      lg: { kcal:558,fat:8.7,sat:1.1,carbs:112.5,sugars:0.6,fibre:4.5,protein:9.6,salt:1.59 } },
+    { id:"cauli_rice", name:"Cauli Rice",
+      reg:{ kcal:58,fat:0.3,sat:0.1,carbs:8.5,sugars:5.0,fibre:3.8,protein:3.5,salt:2.13 },
+      lg: { kcal:69,fat:0.3,sat:0.2,carbs:10.2,sugars:6.0,fibre:4.5,protein:4.2,salt:2.55 } },
+  ],
+  // Toppings: ein Wert pro Topping in der Box (Regular = Large laut V19).
+  toppings: [
+    { id:"sweet_sour", name:"Sweet & Sour Chicken", kcal:162,fat:6.2,sat:0.8,carbs:17.9,sugars:10.3,fibre:1.9,protein:9.7,salt:1.20 },
+    { id:"caramel_drizzle", name:"Caramel Drizzle Chicken", kcal:169,fat:7.2,sat:1.2,carbs:15.8,sugars:6.2,fibre:0.5,protein:10.5,salt:1.18 },
+    { id:"chinese_curry", name:"Chinese Chicken Curry", kcal:133,fat:6.5,sat:2.5,carbs:6.4,sugars:1.6,fibre:2.0,protein:8.1,salt:1.37 },
+    { id:"sp_chicken", name:"Salt & Pepper Chicken", kcal:138,fat:6.6,sat:0.7,carbs:9.8,sugars:1.3,fibre:0.8,protein:10.2,salt:1.58 },
+    { id:"sp_potatoes", name:"Salt & Pepper Potatoes", kcal:100,fat:6.7,sat:1.0,carbs:8.3,sugars:1.8,fibre:0.5,protein:1.4,salt:0.32 },
+    { id:"coconut_crave", name:"Spicy Coconut Crave Chicken", kcal:113,fat:7.1,sat:3.9,carbs:3.8,sugars:0.0,fibre:1.4,protein:9.1,salt:1.06 },
+    { id:"firecracker", name:"Firecracker Chicken", kcal:280,fat:14.0,sat:1.5,carbs:24.1,sugars:11.2,fibre:1.9,protein:15.2,salt:2.68 },
+    { id:"no_beef_teriyaki", name:"No Beef Teriyaki", kcal:67,fat:1.5,sat:0.2,carbs:9.8,sugars:2.4,fibre:2.3,protein:4.9,salt:0.62 },
+    { id:"cherry_kiss", name:"Cherry Kiss Chicken", kcal:224,fat:10.0,sat:1.0,carbs:18.6,sugars:7.0,fibre:0.0,protein:15.2,salt:1.80 },
+    { id:"soy_mazing", name:"Soy-Mazing Chicken", kcal:154,fat:7.0,sat:0.8,carbs:13.0,sugars:3.3,fibre:0.8,protein:10.2,salt:2.40 },
+  ],
+};
+
 const KEYS = ["kcal","fat","sat","carbs","sugars","fibre","protein","salt"];
 
 // singleItems (Salads) werden NIE multipliziert: Footlong = ×2 für alles AUSSER Salads
@@ -1342,6 +1374,22 @@ function optimizeTFC(t, mode, p, activeCats, maxN, noFish) {
   return alaCarteCombos(t,mode,p,pool,maxN);
 }
 
+// Chopstix Noodle Bar: Build-a-Box. 2-Topping-Box (Regular) = base.reg + 2 Toppings; 3-Topping-Box (Large) = base.lg + 3 Toppings.
+// Toppings mit Wiederholung erlaubt. Voll-Enumeration (3 Bases × [55 Paare + 220 Triples] = 825 Kombos). Eigene Result-Form.
+function optimizeChopstix(t, mode, p) {
+  const R1=v=>Math.round(v*10)/10;
+  const add=(a,b)=>{const o={};for(const k of KEYS)o[k]=(a[k]||0)+(b[k]||0);return o;};
+  const toN=s=>{const o={};for(const k of KEYS)o[k]=R1(s[k]);return o;};
+  const T=CHOPSTIX.toppings, res=[];
+  const mk=(box,nTop,base,baseN,tops)=>{let s=baseN;for(const tp of tops)s=add(s,tp);const n=toN(s);return {kind:"chopstix",box,nTop,base,tops,nutrition:n,score:score(n,t,mode,p)};};
+  for(const b of CHOPSTIX.bases){
+    for(let i=0;i<T.length;i++)for(let j=i;j<T.length;j++) res.push(mk("regular",2,b,b.reg,[T[i],T[j]]));            // 2-Topping = Regular Box
+    for(let i=0;i<T.length;i++)for(let j=i;j<T.length;j++)for(let k=j;k<T.length;k++) res.push(mk("large",3,b,b.lg,[T[i],T[j],T[k]])); // 3-Topping = Large Box
+  }
+  res.sort((a,b)=>a.score-b.score);
+  return res.slice(0,20);
+}
+
 // "All restaurants": restaurantsübergreifend die besten Bestellungen. Jedes Restaurant läuft mit ALLEN
 // Exclude-Schaltern AN (Itsu only-sushi/w-o-sashimi AUS, User-Vorgabe), Default-Kategorien, à-la-carte max 5,
 // Subway-Brot frei + aktuelle Größe. Jedes Ergebnis bekommt _resto; gemerged + nach Score sortiert; Top 20.
@@ -1360,6 +1408,7 @@ function optimizeAll(t, mode, p, subSize) {
   all = all.concat(tag(optimizeTFC(t,mode,p,def(TFC.cats),5,true),"tfc"));                   // No fish
   all = all.concat(tag(optimizeUG(t,mode,p,"salad",true,true),"ug"));                        // BYO Salad, No nuts + No dressing
   all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true),"ug"));                         // BYO Tray
+  all = all.concat(tag(optimizeChopstix(t,mode,p),"chopstix"));                              // Build-a-Box (2 + 3 Toppings)
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 2 Treffer pro Restaurant (sonst überschwemmt ein Restaurant mit vielen ähnlichen Kombos die Liste).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -1367,7 +1416,7 @@ function optimizeAll(t, mode, p, subSize) {
   for(const r of all){ const c=perR[r._resto]||0; if(c>=2)continue; perR[r._resto]=c+1; out.push(r); if(out.length>=20)break; }
   return out;
 }
-const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef"};
+const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix"};
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
   const rt=r._resto;
@@ -1375,6 +1424,7 @@ function summarizeAcross(r){
   if(rt==="farmerj")return r.set?r.set.name:(r.main.name+(r.sides&&r.sides.length?" · "+r.sides.map(s=>s.name).join(" + "):""));
   if(rt==="ug")return (r.prot?r.prot.name:"No protein")+" · "+(r.kind==="tray"?"Tray":"Salad")+(r.carb?" · "+r.carb.name:"");
   if(rt==="atis")return (r.prots&&r.prots.length?r.prots.map(x=>x.name).join(" + "):"No protein")+" · Power Plate";
+  if(rt==="chopstix")return (r.box==="large"?"Large Box":"Regular Box")+" · "+r.base.name+" · "+itsuLabel(r.tops);
   return itsuLabel(r.items); // AC-Familie (itsu/pret/nandos/wagamama/gdk/tfc)
 }
 
@@ -1713,6 +1763,8 @@ function App() {
   const [selTFC,setSelTFC]=useState(null);
   // Screenshot-Import (OCR)
   const [imp,setImp]=useState({busy:false,msg:"",err:false});
+  // Chopstix (Build-a-Box)
+  const [selCh,setSelCh]=useState(null);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -1752,6 +1804,7 @@ function App() {
     else if(rt==="wagamama")setSelW(r);
     else if(rt==="gdk")setSelG(r);
     else if(rt==="tfc")setSelTFC(r);
+    else if(rt==="chopstix")setSelCh(r);
   };
 
   const targets=useMemo(()=>{
@@ -1773,6 +1826,7 @@ function App() {
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
   const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
   const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
+  const resultsChopstix=useMemo(()=>resto==="chopstix"?optimizeChopstix(targets,mode,prefs):[],[resto,targets,mode,prefs]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
@@ -1821,9 +1875,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -1857,7 +1911,7 @@ function App() {
             h(NumIn,{label:"Carbs",value:tC,onChange:setTC,placeholder:"45",unit:"g"}),
             h(NumIn,{label:"Fat",value:tF,onChange:setTF,placeholder:"12",unit:"g"})
           ),
-          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":resto==="all"?"across all restaurants — best picks":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
+          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":resto==="chopstix"?"Build a Box · 2–3 toppings":resto==="all"?"across all restaurants — best picks":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
         ):h("div",null,
           h("div",{style:{marginBottom:12}},h(NumIn,{label:"Calorie target",value:tK,onChange:setTK,placeholder:"450",unit:"kcal"})),
           h("div",{style:{fontSize:10,color:"#666",marginBottom:8,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Macro preferences"),
@@ -1887,7 +1941,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto)
+        btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto)
       ),
 
       // Size (nur Subway)
@@ -2052,7 +2106,7 @@ function App() {
 
       // Results list
       h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
-        ...sortResults(resto==="all"?resultsAll:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
+        ...sortResults(resto==="all"?resultsAll:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
           if(resto==="all"){
             return h("button",{key:i,onClick:()=>selectAcross(r),style:{
               background:"#151515",border:"1px solid #222",borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
@@ -2103,6 +2157,32 @@ function App() {
                 h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g")
+              )
+            );
+          }
+          if(resto==="chopstix"){
+            const isSelCh=selCh===r;
+            const title=r.base.name+" + "+itsuLabel(r.tops);
+            const sub=r.box==="large"?"Large Box · 3 toppings":"Regular Box · 2 toppings";
+            return h("button",{key:i,onClick:()=>setSelCh(isSelCh?null:r),style:{
+              background:isSelCh?"rgba(0,151,67,0.08)":"#151515",
+              border:isSelCh?"1px solid "+S.green:"1px solid #222",
+              borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+            }},
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}},
+                h("div",null,
+                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},title),
+                  h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},sub)
+                ),
+                h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
+                  r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+              ),
+              h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
+                h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
+                h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
+                h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
               )
             );
           }
@@ -2584,9 +2664,55 @@ function App() {
         })()
       ),
 
+      // Detail panel (Chopstix — Build a Box)
+      resto==="chopstix"&&selCh&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
+        h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}}, itsuLabel(selCh.tops)),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},
+          (selCh.box==="large"?"Large Box · 3 toppings":"Regular Box · 2 toppings")+" · "+selCh.base.name),
+
+        h("div",{style:{marginBottom:16}},
+          h(MacroBar,{label:"Calories",value:selCh.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:selCh.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:selCh.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:selCh.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"})
+        ),
+
+        // Komponenten (Base in Box-Größe + Toppings)
+        (()=>{
+          const sz=selCh.box==="large"?"lg":"reg";
+          return h("div",{style:{marginBottom:16}},
+            h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Components"),
+            ...[["Base",[selCh.base.name+" ("+selCh.base[sz].kcal+")"]],
+                ["Toppings",selCh.tops.map(x=>x.name+" ("+x.kcal+")")]].map(([l,arr],gi)=>
+              h("div",{key:gi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:"1px solid #1f1f1f"}},
+                h("span",{style:{color:"#777",fontFamily:S.mono,fontSize:10,minWidth:90}},l),
+                h("span",{style:{color:"#e0e0e0",textAlign:"right",flex:1}},arr.join(", "))
+              ))
+          );
+        })(),
+
+        // Order guide (Chopstix, Deliveroo-Schritte)
+        (()=>{
+          const box=(steps)=>h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
+            h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
+              h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
+            ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
+              h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
+              h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:100}},st.l),
+              h("span",{style:{fontSize:12,color:"#e0e0e0",fontWeight:500,fontFamily:S.font}},st.v)
+            ))
+          );
+          return box([
+            {l:"Box",v:selCh.box==="large"?"Triple Topper (3 Toppings) / Large Box":"Build a Box (2 Toppings) / Regular"},
+            {l:"Base",v:selCh.base.name},
+            {l:"Toppings",v:itsuLabel(selCh.tops)},
+          ]);
+        })()
+      ),
+
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }
