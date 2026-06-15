@@ -1124,7 +1124,7 @@ const FIVEGUYS = {
     { id:"loaded_fries",name:"Loaded Fries",kcal:751,fat:41,sat:8.9,carbs:77,sugars:4.3,fibre:8.9,protein:14,salt:3.97 },
     { id:"loaded_cajun_fries",name:"Loaded Cajun Fries",kcal:771,fat:42,sat:9.1,carbs:79,sugars:4,fibre:9,protein:15,salt:3.81 },
   ],
-  // Freie Toppings (kommen auf den Main)
+  // Freie Toppings (Deliveroos 15; sauce:true wird vom 'No sauce'-Schalter gefiltert)
   toppings: [
     { id:"lettuce",name:"Lettuce",kcal:4,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
     { id:"tomatoes",name:"Tomatoes",kcal:6,fat:0,sat:0,carbs:1.3,sugars:1.3,fibre:0,protein:0,salt:0 },
@@ -1134,17 +1134,22 @@ const FIVEGUYS = {
     { id:"pickles",name:"Pickles",kcal:3,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.46 },
     { id:"green_peppers",name:"Green Peppers",kcal:2,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
     { id:"jalapeno_peppers",name:"Jalapeno Peppers",kcal:1,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.02 },
-    { id:"grilled_cheese_slice",name:"Grilled Cheese Slice",kcal:64,fat:4.9,sat:3.2,carbs:1.1,sugars:0.8,fibre:0,protein:3.6,salt:0.76 },
-    { id:"mayonnaise",name:"Mayonnaise",kcal:113,fat:12,sat:2,carbs:0,sugars:0,fibre:0,protein:0,salt:0.2 },
-    { id:"ketchup",name:"Ketchup",kcal:14,fat:0,sat:0,carbs:3.2,sugars:3.2,fibre:0,protein:0,salt:0.25 },
-    { id:"mustard",name:"Mustard",kcal:5,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.17 },
-    { id:"bbq_sauce",name:"BBQ Sauce",kcal:16,fat:0,sat:0,carbs:3.3,sugars:3.2,fibre:0,protein:0,salt:0.28 },
-    { id:"hot_sauce",name:"Hot Sauce",kcal:2,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.67 },
-    { id:"hp_brown_sauce",name:"HP Brown Sauce",kcal:7,fat:0,sat:0,carbs:2,sugars:1.6,fibre:0,protein:0,salt:0.09 },
-    { id:"relish",name:"Relish",kcal:20,fat:0,sat:0,carbs:4.6,sugars:3.8,fibre:0,protein:0,salt:0.18 },
-    { id:"crispy_fried_onions",name:"Crispy Fried Onions",kcal:47,fat:3.5,sat:1.7,carbs:3.2,sugars:0.7,fibre:0.4,protein:0.5,salt:0.1 },
-    { id:"fried_egg",name:"Fried Egg",kcal:93,fat:6.1,sat:1.9,carbs:1.3,sugars:0,fibre:0.3,protein:8.4,salt:0.26 },
+    { id:"mayonnaise",name:"Mayonnaise",sauce:true,kcal:113,fat:12,sat:2,carbs:0,sugars:0,fibre:0,protein:0,salt:0.2 },
+    { id:"ketchup",name:"Ketchup",sauce:true,kcal:14,fat:0,sat:0,carbs:3.2,sugars:3.2,fibre:0,protein:0,salt:0.25 },
+    { id:"mustard",name:"Mustard",sauce:true,kcal:5,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.17 },
+    { id:"bbq_sauce",name:"BBQ Sauce",sauce:true,kcal:16,fat:0,sat:0,carbs:3.3,sugars:3.2,fibre:0,protein:0,salt:0.28 },
+    { id:"hot_sauce",name:"Hot Sauce",sauce:true,kcal:2,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0.67 },
+    { id:"hp_sauce",name:"HP Sauce",sauce:true,kcal:7,fat:0,sat:0,carbs:2,sugars:1.6,fibre:0,protein:0,salt:0.09 },
+    { id:"relish",name:"Relish",sauce:true,kcal:20,fat:0,sat:0,carbs:4.6,sugars:3.8,fibre:0,protein:0,salt:0.18 },
   ],
+  // Komponenten fuer Burger-Bun-Wahl (Bowl/Wrap), Extra Patties + Sandwich-Extras (Patty/Cheese/Bacon)
+  mods: {
+    patty: { kcal:195,fat:14,sat:5.6,carbs:0,sugars:0,fibre:0,protein:18,salt:0.13 },
+    cheese: { kcal:64,fat:4.9,sat:3.2,carbs:1.1,sugars:0.8,fibre:0,protein:3.6,salt:0.76 },
+    bacon: { kcal:78,fat:5.5,sat:2.2,carbs:0.7,sugars:0,fibre:0,protein:6.4,salt:0.92 },
+    bun: { kcal:238,fat:7.5,sat:2.6,carbs:38,sugars:6.2,fibre:1.4,protein:6,salt:0.49 },
+    lettuce: { kcal:4,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
+  },
 };
 // __FIVEGUYS_DATA_END__
 
@@ -1530,29 +1535,53 @@ function optimizeChopstix(t, mode, p) {
 // Five Guys: Build Your Own (Komponenten-Daten -> komponierte Produkte). Ein Ergebnis = 1 Main (Burger/Hot Dog/
 // Sandwich) optional + 1 Fries optional (mind. eines) + freie Toppings auf dem Main (greedy, nur wenn sie den Score
 // verbessern; max 6, jedes hoechstens 1x). Eigener BYO-Optimizer (wie UG/Atis/Chopstix), volle 8 Makros.
-function optimizeFiveGuys(t, mode, p) {
-  const mains=[null,...FIVEGUYS.mains], friesL=[null,...FIVEGUYS.fries], tops=FIVEGUYS.toppings;
+function optimizeFiveGuys(t, mode, p, noSauce) {
+  const M=FIVEGUYS.mods;
+  const negBun=(()=>{const o={};for(const k of KEYS)o[k]=-(M.bun[k]||0);return o;})();
+  const tops=FIVEGUYS.toppings.filter(x=>!(noSauce && x.sauce));
+  const friesL=[null,...FIVEGUYS.fries];
+  const paid=[{name:"Extra Patty",comp:M.patty},{name:"Cheese",comp:M.cheese},{name:"Bacon",comp:M.bacon}];
+  // Konfigurierte Mains: Burger × Bun(Bun/Bowl/Wrap) × ExtraPatties(0–2); Hot Dogs/Sandwiches einfach; + "Fries only"
+  const cfgs=[];
+  for(const m of FIVEGUYS.mains){
+    if(m.group==="burgers"){
+      for(const bun of ["bun","bowl","wrap"]) for(let ep=0;ep<=2;ep++){
+        const parts=[m];
+        if(bun==="bowl")parts.push(negBun);
+        else if(bun==="wrap"){parts.push(negBun);parts.push(M.lettuce);}
+        for(let i=0;i<ep;i++)parts.push(M.patty);
+        cfgs.push({main:m,bun,extraPatties:ep,parts,sandwich:false});
+      }
+    } else cfgs.push({main:m,bun:null,extraPatties:0,parts:[m],sandwich:m.group==="sandwiches"});
+  }
+  cfgs.push({main:null,bun:null,extraPatties:0,parts:[],sandwich:false}); // Fries only
   const res=[];
-  for(const m of mains){
+  for(const cfg of cfgs){
     for(const f of friesL){
-      if(!m && !f) continue;
-      const base=[]; if(m)base.push(m); if(f)base.push(f);
-      const chosen=[];
+      if(!cfg.main && !f) continue;
+      const base=[...cfg.parts]; if(f)base.push(f);
+      const chosenTops=[], chosenExtras=[];
       let curScore=score(sumN(base,1),t,mode,p);
-      if(m){ // Toppings nur auf einen Main; greedy bestes Topping bis keine Verbesserung
+      if(cfg.main){ // greedy: freie Toppings (+ Sandwich paid-extras) bis keine Score-Verbesserung
         let improved=true;
-        while(improved && chosen.length<6){
-          improved=false; let bestT=null, bestS=curScore;
+        while(improved && (chosenTops.length+chosenExtras.length)<6){
+          improved=false; let best=null, bestS=curScore, kind=null;
+          const cur=[...base,...chosenTops,...chosenExtras.map(e=>e.comp)];
           for(const tp of tops){
-            if(chosen.indexOf(tp)>=0) continue;
-            const s=score(sumN([...base,...chosen,tp],1),t,mode,p);
-            if(s<bestS-1e-9){ bestS=s; bestT=tp; }
+            if(chosenTops.indexOf(tp)>=0)continue;
+            const s=score(sumN([...cur,tp],1),t,mode,p);
+            if(s<bestS-1e-9){bestS=s;best=tp;kind="top";}
           }
-          if(bestT){ chosen.push(bestT); curScore=bestS; improved=true; }
+          if(cfg.sandwich)for(const ex of paid){
+            if(chosenExtras.find(e=>e.name===ex.name))continue;
+            const s=score(sumN([...cur,ex.comp],1),t,mode,p);
+            if(s<bestS-1e-9){bestS=s;best=ex;kind="extra";}
+          }
+          if(best){ if(kind==="top")chosenTops.push(best); else chosenExtras.push(best); curScore=bestS; improved=true; }
         }
       }
-      const n=sumN([...base,...chosen],1);
-      res.push({kind:"fiveguys",main:m,fries:f,tops:chosen,nutrition:n,score:score(n,t,mode,p)});
+      const n=sumN([...base,...chosenTops,...chosenExtras.map(e=>e.comp)],1);
+      res.push({kind:"fiveguys",main:cfg.main,bun:cfg.bun,extraPatties:cfg.extraPatties,extras:chosenExtras.map(e=>e.name),tops:chosenTops,fries:f,nutrition:n,score:score(n,t,mode,p)});
     }
   }
   res.sort((a,b)=>a.score-b.score);
@@ -1593,7 +1622,7 @@ function optimizeAll(t, mode, p, subSize) {
   all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true),"ug"));                         // BYO Tray
   all = all.concat(tag(optimizeChopstix(t,mode,p),"chopstix"));                              // Build-a-Box (2 + 3 Toppings)
   all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),5,true,"plain"),"pepes")); // à la carte, No Sauce, No Flavour (Plain)
-  all = all.concat(tag(optimizeFiveGuys(t,mode,p),"fiveguys"));                             // Build your own: Main + Fries + Toppings
+  all = all.concat(tag(optimizeFiveGuys(t,mode,p,true),"fiveguys"));                         // Build your own: Main + Fries + Toppings, No sauce
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -1959,6 +1988,7 @@ function App() {
   const [pepNoFlavour,setPepNF]=useState(true);
   const [selPep,setSelPep]=useState(null);
   const [selFG,setSelFG]=useState(null);
+  const [fgNoSauce,setFGNS]=useState(true);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -2024,7 +2054,7 @@ function App() {
   const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
   const resultsChopstix=useMemo(()=>resto==="chopstix"?optimizeChopstix(targets,mode,prefs):[],[resto,targets,mode,prefs]);
   const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour?"plain":pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour,pepFlavour]);
-  const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs):[],[resto,targets,mode,prefs]);
+  const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs,fgNoSauce):[],[resto,targets,mode,prefs,fgNoSauce]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
@@ -2299,6 +2329,8 @@ function App() {
           h("input",{type:"checkbox",checked:pepNoSauce,onChange:e=>setPepNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="pepes"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:pepNoFlavour,onChange:e=>setPepNF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No flavour"),
+        resto==="fiveguys"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:fgNoSauce,onChange:e=>setFGNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="tfc"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
@@ -2440,6 +2472,9 @@ function App() {
             const grp=r.main?(r.main.group==="hotdogs"?"Hot Dog":r.main.group==="sandwiches"?"Sandwich":"Burger"):"Fries";
             const title=r.main?r.main.name:r.fries.name;
             const sub=[grp,
+               r.bun==="bowl"?"Bowl":r.bun==="wrap"?"Lettuce Wrap":null,
+               r.extraPatties?"+"+r.extraPatties+" patty":null,
+               r.extras&&r.extras.length?"+ "+r.extras.join(", "):null,
                r.tops&&r.tops.length?"+ "+r.tops.map(x=>x.name).join(", "):null,
                r.main&&r.fries?r.fries.name:null].filter(Boolean).join(" · ");
             return h("button",{key:i,onClick:()=>setSelFG(isSelF?null:r),style:{
@@ -2978,6 +3013,9 @@ function App() {
         h("div",{style:{marginBottom:16}},
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Components"),
           ...[["Main",selFG.main?[selFG.main.name+" ("+selFG.main.kcal+")"]:[]],
+              ["Bun",(selFG.bun==="bowl")?["Bowl — no bun (−"+FIVEGUYS.mods.bun.kcal+")"]:(selFG.bun==="wrap")?["Lettuce Wrap — no bun (−"+Math.round((FIVEGUYS.mods.bun.kcal-FIVEGUYS.mods.lettuce.kcal)*10)/10+")"]:[]],
+              ["Extra patties",selFG.extraPatties?[selFG.extraPatties+"× Beef Patty (+"+Math.round(selFG.extraPatties*FIVEGUYS.mods.patty.kcal)+")"]:[]],
+              ["Extras",(selFG.extras||[]).map(nm=>nm+" (+"+(nm==="Extra Patty"?FIVEGUYS.mods.patty.kcal:nm==="Cheese"?FIVEGUYS.mods.cheese.kcal:FIVEGUYS.mods.bacon.kcal)+")")],
               ["Toppings",selFG.tops.map(x=>x.name+" ("+x.kcal+")")],
               ["Fries",selFG.fries?[selFG.fries.name+" ("+selFG.fries.kcal+")"]:[]]]
             .filter(([l,arr])=>arr.length).map(([l,arr],gi)=>
@@ -3000,8 +3038,12 @@ function App() {
           );
           const steps=[];
           if(selFG.main){
-            steps.push({l:selFG.main.group==="hotdogs"?"Hot Dog":selFG.main.group==="sandwiches"?"Sandwich":"Burger",v:selFG.main.name});
+            const g=selFG.main.group;
+            steps.push({l:g==="hotdogs"?"Hot Dog":g==="sandwiches"?"Sandwich":"Burger",v:selFG.main.name});
+            if(g==="burgers")steps.push({l:"Bun or Bunless",v:selFG.bun==="bowl"?"Bowl":selFG.bun==="wrap"?"Lettuce Wrap":"Bun"});
+            if(g==="burgers"&&selFG.extraPatties)steps.push({l:"Extra Patties",v:selFG.extraPatties===1?"One Extra Patty":"Two Extra Patties"});
             steps.push({l:"Toppings (free)",v:selFG.tops.length?selFG.tops.map(x=>x.name).join(", "):"none"});
+            if(g==="sandwiches"&&selFG.extras&&selFG.extras.length)steps.push({l:"Extras",v:selFG.extras.join(", ")});
           }
           if(selFG.fries)steps.push({l:"Fries",v:selFG.fries.name});
           return box(steps);

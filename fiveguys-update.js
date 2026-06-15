@@ -53,10 +53,16 @@ for (const l of raw.loaded) {
   fries.push(o);
 }
 
-// ── Toppings (fertig) ──
+// ── Toppings (fertig; sauce-Flag fuer "No sauce") ──
 const toppings = raw.toppings.map(t => {
-  const o = { id: mkId(t.name), name: t.name }; for (const k of KEYS) o[k] = R2(t[k] || 0); return o;
+  const o = { id: mkId(t.name), name: t.name }; if (t.sauce) o.sauce = true; for (const k of KEYS) o[k] = R2(t[k] || 0); return o;
 });
+
+// ── mods: Komponenten fuer Bun-Wahl (Bowl/Wrap = -Bun [+Lettuce]), Extra Patties + Sandwich-Extras (Patty/Cheese/Bacon) ──
+const lettuceRaw = raw.toppings.find(t => t.name === "Lettuce");
+const modOf = c => { const o = {}; for (const k of KEYS) o[k] = R2(c[k] || 0); return o; };
+const mods = { patty: modOf(C.patty), cheese: modOf(C.cheese), bacon: modOf(C.bacon), bun: modOf(C.burger_bun), lettuce: modOf(lettuceRaw) };
+const modStr = m => `{ ${macStr(m)} }`;
 
 const lines = [];
 lines.push("// __FIVEGUYS_DATA_START__ (generiert via: node fiveguys-update.js aus data/fiveguys-raw.json — nicht von Hand editieren)");
@@ -71,10 +77,18 @@ lines.push("  // Fries: Plain + Cajun (=Plain + Cajun Seasoning) + Loaded");
 lines.push("  fries: [");
 for (const f of fries) lines.push(`    { id:${JSON.stringify(f.id)},name:${JSON.stringify(f.name)},${macStr(f)} },`);
 lines.push("  ],");
-lines.push("  // Freie Toppings (kommen auf den Main)");
+lines.push("  // Freie Toppings (Deliveroos 15; sauce:true wird vom 'No sauce'-Schalter gefiltert)");
 lines.push("  toppings: [");
-for (const t of toppings) lines.push(`    { id:${JSON.stringify(t.id)},name:${JSON.stringify(t.name)},${macStr(t)} },`);
+for (const t of toppings) lines.push(`    { id:${JSON.stringify(t.id)},name:${JSON.stringify(t.name)}${t.sauce ? ",sauce:true" : ""},${macStr(t)} },`);
 lines.push("  ],");
+lines.push("  // Komponenten fuer Burger-Bun-Wahl (Bowl/Wrap), Extra Patties + Sandwich-Extras (Patty/Cheese/Bacon)");
+lines.push("  mods: {");
+lines.push(`    patty: ${modStr(mods.patty)},`);
+lines.push(`    cheese: ${modStr(mods.cheese)},`);
+lines.push(`    bacon: ${modStr(mods.bacon)},`);
+lines.push(`    bun: ${modStr(mods.bun)},`);
+lines.push(`    lettuce: ${modStr(mods.lettuce)},`);
+lines.push("  },");
 lines.push("};");
 lines.push("// __FIVEGUYS_DATA_END__");
 const block = lines.join("\n");

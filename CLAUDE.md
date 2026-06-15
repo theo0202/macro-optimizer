@@ -104,9 +104,12 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - **Deliveroo-Abgleich (15.06.2026)**: alle Items, die es auf der Deliveroo-Karte nicht gibt, entfernt → 67→51 Items. Raus: alle **Double-Burger/-Patties** (Deliveroo führt keine Doubles), **Chicken Nuggets 8er** (Deliveroo nur 5er = 268 kcal), **Chimichurri Fries** (L/R) + **Chimichurri Wedges**, **Piri Piri Fries** (L/R) + **Piri Piri Onion Rings** + **Piri Piri Wedges**. Die 7 Burger-Singles wurden in die Deliveroo-Namen umbenannt (Suffix "- Single" entfernt, da ohne Double sinnlos). **Chicken/Paneer Harissa Honey Melt** stehen zwar auf Deliveroo, sind aber NICHT aufgenommen (Deliveroo nennt nur Gesamt-kcal, keine vollen Makros → kein Schätzwert)
 - **Five Guys** (UK): offizielle Naehrwerttabelle (2 Screenshots, FGJUK 20260324) — **KOMPONENTEN-basiert** (Five Guys ist Build-Your-Own, daher publizieren sie pro Komponente). KEIN Crawler. Roh in `data/fiveguys-raw.json`, `node fiveguys-update.js` → FIVEGUYS-Block (Marker `__FIVEGUYS_DATA_START__`/`__FIVEGUYS_DATA_END__`), volle 8 Makros
   - **Komposition** (Annahmen im `_meta.composition_assumptions`, von Five-Guys-Standard abgeleitet): Hamburger = 2 Patties + Bun, Little = 1 Patty + Bun; **Cheese = 1 Scheibe pro Patty** (Cheeseburger 2, Little Cheeseburger 1); **Bacon = 1 Portion** (= die „Bacon"-Spalte ~2 Streifen); **Cheese Dog = 1 Cheese-Scheibe** (Annahme, da nur Komponenten geliefert — bei besserer Quelle anpassen). Cajun Fries = Fries + 1 Cajun Seasoning. Das Generator-Skript rechnet die Summen (keine handgetippten Produktwerte)
-  - 17 Mains (8 Burger + 4 Hot Dogs komponiert + 5 Sandwiches/Lettuce Wrap fertig), 10 Fries (Mini/Little/Regular/Large je Plain + Cajun + 2 Loaded), 18 freie Toppings
+  - 17 Mains (8 Burger + 4 Hot Dogs komponiert + 5 Sandwiches/Lettuce Wrap fertig), 10 Fries (Mini/Little/Regular/Large je Plain + Cajun + 2 Loaded), **15 freie Toppings** (= Deliveroos Burger/Sandwich-Free-Topping-Liste)
+  - **Deliveroo-Customizing (16.06.2026)**: Burger haben auf Deliveroo eine **Bun-Wahl** (Bun / Bowl −Bun / Lettuce Wrap −Bun+Lettuce) + **Extra Patties** (0/1/2 × Patty); Sandwiches haben **paid extras** (Add Extra Patty/Cheese/Bacon). Diese Deltas rechnet `optimizeFiveGuys` zur Laufzeit aus dem **`mods`-Block** (patty/cheese/bacon/bun/lettuce, vom Generator erzeugt). Schalter **„No sauce"** (Default AN) filtert die `sauce:true`-Toppings (Mayo, Ketchup, Mustard, BBQ, Hot, HP, Relish — Mayo zählt als Sauce)
+  - **Topping-Pool = Deliveroos 15** (Mayo/Relish/Fresh Onions/Lettuce/Pickles/Tomatoes/Grilled Onions/Grilled Mushrooms/Ketchup/Mustard/Jalapeno/Green Peppers/HP/BBQ/Hot Sauce). NICHT in Deliveroos Free-Toppings → entfernt: **Grilled Cheese Slice** (= „Add Cheese", paid extra), **Crispy Fried Onions**, **Fried Egg** (im offiziellen Nährwert-PDF gelistet, aber nicht als Free-Topping bestellbar)
+  - **Deliveroo-vs-Komponenten-kcal-Konflikt** (siehe `_meta.deliveroo_kcal_note`): Deliveroo zeigt z.B. **Bacon Cheeseburger 904 kcal**, die Komponenten-Summe ergibt **834**; gleichzeitig sagt dieselbe Deliveroo-Seite „Add Bacon +78" (1 Portion) — die 904 sind also NICHT aus den Komponenten reproduzierbar. Wir nutzen die offizielle, in sich konsistente Komponenten-Tabelle (volle Makros); Deliveroo-Anzeige kann ~70 kcal höher sein. Falls Deliveroo-genaue kcal gewünscht: User müsste die Deliveroo-Produkt-kcal je Burger liefern
   - **AUSGESCHLOSSEN**: Bulk Peanuts (nur per-100g, keine Portion), Getraenke (nicht in den Screenshots), die Diced-Loaded-Fries-Sub-Toppings (Loaded Fries sind als fertige Produkte drin)
-  - **Noch nicht gegen die Deliveroo-Karte abgeglichen** (User lieferte nur die Naehrwerttabelle): „Mini Fries" ist evtl. keine Deliveroo-Groesse; bei Bedarf wie bei Pepe's mit der Deliveroo-Karte prunen
+  - **Noch nicht voll gegen die Deliveroo-Karte abgeglichen**: „Mini Fries" ist evtl. keine Deliveroo-Groesse; bei Bedarf wie bei Pepe's mit der Deliveroo-Karte prunen
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -122,7 +125,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **The Fitness Chef**: `TFC.cats[]` + `TFC.items[]` (AC-Schema wie Itsu/Pret; Dishes zusätzlich `size`-Feld wl/ml/wg, Sides ohne)
 - **Chopstix**: `CHOPSTIX.bases[]` (je `reg`/`lg`-Größe mit 8 Makros) + `CHOPSTIX.toppings[]` (ein 8-Makro-Wert pro Topping, Regular=Large)
 - **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (7 Basting-Flavours inkl. Plain=0, Werte per 10 ml)
-- **Five Guys**: `FIVEGUYS.mains[]` (komponierte Burger/Hot Dogs + fertige Sandwiches, je mit `group` burgers/hotdogs/sandwiches) + `FIVEGUYS.fries[]` (Plain/Cajun/Loaded) + `FIVEGUYS.toppings[]` (freie Toppings) — alle mit vollen 8 Makros
+- **Five Guys**: `FIVEGUYS.mains[]` (komponierte Burger/Hot Dogs + fertige Sandwiches, je mit `group` burgers/hotdogs/sandwiches) + `FIVEGUYS.fries[]` (Plain/Cajun/Loaded) + `FIVEGUYS.toppings[]` (15 freie Toppings, `sauce:true` auf den 7 Saucen) + `FIVEGUYS.mods[]` (patty/cheese/bacon/bun/lettuce — Komponenten für Bun-Wahl/Extra-Patties/Sandwich-Extras zur Optimizer-Laufzeit) — alle mit vollen 8 Makros
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -227,9 +230,11 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - Eigener BYO-Optimizer (`optimizeFiveGuys`, wie UG/Atis/Chopstix — NICHT AC-Alias). Five Guys ist komponenten-basiert → Burger/Hot Dogs werden aus Komponenten komponiert (siehe Datenquellen)
 - Ein Ergebnis = **1 Main** (Burger / Hot Dog / Sandwich) optional + **1 Fries** optional (mindestens eines von beiden) + **freie Toppings** auf dem Main
 - **Mains** (17): 8 Burger (Hamburger / Cheeseburger / Bacon Burger / Bacon Cheeseburger je Regular = 2 Patties + Little = 1 Patty), 4 Hot Dogs (Hot Dog / Cheese / Bacon / Bacon Cheese), 5 Sandwiches (Veggie, Cheese Veggie, Grilled Cheese, BLT, Lettuce Wrap)
+- **Burger-Customizing** (Deliveroo): **Bun-Wahl** (Bun / Bowl = −Bun / Lettuce Wrap = −Bun + Lettuce, Pflicht) + **Extra Patties** (0/1/2). Der Optimizer enumeriert je Burger 3 Bun × 3 Patty-Stufen
+- **Sandwich-Customizing** (Deliveroo): **paid extras** Add Extra Patty (+195) / Add Cheese (+64) / Add Bacon (+78) — der Optimizer fügt sie greedy hinzu (nur Sandwiches)
 - **Fries** (10): Mini/Little/Regular/Large je Five-Guys-Style (Plain) + Cajun-Style (= Plain + Cajun Seasoning) + Loaded Fries + Loaded Cajun Fries
-- **Toppings** (18, alle frei): Lettuce, Tomatoes, Grilled/Fresh Onions, Grilled Mushrooms, Pickles, Green/Jalapeno Peppers, Grilled Cheese Slice, Mayonnaise, Ketchup, Mustard, BBQ/Hot/HP Brown Sauce, Relish, Crispy Fried Onions, Fried Egg
-- Toppings wählt der Optimizer greedy (nur Score-verbessernde, max 6, je ≤1×) und nur auf einen Main. Keine Schalter (v1) — bei Bedarf später z.B. „Vegetarian", „No bacon", „No fries"
+- **Toppings** (15, alle frei = Deliveroos Liste): Lettuce, Tomatoes, Grilled/Fresh Onions, Grilled Mushrooms, Pickles, Green/Jalapeno Peppers, Mayonnaise, Ketchup, Mustard, BBQ/Hot/HP Sauce, Relish. **Schalter „No sauce"** (Default AN) filtert die 7 Saucen (Mayo, Ketchup, Mustard, BBQ, Hot, HP, Relish — Mayo zählt als Sauce)
+- Toppings/Extras wählt der Optimizer greedy (nur Score-verbessernde, max 6, je ≤1×) und nur auf einen Main
 
 ## Bestellablauf Urban Greens (Deliveroo)
 Zwei Modi (Umschalt-Buttons): **"BYO Salad"** und **"BYO Tray"** — fertige Gerichte gibt es in der App NICHT (User-Entscheidung, siehe Datenquellen).
@@ -262,7 +267,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour".
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce".
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -286,7 +291,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
 - **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
 - **Pepe's**: alle Kategorien aktiv, max. 5 Items, "No sauce" + "No flavour" AN (No flavour = Plain, 0 Makros; die Flavour-Chips erscheinen + wirken erst, wenn "No flavour" aus ist — Default-Chip dann Lemon & Herb)
-- **Five Guys**: Build Your Own (keine Schalter v1) — der Optimizer wählt 1 Main (Burger/Hot Dog/Sandwich) + optional 1 Fries + freie Toppings automatisch
+- **Five Guys**: Build Your Own, „No sauce" AN — der Optimizer wählt 1 Main (Burger/Hot Dog/Sandwich) + Bun-Wahl + Extra Patties (Burger) + optional 1 Fries + freie Toppings (+ paid extras bei Sandwiches) automatisch
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -388,12 +393,14 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - Eigene Result-Form (`kind/box/nTop/base/tops`) → eigene Karte + eigenes Panel
 
 ### Five Guys (`optimizeFiveGuys`)
-- Eigener BYO-Optimizer (wie UG/Atis/Chopstix, NICHT AC-Alias). Five Guys ist komponenten-basiert → der FIVEGUYS-Block hat **komponierte** Mains (`mains[]`: 8 Burger + 4 Hot Dogs + 5 Sandwiches mit `group` burgers/hotdogs/sandwiches), `fries[]` (Plain + Cajun + Loaded) und `toppings[]` (18 freie Toppings)
+- Eigener BYO-Optimizer (wie UG/Atis/Chopstix, NICHT AC-Alias). Signatur `optimizeFiveGuys(t, mode, p, noSauce)`. Five Guys ist komponenten-basiert → der FIVEGUYS-Block hat **komponierte** Mains (`mains[]`: 8 Burger + 4 Hot Dogs + 5 Sandwiches mit `group`), `fries[]`, `toppings[]` (15 freie, `sauce:true` auf 7) und `mods` (patty/cheese/bacon/bun/lettuce)
+- Konfigurierte Mains zur Laufzeit: Burger × **Bun-Wahl** (Bun / Bowl = −Bun / Lettuce Wrap = −Bun+Lettuce) × **Extra Patties** (0/1/2) = 72 Burger-Varianten; Hot Dogs/Sandwiches einfach; + „Fries only". Bun-Abzug/Patties via `mods` (sumN summiert auch negative Beiträge). „No sauce" filtert `sauce:true`-Toppings (inkl. Mayo)
+- Greedy-Schritt pro (Main × Fries): freie Toppings + (bei Sandwiches) paid extras (Patty/Cheese/Bacon), nur Score-verbessernd, max 6, je ≤1×
 - Ein Ergebnis = 0/1 Main × 0/1 Fries (mind. eines) + freie Toppings auf dem Main (greedy: bestes Score-verbesserndes Topping bis keine Verbesserung, max 6, jedes ≤1×). Voll-Enumeration der ~198 Main×Fries-Kombos + Topping-Greedy, Top 20
 - Eigene Result-Form (`kind/main/fries/tops`) → eigene Karte + eigenes Panel. `resultsFiveGuys`-Memo nur bei aktivem Five-Guys-Tab. Volle 8 Makros. Keine Schalter (v1)
 
 ### „All restaurants" (`optimizeAll`)
-- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Fries + Toppings)
+- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Bun-Wahl + Extra Patties + Fries + Toppings, No sauce)
 - Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 1 Treffer pro Restaurant** (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant), Top 20 → Top 8 angezeigt
 - Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
 - Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt
@@ -407,7 +414,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - **Urban Greens**: Komponenten-Aufschlüsselung nach Gruppen + Bestellanleitung (Salad: 11 Schritte, Tray: 10, fertig: 2); KEINE Fibre/Salt-Bars (keine Daten); fertige Salads tragen den Hinweis "Werte ohne Dressing"
 - **Chopstix** (eigenes Panel, Build-a-Box): Komponenten (Base in Box-Größe + Toppings mit kcal) + Bestellanleitung (Box-Typ → Base → Toppings mit Mengen); volle Makro-Bars
 - **Atis** (eigenes Panel, Power Plate): Komponenten-Aufschlüsselung nach Gruppen (doublePlate-Items mit "×2" + verdoppeltem kcal) + Hinweis "×2 = double portion" + Bestellanleitung (8 Schritte); volle Makro-Bars
-- **Five Guys** (eigenes Panel, Build Your Own): Komponenten (Main + freie Toppings + Fries, je mit kcal) + Bestellanleitung (Burger/Dog/Sandwich → freie Toppings → Fries); volle Makro-Bars
+- **Five Guys** (eigenes Panel, Build Your Own): Komponenten (Main + Bun-Wahl [Bowl/Wrap mit −kcal] + Extra Patties + Sandwich-Extras + freie Toppings + Fries, je mit kcal) + Bestellanleitung (Burger: Burger → Bun or Bunless → Extra Patties → Toppings → Fries; Sandwich: + Extras); volle Makro-Bars
 - **Bestellanleitung (Deliveroo)**: nummerierte Schritt-für-Schritt-Liste, aktualisiert sich live
 
 ## Footlong-Logik (Subway) — GEFIXT

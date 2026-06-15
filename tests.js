@@ -680,7 +680,11 @@ check("All: Pepe's-Treffer nutzt Plain (kein gebasteter Flavour-Name)", rAllPep.
 // ── Five Guys (Build Your Own: komponierte Mains + Fries + freie Toppings) ──
 check("FiveGuys Mains (17: 8 Burger + 4 Hot Dogs + 5 Sandwiches)", T.FIVEGUYS.mains.length, 17);
 check("FiveGuys Fries (10: 4 Plain + 4 Cajun + 2 Loaded)", T.FIVEGUYS.fries.length, 10);
-check("FiveGuys Toppings (18)", T.FIVEGUYS.toppings.length, 18);
+check("FiveGuys Toppings (15, Deliveroo Free-Toppings)", T.FIVEGUYS.toppings.length, 15);
+check("FiveGuys 7 Sauce-Toppings (No-sauce-Filter, inkl. Mayo)", T.FIVEGUYS.toppings.filter(x => x.sauce).length, 7);
+check("FiveGuys Mayo ist sauce", !!T.FIVEGUYS.toppings.find(x => x.name === "Mayonnaise" && x.sauce), true);
+check("FiveGuys mods vorhanden (patty/cheese/bacon/bun/lettuce)", ["patty", "cheese", "bacon", "bun", "lettuce"].every(k => T.FIVEGUYS.mods && T.FIVEGUYS.mods[k] && typeof T.FIVEGUYS.mods[k].kcal === "number"), true);
+check("FiveGuys kein Egg/Crispy-Onions/Cheese-Slice mehr im Free-Topping-Pool", !T.FIVEGUYS.toppings.find(x => /egg|crispy|cheese/i.test(x.name)), true);
 // Komposition: Hamburger = 2 Patty(195) + Bun(238) = 628; Cheeseburger = +2 Cheese(64) = 756; Little Hamburger = 1 Patty + Bun = 433
 check("FiveGuys Hamburger komponiert = 628 kcal (2 Patties + Bun)", T.FIVEGUYS.mains.find(m => m.name === "Hamburger").kcal, 628);
 check("FiveGuys Cheeseburger = 756 kcal (2 Patties + Bun + 2 Cheese)", T.FIVEGUYS.mains.find(m => m.name === "Cheeseburger").kcal, 756);
@@ -691,19 +695,34 @@ check("FiveGuys Cheeseburger Salt = 2.27 (2x0.13 + Bun 0.49 + 2x0.76)", T.FIVEGU
 check("FiveGuys Little Cajun Fries = 679 kcal", T.FIVEGUYS.fries.find(f => f.name === "Little Cajun Fries").kcal, 679);
 check("FiveGuys hat volle 8 Makros (fibre vorhanden)", T.FIVEGUYS.mains.every(m => typeof m.fibre === "number"), true);
 
-const rFG = T.optimizeFiveGuys({ protein: 40, carbs: 45, fat: 30, kcal: 610, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
+const rFG = T.optimizeFiveGuys({ protein: 40, carbs: 45, fat: 30, kcal: 610, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
 check("FiveGuys liefert Ergebnisse (1..20)", rFG.length > 0 && rFG.length <= 20, true);
 check("FiveGuys jedes Ergebnis kind=fiveguys + min. 1 von main/fries", rFG.every(r => r.kind === "fiveguys" && (r.main || r.fries)), true);
-check("FiveGuys Nutrition == main + fries + toppings", rFG.every(r => {
-  const exp = Math.round(((r.main ? r.main.kcal : 0) + (r.fries ? r.fries.kcal : 0) + r.tops.reduce((s, x) => s + x.kcal, 0)) * 10) / 10;
-  return approx(r.nutrition.kcal, exp);
-}), true);
-check("FiveGuys Toppings nur auf einem Main (keine Toppings ohne Main)", rFG.every(r => r.main || r.tops.length === 0), true);
+// Robuste Nutrition-Pruefung: Main + Bun-Mod (Bowl/Wrap) + Extra-Patties + Toppings + Sandwich-Extras + Fries
+const fgKcal = r => {
+  const M = T.FIVEGUYS.mods; let k = r.main ? r.main.kcal : 0;
+  if (r.bun === "bowl") k -= M.bun.kcal; else if (r.bun === "wrap") k += -M.bun.kcal + M.lettuce.kcal;
+  k += (r.extraPatties || 0) * M.patty.kcal;
+  k += r.tops.reduce((s, x) => s + x.kcal, 0);
+  k += (r.extras || []).reduce((s, nm) => s + (nm === "Extra Patty" ? M.patty.kcal : nm === "Cheese" ? M.cheese.kcal : M.bacon.kcal), 0);
+  k += r.fries ? r.fries.kcal : 0; return Math.round(k * 10) / 10;
+};
+check("FiveGuys Nutrition == Main + Bun-Mod + Extra-Patties + Toppings + Extras + Fries", rFG.every(r => approx(r.nutrition.kcal, fgKcal(r))), true);
+check("FiveGuys Toppings/Extras nur mit Main", rFG.every(r => r.main || (r.tops.length === 0 && (!r.extras || r.extras.length === 0))), true);
+check("FiveGuys Extras (paid) nur auf Sandwiches", rFG.every(r => !r.extras || r.extras.length === 0 || (r.main && r.main.group === "sandwiches")), true);
+check("FiveGuys Bun-Wahl nur bei Burgern", rFG.every(r => !r.bun || (r.main && r.main.group === "burgers")), true);
 check("FiveGuys nach Score sortiert", rFG.every((r, i) => i === 0 || rFG[i - 1].score <= r.score), true);
-// kleines Ziel -> eher Little/kein Fries; grosses Ziel -> grosse Optionen
-const rFGsmall = T.optimizeFiveGuys({ protein: 24, carbs: 38, fat: 21, kcal: 433, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
-check("FiveGuys kleines Ziel trifft Little Hamburger (Top 3)", rFGsmall.slice(0, 3).some(r => r.main && r.main.name === "Little Hamburger"), true);
-// All-restaurants: fiveguys gueltig + mind. 1 von main/fries
+// No-sauce-Schalter: AN -> keine Sauce-Toppings; Gegenprobe AUS -> Sauce/Mayo moeglich (fettiges Ziel)
+const fgFatTgt = { protein: 30, carbs: 5, fat: 50, kcal: 590, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("FiveGuys 'No sauce': keine Sauce-Toppings (inkl. Mayo)", T.optimizeFiveGuys(fgFatTgt, "macros", {}, true).every(r => r.tops.every(tp => !tp.sauce)), true);
+check("FiveGuys ohne 'No sauce': Sauce/Mayo moeglich (Gegenprobe)", T.optimizeFiveGuys(fgFatTgt, "macros", {}, false).some(r => r.tops.some(tp => tp.sauce)), true);
+// Bun-Wahl: low-carb-Ziel -> Bowl/Lettuce Wrap erscheint
+check("FiveGuys low-carb -> Bowl/Lettuce Wrap erscheint", T.optimizeFiveGuys({ protein: 50, carbs: 8, fat: 35, kcal: 547, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true).some(r => r.bun === "bowl" || r.bun === "wrap"), true);
+// Extra patties: high-protein-Ziel -> Extra Patties moeglich
+check("FiveGuys high-protein -> Extra Patties erscheint", T.optimizeFiveGuys({ protein: 75, carbs: 40, fat: 45, kcal: 865, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true).some(r => r.extraPatties > 0), true);
+const rFGsmall = T.optimizeFiveGuys({ protein: 24, carbs: 38, fat: 21, kcal: 433, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
+check("FiveGuys kleines Ziel trifft Little Hamburger (Top 5)", rFGsmall.slice(0, 5).some(r => r.main && r.main.name === "Little Hamburger"), true);
+// All-restaurants: fiveguys gueltig
 const rAllFG = T.optimizeAll({ protein: 45, carbs: 60, fat: 35, kcal: 735, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
 check("All: fiveguys-Treffer gueltig (kind + main/fries)", rAllFG.filter(r => r._resto === "fiveguys").every(r => r.kind === "fiveguys" && (r.main || r.fries)), true);
 
