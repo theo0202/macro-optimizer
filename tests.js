@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeAll, sortResults, parseMacroScreenshot };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -469,13 +469,20 @@ check("Atis: Pesto/Lemon Oregano/einzelnes Olive Oil nie als Sauce",
 check("Atis Bowl-Modus liefert (noch) keine Ergebnisse", T.optimizeAtis(tA, "macros", {}, "bowl", false, false).length, 0);
 
 // ── The Fitness Chef (TFC, à la carte; Dishes in 3 Größen) ──
-check("TFC Items (33: 27 Dishes + 6 Sides)", T.TFC.items.length, 33);
-check("TFC Kategorien (3)", T.TFC.cats.length, 3);
+check("TFC Items (45: 39 Dishes + 6 Sides)", T.TFC.items.length, 45);
+check("TFC Kategorien (4)", T.TFC.cats.length, 4);
 check("TFC Meat Dishes (18)", T.TFC.items.filter(x => x.cat === "meat_dishes").length, 18);
 check("TFC Fish Dishes (9)", T.TFC.items.filter(x => x.cat === "fish_dishes").length, 9);
+check("TFC Pasta (12)", T.TFC.items.filter(x => x.cat === "pasta_dishes").length, 12);
 check("TFC Sides (6)", T.TFC.items.filter(x => x.cat === "sides").length, 6);
-check("TFC Größenvarianten (9× wl / 9× ml / 9× wg)",
-  [T.TFC.items.filter(x => x.size === "wl").length, T.TFC.items.filter(x => x.size === "ml").length, T.TFC.items.filter(x => x.size === "wg").length].join(",") === "9,9,9", true);
+check("TFC fish-Flag (15: 9 fish_dishes + 3 Salmon-Pasta + 3 Tuna-Pasta)", T.TFC.items.filter(x => x.fish).length, 15);
+check("TFC Turkey-Pasta ausgelassen (kaputte Werte)", !T.TFC.items.find(x => /minced/i.test(x.name)), true);
+check("TFC Pasta-Gericht vorhanden", !!T.TFC.items.find(x => x.id === "wholemeal_pasta_with_chicken_pesto_maintain_lean"), true);
+check("TFC Salmon-Pasta ist fish", !!T.TFC.items.find(x => x.id === "wholemeal_pasta_with_salmon_weight_loss").fish, true);
+check("TFC Tuna-Pasta ist fish", !!T.TFC.items.find(x => x.id === "wholemeal_pasta_with_tuna_weight_loss").fish, true);
+check("TFC Beef-Pasta ist NICHT fish", !T.TFC.items.find(x => x.id === "wholemeal_pasta_beef_strips_weight_loss").fish, true);
+check("TFC Größenvarianten (13× wl / 13× ml / 13× wg)",
+  [T.TFC.items.filter(x => x.size === "wl").length, T.TFC.items.filter(x => x.size === "ml").length, T.TFC.items.filter(x => x.size === "wg").length].join(",") === "13,13,13", true);
 check("TFC Sides haben keine size", T.TFC.items.filter(x => x.cat === "sides").every(x => !x.size), true);
 check("TFC Name-Komposition (Größen-Suffix)", !!T.TFC.items.find(x => x.name === "Chicken Supreme (Weight Loss)"), true);
 check("TFC Chicken Supreme (Maintain/Lean) kcal", T.TFC.items.find(x => x.id === "chicken_supreme_maintain_lean").kcal, 466.09);
@@ -509,13 +516,25 @@ const onlySides = { meat_dishes: false, fish_dishes: false, sides: true };
 const rSides = T.optimizeTFC(t13, "macros", {}, onlySides, 3);
 check("TFC Kategorie-Filter: nur Sides", rSides.length > 0 && rSides.every(r => r.items.every(x => x.cat === "sides")), true);
 
-// Schalter "No fish": fish_dishes raus / an gelassen (fettreiches Ziel macht Lachs attraktiv)
+// Schalter "No fish": alle fish-Items raus / an gelassen (fettreiches Ziel macht Lachs attraktiv)
 const tFish = { protein: 25, carbs: 19, fat: 27, kcal: 419, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rFishOff = T.optimizeTFC(tFish, "macros", {}, tfcAll, 2, false);
-check("TFC ohne 'No fish': Fisch erscheint (Gegenprobe)", rFishOff.some(r => r.items.some(x => x.cat === "fish_dishes")), true);
+check("TFC ohne 'No fish': Fisch erscheint (Gegenprobe)", rFishOff.some(r => r.items.some(x => x.fish)), true);
 const rFishOn = T.optimizeTFC(tFish, "macros", {}, tfcAll, 2, true);
-check("TFC 'No fish' filtert fish_dishes", rFishOn.every(r => r.items.every(x => x.cat !== "fish_dishes")), true);
+check("TFC 'No fish' filtert alle fish-Items (inkl. Salmon/Tuna-Pasta)", rFishOn.every(r => r.items.every(x => !x.fish)), true);
 check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
+
+// ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
+const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc"];
+check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
+check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
+check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
+check("All: mehrere Restaurants vertreten (>=3)", new Set(rAll.map(r => r._resto)).size >= 3, true);
+check("All: max 2 Treffer pro Restaurant (Vielfalt)", Object.values(rAll.reduce((m, r) => { m[r._resto] = (m[r._resto] || 0) + 1; return m; }, {})).every(c => c <= 2), true);
+check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto)), true);
+check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 
 // ── Screenshot-Import-Parser (OCR-Text -> verbleibende Makros C/P/F + "Übrig"-kcal) ──
 // Erwartet aus dem Beispiel: Carbs 341-54=287, Protein 184-52=132, Fat 69-9=60, kcal=Übrig 2267.

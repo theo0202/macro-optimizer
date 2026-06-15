@@ -841,11 +841,12 @@ const ATIS = {
 // __ATIS_DATA_END__
 
 // __TFC_DATA_START__ (generiert via: node tfc-update.js aus data/tfc-raw.json — nicht von Hand editieren)
-// Quelle: The Fitness Chef offizielle Produktseiten (Copy-Paste vom User) · Stand 2026-06-15 · 33 Items · Dishes in 3 Größen (size wl/ml/wg), Optimizer wählt die passende · salt aus sodium(mg)*2.5/1000
+// Quelle: The Fitness Chef offizielle Produktseiten (Copy-Paste vom User) · Stand 2026-06-15 · 45 Items · Dishes in 3 Größen (size wl/ml/wg), Optimizer wählt die passende · salt aus sodium(mg)*2.5/1000
 const TFC = {
   cats: [
     { id:"meat_dishes",name:"Meat Dishes",on:true },
     { id:"fish_dishes",name:"Fish Dishes",on:true },
+    { id:"pasta_dishes",name:"Pasta",on:true },
     { id:"sides",name:"Sides",on:true },
   ],
   items: [
@@ -867,15 +868,27 @@ const TFC = {
     { id:"beef_strips_with_rocket_tomatoes_and_rice_weight_loss",name:"Beef strips with rocket, tomatoes and rice (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:361.56,fat:22.02,sat:8.28,carbs:16.69,sugars:3.07,fibre:2.85,protein:27.75,salt:0.91 },
     { id:"beef_strips_with_rocket_tomatoes_and_rice_maintain_lean",name:"Beef strips with rocket, tomatoes and rice (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:460.49,fat:26.59,sat:10.31,carbs:24.3,sugars:3.58,fibre:3.57,protein:35.01,salt:1.05 },
     { id:"beef_strips_with_rocket_tomatoes_and_rice_weight_gain",name:"Beef strips with rocket, tomatoes and rice (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:629.31,fat:32.76,sat:13.19,carbs:43.01,sugars:4.65,fibre:5.28,protein:45.09,salt:1.36 },
-    { id:"poached_salmon_weight_loss",name:"Poached Salmon (Weight Loss)",cat:"fish_dishes",size:"wl",kcal:360,fat:19,sat:3.9,carbs:24.2,sugars:2.5,fibre:3.3,protein:24.7,salt:0.52 },
-    { id:"poached_salmon_maintain_lean",name:"Poached Salmon (Maintain/Lean)",cat:"fish_dishes",size:"ml",kcal:505.89,fat:26.01,sat:5.52,carbs:33.15,sugars:2.52,fibre:4.44,protein:36.77,salt:1.24 },
-    { id:"poached_salmon_weight_gain",name:"Poached Salmon (Weight Gain)",cat:"fish_dishes",size:"wg",kcal:623.99,fat:31.26,sat:6.76,carbs:41.33,sugars:3.08,fibre:5.58,protein:46.55,salt:1.3 },
-    { id:"roasted_salmon_and_spicy_lentils_weight_loss",name:"Roasted Salmon and spicy lentils (Weight Loss)",cat:"fish_dishes",size:"wl",kcal:390,fat:19.5,sat:4.1,carbs:25.2,sugars:3.4,fibre:9.7,protein:31.6,salt:0.66 },
-    { id:"roasted_salmon_and_spicy_lentils_maintain_lean",name:"Roasted Salmon and spicy lentils (Maintain/Lean)",cat:"fish_dishes",size:"ml",kcal:527.08,fat:26.63,sat:5.72,carbs:30.63,sugars:4.31,fibre:11.85,protein:44.8,salt:1.37 },
-    { id:"roasted_salmon_and_spicy_lentils_weight_gain",name:"Roasted Salmon and spicy lentils (Weight Gain)",cat:"fish_dishes",size:"wg",kcal:659.12,fat:32.1,sat:7.02,carbs:39.72,sugars:5.87,fibre:15.43,protein:57.24,salt:1.54 },
-    { id:"roasted_salmon_cajun_weight_loss",name:"Roasted Salmon Cajun (Weight Loss)",cat:"fish_dishes",size:"wl",kcal:400.17,fat:26.7,sat:5.1,carbs:18.6,sugars:1.3,fibre:3.9,protein:25.15,salt:0.6 },
-    { id:"roasted_salmon_cajun_maintain_lean",name:"Roasted Salmon Cajun (Maintain/Lean)",cat:"fish_dishes",size:"ml",kcal:523.92,fat:30.99,sat:6.36,carbs:24.68,sugars:1.56,fibre:4.78,protein:34.29,salt:0.67 },
-    { id:"roasted_salmon_cajun_weight_gain",name:"Roasted Salmon Cajun (Weight Gain)",cat:"fish_dishes",size:"wg",kcal:700.87,fat:36.98,sat:7.78,carbs:44.09,sugars:2.21,fibre:7.12,protein:44.96,salt:0.76 },
+    { id:"poached_salmon_weight_loss",name:"Poached Salmon (Weight Loss)",cat:"fish_dishes",size:"wl",fish:true,kcal:360,fat:19,sat:3.9,carbs:24.2,sugars:2.5,fibre:3.3,protein:24.7,salt:0.52 },
+    { id:"poached_salmon_maintain_lean",name:"Poached Salmon (Maintain/Lean)",cat:"fish_dishes",size:"ml",fish:true,kcal:505.89,fat:26.01,sat:5.52,carbs:33.15,sugars:2.52,fibre:4.44,protein:36.77,salt:1.24 },
+    { id:"poached_salmon_weight_gain",name:"Poached Salmon (Weight Gain)",cat:"fish_dishes",size:"wg",fish:true,kcal:623.99,fat:31.26,sat:6.76,carbs:41.33,sugars:3.08,fibre:5.58,protein:46.55,salt:1.3 },
+    { id:"roasted_salmon_and_spicy_lentils_weight_loss",name:"Roasted Salmon and spicy lentils (Weight Loss)",cat:"fish_dishes",size:"wl",fish:true,kcal:390,fat:19.5,sat:4.1,carbs:25.2,sugars:3.4,fibre:9.7,protein:31.6,salt:0.66 },
+    { id:"roasted_salmon_and_spicy_lentils_maintain_lean",name:"Roasted Salmon and spicy lentils (Maintain/Lean)",cat:"fish_dishes",size:"ml",fish:true,kcal:527.08,fat:26.63,sat:5.72,carbs:30.63,sugars:4.31,fibre:11.85,protein:44.8,salt:1.37 },
+    { id:"roasted_salmon_and_spicy_lentils_weight_gain",name:"Roasted Salmon and spicy lentils (Weight Gain)",cat:"fish_dishes",size:"wg",fish:true,kcal:659.12,fat:32.1,sat:7.02,carbs:39.72,sugars:5.87,fibre:15.43,protein:57.24,salt:1.54 },
+    { id:"roasted_salmon_cajun_weight_loss",name:"Roasted Salmon Cajun (Weight Loss)",cat:"fish_dishes",size:"wl",fish:true,kcal:400.17,fat:26.7,sat:5.1,carbs:18.6,sugars:1.3,fibre:3.9,protein:25.15,salt:0.6 },
+    { id:"roasted_salmon_cajun_maintain_lean",name:"Roasted Salmon Cajun (Maintain/Lean)",cat:"fish_dishes",size:"ml",fish:true,kcal:523.92,fat:30.99,sat:6.36,carbs:24.68,sugars:1.56,fibre:4.78,protein:34.29,salt:0.67 },
+    { id:"roasted_salmon_cajun_weight_gain",name:"Roasted Salmon Cajun (Weight Gain)",cat:"fish_dishes",size:"wg",fish:true,kcal:700.87,fat:36.98,sat:7.78,carbs:44.09,sugars:2.21,fibre:7.12,protein:44.96,salt:0.76 },
+    { id:"wholemeal_pasta_with_salmon_weight_loss",name:"Wholemeal pasta with Salmon (Weight Loss)",cat:"pasta_dishes",size:"wl",fish:true,kcal:321.74,fat:9.04,sat:0.73,carbs:41.43,sugars:5.96,fibre:12.08,protein:20.61,salt:0.01 },
+    { id:"wholemeal_pasta_with_salmon_maintain_lean",name:"Wholemeal pasta with Salmon (Maintain/Lean)",cat:"pasta_dishes",size:"ml",fish:true,kcal:511.94,fat:10.63,sat:0.76,carbs:77.07,sugars:8.5,fibre:18.58,protein:31.23,salt:0.01 },
+    { id:"wholemeal_pasta_with_salmon_weight_gain",name:"Wholemeal pasta with Salmon (Weight Gain)",cat:"pasta_dishes",size:"wg",fish:true,kcal:726.04,fat:12.74,sat:0.85,carbs:113.94,sugars:12.02,fibre:26.11,protein:45.6,salt:0.01 },
+    { id:"wholemeal_pasta_beef_strips_weight_loss",name:"Wholemeal pasta beef strips (Weight Loss)",cat:"pasta_dishes",size:"wl",kcal:359.76,fat:16.89,sat:4.73,carbs:30.22,sugars:0.81,fibre:5.63,protein:20.49,salt:0.49 },
+    { id:"wholemeal_pasta_beef_strips_maintain_lean",name:"Wholemeal pasta beef strips (Maintain/Lean)",cat:"pasta_dishes",size:"ml",kcal:486.86,fat:20.94,sat:6.24,carbs:43.47,sugars:1.14,fibre:8.01,protein:29.04,salt:0.56 },
+    { id:"wholemeal_pasta_beef_strips_weight_gain",name:"Wholemeal pasta beef strips (Weight Gain)",cat:"pasta_dishes",size:"wg",kcal:628.46,fat:25.12,sat:7.77,carbs:59.22,sugars:1.53,fibre:10.77,protein:38.13,salt:0.62 },
+    { id:"wholemeal_pasta_with_chicken_pesto_weight_loss",name:"Wholemeal pasta with chicken pesto (Weight Loss)",cat:"pasta_dishes",size:"wl",kcal:333.47,fat:13.62,sat:2.12,carbs:29.31,sugars:0.75,fibre:5.15,protein:19.83,salt:0.73 },
+    { id:"wholemeal_pasta_with_chicken_pesto_maintain_lean",name:"Wholemeal pasta with chicken pesto (Maintain/Lean)",cat:"pasta_dishes",size:"ml",kcal:483.62,fat:18.97,sat:2.96,carbs:43.01,sugars:1.15,fibre:7.68,protein:29.82,salt:1.05 },
+    { id:"wholemeal_pasta_with_chicken_pesto_weight_gain",name:"Wholemeal pasta with chicken pesto (Weight Gain)",cat:"pasta_dishes",size:"wg",kcal:648.27,fat:24.44,sat:3.81,carbs:59.21,sugars:1.6,fibre:10.59,protein:40.37,salt:1.37 },
+    { id:"wholemeal_pasta_with_tuna_weight_loss",name:"Wholemeal pasta with tuna (Weight Loss)",cat:"pasta_dishes",size:"wl",fish:true,kcal:318.98,fat:6.95,sat:1.1,carbs:37.67,sugars:4.28,fibre:7.68,protein:23.42,salt:0.44 },
+    { id:"wholemeal_pasta_with_tuna_maintain_lean",name:"Wholemeal pasta with tuna (Maintain/Lean)",cat:"pasta_dishes",size:"ml",fish:true,kcal:453.08,fat:8.04,sat:1.31,carbs:56.53,sugars:5.69,fibre:11.86,protein:34.08,salt:0.47 },
+    { id:"wholemeal_pasta_with_tuna_weight_gain",name:"Wholemeal pasta with tuna (Weight Gain)",cat:"pasta_dishes",size:"wg",fish:true,kcal:617.43,fat:9.43,sat:1.58,carbs:78.36,sugars:7.53,fibre:16.57,protein:48.27,salt:0.52 },
     { id:"grilled_halloumi",name:"Grilled Halloumi",cat:"sides",kcal:337.68,fat:28,sat:18.28,carbs:2,sugars:1,fibre:0,protein:21,salt:2.13 },
     { id:"grilled_tofu",name:"Grilled Tofu",cat:"sides",kcal:233.68,fat:14,sat:2.08,carbs:5.85,sugars:0.9,fibre:1.5,protein:22.5,salt:0.05 },
     { id:"new_potatoes",name:"New potatoes",cat:"sides",kcal:149.3,fat:2.19,sat:0.28,carbs:29.02,sugars:1.38,fibre:3.81,protein:3.46,salt:0.03 },
@@ -1280,8 +1293,44 @@ function optimizeGDK(t, mode, p, activeCats, maxN, noSauce, noRiceBowl) {
 // (size wl/ml/wg) als eigene Items — der Optimizer wählt automatisch die passende Größe fürs Makroziel.
 // Sides ohne Größe. Kein Schalter; nur Kategorie-Chips (Meat Dishes / Fish Dishes / Sides) + Max-Items.
 function optimizeTFC(t, mode, p, activeCats, maxN, noFish) {
-  const pool=TFC.items.filter(x=>activeCats[x.cat]&&!(noFish&&x.cat==="fish_dishes"));
+  const pool=TFC.items.filter(x=>activeCats[x.cat]&&!(noFish&&x.fish));
   return alaCarteCombos(t,mode,p,pool,maxN);
+}
+
+// "All restaurants": restaurantsübergreifend die besten Bestellungen. Jedes Restaurant läuft mit ALLEN
+// Exclude-Schaltern AN (Itsu only-sushi/w-o-sashimi AUS, User-Vorgabe), Default-Kategorien, à-la-carte max 5,
+// Subway-Brot frei + aktuelle Größe. Jedes Ergebnis bekommt _resto; gemerged + nach Score sortiert; Top 20.
+function optimizeAll(t, mode, p, subSize) {
+  const def = cats => { const o={}; cats.forEach(c=>o[c.id]=c.on); return o; };
+  const tag = (arr, rt) => (arr||[]).map(r=>{ r._resto=rt; return r; });
+  let all = [];
+  all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize),"subway"));               // No cheese + No sauce, Brot frei
+  all = all.concat(tag(optimizeFJ(t,mode,p,true),"farmerj"));                               // Free items only
+  all = all.concat(tag(optimizeItsu(t,mode,p,def(ITSU.cats),5,true,false,false),"itsu"));   // No soups…; only-sushi AUS
+  all = all.concat(tag(optimizePret(t,mode,p,def(PRET.cats),5,true,true),"pret"));          // only relevant + Salads only
+  all = all.concat(tag(optimizeNandos(t,mode,p,def(NANDOS.cats),5,true,true,true,true,true),"nandos"));
+  all = all.concat(tag(optimizeWaga(t,mode,p,def(WAGA.cats),5,true),"wagamama"));            // No Ramen
+  all = all.concat(tag(optimizeGDK(t,mode,p,def(GDK.cats),5,true,true),"gdk"));              // No Sauce + No rice bowl
+  all = all.concat(tag(optimizeAtis(t,mode,p,"plate",true,true),"atis"));                   // No crunch + No sauce
+  all = all.concat(tag(optimizeTFC(t,mode,p,def(TFC.cats),5,true),"tfc"));                   // No fish
+  all = all.concat(tag(optimizeUG(t,mode,p,"salad",true,true),"ug"));                        // BYO Salad, No nuts + No dressing
+  all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true),"ug"));                         // BYO Tray
+  all.sort((a,b)=>a.score-b.score);
+  // Vielfalt: max. 2 Treffer pro Restaurant (sonst überschwemmt ein Restaurant mit vielen ähnlichen Kombos die Liste).
+  // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
+  const perR={}, out=[];
+  for(const r of all){ const c=perR[r._resto]||0; if(c>=2)continue; perR[r._resto]=c+1; out.push(r); if(out.length>=20)break; }
+  return out;
+}
+const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef"};
+// Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
+function summarizeAcross(r){
+  const rt=r._resto;
+  if(rt==="subway")return r.protein.name+" · "+r.bread.name+(r.extras&&r.extras.length?" · +"+r.extras.map(x=>x.name).join(", +"):"");
+  if(rt==="farmerj")return r.set?r.set.name:(r.main.name+(r.sides&&r.sides.length?" · "+r.sides.map(s=>s.name).join(" + "):""));
+  if(rt==="ug")return (r.prot?r.prot.name:"No protein")+" · "+(r.kind==="tray"?"Tray":"Salad")+(r.carb?" · "+r.carb.name:"");
+  if(rt==="atis")return (r.prots&&r.prots.length?r.prots.map(x=>x.name).join(" + "):"No protein")+" · Power Plate";
+  return itsuLabel(r.items); // AC-Familie (itsu/pret/nandos/wagamama/gdk/tfc)
 }
 
 // Urban Greens: NUR Build Your Own (Salad/Tray), fertige Gerichte bewusst entfernt.
@@ -1643,6 +1692,22 @@ function App() {
     }
   };
 
+  // "All restaurants": Klick auf ein Cross-Restaurant-Ergebnis → zum jeweiligen Restaurant wechseln + dort auswählen
+  // (dann greift das bestehende, restaurant-spezifische Detail-Panel + die Bestellanleitung).
+  const selectAcross=r=>{
+    const rt=r._resto; setResto(rt);
+    if(rt==="subway"){setSel(r);setMSal(defaultSalad());setMSau({});setMSea({});setMExt({});}
+    else if(rt==="farmerj"){setSelF(r);setFTop({});setFSdt({});}
+    else if(rt==="ug")setSelU(r);
+    else if(rt==="atis")setSelA(r);
+    else if(rt==="itsu")setSelI(r);
+    else if(rt==="pret")setSelP(r);
+    else if(rt==="nandos")setSelN(r);
+    else if(rt==="wagamama")setSelW(r);
+    else if(rt==="gdk")setSelG(r);
+    else if(rt==="tfc")setSelTFC(r);
+  };
+
   const targets=useMemo(()=>{
     const t={protein:0,carbs:0,fat:0,kcal:0,fibMin:null,fibMax:null,sMin:null,sMax:null};
     if(mode==="macros"){t.protein=tP||0;t.carbs=tC||0;t.fat=tF||0;t.kcal=t.protein*4+t.carbs*4+t.fat*9;}
@@ -1662,6 +1727,8 @@ function App() {
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
   const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
   const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
+  // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
+  const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
   const AC=resto==="itsu"?{D:ITSU,sel:selI,setSel:setSelI,res:resultsItsu,maxN:maxIt}
          :resto==="pret"?{D:PRET,sel:selP,setSel:setSelP,res:resultsPret,maxN:maxP}
@@ -1708,9 +1775,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -1744,7 +1811,7 @@ function App() {
             h(NumIn,{label:"Carbs",value:tC,onChange:setTC,placeholder:"45",unit:"g"}),
             h(NumIn,{label:"Fat",value:tF,onChange:setTF,placeholder:"12",unit:"g"})
           ),
-          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
+          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":resto==="all"?"across all restaurants — best picks":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
         ):h("div",null,
           h("div",{style:{marginBottom:12}},h(NumIn,{label:"Calorie target",value:tK,onChange:setTK,placeholder:"450",unit:"kcal"})),
           h("div",{style:{fontSize:10,color:"#666",marginBottom:8,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Macro preferences"),
@@ -1774,7 +1841,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto)
+        btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto)
       ),
 
       // Size (nur Subway)
@@ -1939,7 +2006,29 @@ function App() {
 
       // Results list
       h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
-        ...sortResults(resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
+        ...sortResults(resto==="all"?resultsAll:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
+          if(resto==="all"){
+            return h("button",{key:i,onClick:()=>selectAcross(r),style:{
+              background:"#151515",border:"1px solid #222",borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
+            }},
+              h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6,gap:8}},
+                h("div",null,
+                  h("div",{style:{display:"flex",alignItems:"center",gap:7,marginBottom:3}},
+                    h("span",{style:{fontSize:9,fontWeight:700,color:"#c4b5fd",background:"rgba(124,58,237,0.18)",border:"1px solid rgba(124,58,237,0.4)",borderRadius:5,padding:"2px 6px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},RESTO_NAME[r._resto]||r._resto),
+                    h("span",{style:{fontSize:13,fontWeight:600,color:"#fff"}},summarizeAcross(r))
+                  )
+                ),
+                h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono,whiteSpace:"nowrap"}},
+                  r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
+              ),
+              h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
+                h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
+                h("span",{style:{color:"#777",marginLeft:"auto",fontSize:9}},"tap → details")
+              )
+            );
+          }
           if(resto==="ug"){
             const isSelU=selU===r;
             const title=(r.prot?r.prot.name:"No protein")+(r.prot2?" + "+r.prot2.name:"");
@@ -2451,7 +2540,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }

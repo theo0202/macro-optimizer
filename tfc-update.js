@@ -11,7 +11,7 @@ const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().repla
 const num = v => { const f = parseFloat(v); return isNaN(f) ? 0 : Math.round(f * 100) / 100; };
 
 const SIZE_LABEL = { wl: "Weight Loss", ml: "Maintain/Lean", wg: "Weight Gain" };
-const CAT_NAMES = { meat_dishes: "Meat Dishes", fish_dishes: "Fish Dishes", sides: "Sides" };
+const CAT_NAMES = { meat_dishes: "Meat Dishes", fish_dishes: "Fish Dishes", pasta_dishes: "Pasta", sides: "Sides" };
 
 // Kategorien in Reihenfolge des ersten Auftretens
 const catIds = [];
@@ -25,8 +25,10 @@ const items = raw.items.map(it => {
   while (usedIds.has(id)) id += "_2";
   usedIds.add(id);
   const salt = it.sodium != null ? Math.round((it.sodium * 2.5 / 1000) * 100) / 100 : 0;
+  // Fisch-Flag (Schalter "No fish"): ganze fish_dishes-Kategorie ODER Name enthält salmon/tuna (z.B. Pasta)
+  const fish = it.cat === "fish_dishes" || /salmon|tuna/i.test(name);
   return {
-    id, name, cat: it.cat, size: it.size || null,
+    id, name, cat: it.cat, size: it.size || null, fish,
     kcal: num(it.kcal), fat: num(it.fat), sat: num(it.sat), carbs: num(it.carbs),
     sugars: num(it.sugars), fibre: num(it.fibre), protein: num(it.protein), salt,
   };
@@ -43,7 +45,7 @@ for (const c of cats) lines.push(`    { id:${q(c.id)},name:${q(c.name)},on:${c.o
 lines.push("  ],");
 lines.push("  items: [");
 for (const x of items)
-  lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)}${x.size ? `,size:${q(x.size)}` : ""},kcal:${x.kcal},fat:${x.fat},sat:${x.sat},carbs:${x.carbs},sugars:${x.sugars},fibre:${x.fibre},protein:${x.protein},salt:${x.salt} },`);
+  lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)}${x.size ? `,size:${q(x.size)}` : ""}${x.fish ? ",fish:true" : ""},kcal:${x.kcal},fat:${x.fat},sat:${x.sat},carbs:${x.carbs},sugars:${x.sugars},fibre:${x.fibre},protein:${x.protein},salt:${x.salt} },`);
 lines.push("  ],");
 lines.push("};");
 lines.push("// __TFC_DATA_END__");

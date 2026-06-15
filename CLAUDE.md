@@ -1,7 +1,7 @@
 # Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC)
 
 ## Projektübersicht
-Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) und **The Fitness Chef / TFC** (UK, Meal-Prep), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen.
+Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) und **The Fitness Chef / TFC** (UK, Meal-Prep), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es einen **„All restaurants"-Tab** (ganz vorne in der Tab-Zeile), der restaurantsübergreifend die besten Bestellungen berechnet.
 
 ## Deployment / Sync
 Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
@@ -86,7 +86,10 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - Workflow: Items in `data/tfc-raw.json` (Name, cat, `size` wl/ml/wg bei Dishes, 7 Makros + `sodium` in mg) → `node tfc-update.js` → TFC-Block (Marker `__TFC_DATA_START__`/`__TFC_DATA_END__`)
   - **Dishes in 3 Größen** (Weight Loss / Maintain-Lean / Weight Gain) — je eigenes Item mit Größen-Suffix im Namen ("Chicken Supreme (Weight Loss)"); der Optimizer wählt automatisch die passende Größe. Sides ohne Größe
   - **Sodium → Salt**: Quelle gibt Sodium in **mg** → tfc-update.js rechnet `salt(g) = sodium(mg) × 2.5 / 1000` (UK-Konvention)
-  - 33 Items: Meat Dishes (6 Gerichte × 3), Fish Dishes (3 × 3), Sides (6). Volle 8 Makros → Fibre/Salt-Constraints funktionieren
+  - 45 Items: Meat Dishes (6 Gerichte × 3), Fish Dishes (3 × 3), **Pasta (4 × 3)**, Sides (6). Volle 8 Makros → Fibre/Salt-Constraints funktionieren
+  - **`fish:true`-Flag** (auto in tfc-update.js: cat fish_dishes ODER Name enthält salmon/tuna) auf 15 Items (9 fish_dishes + Salmon-Pasta + Tuna-Pasta) → Schalter „No fish" filtert `x.fish`
+  - **„Wholemeal pasta turkey minced meat" AUSGELASSEN** (User-Daten unmöglich: Protein 110/160/220 g, Fett 36-73 g bei 360-631 kcal — Spalten-/Dezimalfehler). Bei korrigierten Werten in tfc-raw.json ergänzen
+  - **Salmon-Pasta-Sodium** (4.06/4.23/4.45, Quelle mit „g"-Suffix) ggü. den anderen Pasta (175-549) auffällig niedrig → wörtlich übernommen (Salt ~0.01 g), vermutlich Datenfehler (siehe `_meta.anomalies`)
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -179,9 +182,9 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 
 ## Bestellablauf The Fitness Chef (à la carte)
 - Wie Itsu/Pret/Nando's/Wagamama/GDK: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
-- Kategorien (3): Meat Dishes (18), Fish Dishes (9), Sides (6)
+- Kategorien (4): Meat Dishes (18), Fish Dishes (9), Pasta (12), Sides (6)
 - **Dishes in 3 Größen** (Weight Loss / Maintain-Lean / Weight Gain) als eigene Items (`size` wl/ml/wg, Größe im Namen) — der Optimizer wählt die zum Makroziel passende Größe automatisch (z.B. kleines Ziel → Weight Loss). Sides haben keine Größe
-- **Schalter "No fish"**: schließt die Kategorie fish_dishes aus (Default AN). Sonst nur Kategorie-Chips + Max-Items. Ein Größen-Filter (nur wl/ml/wg zulassen) wäre über das `size`-Feld leicht nachrüstbar, falls gewünscht
+- **Schalter "No fish"**: filtert alle `fish:true`-Items (9 fish_dishes + Salmon-Pasta + Tuna-Pasta; Default AN). Sonst nur Kategorie-Chips + Max-Items. Ein Größen-Filter (nur wl/ml/wg zulassen) wäre über das `size`-Feld leicht nachrüstbar, falls gewünscht
 - Standard-Chips: alle an
 
 ## Bestellablauf Urban Greens (Deliveroo)
@@ -251,7 +254,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef)
+4. Restaurant-Tabs (**All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef)
 5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items + "No fish" (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
@@ -309,7 +312,7 @@ Pool-Bildung:
 - **Nando's**: aktive Chips MINUS Desserts/Lunch Fix/Sharing Platters (`NANDOS_SWITCH_CATS`) MINUS Saucen (`sauce:true`) MINUS Grilled Pineapple MINUS Wings/Livers (`wings:true`) MINUS Corn (`corn:true`) — je nach Schalter; Drinks sind nicht in den Daten
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
-- **TFC**: aktive Kategorie-Chips MINUS fish_dishes (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
+- **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
 
 UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
@@ -325,6 +328,12 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich 
 - Beam-Suche: Backbone (Bases 1–2 × Mixed 1 × Ingredients 1–2; beste 2000) → Proteins 0–2 voll-enumeriert (beste 800) → Sauce 0/1 (beste 600, außer `noSauce`) → Crunch 0/1 (beste 500, außer `noCrunch`) → Extras-Stufe (Add-ons + 3. Protein, nur bei Score-Verbesserung)
 - Voll auf vorberechneten 8-Makro-Summen (`eff`: doublePlate-Items ×2 in der Plate); `resultsAtis`-Memo rechnet nur bei aktivem Atis-Tab
 - Eigene Result-Form (`kind/bases/mixed/ing/prots/sauce/crunch/addons`) → eigene Karte + eigenes Panel
+
+### „All restaurants" (`optimizeAll`)
+- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish
+- Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 2 Treffer pro Restaurant** (sonst überschwemmt ein Restaurant mit ähnlichen Kombos die Liste), Top 20 → Top 8 angezeigt
+- Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
+- Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt
 
 ## Detail-Panel (nach Ergebnis-Auswahl)
 - Macro-Bars mit Live-Vergleich zu Zielen (beide Restaurants)
