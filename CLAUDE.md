@@ -1,7 +1,7 @@
-# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis)
+# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC)
 
 ## Projektübersicht
-Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK) und **Atis** (atisfood.com, London), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen.
+Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) und **The Fitness Chef / TFC** (UK, Meal-Prep), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen.
 
 ## Deployment / Sync
 Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
@@ -28,6 +28,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - `node wagamama-update.js` generiert den WAGAMAMA-Block aus `data/wagamama-raw.json` (KEIN Crawler — User liefert Copy-Paste-Batches)
 - `node gdk-update.js` generiert den GDK-Block aus `data/gdk-raw.json` (KEIN Crawler — User liefert offizielle Nährwerttabelle als Copy-Paste)
 - `node atis-update.js` generiert den ATIS-Block aus `data/atis-raw.json` (KEIN Crawler — User liefert Screenshots; Skript mappt Screenshot- → Deliveroo-Namen)
+- `node tfc-update.js` generiert den TFC-Block aus `data/tfc-raw.json` (KEIN Crawler — User liefert Copy-Paste; Skript komponiert Größen-Namen + rechnet sodium→salt)
 - Preview-Server: `.claude/launch.json` → "macro-optimizer" (py -3 -m http.server 8321)
 
 ## Datenquellen
@@ -80,6 +81,11 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - **kcal-Diffs Deliveroo↔Tabelle** bei 3 Items (Blackened Chicken 204/260, Miso Ginger Sweet Potato 145/220, Herb Quinoa 129/118): die Nährwerttabelle gilt (volle Makros + intern konsistent mit P/F/C); Deliveroo-Werte sind vermutlich andere Portion/Rundung
   - LARGE-Bases/Dressings (`basesL`/`saucesL`) aktuell UNGENUTZT — reserviert für den Bowl-Modus/Größenvariante
   - Atis hat volle 8 Makros (inkl. sat/sugars/fibre/salt) → Fibre/Salt-Constraints funktionieren (anders als UG)
+- **The Fitness Chef (TFC)** (UK Meal-Prep): offizielle Produktseiten (per-Serving) — KEIN Crawler, **User liefert Copy-Paste**; Roh in `data/tfc-raw.json`
+  - Workflow: Items in `data/tfc-raw.json` (Name, cat, `size` wl/ml/wg bei Dishes, 7 Makros + `sodium` in mg) → `node tfc-update.js` → TFC-Block (Marker `__TFC_DATA_START__`/`__TFC_DATA_END__`)
+  - **Dishes in 3 Größen** (Weight Loss / Maintain-Lean / Weight Gain) — je eigenes Item mit Größen-Suffix im Namen ("Chicken Supreme (Weight Loss)"); der Optimizer wählt automatisch die passende Größe. Sides ohne Größe
+  - **Sodium → Salt**: Quelle gibt Sodium in **mg** → tfc-update.js rechnet `salt(g) = sodium(mg) × 2.5 / 1000` (UK-Konvention)
+  - 33 Items: Meat Dishes (6 Gerichte × 3), Fish Dishes (3 × 3), Sides (6). Volle 8 Makros → Fibre/Salt-Constraints funktionieren
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -92,6 +98,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **GDK**: `GDK.cats[]` + `GDK.items[]` (gleiches Schema; Items zusätzlich `sauce:true`-Flag für "No Sauce"-Schalter)
 - **Urban Greens**: `UG.pre[]` (18 fertige Salads/Trays, `group`-Feld) + BYO-Komponenten `UG.greens[]`, `UG.carbs[]`, `UG.prots[]`, `UG.veg[]`, `UG.tops[]`, `UG.dress[]`, `UG.scoops[]` — Items nur mit kcal/protein/fat/carbs
 - **Atis**: BYO-Komponenten `ATIS.bases[]`, `ATIS.basesL[]`, `ATIS.mixed[]`, `ATIS.ingredients[]`, `ATIS.proteins[]`, `ATIS.sauces[]`, `ATIS.saucesL[]`, `ATIS.crunches[]`, `ATIS.addons[]` (volle 8 Makros; Flags `carb`/`doublePlate`/`seasonal`)
+- **The Fitness Chef**: `TFC.cats[]` + `TFC.items[]` (AC-Schema wie Itsu/Pret; Dishes zusätzlich `size`-Feld wl/ml/wg, Sides ohne)
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -169,6 +176,13 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - **Schalter "No crunch"** (intern `aNoCrunch`): erzwingt Schritt 6 = "I Don't Want A Crunch"
 - Pool-Ausschlüsse (= aktueller Deliveroo-Flow) als `ATIS_BASE_EXCLUDE`/`ATIS_SAUCE_EXCLUDE`/`ATIS_ADDON_EXCLUDE` in index.html gepflegt; bei Flow-Änderung dort anpassen. Items bleiben im ATIS-Katalog, werden nur aus dem Pool gefiltert
 
+## Bestellablauf The Fitness Chef (à la carte)
+- Wie Itsu/Pret/Nando's/Wagamama/GDK: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
+- Kategorien (3): Meat Dishes (18), Fish Dishes (9), Sides (6)
+- **Dishes in 3 Größen** (Weight Loss / Maintain-Lean / Weight Gain) als eigene Items (`size` wl/ml/wg, Größe im Namen) — der Optimizer wählt die zum Makroziel passende Größe automatisch (z.B. kleines Ziel → Weight Loss). Sides haben keine Größe
+- **Keine Exclude-Schalter** — nur Kategorie-Chips + Max-Items. Ein Größen-Filter (nur wl/ml/wg zulassen) wäre über das `size`-Feld leicht nachrüstbar, falls gewünscht
+- Standard-Chips: alle an
+
 ## Bestellablauf Urban Greens (Deliveroo)
 Zwei Modi (Umschalt-Buttons): **"BYO Salad"** und **"BYO Tray"** — fertige Gerichte gibt es in der App NICHT (User-Entscheidung, siehe Datenquellen).
 (Getrennte Modi statt gemischter Ergebnisse: Salads dominieren Trays im Score fast immer, weil sie mehr Freiheitsgrade haben.)
@@ -222,6 +236,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 5 Items, "No Sauce" + "No rice bowl" AN
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
 - **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
+- **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, keine Schalter; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -235,8 +250,8 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis)
-5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
+4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef)
+5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items ohne Schalter (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
 
@@ -270,7 +285,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 3. Set Fieldtrays/Fieldbowls/Solo-Salate laufen als Einzel-Kandidaten mit
 4. Gleiche Score-Funktion, Top 20/Top 8 wie Subway
 
-### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`) und GDK (`optimizeGDK`)
+### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`), GDK (`optimizeGDK`) und The Fitness Chef (`optimizeTFC`)
 Alle nutzen den gemeinsamen Kern `alaCarteCombos`:
 1. Enumeriert alle Singles und Paare (Duplikate erlaubt, i<=j)
 2. Triples per Beam-Suche: nur Erweiterungen der besten 80 Paare (dedupliziert) — bleibt auch mit großem Pool flott
@@ -283,8 +298,9 @@ Pool-Bildung:
 - **Nando's**: aktive Chips MINUS Desserts/Lunch Fix/Sharing Platters (`NANDOS_SWITCH_CATS`) MINUS Saucen (`sauce:true`) MINUS Grilled Pineapple MINUS Wings/Livers (`wings:true`) MINUS Corn (`corn:true`) — je nach Schalter; Drinks sind nicht in den Daten
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
+- **TFC**: nur aktive Kategorie-Chips (kein Schalter). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
 
-UI-Rendering: Itsu, Pret, Nando's, Wagamama & GDK teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
+UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
 ### Urban Greens (`optimizeUG`)
 - Modus "pre": 18 fertige Trays/Salads als Einzel-Kandidaten (wie FJ-Sets)
@@ -304,7 +320,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama & GDK teilen sich Ergebnis-Karten un
 - **Subway**: Extras (inkl. Double Meat/Cheese), Salad togglen ("✦ Mein Standard"), Saucen (max 2), Seasonings
 - **Farmer J**: Toppings togglen, Sauce/Dip/Topping togglen (max 1, UI erzwingt das); bei Sets keine Add-ons
 - **Farmer J Set-Browser**: alle 13 Sets gruppiert (Set Fieldtrays / Set Fieldbowls / The Salad, Solo), Klick wählt das Set aus und öffnet das Detail-Panel
-- **Itsu & Pret & Nando's** (gemeinsames À-la-carte-Panel): Item-Aufschlüsselung (kcal + Protein je Item), keine Add-ons; Bestellanleitung = Stückliste mit Mengen (z.B. "2× chicken gyoza")
+- **À-la-carte-Familie (Itsu / Pret / Nando's / Wagamama / GDK / The Fitness Chef)** (gemeinsames Panel über AC-Alias): Item-Aufschlüsselung (kcal + Protein je Item), keine Add-ons; Bestellanleitung = Stückliste mit Mengen (z.B. "2× chicken gyoza", "1× Chicken Supreme (Weight Loss)")
 - **Urban Greens**: Komponenten-Aufschlüsselung nach Gruppen + Bestellanleitung (Salad: 11 Schritte, Tray: 10, fertig: 2); KEINE Fibre/Salt-Bars (keine Daten); fertige Salads tragen den Hinweis "Werte ohne Dressing"
 - **Atis** (eigenes Panel, Power Plate): Komponenten-Aufschlüsselung nach Gruppen (doublePlate-Items mit "×2" + verdoppeltem kcal) + Hinweis "×2 = double portion" + Bestellanleitung (8 Schritte); volle Makro-Bars
 - **Bestellanleitung (Deliveroo)**: nummerierte Schritt-für-Schritt-Liste, aktualisiert sich live
@@ -316,7 +332,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama & GDK teilen sich Ergebnis-Karten un
 
 ## Design
 - Dark Mode (#0d0d0d Background)
-- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
+- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
 - Fonts: DM Sans (UI), DM Mono (Zahlen/Labels)
 - iPhone-optimiert: safe-area-inset, touch-optimierte Buttons
 - PWA-fähig: apple-mobile-web-app-capable, Vollbild-Modus
@@ -339,6 +355,7 @@ Essen bestellen Claude Tool/
 ├── gdk-update.js            ← Generiert GDK-Block in index.html aus data/gdk-raw.json
 ├── atis-update.js           ← Generiert ATIS-Block in index.html aus data/atis-raw.json (Screenshot→Deliveroo-Namen)
 ├── verify-atis.js           ← Sanity-Check der Atis-Rohdaten (Item-Counts + kcal-Plausibilität)
+├── tfc-update.js            ← Generiert TFC-Block in index.html aus data/tfc-raw.json (Größen-Namen + sodium→salt)
 ├── .claude/launch.json      ← Preview-Server-Konfiguration
 └── data/
     ├── urbangreens.json     ← Urban-Greens-Daten + Order Rules als JSON
@@ -353,6 +370,7 @@ Essen bestellen Claude Tool/
     ├── wagamama-raw.json    ← Wagamama-Daten aus User-Copy-Paste-Batches (inkl. Allergene, Veggie-Flags)
     ├── gdk-raw.json         ← GDK-Daten aus User-Copy-Paste (offizielle Nährwerttabelle, sauce-Flags)
     ├── atis-raw.json        ← Atis-Daten aus User-Screenshots (86 Items, portion/carb/doublePlate/seasonal-Flags) — Quelle der Wahrheit
+    ├── tfc-raw.json         ← The-Fitness-Chef-Daten aus User-Copy-Paste (33 Items, size wl/ml/wg, sodium in mg)
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
     ├── Farmer J _ Nutritional Info.xlsx ← Original-Erfassung Farmer J
     └── UKIandROINutritionalInformationJan2026.pdf ← Original-PDF Subway

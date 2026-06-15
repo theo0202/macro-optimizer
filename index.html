@@ -838,6 +838,52 @@ const ATIS = {
 };
 // __ATIS_DATA_END__
 
+// __TFC_DATA_START__ (generiert via: node tfc-update.js aus data/tfc-raw.json — nicht von Hand editieren)
+// Quelle: The Fitness Chef offizielle Produktseiten (Copy-Paste vom User) · Stand 2026-06-15 · 33 Items · Dishes in 3 Größen (size wl/ml/wg), Optimizer wählt die passende · salt aus sodium(mg)*2.5/1000
+const TFC = {
+  cats: [
+    { id:"meat_dishes",name:"Meat Dishes",on:true },
+    { id:"fish_dishes",name:"Fish Dishes",on:true },
+    { id:"sides",name:"Sides",on:true },
+  ],
+  items: [
+    { id:"chicken_supreme_weight_loss",name:"Chicken Supreme (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:342.24,fat:10.39,sat:1.98,carbs:28.11,sugars:5.28,fibre:5.09,protein:34.94,salt:0.22 },
+    { id:"chicken_supreme_maintain_lean",name:"Chicken Supreme (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:466.09,fat:12.35,sat:2.51,carbs:37.53,sugars:7.19,fibre:6.82,protein:51.68,salt:0.32 },
+    { id:"chicken_supreme_weight_gain",name:"Chicken Supreme (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:594.29,fat:14.31,sat:3.04,carbs:47.95,sugars:9.16,fibre:8.64,protein:68.52,salt:0.43 },
+    { id:"chicken_aubergine_and_lentils_weight_loss",name:"Chicken, aubergine and lentils (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:370.3,fat:10.37,sat:1.85,carbs:31.5,sugars:7.96,fibre:10.82,protein:40.05,salt:0.68 },
+    { id:"chicken_aubergine_and_lentils_maintain_lean",name:"Chicken, aubergine and lentils (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:489.5,fat:12.34,sat:2.39,carbs:38.72,sugars:10.06,fibre:13.1,protein:57.66,salt:0.9 },
+    { id:"chicken_aubergine_and_lentils_weight_gain",name:"Chicken, aubergine and lentils (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:626.8,fat:14.4,sat:2.94,carbs:49.44,sugars:13.44,fibre:16.37,protein:76.32,salt:1.24 },
+    { id:"grilled_chicken_cajun_weight_loss",name:"Grilled Chicken Cajun (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:358.1,fat:16,sat:2.74,carbs:19.64,sugars:1.19,fibre:4.3,protein:34.52,salt:1.96 },
+    { id:"grilled_chicken_cajun_maintain_lean",name:"Grilled Chicken Cajun (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:482.75,fat:18.16,sat:3.31,carbs:28.4,sugars:1.49,fibre:5.27,protein:51.19,salt:2.07 },
+    { id:"grilled_chicken_cajun_weight_gain",name:"Grilled Chicken Cajun (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:668,fat:20.83,sat:3.99,carbs:49.76,sugars:2.13,fibre:7.46,protein:69.43,salt:2.2 },
+    { id:"chicken_curry_weight_loss",name:"Chicken Curry (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:356.2,fat:16.04,sat:8.04,carbs:19.17,sugars:4.51,fibre:3.94,protein:34.13,salt:0.39 },
+    { id:"chicken_curry_maintain_lean",name:"Chicken Curry (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:512.8,fat:22.71,sat:12.75,carbs:26.66,sugars:6.47,fibre:5.5,protein:50.86,salt:0.55 },
+    { id:"chicken_curry_weight_gain",name:"Chicken Curry (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:678,fat:29.39,sat:17.47,carbs:36.16,sugars:8.85,fibre:7.36,protein:67.75,salt:0.72 },
+    { id:"turkey_with_sweet_potatoes_broccoli_and_egg_weight_loss",name:"Turkey with sweet potatoes, broccoli and egg (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:386.98,fat:13.04,sat:2.95,carbs:30.6,sugars:6.9,fibre:6.54,protein:39.36,salt:0.55 },
+    { id:"turkey_with_sweet_potatoes_broccoli_and_egg_maintain_lean",name:"Turkey with sweet potatoes, broccoli and egg (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:494.13,fat:13.89,sat:3.17,carbs:39.72,sugars:8.79,fibre:8.24,protein:55.36,salt:0.68 },
+    { id:"turkey_with_sweet_potatoes_broccoli_and_egg_weight_gain",name:"Turkey with sweet potatoes, broccoli and egg (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:616.33,fat:15.08,sat:3.48,carbs:45.9,sugars:10.05,fibre:9.83,protein:77.4,salt:0.84 },
+    { id:"beef_strips_with_rocket_tomatoes_and_rice_weight_loss",name:"Beef strips with rocket, tomatoes and rice (Weight Loss)",cat:"meat_dishes",size:"wl",kcal:361.56,fat:22.02,sat:8.28,carbs:16.69,sugars:3.07,fibre:2.85,protein:27.75,salt:0.91 },
+    { id:"beef_strips_with_rocket_tomatoes_and_rice_maintain_lean",name:"Beef strips with rocket, tomatoes and rice (Maintain/Lean)",cat:"meat_dishes",size:"ml",kcal:460.49,fat:26.59,sat:10.31,carbs:24.3,sugars:3.58,fibre:3.57,protein:35.01,salt:1.05 },
+    { id:"beef_strips_with_rocket_tomatoes_and_rice_weight_gain",name:"Beef strips with rocket, tomatoes and rice (Weight Gain)",cat:"meat_dishes",size:"wg",kcal:629.31,fat:32.76,sat:13.19,carbs:43.01,sugars:4.65,fibre:5.28,protein:45.09,salt:1.36 },
+    { id:"poached_salmon_weight_loss",name:"Poached Salmon (Weight Loss)",cat:"fish_dishes",size:"wl",kcal:360,fat:19,sat:3.9,carbs:24.2,sugars:2.5,fibre:3.3,protein:24.7,salt:0.52 },
+    { id:"poached_salmon_maintain_lean",name:"Poached Salmon (Maintain/Lean)",cat:"fish_dishes",size:"ml",kcal:505.89,fat:26.01,sat:5.52,carbs:33.15,sugars:2.52,fibre:4.44,protein:36.77,salt:1.24 },
+    { id:"poached_salmon_weight_gain",name:"Poached Salmon (Weight Gain)",cat:"fish_dishes",size:"wg",kcal:623.99,fat:31.26,sat:6.76,carbs:41.33,sugars:3.08,fibre:5.58,protein:46.55,salt:1.3 },
+    { id:"roasted_salmon_and_spicy_lentils_weight_loss",name:"Roasted Salmon and spicy lentils (Weight Loss)",cat:"fish_dishes",size:"wl",kcal:390,fat:19.5,sat:4.1,carbs:25.2,sugars:3.4,fibre:9.7,protein:31.6,salt:0.66 },
+    { id:"roasted_salmon_and_spicy_lentils_maintain_lean",name:"Roasted Salmon and spicy lentils (Maintain/Lean)",cat:"fish_dishes",size:"ml",kcal:527.08,fat:26.63,sat:5.72,carbs:30.63,sugars:4.31,fibre:11.85,protein:44.8,salt:1.37 },
+    { id:"roasted_salmon_and_spicy_lentils_weight_gain",name:"Roasted Salmon and spicy lentils (Weight Gain)",cat:"fish_dishes",size:"wg",kcal:659.12,fat:32.1,sat:7.02,carbs:39.72,sugars:5.87,fibre:15.43,protein:57.24,salt:1.54 },
+    { id:"roasted_salmon_cajun_weight_loss",name:"Roasted Salmon Cajun (Weight Loss)",cat:"fish_dishes",size:"wl",kcal:400.17,fat:26.7,sat:5.1,carbs:18.6,sugars:1.3,fibre:3.9,protein:25.15,salt:0.6 },
+    { id:"roasted_salmon_cajun_maintain_lean",name:"Roasted Salmon Cajun (Maintain/Lean)",cat:"fish_dishes",size:"ml",kcal:523.92,fat:30.99,sat:6.36,carbs:24.68,sugars:1.56,fibre:4.78,protein:34.29,salt:0.67 },
+    { id:"roasted_salmon_cajun_weight_gain",name:"Roasted Salmon Cajun (Weight Gain)",cat:"fish_dishes",size:"wg",kcal:700.87,fat:36.98,sat:7.78,carbs:44.09,sugars:2.21,fibre:7.12,protein:44.96,salt:0.76 },
+    { id:"grilled_halloumi",name:"Grilled Halloumi",cat:"sides",kcal:337.68,fat:28,sat:18.28,carbs:2,sugars:1,fibre:0,protein:21,salt:2.13 },
+    { id:"grilled_tofu",name:"Grilled Tofu",cat:"sides",kcal:233.68,fat:14,sat:2.08,carbs:5.85,sugars:0.9,fibre:1.5,protein:22.5,salt:0.05 },
+    { id:"new_potatoes",name:"New potatoes",cat:"sides",kcal:149.3,fat:2.19,sat:0.28,carbs:29.02,sugars:1.38,fibre:3.81,protein:3.46,salt:0.03 },
+    { id:"broccoli",name:"Broccoli",cat:"sides",kcal:63.18,fat:2.52,sat:0.41,carbs:9.1,sugars:1.82,fibre:4.29,protein:3.12,salt:0.1 },
+    { id:"spinach",name:"Spinach",cat:"sides",kcal:52.18,fat:2.6,sat:0.43,carbs:5.7,sugars:0.6,fibre:3.6,protein:4.35,salt:0.3 },
+    { id:"green_peas_carrots",name:"Green Peas & Carrots",cat:"sides",kcal:103.08,fat:2.42,sat:0.38,carbs:17.15,sugars:7.28,fibre:5.53,protein:4.42,salt:0.13 },
+  ],
+};
+// __TFC_DATA_END__
+
 // Urban Greens (London) — Quelle: "Allergen guide 2026" PDF (data/UrbanGreens-AllergenMatrix.pdf),
 // gegengeprüft mit data/UrbanGreens_Nutrition.xlsx. NUR Build Your Own (Salad/Tray)!
 // Fertige Salads & Trays sind KOMPLETT entfernt (User-Entscheidung 12.06.2026: "wir machen immer BYO" —
@@ -1130,6 +1176,14 @@ function optimizeWaga(t, mode, p, activeCats, maxN, noRamen) {
 // (WITH SAUCE / plain Quesadilla / Ketchup-Juniors); Schalter "No rice bowl" = Kategorie rice_bowls raus.
 function optimizeGDK(t, mode, p, activeCats, maxN, noSauce, noRiceBowl) {
   const pool=GDK.items.filter(x=>activeCats[x.cat]&&!(noSauce&&x.sauce)&&!(noRiceBowl&&x.cat==="rice_bowls"));
+  return alaCarteCombos(t,mode,p,pool,maxN);
+}
+
+// The Fitness Chef (TFC): à la carte wie Itsu/Pret/Nando's/Wagamama/GDK (AC-Alias). Dishes kommen in 3 Größen
+// (size wl/ml/wg) als eigene Items — der Optimizer wählt automatisch die passende Größe fürs Makroziel.
+// Sides ohne Größe. Kein Schalter; nur Kategorie-Chips (Meat Dishes / Fish Dishes / Sides) + Max-Items.
+function optimizeTFC(t, mode, p, activeCats, maxN) {
+  const pool=TFC.items.filter(x=>activeCats[x.cat]);
   return alaCarteCombos(t,mode,p,pool,maxN);
 }
 
@@ -1461,6 +1515,10 @@ function App() {
   const [aNoCrunch,setANoCrunch]=useState(true);
   const [aNoSauce,setANoSauce]=useState(true);
   const [selA,setSelA]=useState(null);
+  // The Fitness Chef (à la carte, AC-Alias)
+  const [tfcCats,setTFCC]=useState(()=>{const o={};TFC.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxTFC,setMaxTFC]=useState(5);
+  const [selTFC,setSelTFC]=useState(null);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -1488,12 +1546,14 @@ function App() {
   const resultsWaga=useMemo(()=>optimizeWaga(targets,mode,prefs,wagCats,maxW,noRamen),[targets,mode,prefs,wagCats,maxW,noRamen]);
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
   const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
+  const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC):[],[resto,targets,mode,prefs,tfcCats,maxTFC]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
   const AC=resto==="itsu"?{D:ITSU,sel:selI,setSel:setSelI,res:resultsItsu,maxN:maxIt}
          :resto==="pret"?{D:PRET,sel:selP,setSel:setSelP,res:resultsPret,maxN:maxP}
          :resto==="nandos"?{D:NANDOS,sel:selN,setSel:setSelN,res:resultsNandos,maxN:maxNa}
          :resto==="wagamama"?{D:WAGA,sel:selW,setSel:setSelW,res:resultsWaga,maxN:maxW}
-         :resto==="gdk"?{D:GDK,sel:selG,setSel:setSelG,res:resultsGDK,maxN:maxG}:null;
+         :resto==="gdk"?{D:GDK,sel:selG,setSel:setSelG,res:resultsGDK,maxN:maxG}
+         :resto==="tfc"?{D:TFC,sel:selTFC,setSel:setSelTFC,res:resultsTFC,maxN:maxTFC}:null;
 
   const selTotal=useMemo(()=>{
     if(!sel)return null;
@@ -1533,9 +1593,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -1586,7 +1646,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto)
+        btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto)
       ),
 
       // Size (nur Subway)
@@ -1666,6 +1726,20 @@ function App() {
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxG===n,onClick:()=>setMaxG(n),small:true}))
         )
+      ),
+
+      // The Fitness Chef: Kategorien + Anzahl Items (die Größe wählt der Optimizer automatisch)
+      resto==="tfc"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...TFC.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!tfcCats[c.id],
+            onClick:()=>setTFCC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
+        h("div",{style:{display:"flex",gap:5,marginBottom:10}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxTFC===n,onClick:()=>setMaxTFC(n),small:true}))
+        ),
+        h("div",{style:{fontSize:10,color:"#666",lineHeight:1.4}},"Dishes come in 3 sizes (Weight Loss / Maintain-Lean / Weight Gain) — the optimizer picks the best fit for your goal.")
       ),
 
       // Urban Greens: Modus (nur Build Your Own — fertige Gerichte bewusst entfernt)
@@ -2247,7 +2321,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }

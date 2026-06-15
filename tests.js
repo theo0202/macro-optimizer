@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, sortResults };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, sortResults };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -467,6 +467,47 @@ check("Atis: Pesto/Lemon Oregano/einzelnes Olive Oil nie als Sauce",
 
 // Bowl-Modus noch nicht implementiert (Daten vorhanden, Flow ausstehend)
 check("Atis Bowl-Modus liefert (noch) keine Ergebnisse", T.optimizeAtis(tA, "macros", {}, "bowl", false, false).length, 0);
+
+// ── The Fitness Chef (TFC, à la carte; Dishes in 3 Größen) ──
+check("TFC Items (33: 27 Dishes + 6 Sides)", T.TFC.items.length, 33);
+check("TFC Kategorien (3)", T.TFC.cats.length, 3);
+check("TFC Meat Dishes (18)", T.TFC.items.filter(x => x.cat === "meat_dishes").length, 18);
+check("TFC Fish Dishes (9)", T.TFC.items.filter(x => x.cat === "fish_dishes").length, 9);
+check("TFC Sides (6)", T.TFC.items.filter(x => x.cat === "sides").length, 6);
+check("TFC Größenvarianten (9× wl / 9× ml / 9× wg)",
+  [T.TFC.items.filter(x => x.size === "wl").length, T.TFC.items.filter(x => x.size === "ml").length, T.TFC.items.filter(x => x.size === "wg").length].join(",") === "9,9,9", true);
+check("TFC Sides haben keine size", T.TFC.items.filter(x => x.cat === "sides").every(x => !x.size), true);
+check("TFC Name-Komposition (Größen-Suffix)", !!T.TFC.items.find(x => x.name === "Chicken Supreme (Weight Loss)"), true);
+check("TFC Chicken Supreme (Maintain/Lean) kcal", T.TFC.items.find(x => x.id === "chicken_supreme_maintain_lean").kcal, 466.09);
+check("TFC Chicken Supreme (Weight Gain) Protein", T.TFC.items.find(x => x.id === "chicken_supreme_weight_gain").protein, 68.52);
+// Sodium(mg) -> salt(g) = sodium*2.5/1000
+check("TFC salt aus sodium: Grilled Halloumi (850.04mg -> 2.13g)", T.TFC.items.find(x => x.id === "grilled_halloumi").salt, 2.13);
+check("TFC salt aus sodium: Chicken Supreme WL (87.46mg -> 0.22g)", T.TFC.items.find(x => x.id === "chicken_supreme_weight_loss").salt, 0.22);
+
+const tfcAll = {};
+T.TFC.cats.forEach(c => tfcAll[c.id] = true);
+const t13 = { protein: 45, carbs: 35, fat: 15, kcal: 455, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rtfc = T.optimizeTFC(t13, "macros", {}, tfcAll, 3);
+let tfcSumOk = true, tfcLenOk = true, tfcCatOk = true;
+for (const r of rtfc) {
+  const exp = Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10;
+  if (!approx(r.nutrition.kcal, exp)) tfcSumOk = false;
+  if (r.items.length < 1 || r.items.length > 3) tfcLenOk = false;
+  if (!r.items.every(x => tfcAll[x.cat])) tfcCatOk = false;
+}
+check("TFC Nutrition == Summe (alle Ergebnisse)", tfcSumOk, true);
+check("TFC 1–3 Items", tfcLenOk, true);
+check("TFC nur aktive Kategorien", tfcCatOk, true);
+
+// Optimizer wählt die passende GRÖSSE: kleines Ziel → Weight Loss, großes Ziel → Weight Gain (maxN=1)
+const tLo = { protein: 34.94, carbs: 28.11, fat: 10.39, kcal: 342, fibMin: null, fibMax: null, sMin: null, sMax: null }; // = Chicken Supreme WL
+const tHi = { protein: 68.52, carbs: 47.95, fat: 14.31, kcal: 595, fibMin: null, fibMax: null, sMin: null, sMax: null }; // = Chicken Supreme WG
+check("TFC wählt Weight Loss bei kleinem Ziel", T.optimizeTFC(tLo, "macros", {}, tfcAll, 1)[0].items[0].id === "chicken_supreme_weight_loss", true);
+check("TFC wählt Weight Gain bei großem Ziel", T.optimizeTFC(tHi, "macros", {}, tfcAll, 1)[0].items[0].id === "chicken_supreme_weight_gain", true);
+// Kategorie-Filter: nur Sides aktiv → nur Sides
+const onlySides = { meat_dishes: false, fish_dishes: false, sides: true };
+const rSides = T.optimizeTFC(t13, "macros", {}, onlySides, 3);
+check("TFC Kategorie-Filter: nur Sides", rSides.length > 0 && rSides.every(r => r.items.every(x => x.cat === "sides")), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

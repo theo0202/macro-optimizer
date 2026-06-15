@@ -1,0 +1,53 @@
+{
+  "_meta": {
+    "source": "The Fitness Chef (TFC) offizielle Produktseiten (per-Serving). Copy-Paste vom User.",
+    "workflow": "User liefert Nährwerte als Text -> data/tfc-raw.json -> node tfc-update.js -> TFC-Block in index.html",
+    "updated": "2026-06-15",
+    "notes": "Dishes kommen in 3 Größen (size: wl=Weight Loss, ml=Maintain/Lean, wg=Weight Gain) — je eigenes Item, der Optimizer wählt die passende Größe. Sides haben keine Größe. Sodium ist in mg angegeben; tfc-update.js rechnet salt(g)=sodium(mg)*2.5/1000. À-la-carte (AC-Alias), kein Schalter.",
+    "units": "kcal/fat/sat/carbs/sugars/fibre/protein in g, sodium in mg"
+  },
+  "items": [
+    { "name": "Chicken Supreme", "cat": "meat_dishes", "size": "wl", "kcal": 342.24, "fat": 10.39, "sat": 1.98, "carbs": 28.11, "sugars": 5.28, "fibre": 5.09, "protein": 34.94, "sodium": 87.46 },
+    { "name": "Chicken Supreme", "cat": "meat_dishes", "size": "ml", "kcal": 466.09, "fat": 12.35, "sat": 2.51, "carbs": 37.53, "sugars": 7.19, "fibre": 6.82, "protein": 51.68, "sodium": 128.76 },
+    { "name": "Chicken Supreme", "cat": "meat_dishes", "size": "wg", "kcal": 594.29, "fat": 14.31, "sat": 3.04, "carbs": 47.95, "sugars": 9.16, "fibre": 8.64, "protein": 68.52, "sodium": 170.36 },
+
+    { "name": "Chicken, aubergine and lentils", "cat": "meat_dishes", "size": "wl", "kcal": 370.3, "fat": 10.37, "sat": 1.85, "carbs": 31.5, "sugars": 7.96, "fibre": 10.82, "protein": 40.05, "sodium": 271.6 },
+    { "name": "Chicken, aubergine and lentils", "cat": "meat_dishes", "size": "ml", "kcal": 489.5, "fat": 12.34, "sat": 2.39, "carbs": 38.72, "sugars": 10.06, "fibre": 13.1, "protein": 57.66, "sodium": 359.4 },
+    { "name": "Chicken, aubergine and lentils", "cat": "meat_dishes", "size": "wg", "kcal": 626.8, "fat": 14.4, "sat": 2.94, "carbs": 49.44, "sugars": 13.44, "fibre": 16.37, "protein": 76.32, "sodium": 497.4 },
+
+    { "name": "Grilled Chicken Cajun", "cat": "meat_dishes", "size": "wl", "kcal": 358.1, "fat": 16, "sat": 2.74, "carbs": 19.64, "sugars": 1.19, "fibre": 4.3, "protein": 34.52, "sodium": 785.06 },
+    { "name": "Grilled Chicken Cajun", "cat": "meat_dishes", "size": "ml", "kcal": 482.75, "fat": 18.16, "sat": 3.31, "carbs": 28.4, "sugars": 1.49, "fibre": 5.27, "protein": 51.19, "sodium": 828.2 },
+    { "name": "Grilled Chicken Cajun", "cat": "meat_dishes", "size": "wg", "kcal": 668, "fat": 20.83, "sat": 3.99, "carbs": 49.76, "sugars": 2.13, "fibre": 7.46, "protein": 69.43, "sodium": 878.1 },
+
+    { "name": "Chicken Curry", "cat": "meat_dishes", "size": "wl", "kcal": 356.2, "fat": 16.04, "sat": 8.04, "carbs": 19.17, "sugars": 4.51, "fibre": 3.94, "protein": 34.13, "sodium": 154.1 },
+    { "name": "Chicken Curry", "cat": "meat_dishes", "size": "ml", "kcal": 512.8, "fat": 22.71, "sat": 12.75, "carbs": 26.66, "sugars": 6.47, "fibre": 5.5, "protein": 50.86, "sodium": 218.5 },
+    { "name": "Chicken Curry", "cat": "meat_dishes", "size": "wg", "kcal": 678, "fat": 29.39, "sat": 17.47, "carbs": 36.16, "sugars": 8.85, "fibre": 7.36, "protein": 67.75, "sodium": 288.4 },
+
+    { "name": "Turkey with sweet potatoes, broccoli and egg", "cat": "meat_dishes", "size": "wl", "kcal": 386.98, "fat": 13.04, "sat": 2.95, "carbs": 30.6, "sugars": 6.9, "fibre": 6.54, "protein": 39.36, "sodium": 218.18 },
+    { "name": "Turkey with sweet potatoes, broccoli and egg", "cat": "meat_dishes", "size": "ml", "kcal": 494.13, "fat": 13.89, "sat": 3.17, "carbs": 39.72, "sugars": 8.79, "fibre": 8.24, "protein": 55.36, "sodium": 273.83 },
+    { "name": "Turkey with sweet potatoes, broccoli and egg", "cat": "meat_dishes", "size": "wg", "kcal": 616.33, "fat": 15.08, "sat": 3.48, "carbs": 45.9, "sugars": 10.05, "fibre": 9.83, "protein": 77.4, "sodium": 335.63 },
+
+    { "name": "Beef strips with rocket, tomatoes and rice", "cat": "meat_dishes", "size": "wl", "kcal": 361.56, "fat": 22.02, "sat": 8.28, "carbs": 16.69, "sugars": 3.07, "fibre": 2.85, "protein": 27.75, "sodium": 362.52 },
+    { "name": "Beef strips with rocket, tomatoes and rice", "cat": "meat_dishes", "size": "ml", "kcal": 460.49, "fat": 26.59, "sat": 10.31, "carbs": 24.3, "sugars": 3.58, "fibre": 3.57, "protein": 35.01, "sodium": 421.64 },
+    { "name": "Beef strips with rocket, tomatoes and rice", "cat": "meat_dishes", "size": "wg", "kcal": 629.31, "fat": 32.76, "sat": 13.19, "carbs": 43.01, "sugars": 4.65, "fibre": 5.28, "protein": 45.09, "sodium": 544.92 },
+
+    { "name": "Poached Salmon", "cat": "fish_dishes", "size": "wl", "kcal": 360, "fat": 19, "sat": 3.9, "carbs": 24.2, "sugars": 2.5, "fibre": 3.3, "protein": 24.7, "sodium": 208 },
+    { "name": "Poached Salmon", "cat": "fish_dishes", "size": "ml", "kcal": 505.89, "fat": 26.01, "sat": 5.52, "carbs": 33.15, "sugars": 2.52, "fibre": 4.44, "protein": 36.77, "sodium": 494.43 },
+    { "name": "Poached Salmon", "cat": "fish_dishes", "size": "wg", "kcal": 623.99, "fat": 31.26, "sat": 6.76, "carbs": 41.33, "sugars": 3.08, "fibre": 5.58, "protein": 46.55, "sodium": 521.38 },
+
+    { "name": "Roasted Salmon and spicy lentils", "cat": "fish_dishes", "size": "wl", "kcal": 390, "fat": 19.5, "sat": 4.1, "carbs": 25.2, "sugars": 3.4, "fibre": 9.7, "protein": 31.6, "sodium": 264 },
+    { "name": "Roasted Salmon and spicy lentils", "cat": "fish_dishes", "size": "ml", "kcal": 527.08, "fat": 26.63, "sat": 5.72, "carbs": 30.63, "sugars": 4.31, "fibre": 11.85, "protein": 44.8, "sodium": 548.62 },
+    { "name": "Roasted Salmon and spicy lentils", "cat": "fish_dishes", "size": "wg", "kcal": 659.12, "fat": 32.1, "sat": 7.02, "carbs": 39.72, "sugars": 5.87, "fibre": 15.43, "protein": 57.24, "sodium": 617.22 },
+
+    { "name": "Roasted Salmon Cajun", "cat": "fish_dishes", "size": "wl", "kcal": 400.17, "fat": 26.7, "sat": 5.1, "carbs": 18.6, "sugars": 1.3, "fibre": 3.9, "protein": 25.15, "sodium": 239.98 },
+    { "name": "Roasted Salmon Cajun", "cat": "fish_dishes", "size": "ml", "kcal": 523.92, "fat": 30.99, "sat": 6.36, "carbs": 24.68, "sugars": 1.56, "fibre": 4.78, "protein": 34.29, "sodium": 269.58 },
+    { "name": "Roasted Salmon Cajun", "cat": "fish_dishes", "size": "wg", "kcal": 700.87, "fat": 36.98, "sat": 7.78, "carbs": 44.09, "sugars": 2.21, "fibre": 7.12, "protein": 44.96, "sodium": 305.93 },
+
+    { "name": "Grilled Halloumi", "cat": "sides", "kcal": 337.68, "fat": 28, "sat": 18.28, "carbs": 2, "sugars": 1, "fibre": 0, "protein": 21, "sodium": 850.04 },
+    { "name": "Grilled Tofu", "cat": "sides", "kcal": 233.68, "fat": 14, "sat": 2.08, "carbs": 5.85, "sugars": 0.9, "fibre": 1.5, "protein": 22.5, "sodium": 19.54 },
+    { "name": "New potatoes", "cat": "sides", "kcal": 149.3, "fat": 2.186, "sat": 0.28, "carbs": 29.02, "sugars": 1.378, "fibre": 3.81, "protein": 3.46, "sodium": 13.059 },
+    { "name": "Broccoli", "cat": "sides", "kcal": 63.18, "fat": 2.52, "sat": 0.41, "carbs": 9.1, "sugars": 1.82, "fibre": 4.29, "protein": 3.12, "sodium": 39.04 },
+    { "name": "Spinach", "cat": "sides", "kcal": 52.18, "fat": 2.6, "sat": 0.43, "carbs": 5.7, "sugars": 0.6, "fibre": 3.6, "protein": 4.35, "sodium": 118.54 },
+    { "name": "Green Peas & Carrots", "cat": "sides", "kcal": 103.08, "fat": 2.42, "sat": 0.38, "carbs": 17.15, "sugars": 7.28, "fibre": 5.53, "protein": 4.42, "sodium": 51.84 }
+  ]
+}
