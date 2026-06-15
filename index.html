@@ -1112,6 +1112,12 @@ function parseMacroScreenshot(ocrText) {
   // als Müll eintragen (onImport zeigt dann den OCR-Text zur Diagnose).
   if (!kcalComputed && kcal > 0 && computedKcal > kcal * 3 + 1500) return null;
 
+  // 4) Fett an die angezeigten Rest-Kalorien angleichen: ergeben die Rest-Makros zusammen MEHR kcal als "Übrig"
+  //    (Rundung / Ballaststoff-Kalorien / App-Inkonsistenz), Fett so weit senken (≥0), dass 4·C + 4·P + 9·F = Übrig aufgeht.
+  if (!kcalComputed && kcal > 0 && (4*carbs + 4*protein + 9*fat) > kcal) {
+    fat = Math.max(0, Math.round((kcal - 4*carbs - 4*protein) / 9 * 10) / 10);
+  }
+
   const r = { carbs, protein, fat, kcal };
   if (kcalComputed) r.kcalComputed = true;
   return r;

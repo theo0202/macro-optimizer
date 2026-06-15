@@ -562,6 +562,10 @@ const OCR_CASES = [
   // REALER FEHLER: OCR liest das Einheiten-"g" als "9" und haengt es ans Total ("341 g"->"3419", "184 g"->"1849")
   // -> aufgeblaehte Restmakros (3365/1797). g->9-Korrektur muss via Uebrig (2267) auf 287/132/60 zurueckrechnen.
   { name: "g_merged_as_9_recovery", t: "Gegessen Ubrig Verbrannt\n533 2.267 0\nKohlenhydrate 54 / 3419\nEiweiss 52 / 1849\nFett 9 / 69 g\nFruhstuck 533 / 840 kcal\nMittagessen 0 / 1.120 kcal", e: { carbs: 287, protein: 132, fat: 60, kcal: 2267 } },
+  // Fett-Angleichung: Rest-Makros ergeben mehr kcal als "Übrig" (1250 > 1000) -> Fett runter auf (1000-400-400)/9 = 22.2
+  { name: "fat_trimmed_to_fit_kcal", t: "Gegessen Ubrig Verbrannt\n50 1.000 0\nKohlenhydrate 0 / 100 g\nEiweiss 0 / 100 g\nFett 0 / 50 g", e: { carbs: 100, protein: 100, fat: 22.2, kcal: 1000 } },
+  // Carbs+Protein allein schon über "Übrig" (1600 > 1000) -> Fett auf 0 (mehr geht über Fett nicht)
+  { name: "fat_trimmed_to_zero", t: "Gegessen Ubrig Verbrannt\n50 1.000 0\nKohlenhydrate 0 / 200 g\nEiweiss 0 / 200 g\nFett 0 / 50 g", e: { carbs: 200, protein: 200, fat: 0, kcal: 1000 } },
 ];
 for (const c of OCR_CASES) {
   const r = T.parseMacroScreenshot(c.t) || {};
