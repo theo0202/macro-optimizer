@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, sortResults };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, sortResults };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -389,6 +389,84 @@ check("GDK 'No rice bowl' filtert rice_bowls-Kategorie", rgNRB.every(r => r.item
 // Beide Schalter kombiniert
 const rgBoth = T.optimizeGDK(t12, "macros", {}, gdkAll, 3, true, true);
 check("GDK beide Schalter: keine Sauce UND keine Rice Bowls", rgBoth.every(r => r.items.every(x => !x.sauce && x.cat !== "rice_bowls")), true);
+
+// ── Atis (atisfood.com — Build Your Own Power Plate; Bowl-Flow folgt) ──
+check("Atis bases (8: 4 greens + 4 carbs)", T.ATIS.bases.length, 8);
+check("Atis basesL (4 large greens, reserviert)", T.ATIS.basesL.length, 4);
+check("Atis mixed salads (4)", T.ATIS.mixed.length, 4);
+check("Atis ingredients (16)", T.ATIS.ingredients.length, 16);
+check("Atis proteins (8)", T.ATIS.proteins.length, 8);
+check("Atis sauces (18: 3 Saucen + 15 Dressings)", T.ATIS.sauces.length, 18);
+check("Atis saucesL (12 large Dressings, reserviert)", T.ATIS.saucesL.length, 12);
+check("Atis crunches (7)", T.ATIS.crunches.length, 7);
+check("Atis addons (9)", T.ATIS.addons.length, 9);
+check("Atis doublePlate Bases (4 Carbs)", T.ATIS.bases.filter(x => x.doublePlate).length, 4);
+check("Atis doublePlate Mixed (alle 4)", T.ATIS.mixed.every(x => x.doublePlate), true);
+check("Atis Wholegrain Rice kcal", T.ATIS.bases.find(x => x.id === "wholegrain_rice").kcal, 67);
+check("Atis Garlic Butter Steak Protein", T.ATIS.proteins.find(x => x.id === "garlic_butter_steak").protein, 42);
+check("Atis Blackened Chicken kcal (Tabelle, nicht Deliveroo 204)", T.ATIS.proteins.find(x => x.id === "blackened_chicken").kcal, 260);
+// Deliveroo-Renames angewendet
+check("Atis Rename: Sesame Gochujang Cauliflower", !!T.ATIS.mixed.find(x => x.name === "Sesame Gochujang Cauliflower"), true);
+check("Atis Rename: Roasted Broccoli", !!T.ATIS.ingredients.find(x => x.name === "Roasted Broccoli"), true);
+check("Atis Rename: Avocado (Add-on)", !!T.ATIS.addons.find(x => x.name === "Avocado"), true);
+
+const tA = { protein: 50, carbs: 60, fat: 25, kcal: 665, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const effA = it => (it.doublePlate ? 2 : 1) * it.kcal; // Power Plate: unterstrichene Items ×2
+
+// Default (beide Schalter AN): Struktur-Regeln + Doppelportions-Summe
+const ra = T.optimizeAtis(tA, "macros", {}, "plate", true, true);
+let aSumOk = true, aStructOk = true;
+for (const r of ra) {
+  if (r.bases.length < 1 || r.bases.length > 2) aStructOk = false;
+  if (!r.mixed) aStructOk = false;
+  if (r.ing.length < 1 || r.ing.length > 2) aStructOk = false;
+  if (r.prots.length > 3) aStructOk = false;
+  const comps = [...r.bases, r.mixed, ...r.ing, ...r.prots, r.sauce, r.crunch, ...r.addons].filter(Boolean);
+  const exp = Math.round(comps.reduce((s, x) => s + effA(x), 0) * 10) / 10;
+  if (!approx(r.nutrition.kcal, exp)) aSumOk = false;
+}
+check("Atis Power Plate Struktur (1-2 Bases, 1 Mixed, 1-2 Ingr., ≤3 Prot.)", aStructOk, true);
+check("Atis Nutrition == Summe MIT Doppelportion (×2 unterstrichen)", aSumOk, true);
+check("Atis liefert Ergebnisse", ra.length > 0, true);
+check("Atis Default-Schalter: nie Sauce/Crunch", ra.every(r => !r.sauce && !r.crunch), true);
+
+// doublePlate wirklich ×2 (Ergebnis mit Wholegrain Rice trägt 134, nicht 67)
+const withRice = ra.find(r => r.bases.some(b => b.id === "wholegrain_rice"));
+if (withRice) check("Atis Wholegrain Rice zählt ×2 (134)", effA(withRice.bases.find(b => b.id === "wholegrain_rice")), 134);
+
+// Hoch-Fett-Ziel macht Dressings + Crunches attraktiv → Gegenproben
+const tFat = { protein: 40, carbs: 45, fat: 70, kcal: 970, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const raOff = T.optimizeAtis(tFat, "macros", {}, "plate", false, false);
+check("Atis ohne Schalter: Sauce erscheint", raOff.some(r => r.sauce), true);
+check("Atis ohne Schalter: Crunch erscheint", raOff.some(r => r.crunch), true);
+// Summen auch im Schalter-aus-Modus korrekt (inkl. Sauce/Crunch/Add-ons)
+let aSumOk2 = true;
+for (const r of raOff) {
+  const comps = [...r.bases, r.mixed, ...r.ing, ...r.prots, r.sauce, r.crunch, ...r.addons].filter(Boolean);
+  const exp = Math.round(comps.reduce((s, x) => s + effA(x), 0) * 10) / 10;
+  if (!approx(r.nutrition.kcal, exp)) aSumOk2 = false;
+}
+check("Atis Nutrition == Summe (Schalter aus, mit Sauce/Crunch)", aSumOk2, true);
+
+// Nur "No sauce" (noSauce=true, noCrunch=false): keine Sauce, Crunch erlaubt
+const raNoSauce = T.optimizeAtis(tFat, "macros", {}, "plate", false, true);
+check("Atis 'No sauce': keine Sauce", raNoSauce.every(r => !r.sauce), true);
+check("Atis 'No sauce': Crunch weiterhin möglich", raNoSauce.some(r => r.crunch), true);
+
+// Nur "No crunch" (noCrunch=true, noSauce=false): kein Crunch, Sauce erlaubt
+const raNoCrunch = T.optimizeAtis(tFat, "macros", {}, "plate", true, false);
+check("Atis 'No crunch': kein Crunch", raNoCrunch.every(r => !r.crunch), true);
+check("Atis 'No crunch': Sauce weiterhin möglich", raNoCrunch.some(r => r.sauce), true);
+
+// Pool-Ausschlüsse (= aktueller Deliveroo-Power-Plate-Flow)
+const raAll = [...ra, ...raOff, ...raNoSauce, ...raNoCrunch];
+check("Atis: Kale + Cabbage Mix nie als Base", raAll.every(r => r.bases.every(b => b.id !== "kale_cabbage_mix")), true);
+check("Atis: Focaccia nie als Add-on", raAll.every(r => r.addons.every(a => a.id !== "the_dusty_knuckle_focaccia")), true);
+check("Atis: Pesto/Lemon Oregano/einzelnes Olive Oil nie als Sauce",
+  raAll.every(r => !r.sauce || !["pesto_vinaigrette", "lemon_oregano_dressing", "the_olive_oil_guy_olive_oil", "balsamic_vinegar"].includes(r.sauce.id)), true);
+
+// Bowl-Modus noch nicht implementiert (Daten vorhanden, Flow ausstehend)
+check("Atis Bowl-Modus liefert (noch) keine Ergebnisse", T.optimizeAtis(tA, "macros", {}, "bowl", false, false).length, 0);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
