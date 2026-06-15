@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeAll, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizeAll, sortResults, parseMacroScreenshot };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -527,7 +527,7 @@ check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -676,6 +676,36 @@ check("Pepes Plain: Makros == reine Basis", tsPl ? approx(tsPl.items[0].kcal, ba
 const rAllPep = T.optimizeAll({ protein: 38, carbs: 40, fat: 14, kcal: 438, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
 check("All: alle _resto-Werte gültig (inkl. pepes)", rAllPep.every(r => RESTOS.includes(r._resto)), true);
 check("All: Pepe's-Treffer nutzt Plain (kein gebasteter Flavour-Name)", rAllPep.filter(r => r._resto === "pepes").every(r => r.items.every(x => !/\((Lemon & Herb|Mango & Lime|Mild|Hot|Extra Hot|Extreme)\)/.test(x.name))), true);
+
+// ── Five Guys (Build Your Own: komponierte Mains + Fries + freie Toppings) ──
+check("FiveGuys Mains (17: 8 Burger + 4 Hot Dogs + 5 Sandwiches)", T.FIVEGUYS.mains.length, 17);
+check("FiveGuys Fries (10: 4 Plain + 4 Cajun + 2 Loaded)", T.FIVEGUYS.fries.length, 10);
+check("FiveGuys Toppings (18)", T.FIVEGUYS.toppings.length, 18);
+// Komposition: Hamburger = 2 Patty(195) + Bun(238) = 628; Cheeseburger = +2 Cheese(64) = 756; Little Hamburger = 1 Patty + Bun = 433
+check("FiveGuys Hamburger komponiert = 628 kcal (2 Patties + Bun)", T.FIVEGUYS.mains.find(m => m.name === "Hamburger").kcal, 628);
+check("FiveGuys Cheeseburger = 756 kcal (2 Patties + Bun + 2 Cheese)", T.FIVEGUYS.mains.find(m => m.name === "Cheeseburger").kcal, 756);
+check("FiveGuys Little Hamburger = 433 kcal (1 Patty + Bun)", T.FIVEGUYS.mains.find(m => m.name === "Little Hamburger").kcal, 433);
+check("FiveGuys Hamburger Protein = 42 (2x18 + Bun 6)", T.FIVEGUYS.mains.find(m => m.name === "Hamburger").protein, 42);
+check("FiveGuys Cheeseburger Salt = 2.27 (2x0.13 + Bun 0.49 + 2x0.76)", T.FIVEGUYS.mains.find(m => m.name === "Cheeseburger").salt, 2.27);
+// Cajun Fries = Little Fries(659) + Cajun Seasoning(20) = 679
+check("FiveGuys Little Cajun Fries = 679 kcal", T.FIVEGUYS.fries.find(f => f.name === "Little Cajun Fries").kcal, 679);
+check("FiveGuys hat volle 8 Makros (fibre vorhanden)", T.FIVEGUYS.mains.every(m => typeof m.fibre === "number"), true);
+
+const rFG = T.optimizeFiveGuys({ protein: 40, carbs: 45, fat: 30, kcal: 610, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
+check("FiveGuys liefert Ergebnisse (1..20)", rFG.length > 0 && rFG.length <= 20, true);
+check("FiveGuys jedes Ergebnis kind=fiveguys + min. 1 von main/fries", rFG.every(r => r.kind === "fiveguys" && (r.main || r.fries)), true);
+check("FiveGuys Nutrition == main + fries + toppings", rFG.every(r => {
+  const exp = Math.round(((r.main ? r.main.kcal : 0) + (r.fries ? r.fries.kcal : 0) + r.tops.reduce((s, x) => s + x.kcal, 0)) * 10) / 10;
+  return approx(r.nutrition.kcal, exp);
+}), true);
+check("FiveGuys Toppings nur auf einem Main (keine Toppings ohne Main)", rFG.every(r => r.main || r.tops.length === 0), true);
+check("FiveGuys nach Score sortiert", rFG.every((r, i) => i === 0 || rFG[i - 1].score <= r.score), true);
+// kleines Ziel -> eher Little/kein Fries; grosses Ziel -> grosse Optionen
+const rFGsmall = T.optimizeFiveGuys({ protein: 24, carbs: 38, fat: 21, kcal: 433, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
+check("FiveGuys kleines Ziel trifft Little Hamburger (Top 3)", rFGsmall.slice(0, 3).some(r => r.main && r.main.name === "Little Hamburger"), true);
+// All-restaurants: fiveguys gueltig + mind. 1 von main/fries
+const rAllFG = T.optimizeAll({ protein: 45, carbs: 60, fat: 35, kcal: 735, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
+check("All: fiveguys-Treffer gueltig (kind + main/fries)", rAllFG.filter(r => r._resto === "fiveguys").every(r => r.kind === "fiveguys" && (r.main || r.fries)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
