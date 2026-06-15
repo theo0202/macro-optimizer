@@ -20,6 +20,8 @@
 <div id="root"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<!-- Tesseract.js (OCR) für den Screenshot-Import; defer = blockiert den App-Start nicht, ist beim Klick bereit -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js" defer></script>
 <script>
 const { useState, useMemo, createElement: h } = React;
 
@@ -1004,6 +1006,101 @@ function sortResults(arr, sortBy, tgts) {
     Math.abs(a.nutrition[sortBy]-tgt)-Math.abs(b.nutrition[sortBy]-tgt)||a.score-b.score);
 }
 
+// ── Screenshot-Import (OCR) ──
+// Liest die "Übersicht" eines Makro-Trackers (z.B. YAZIO) aus einem hochgeladenen Screenshot und füllt die
+// VERBLEIBENDEN Makros (Total − Gegessen) + die "Übrig"-Kalorien automatisch ein. Alles UNTER der Übersicht
+// (Frühstück/Mittagessen … in kcal) wird ignoriert: die Makro-Balken enden auf "g", die Meal-Rows auf "kcal".
+// parseMacroScreenshot ist rein (Text → {carbs,protein,fat,kcal}|null) und in tests.js abgesichert.
+function parseMacroScreenshot(ocrText) {
+  if (ocrText == null || typeof ocrText !== "string") return null;
+  const norm = s => String(s).toLowerCase().replace(/ü/g,"u").replace(/ö/g,"o").replace(/ä/g,"a").replace(/ß/g,"ss");
+  const stripTh = n => String(n).replace(/[.,](?=\d{3}\b)/g, "");       // 2.267 -> 2267, echte Dezimale (12,4) bleiben
+  const toInt = n => { const c = stripTh(n).replace(/[^\d]/g,""); return c==="" ? null : parseInt(c,10); };
+  const lines = ocrText.split(/\r?\n/);
+
+  // 1) Makro-Paare "N / M g". Slash auch als | I l ) ] verlesbar; \s matcht \n (Paar darf umbrechen).
+  //    Trailing "g" (nicht "kcal"/"kg") schließt Meal-Rows aus. Erste 3 Treffer = Carbs, Protein, Fat.
+  const SEP = "[\\/|Il\\)\\]]", NUM = "\\d[\\d.,]*";
+  const pairSrc = "(" + NUM + ")\\s*" + SEP + "\\s*(" + NUM + ")\\s*g(?![a-z])";
+  const pairRe = new RegExp(pairSrc, "gi");
+  const macros = []; let m;
+  while ((m = pairRe.exec(ocrText)) !== null) {
+    const eaten = toInt(m[1]), total = toInt(m[2]);
+    if (eaten == null || total == null || total <= 0) continue;
+    macros.push({ eaten, total });
+    if (macros.length >= 3) break;
+  }
+  if (macros.length < 3) return null;
+  const carbs   = Math.max(0, macros[0].total - macros[0].eaten);
+  const protein = Math.max(0, macros[1].total - macros[1].eaten);
+  const fat     = Math.max(0, macros[2].total - macros[2].eaten);
+  const computedKcal = carbs*4 + protein*4 + fat*9;
+
+  // 2) "Übrig"-Kalorien — angezeigten Wert bevorzugen (Reihenfolge der Top-Zahlen: Gegessen, Übrig, Verbrannt).
+  const isMacroBar = ln => new RegExp(pairSrc, "i").test(ln);
+  const isKcal = ln => /kcal/i.test(ln);
+  const numsIn = ln => { const out=[], re=/\d[\d.,]*/g; let mm; while((mm=re.exec(ln))!==null){const v=toInt(mm[0]); if(v!=null)out.push(v);} return out; };
+  const hasUbrig = ln => /(ubrig|obrig|\bbrig\b)/.test(norm(ln));
+
+  let posKcal = null;
+  for (let i=0;i<lines.length && posKcal==null;i++){                 // Label + Zahl in DERSELBEN Zeile
+    if (!hasUbrig(lines[i]) || isMacroBar(lines[i])) continue;
+    const nb = numsIn(lines[i]); if (nb.length) posKcal = Math.max.apply(null, nb);
+  }
+  if (posKcal==null) for (let j=0;j<lines.length && posKcal==null;j++){  // Zahlen in Nachbarzeile ±1..2 → Index 1 = Übrig
+    if (!hasUbrig(lines[j])) continue;
+    const cand=[]; for(let d=1;d<=2;d++){ if(j+d<lines.length)cand.push(j+d); if(j-d>=0)cand.push(j-d); }
+    for (const ci of cand){ if(posKcal!=null)break; const ln=lines[ci]; if(isMacroBar(ln)||isKcal(ln))continue;
+      const ns=numsIn(ln); if(!ns.length)continue; posKcal = ns.length>=2 ? ns[1] : ns[0]; }
+  }
+
+  // Sicherheitsnetz: zerfällt der Ring (533 / 2.267 / 0) bei der OCR in getrennte Zeilen, erwischt die
+  // Positionslogik evtl. die "0". Dann aus den Top-Zahlen (keine Makro/kcal-Zeile, 100..9999) die nehmen,
+  // die dem berechneten Rest (computedKcal) am nächsten ist — der angezeigte "Übrig"-Wert liegt da immer nah dran.
+  const cands = [];
+  for (const ln of lines){ if(isMacroBar(ln)||isKcal(ln))continue; for(const v of numsIn(ln)) if(v>=100&&v<=9999) cands.push(v); }
+  let best = null;
+  for (const v of cands) if (best==null || Math.abs(v-computedKcal) < Math.abs(best-computedKcal)) best = v;
+
+  let kcal, kcalComputed = false;
+  if (posKcal == null) { if (best != null) kcal = best; else { kcal = computedKcal; kcalComputed = true; } }
+  else if (posKcal < 0.6*computedKcal && best != null && Math.abs(best-computedKcal) < Math.abs(posKcal-computedKcal)) kcal = best;
+  else kcal = posKcal;
+
+  const r = { carbs, protein, fat, kcal };
+  if (kcalComputed) r.kcalComputed = true;
+  return r;
+}
+
+// Bild vor der OCR verkleinern (iOS-Speicherlimit + Tempo + bessere Genauigkeit); gibt Blob oder Original zurück.
+function downscaleImage(file, maxSide) {
+  return new Promise(resolve => {
+    try {
+      const url = URL.createObjectURL(file), im = new Image();
+      im.onload = () => {
+        URL.revokeObjectURL(url);
+        const mx = Math.max(im.width, im.height), scale = mx > maxSide ? maxSide/mx : 1;
+        if (scale >= 1) { resolve(file); return; }
+        const cv = document.createElement("canvas");
+        cv.width = Math.round(im.width*scale); cv.height = Math.round(im.height*scale);
+        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+        cv.toBlob(b => resolve(b || file), "image/png");
+      };
+      im.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      im.src = url;
+    } catch (e) { resolve(file); }
+  });
+}
+// OCR eines Screenshots → geparste Makros (oder null). Tesseract.js kommt per <script>-CDN als globales Tesseract.
+async function ocrMacroScreenshot(file, onProgress) {
+  if (typeof Tesseract === "undefined") throw new Error("OCR library not loaded yet");
+  const img = await downscaleImage(file, 2000);
+  const { data } = await Tesseract.recognize(img, "deu", {
+    logger: msg => { if (msg.status === "recognizing text" && onProgress) onProgress(msg.progress); }
+  });
+  return parseMacroScreenshot(data.text);
+}
+
 // Standard salad = all except jalapenos, sweetcorn, olives
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
@@ -1182,8 +1279,8 @@ function optimizeGDK(t, mode, p, activeCats, maxN, noSauce, noRiceBowl) {
 // The Fitness Chef (TFC): à la carte wie Itsu/Pret/Nando's/Wagamama/GDK (AC-Alias). Dishes kommen in 3 Größen
 // (size wl/ml/wg) als eigene Items — der Optimizer wählt automatisch die passende Größe fürs Makroziel.
 // Sides ohne Größe. Kein Schalter; nur Kategorie-Chips (Meat Dishes / Fish Dishes / Sides) + Max-Items.
-function optimizeTFC(t, mode, p, activeCats, maxN) {
-  const pool=TFC.items.filter(x=>activeCats[x.cat]);
+function optimizeTFC(t, mode, p, activeCats, maxN, noFish) {
+  const pool=TFC.items.filter(x=>activeCats[x.cat]&&!(noFish&&x.cat==="fish_dishes"));
   return alaCarteCombos(t,mode,p,pool,maxN);
 }
 
@@ -1518,7 +1615,10 @@ function App() {
   // The Fitness Chef (à la carte, AC-Alias)
   const [tfcCats,setTFCC]=useState(()=>{const o={};TFC.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxTFC,setMaxTFC]=useState(5);
+  const [noFish,setNoFish]=useState(true);
   const [selTFC,setSelTFC]=useState(null);
+  // Screenshot-Import (OCR)
+  const [imp,setImp]=useState({busy:false,msg:"",err:false});
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -1526,6 +1626,21 @@ function App() {
   const toggleP=k=>{
     const opp={hp:"lp",lp:"hp",hc:"lc",lc:"hc",hf:"lf",lf:"hf"};
     setPr(p=>({...p,[k]:!p[k],...(p[k]?{}:{[opp[k]]:false})}));
+  };
+
+  // Screenshot-Import: OCR der "Übersicht" → verbleibende Makros (Total−Gegessen) + "Übrig"-kcal automatisch eintragen
+  const onImport=async e=>{
+    const file=e.target.files&&e.target.files[0]; e.target.value="";
+    if(!file)return;
+    setImp({busy:true,msg:"Reading screenshot…",err:false});
+    try{
+      const r=await ocrMacroScreenshot(file,p=>setImp({busy:true,msg:"Reading… "+Math.round(p*100)+"%",err:false}));
+      if(!r){setImp({busy:false,msg:"Couldn't find the macros — make sure the overview (with the macro bars) is visible, or enter them manually.",err:true});return;}
+      setTC(r.carbs);setTP(r.protein);setTF(r.fat);setTK(r.kcal);
+      setImp({busy:false,msg:"Imported  C "+r.carbs+" · P "+r.protein+" · F "+r.fat+" · "+r.kcal+" kcal"+(r.kcalComputed?" (kcal estimated)":""),err:false});
+    }catch(err){
+      setImp({busy:false,msg:"OCR failed — needs internet on first use (downloads the recogniser). Try again or enter manually.",err:true});
+    }
   };
 
   const targets=useMemo(()=>{
@@ -1546,7 +1661,7 @@ function App() {
   const resultsWaga=useMemo(()=>optimizeWaga(targets,mode,prefs,wagCats,maxW,noRamen),[targets,mode,prefs,wagCats,maxW,noRamen]);
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
   const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
-  const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC):[],[resto,targets,mode,prefs,tfcCats,maxTFC]);
+  const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
   const AC=resto==="itsu"?{D:ITSU,sel:selI,setSel:setSelI,res:resultsItsu,maxN:maxIt}
          :resto==="pret"?{D:PRET,sel:selP,setSel:setSelP,res:resultsPret,maxN:maxP}
@@ -1606,6 +1721,19 @@ function App() {
       h("div",{style:{display:"flex",gap:8,marginBottom:16}},
         btn("macros","Enter macros",mode,setMode),
         btn("calories","Calories + preferences",mode,setMode)
+      ),
+
+      // Screenshot-Import (auto-fill remaining macros + calories via on-device OCR)
+      h("div",{style:{marginBottom:16}},
+        h("label",{style:{display:"inline-flex",alignItems:"center",gap:8,cursor:imp.busy?"progress":"pointer",
+            padding:"10px 14px",borderRadius:8,border:"1px solid #2a2a2a",background:"#151515",
+            color:"#bbb",fontSize:12,fontWeight:600,fontFamily:S.font,opacity:imp.busy?0.65:1}},
+          h("span",{style:{fontSize:15}},"📷"),
+          imp.busy?imp.msg:"Import from screenshot",
+          h("input",{type:"file",accept:"image/*",disabled:imp.busy,onChange:onImport,style:{display:"none"}})
+        ),
+        imp.msg&&!imp.busy&&h("div",{style:{marginTop:6,fontSize:11,fontFamily:S.mono,color:imp.err?"#f87171":"#4ade80"}},
+          (imp.err?"":"✓ ")+imp.msg)
       ),
 
       // Input
@@ -1784,6 +1912,8 @@ function App() {
           h("input",{type:"checkbox",checked:aNoSauce,onChange:e=>setANoSauce(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="atis"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:aNoCrunch,onChange:e=>setANoCrunch(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No crunch"),
+        resto==="tfc"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noCheese,onChange:e=>setNC(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

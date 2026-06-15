@@ -15,6 +15,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - Vanilla `createElement` calls (kein JSX, kein Bundler)
 - Inline Styles, kein CSS Framework
 - Fonts: DM Sans + DM Mono via Google Fonts CDN
+- Tesseract.js v5 via CDN (`<script defer>`) für client-seitige OCR (Screenshot-Import) — kein Backend, kein API-Key
 
 ## Dev-Umgebung (Windows)
 - Python nur über `py -3` aufrufbar (kein `python` Alias), openpyxl installiert
@@ -180,7 +181,7 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - Wie Itsu/Pret/Nando's/Wagamama/GDK: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
 - Kategorien (3): Meat Dishes (18), Fish Dishes (9), Sides (6)
 - **Dishes in 3 Größen** (Weight Loss / Maintain-Lean / Weight Gain) als eigene Items (`size` wl/ml/wg, Größe im Namen) — der Optimizer wählt die zum Makroziel passende Größe automatisch (z.B. kleines Ziel → Weight Loss). Sides haben keine Größe
-- **Keine Exclude-Schalter** — nur Kategorie-Chips + Max-Items. Ein Größen-Filter (nur wl/ml/wg zulassen) wäre über das `size`-Feld leicht nachrüstbar, falls gewünscht
+- **Schalter "No fish"**: schließt die Kategorie fish_dishes aus (Default AN). Sonst nur Kategorie-Chips + Max-Items. Ein Größen-Filter (nur wl/ml/wg zulassen) wäre über das `size`-Feld leicht nachrüstbar, falls gewünscht
 - Standard-Chips: alle an
 
 ## Bestellablauf Urban Greens (Deliveroo)
@@ -214,7 +215,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch".
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish".
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -236,7 +237,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 5 Items, "No Sauce" + "No rice bowl" AN
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
 - **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
-- **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, keine Schalter; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
+- **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -251,7 +252,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
 4. Restaurant-Tabs (Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef)
-5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items ohne Schalter (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
+5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items + "No fish" (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
 
@@ -269,6 +270,16 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 ## Optionale Constraints
 - Fibre Min/Max (g), Salt Min/Max (g)
 - Aufklappbar unter "Fibre / Salt ▾"
+
+## Screenshot-Import (OCR) — Ziele aus einem Makro-Tracker übernehmen
+Button **"Import from screenshot"** (unter den Modus-Tabs, in beiden Modi sichtbar): User lädt einen Screenshot seiner Tracker-App (z.B. YAZIO) hoch → client-seitige OCR liest die **"Übersicht"** und trägt automatisch ein:
+- **Verbleibende Makros** = Total − Gegessen je Balken → Carbs/Protein/Fat-Felder (Beispiel: 341−54=287, 184−52=132, 69−9=60)
+- **Verbleibende Kalorien** = der angezeigte **"Übrig"**-Wert → Kalorienfeld (Beispiel: 2267; NICHT berechnet, der echte Anzeigewert)
+- Alles UNTER der Übersicht (Frühstück/Mittagessen … in kcal) wird IGNORIERT — Makro-Balken enden auf "g", Meal-Rows auf "kcal"
+- **OCR**: Tesseract.js v5 via CDN (`tesseract.js@5.1.1`, `<script defer>`), Sprache "deu", on-device (kein Backend/API-Key). Erster Lauf lädt das Modell (~6 MB, danach IndexedDB-Cache → offline nutzbar). Bild wird vor der OCR auf max. 2000px verkleinert (iOS-Speicher). `data.text` wird zeilenweise geparst (keine Bounding-Boxes nötig)
+- **`parseMacroScreenshot(text)`** — rein, in index.html, von tests.js mit 15 Fällen + 3 Negativfällen abgesichert: erste 3 "N / M g"-Paare = C/P/F (remaining = M−N, clamp ≥0; Trailing-"g" schließt kcal/kg-Zeilen aus); "Übrig"-kcal über Positionslogik (Top-Zahlen Gegessen/Übrig/Verbrannt → Index 1) PLUS **Sicherheitsnetz**: zerfällt der Ring (533/2.267/0) bei der OCR in getrennte Zeilen und die Positionslogik erwischt die "0", wird stattdessen die Top-Zahl genommen, die dem berechneten Rest (C·4+P·4+F·9) am nächsten liegt. Fallback wenn Übrig unlesbar: berechneter Rest, `kcalComputed:true`
+- Toleriert OCR-Rauschen: Slash als `| I l ) ]`, "Übrig"→"Ubrig/Obrig/brig", fehlende "0", Tausenderpunkt (2.267→2267), Paar über Zeilenumbruch
+- Ergebnis landet in den normalen (editierbaren) Ziel-Feldern + kurze Import-Zusammenfassung zum Gegenchecken. Browser-Wrapper `ocrMacroScreenshot(file)` + `downscaleImage` ebenfalls in index.html (nur `parseMacroScreenshot` ist getestet, da rein)
 
 ## Optimizer-Algorithmen
 ### Subway (`optimize`)
@@ -298,7 +309,7 @@ Pool-Bildung:
 - **Nando's**: aktive Chips MINUS Desserts/Lunch Fix/Sharing Platters (`NANDOS_SWITCH_CATS`) MINUS Saucen (`sauce:true`) MINUS Grilled Pineapple MINUS Wings/Livers (`wings:true`) MINUS Corn (`corn:true`) — je nach Schalter; Drinks sind nicht in den Daten
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
-- **TFC**: nur aktive Kategorie-Chips (kein Schalter). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
+- **TFC**: aktive Kategorie-Chips MINUS fish_dishes (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
 
 UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK & The Fitness Chef teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
