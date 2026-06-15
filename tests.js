@@ -719,7 +719,9 @@ check("FiveGuys ohne 'No sauce': Sauce/Mayo moeglich (Gegenprobe)", T.optimizeFi
 // Bun-Wahl: low-carb-Ziel -> Bowl/Lettuce Wrap erscheint
 check("FiveGuys low-carb -> Bowl/Lettuce Wrap erscheint", T.optimizeFiveGuys({ protein: 50, carbs: 8, fat: 35, kcal: 547, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true).some(r => r.bun === "bowl" || r.bun === "wrap"), true);
 // Extra patties: high-protein-Ziel -> Extra Patties moeglich
-check("FiveGuys high-protein -> Extra Patties erscheint", T.optimizeFiveGuys({ protein: 75, carbs: 40, fat: 45, kcal: 865, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true).some(r => r.extraPatties > 0), true);
+const rHiPro = T.optimizeFiveGuys({ protein: 75, carbs: 40, fat: 45, kcal: 865, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
+check("FiveGuys high-protein -> Extra Patties erscheint", rHiPro.some(r => r.extraPatties > 0), true);
+check("FiveGuys Extra Patties nur bei regulaeren Burgern (nie Little)", rHiPro.every(r => !(r.main && /^Little/.test(r.main.name)) || r.extraPatties === 0), true);
 const rFGsmall = T.optimizeFiveGuys({ protein: 24, carbs: 38, fat: 21, kcal: 433, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
 check("FiveGuys kleines Ziel trifft Little Hamburger (Top 5)", rFGsmall.slice(0, 5).some(r => r.main && r.main.name === "Little Hamburger"), true);
 // All-restaurants: fiveguys gueltig

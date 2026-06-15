@@ -1541,11 +1541,13 @@ function optimizeFiveGuys(t, mode, p, noSauce) {
   const tops=FIVEGUYS.toppings.filter(x=>!(noSauce && x.sauce));
   const friesL=[null,...FIVEGUYS.fries];
   const paid=[{name:"Extra Patty",comp:M.patty},{name:"Cheese",comp:M.cheese},{name:"Bacon",comp:M.bacon}];
-  // Konfigurierte Mains: Burger × Bun(Bun/Bowl/Wrap) × ExtraPatties(0–2); Hot Dogs/Sandwiches einfach; + "Fries only"
+  // Konfigurierte Mains: Burger × Bun(Bun/Bowl/Wrap) × ExtraPatties; Hot Dogs/Sandwiches einfach; + "Fries only"
+  // Extra Patties gibt es auf Deliveroo NUR bei den regulaeren Burgern, NICHT bei den "Little"-Burgern.
   const cfgs=[];
   for(const m of FIVEGUYS.mains){
     if(m.group==="burgers"){
-      for(const bun of ["bun","bowl","wrap"]) for(let ep=0;ep<=2;ep++){
+      const maxEp=/^Little/.test(m.name)?0:2;
+      for(const bun of ["bun","bowl","wrap"]) for(let ep=0;ep<=maxEp;ep++){
         const parts=[m];
         if(bun==="bowl")parts.push(negBun);
         else if(bun==="wrap"){parts.push(negBun);parts.push(M.lettuce);}
