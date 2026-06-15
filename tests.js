@@ -532,7 +532,7 @@ check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, t
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
 check("All: mehrere Restaurants vertreten (>=3)", new Set(rAll.map(r => r._resto)).size >= 3, true);
-check("All: max 2 Treffer pro Restaurant (Vielfalt)", Object.values(rAll.reduce((m, r) => { m[r._resto] = (m[r._resto] || 0) + 1; return m; }, {})).every(c => c <= 2), true);
+check("All: max 1 Treffer pro Restaurant (User-Wunsch)", Object.values(rAll.reduce((m, r) => { m[r._resto] = (m[r._resto] || 0) + 1; return m; }, {})).every(c => c <= 1), true);
 check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto)), true);
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 
@@ -616,7 +616,8 @@ check("All: alle _resto-Werte gültig (inkl. chopstix)", rAllCh.every(r => RESTO
 
 // ── Pepe's Piri Piri (à la carte + Add-Flavour-Mechanik) ──
 check("Pepes Items (67)", T.PEPES.items.length, 67);
-check("Pepes Flavours (6)", T.PEPES.flavours.length, 6);
+check("Pepes Flavours (7 inkl. Plain)", T.PEPES.flavours.length, 7);
+check("Pepes Plain existiert + 0 kcal", (() => { const pl = T.PEPES.flavours.find(f => f.id === "plain"); return pl && pl.kcal === 0 && pl.fat === 0 && pl.carbs === 0 && pl.protein === 0 && pl.salt === 0; })(), true);
 check("Pepes Kategorien (5)", T.PEPES.cats.length, 5);
 check("Pepes Sauce-Items (5)", T.PEPES.items.filter(x => x.sauce).length, 5);
 check("Pepes ausgeschlossen: keine Wings/Whole/Quarter Chicken", !T.PEPES.items.find(x => /wings|whole chicken|1\/2 chicken|1\/4 chicken|pepe.?s original/i.test(x.name)), true);
@@ -652,9 +653,18 @@ const rPepNoSauce = T.optimizePepes({ protein: 1, carbs: 5, fat: 20, kcal: 200, 
 check("Pepes 'No sauce': keine Mayo/Sauce-Items", rPepNoSauce.every(r => r.items.every(x => !/mayo|sauce/i.test(x.name))), true);
 const rPepSauce = T.optimizePepes({ protein: 1, carbs: 3, fat: 25, kcal: 230, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPep, 2, false, "lemon_herb");
 check("Pepes ohne 'No sauce': Mayo/Sauce möglich (Gegenprobe)", rPepSauce.some(r => r.items.some(x => /mayo|sauce/i.test(x.name))), true);
-// All-restaurants: pepes gültig
+// "No flavour" = Plain: flavourMl-Items behalten ihre Basis-Makros (Flavour addiert 0), Name bekommt "(Plain)"
+const rTSpl = T.optimizePepes({ protein: 22.5, carbs: 0.3, fat: 1.4, kcal: 100, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPep, 1, true, "plain");
+const tsPl = rTSpl.find(r => /Tender Strips - 3/.test(r.items[0].name));
+check("Pepes Plain: Tender Strips 3 = 100 kcal (Basis, Flavour +0)", tsPl ? tsPl.nutrition.kcal : 0, 100);
+check("Pepes Plain: Name trägt (Plain)", tsPl ? /\(Plain\)/.test(tsPl.items[0].name) : false, true);
+// Plain ändert flavourMl-Items NICHT ggü. der reinen Basis
+const baseTS = T.PEPES.items.find(x => x.id === "tender_strips_3");
+check("Pepes Plain: Makros == reine Basis", tsPl ? approx(tsPl.items[0].kcal, baseTS.kcal) && approx(tsPl.items[0].protein, baseTS.protein) : false, true);
+// All-restaurants: pepes gültig + Plain (No flavour default)
 const rAllPep = T.optimizeAll({ protein: 38, carbs: 40, fat: 14, kcal: 438, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
 check("All: alle _resto-Werte gültig (inkl. pepes)", rAllPep.every(r => RESTOS.includes(r._resto)), true);
+check("All: Pepe's-Treffer nutzt Plain (kein gebasteter Flavour-Name)", rAllPep.filter(r => r._resto === "pepes").every(r => r.items.every(x => !/\((Lemon & Herb|Mango & Lime|Mild|Hot|Extra Hot|Extreme)\)/.test(x.name))), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

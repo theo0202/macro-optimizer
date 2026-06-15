@@ -1024,6 +1024,7 @@ const PEPES = {
   ],
   // Add-Flavour-Optionen (Pflicht bei flavourMl>0). Werte per 10 ml.
   flavours: [
+    { id:"plain",name:"Plain",kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
     { id:"lemon_herb",name:"Lemon & Herb",kcal:31,fat:2.5,sat:0.3,carbs:1.8,sugars:0.3,fibre:0,protein:0.1,salt:0 },
     { id:"mango_lime",name:"Mango & Lime",kcal:31,fat:2.1,sat:0.3,carbs:2.9,sugars:1.5,fibre:0,protein:0.1,salt:0.2 },
     { id:"mild",name:"Mild",kcal:29,fat:2.4,sat:0.3,carbs:1.7,sugars:0.3,fibre:0,protein:0.2,salt:0.5 },
@@ -1515,12 +1516,12 @@ function optimizeAll(t, mode, p, subSize) {
   all = all.concat(tag(optimizeUG(t,mode,p,"salad",true,true),"ug"));                        // BYO Salad, No nuts + No dressing
   all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true),"ug"));                         // BYO Tray
   all = all.concat(tag(optimizeChopstix(t,mode,p),"chopstix"));                              // Build-a-Box (2 + 3 Toppings)
-  all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),5,true,"lemon_herb"),"pepes")); // à la carte, No Sauce, Flavour Lemon & Herb
+  all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),5,true,"plain"),"pepes")); // à la carte, No Sauce, No Flavour (Plain)
   all.sort((a,b)=>a.score-b.score);
-  // Vielfalt: max. 2 Treffer pro Restaurant (sonst überschwemmt ein Restaurant mit vielen ähnlichen Kombos die Liste).
+  // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
   const perR={}, out=[];
-  for(const r of all){ const c=perR[r._resto]||0; if(c>=2)continue; perR[r._resto]=c+1; out.push(r); if(out.length>=20)break; }
+  for(const r of all){ const c=perR[r._resto]||0; if(c>=1)continue; perR[r._resto]=c+1; out.push(r); if(out.length>=20)break; }
   return out;
 }
 const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's"};
@@ -1877,6 +1878,7 @@ function App() {
   const [maxPep,setMaxPep]=useState(5);
   const [pepNoSauce,setPepNS]=useState(true);
   const [pepFlavour,setPepFlavour]=useState("lemon_herb");
+  const [pepNoFlavour,setPepNF]=useState(true);
   const [selPep,setSelPep]=useState(null);
 
   // Helper: default salad state
@@ -1941,7 +1943,7 @@ function App() {
   const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
   const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
   const resultsChopstix=useMemo(()=>resto==="chopstix"?optimizeChopstix(targets,mode,prefs):[],[resto,targets,mode,prefs]);
-  const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepFlavour]);
+  const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour?"plain":pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour,pepFlavour]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
@@ -2164,9 +2166,9 @@ function App() {
         h("div",{style:{display:"flex",gap:5,marginBottom:12}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxPep===n,onClick:()=>setMaxPep(n),small:true}))
         ),
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Flavour (added to all basted items)"),
-        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
-          ...PEPES.flavours.map(f=>h(Chip,{key:f.id,label:f.name,active:pepFlavour===f.id,onClick:()=>setPepFlavour(f.id),small:true}))
+        !pepNoFlavour&&h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Flavour (added to all basted items)"),
+        !pepNoFlavour&&h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+          ...PEPES.flavours.filter(f=>f.id!=="plain").map(f=>h(Chip,{key:f.id,label:f.name,active:pepFlavour===f.id,onClick:()=>setPepFlavour(f.id),small:true}))
         )
       ),
 
@@ -2214,6 +2216,8 @@ function App() {
           h("input",{type:"checkbox",checked:aNoCrunch,onChange:e=>setANoCrunch(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No crunch"),
         resto==="pepes"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:pepNoSauce,onChange:e=>setPepNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
+        resto==="pepes"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:pepNoFlavour,onChange:e=>setPepNF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No flavour"),
         resto==="tfc"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

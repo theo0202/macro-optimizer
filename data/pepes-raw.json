@@ -2,13 +2,14 @@
   "_meta": {
     "source": "Pepe's Piri Piri offizielle Nährwertangaben (Copy-Paste vom User). KEINE Ballaststoff-Spalte → fibre=0 für alle.",
     "updated": "2026-06-15",
-    "flavour_model": "Produkte mit flavourMl>0 bekommen eine Pflicht-Flavour (Mango&Lime/Lemon&Herb/Mild/Hot/Extra Hot/Extreme). Deren Makros = per-10ml-Wert × flavourMl/10, additiv zur Basis. Globale Flavour-Auswahl im UI (Default Lemon & Herb).",
+    "flavour_model": "Produkte mit flavourMl>0 bekommen eine Pflicht-Flavour (Plain/Mango&Lime/Lemon&Herb/Mild/Hot/Extra Hot/Extreme). Deren Makros = per-10ml-Wert × flavourMl/10, additiv zur Basis. 'Plain' = 0 Kalorien/0 Makros (keine Basting). Globale Flavour-Auswahl im UI; Schalter 'No flavour' (Default AN) erzwingt Plain.",
     "excluded": "Wings (Pepe's Wings 3/5), 1/2 + 1/4 + Whole Chicken (= Pepe's Original), Sauce-Bottles 250ml, Salt Bottle 135g, Dark Chocolate Sauce, Corn on the Cob + Piri Piri Corn on the Cob, sowie alle 'Extra Chicken/Paneer/Feta/Fillet'-Add-ons (nur kcal, keine Makros).",
     "fixes": "Onion Rings Carbs 393.0 -> 39.3 (offensichtlicher Tippfehler: 393 g unmöglich bei 305 kcal).",
     "no_sauce_switch": "schließt die 5 sauce:true-Items (Mayos/Dips) aus.",
     "units": "kcal/fat/sat/carbs/sugars/protein/salt in g; fibre fehlt in der Quelle -> 0"
   },
   "flavours": [
+    { "id": "plain", "name": "Plain", "kcal": 0, "fat": 0, "sat": 0, "carbs": 0, "sugars": 0, "protein": 0, "salt": 0 },
     { "id": "lemon_herb", "name": "Lemon & Herb", "kcal": 31, "fat": 2.5, "sat": 0.3, "carbs": 1.8, "sugars": 0.3, "protein": 0.1, "salt": 0.0 },
     { "id": "mango_lime", "name": "Mango & Lime", "kcal": 31, "fat": 2.1, "sat": 0.3, "carbs": 2.9, "sugars": 1.5, "protein": 0.1, "salt": 0.2 },
     { "id": "mild", "name": "Mild", "kcal": 29, "fat": 2.4, "sat": 0.3, "carbs": 1.7, "sugars": 0.3, "protein": 0.2, "salt": 0.5 },

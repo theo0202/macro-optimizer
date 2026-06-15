@@ -97,7 +97,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - Validierung der Werte: `node verify-chopstix.js`
 - **Pepe's Piri Piri** (UK): offizielle Nährwerttabelle (per-Serving) — KEIN Crawler, **User liefert Copy-Paste**; Roh in `data/pepes-raw.json` (Quelle der Wahrheit). `node pepes-update.js` → PEPES-Block (Marker `__PEPES_DATA_START__`/`__PEPES_DATA_END__`)
   - **KEINE Ballaststoff-Spalte in der Quelle → `fibre:0` überall** (Fibre-Constraint/-Bar bleibt damit faktisch leer, wie bei UG). Sonst volle Makros (kcal/fat/sat/carbs/sugars/protein/salt)
-  - **Add-Flavour-Mechanik**: Items mit `flavourMl>0` (35 Items, z.B. die Chicken Strips mit 40 ml) tragen eine **Pflicht-Basting-Flavour**. 6 Flavours (Lemon & Herb, Mango & Lime, Mild, Hot, Extra Hot, Extreme), Werte **per 10 ml** in `PEPES.flavours[]`. Der Optimizer addiert `flavour × flavourMl/10` zur Item-Basis (Beispiel: Tender Strips 3 = Basis 100 kcal + Lemon&Herb 31×4 = 224 kcal) und hängt den Flavour-Namen an. Flavour ist ein **globaler Selektor** (ein Chip für die ganze Bestellung), Default Lemon & Herb
+  - **Add-Flavour-Mechanik**: Items mit `flavourMl>0` (35 Items, z.B. die Chicken Strips mit 40 ml) tragen eine **Pflicht-Basting-Flavour**. 7 Flavours (**Plain** = 0 kcal/0 Makros, Lemon & Herb, Mango & Lime, Mild, Hot, Extra Hot, Extreme), Werte **per 10 ml** in `PEPES.flavours[]` (Plain steht an erster Stelle → auch der sichere Fallback in optimizePepes). Der Optimizer addiert `flavour × flavourMl/10` zur Item-Basis (Beispiel: Tender Strips 3 = Basis 100 kcal + Lemon&Herb 31×4 = 224 kcal; mit Plain bleibt es bei 100) und hängt den Flavour-Namen an. Flavour ist ein **globaler Selektor** (ein Chip für die ganze Bestellung), Default Lemon & Herb. **Schalter "No flavour"** (Default AN) erzwingt Plain und blendet die Flavour-Chips aus; Plain ist KEIN eigener Chip (nur über den Schalter erreichbar)
   - **`sauce:true`** auf den 5 Mayo-/Dip-Saucen (Schalter "No sauce")
   - **AUSGESCHLOSSEN** (User-Vorgabe 15.06.2026): Pepe Wings, Half/Whole/Quarter Chicken (Knochen → im Office schlecht essbar/trackbar), alle Sauce-/Salt-Bottles (250 ml), Dark Chocolate Dip, Corn on the Cob. Außerdem die "Extra …"-Add-ons (nur kcal, keine vollen Makros). **Onion Rings Carbs 393→39.3 korrigiert** (offensichtlicher Tippfehler: 393 g Carbs unmöglich)
 
@@ -114,7 +114,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Atis**: BYO-Komponenten `ATIS.bases[]`, `ATIS.basesL[]`, `ATIS.mixed[]`, `ATIS.ingredients[]`, `ATIS.proteins[]`, `ATIS.sauces[]`, `ATIS.saucesL[]`, `ATIS.crunches[]`, `ATIS.addons[]` (volle 8 Makros; Flags `carb`/`doublePlate`/`seasonal`)
 - **The Fitness Chef**: `TFC.cats[]` + `TFC.items[]` (AC-Schema wie Itsu/Pret; Dishes zusätzlich `size`-Feld wl/ml/wg, Sides ohne)
 - **Chopstix**: `CHOPSTIX.bases[]` (je `reg`/`lg`-Größe mit 8 Makros) + `CHOPSTIX.toppings[]` (ein 8-Makro-Wert pro Topping, Regular=Large)
-- **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (6 Basting-Flavours, Werte per 10 ml)
+- **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (7 Basting-Flavours inkl. Plain=0, Werte per 10 ml)
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -210,7 +210,8 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 ## Bestellablauf Pepe's Piri Piri (à la carte)
 - Wie Itsu/Pret/Nando's/Wagamama/GDK/TFC: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
 - Kategorien (5): Chicken (20), Burgers (14), Paneer (veg) (6), Sides (22), Sauces (5) — 67 Items
-- **Flavour-Chip** (Pflicht-Auswahl, global): einer von 6 Bastings (Lemon & Herb / Mango & Lime / Mild / Hot / Extra Hot / Extreme), Default Lemon & Herb. Wird auf ALLE `flavourMl>0`-Items angewandt (`flavour-per-10ml × flavourMl/10` additiv) — der gewählte Flavour-Name erscheint im Item-Namen ("Tender Strips - 3 (Lemon & Herb)")
+- **Flavour-Chip** (Pflicht-Auswahl, global): einer von 6 Bastings (Lemon & Herb / Mango & Lime / Mild / Hot / Extra Hot / Extreme), Default Lemon & Herb. Wird auf ALLE `flavourMl>0`-Items angewandt (`flavour-per-10ml × flavourMl/10` additiv) — der gewählte Flavour-Name erscheint im Item-Namen ("Tender Strips - 3 (Lemon & Herb)"). Die Chips sind nur sichtbar, wenn "No flavour" AUS ist
+- **Schalter "No flavour"** (Default AN): erzwingt **Plain** (0 kcal/0 Makros — im Pepe's-Menü eine echte Flavour-Wahloption) und blendet die Flavour-Chips aus; der Item-Name bekommt dann "(Plain)". Plain ist nur über diesen Schalter wählbar, nicht als eigener Chip
 - **Schalter "No sauce"**: filtert alle 5 `sauce:true`-Mayo/Dips. Sonst nur Kategorie-Chips + Max-Items
 - Standard-Chips: alle an
 
@@ -245,7 +246,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce".
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour".
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -268,7 +269,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" AN
 - **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
 - **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
-- **Pepe's**: alle Kategorien aktiv, max. 5 Items, Flavour = Lemon & Herb, "No sauce" AN
+- **Pepe's**: alle Kategorien aktiv, max. 5 Items, "No sauce" + "No flavour" AN (No flavour = Plain, 0 Makros; die Flavour-Chips erscheinen + wirken erst, wenn "No flavour" aus ist — Default-Chip dann Lemon & Herb)
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -347,7 +348,7 @@ Pool-Bildung:
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 - **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
-- **Pepe's**: aktive Kategorie-Chips MINUS `sauce:true`-Items (Schalter "No sauce"). VOR `alaCarteCombos` wird der gewählte Flavour in jedes `flavourMl>0`-Item eingerechnet (Makros + Name) → der Optimizer sieht fertige, geflavourte Items
+- **Pepe's**: aktive Kategorie-Chips MINUS `sauce:true`-Items (Schalter "No sauce"). VOR `alaCarteCombos` wird der effektive Flavour (bei "No flavour" → Plain, sonst der gewählte) in jedes `flavourMl>0`-Item eingerechnet (Makros + Name) → der Optimizer sieht fertige, geflavourte Items; mit Plain (0 Makros) behalten sie ihre Basiswerte
 
 UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
@@ -370,8 +371,8 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - Eigene Result-Form (`kind/box/nTop/base/tops`) → eigene Karte + eigenes Panel
 
 ### „All restaurants" (`optimizeAll`)
-- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + Flavour Lemon & Herb
-- Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 2 Treffer pro Restaurant** (sonst überschwemmt ein Restaurant mit ähnlichen Kombos die Liste), Top 20 → Top 8 angezeigt
+- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain)
+- Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 1 Treffer pro Restaurant** (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant), Top 20 → Top 8 angezeigt
 - Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
 - Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt
 
@@ -435,7 +436,7 @@ Essen bestellen Claude Tool/
     ├── gdk-raw.json         ← GDK-Daten aus User-Copy-Paste (offizielle Nährwerttabelle, sauce-Flags)
     ├── atis-raw.json        ← Atis-Daten aus User-Screenshots (86 Items, portion/carb/doublePlate/seasonal-Flags) — Quelle der Wahrheit
     ├── tfc-raw.json         ← The-Fitness-Chef-Daten aus User-Copy-Paste (33 Items, size wl/ml/wg, sodium in mg)
-    ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (67 Items + 6 Flavours, sauce/flavourMl-Flags, keine Ballaststoffe)
+    ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (67 Items + 7 Flavours inkl. Plain, sauce/flavourMl-Flags, keine Ballaststoffe)
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
     ├── Farmer J _ Nutritional Info.xlsx ← Original-Erfassung Farmer J
     └── UKIandROINutritionalInformationJan2026.pdf ← Original-PDF Subway
