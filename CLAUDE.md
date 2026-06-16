@@ -1,7 +1,7 @@
 # Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC + Chopstix + Pepe's + Five Guys)
 
 ## Projektübersicht
-Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) **The Fitness Chef / TFC** (UK, Meal-Prep), **Chopstix Noodle Bar** (UK, Build-a-Box), **Pepe's Piri Piri** (UK) und **Five Guys** (UK, Build-Your-Own Burger/Sandwich + Fries), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es einen **„All restaurants"-Tab** (ganz vorne in der Tab-Zeile), der restaurantsübergreifend die besten Bestellungen berechnet.
+Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) **The Fitness Chef / TFC** (UK, Meal-Prep), **Chopstix Noodle Bar** (UK, Build-a-Box), **Pepe's Piri Piri** (UK) und **Five Guys** (UK, Build-Your-Own Burger/Sandwich + Fries), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es zwei restaurantsübergreifende Tabs (ganz vorne in der Tab-Zeile): **„Accurate restaurants"** (nur die 9 Restaurants mit verlässlichen Daten: Subway, Farmer J, Itsu, Pret, Urban Greens, Wagamama, Atis, Fitness Chef, Pepe's) und rechts daneben **„All restaurants"** (alle 13). Beide berechnen restaurantsübergreifend die besten Bestellungen.
 
 ## Deployment / Sync
 Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
@@ -306,7 +306,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (**All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's / Five Guys)
+4. Restaurant-Tabs (**Accurate restaurants** / **All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's / Five Guys)
 5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items + "No fish" (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
@@ -400,8 +400,10 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - Ein Ergebnis = 0/1 Main × 0/1 Fries (mind. eines) + freie Toppings auf dem Main (greedy: bestes Score-verbesserndes Topping bis keine Verbesserung, max 6, jedes ≤1×). Voll-Enumeration der ~198 Main×Fries-Kombos + Topping-Greedy, Top 20
 - Eigene Result-Form (`kind/main/fries/tops`) → eigene Karte + eigenes Panel. `resultsFiveGuys`-Memo nur bei aktivem Five-Guys-Tab. Volle 8 Makros. Keine Schalter (v1)
 
-### „All restaurants" (`optimizeAll`)
-- Eigener Tab **ganz vorne** (resto `"all"`). Ruft JEDEN Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Bun-Wahl + Extra Patties + Fries + Toppings, No sauce)
+### „All restaurants" + „Accurate restaurants" (`optimizeAll`)
+- `optimizeAll(t, mode, p, subSize, only)` — `only` = optionale Restaurant-Whitelist (Array von `_resto`-Keys). Ohne `only` = **All restaurants** (alle 13); mit `only = ACCURATE_RESTOS` = **Accurate restaurants** (`["subway","farmerj","itsu","pret","ug","wagamama","atis","tfc","pepes"]` — ohne Nando's/GDK/Chopstix/Five Guys, da Komposition/Anomalien). Pro Restaurant ein `if(ok(rt))`-Guard
+- Zwei Tabs ganz vorne: `"accurate"` (links) + `"all"`; beide teilen die Cross-Restaurant-Karte/`selectAcross`. `resultsAccurate`-Memo rechnet nur im `"accurate"`-Tab
+- Ruft JEDEN (erlaubten) Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Bun-Wahl + Extra Patties + Fries + Toppings, No sauce)
 - Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 1 Treffer pro Restaurant** (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant), Top 20 → Top 8 angezeigt
 - Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
 - Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt
@@ -425,7 +427,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 
 ## Design
 - Dark Mode (#0d0d0d Background)
-- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81), Chopstix-Header in Orange (#f97316→#9a3412), Pepe's-Header in Gold→Rot (#f2b705→#c1121f), Five-Guys-Header in Rot (#d52b1e→#a01913). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
+- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81), Chopstix-Header in Orange (#f97316→#9a3412), Pepe's-Header in Gold→Rot (#f2b705→#c1121f), Five-Guys-Header in Rot (#d52b1e→#a01913), „All restaurants"-Header in Violett (#7c3aed→#4c1d95), „Accurate restaurants"-Header in Blau (#0284c7→#0c4a6e). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
 - Fonts: DM Sans (UI), DM Mono (Zahlen/Labels)
 - iPhone-optimiert: safe-area-inset, touch-optimierte Buttons
 - PWA-fähig: apple-mobile-web-app-capable, Vollbild-Modus

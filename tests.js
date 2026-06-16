@@ -536,6 +536,17 @@ check("All: max 1 Treffer pro Restaurant (User-Wunsch)", Object.values(rAll.redu
 check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto)), true);
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 
+// ── "Accurate restaurants" (Teilmenge via optimizeAll-Whitelist) ──
+const ACCURATE = ["subway", "farmerj", "itsu", "pret", "ug", "wagamama", "atis", "tfc", "pepes"];
+const rAcc = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
+check("Accurate: liefert Ergebnisse (1..20)", rAcc.length > 0 && rAcc.length <= 20, true);
+check("Accurate: NUR Whitelist-Restaurants", rAcc.every(r => ACCURATE.includes(r._resto)), true);
+check("Accurate: kein Nando's/GDK/Chopstix/Five Guys", !rAcc.find(r => ["nandos", "gdk", "chopstix", "fiveguys"].includes(r._resto)), true);
+check("Accurate: mehrere Restaurants vertreten (>=3)", new Set(rAcc.map(r => r._resto)).size >= 3, true);
+check("Accurate: max 1 Treffer pro Restaurant", Object.values(rAcc.reduce((m, r) => { m[r._resto] = (m[r._resto] || 0) + 1; return m; }, {})).every(c => c <= 1), true);
+// Gegenprobe: ohne Whitelist (= alle) koennen die ausgeschlossenen erscheinen
+check("Accurate-Gegenprobe: ohne Whitelist sind mehr Restaurants moeglich", new Set(rAll.map(r => r._resto)).size >= new Set(rAcc.map(r => r._resto)).size, true);
+
 // ── Screenshot-Import-Parser (OCR-Text -> verbleibende Makros C/P/F + "Übrig"-kcal) ──
 // Erwartet aus dem Beispiel: Carbs 341-54=287, Protein 184-52=132, Fat 69-9=60, kcal=Übrig 2267.
 const OCR_CASES = [
