@@ -8,7 +8,6 @@ const compose = parts => { const o = {}; for (const k of KEYS) o[k] = 0; for (co
 
 const items = [];
 for (const b of raw.burgers) items.push({ name: b.name, _t: "burger", ...compose([{ comp: C.patty, n: b.patties }, { comp: C.burger_bun, n: 1 }, { comp: C.cheese, n: b.cheese }, { comp: C.bacon, n: b.bacon }]) });
-for (const d of raw.hotdogs) items.push({ name: d.name, _t: "hotdog", ...compose([{ comp: C.hot_dog, n: 1 }, { comp: C.hotdog_bun, n: 1 }, { comp: C.cheese, n: d.cheese }, { comp: C.bacon, n: d.bacon }]) });
 for (const s of raw.sandwiches) items.push({ ...s, _t: "sandwich" });
 for (const f of raw.fries_base) items.push({ ...f, _t: "fries" });
 for (const f of raw.fries_base) items.push({ name: f.name.replace(/Fries/, "Cajun Fries"), _t: "cajun", ...compose([{ comp: f, n: 1 }, { comp: raw.cajun_seasoning, n: 1 }]) });
@@ -32,6 +31,6 @@ if (!sf) console.log("  keine");
 console.log("\n=== Uebersicht ===");
 const byT = {}; for (const i of items) byT[i._t] = (byT[i._t] || 0) + 1;
 console.log("  " + Object.entries(byT).map(([k, v]) => k + ":" + v).join(", "));
-console.log("  Mains (burger+hotdog+sandwich): " + items.filter(i => ["burger", "hotdog", "sandwich"].includes(i._t)).length);
+console.log("  Mains (burger+sandwich): " + items.filter(i => ["burger", "sandwich"].includes(i._t)).length);
 console.log("  Fries (fries+cajun+loaded): " + items.filter(i => ["fries", "cajun", "loaded"].includes(i._t)).length);
 console.log("  Toppings: " + items.filter(i => i._t === "topping").length);

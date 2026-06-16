@@ -28,11 +28,7 @@ for (const b of raw.burgers) {
     { comp: C.cheese, n: b.cheese }, { comp: C.bacon, n: b.bacon }]);
   mains.push({ id: mkId(b.name), name: b.name, group: "burgers", ...m });
 }
-for (const d of raw.hotdogs) {
-  const m = compose([{ comp: C.hot_dog, n: 1 }, { comp: C.hotdog_bun, n: 1 },
-    { comp: C.cheese, n: d.cheese }, { comp: C.bacon, n: d.bacon }]);
-  mains.push({ id: mkId(d.name), name: d.name, group: "hotdogs", ...m });
-}
+// Hot Dogs auf User-Wunsch entfernt (16.06.2026)
 for (const s of raw.sandwiches) {
   const o = { id: mkId(s.name), name: s.name, group: "sandwiches" };
   if (s.incl) o.incl = s.incl.map(slug); // bereits enthaltene Toppings (Topping-IDs) -> aus dem Greedy-Pool ausschliessen
@@ -101,5 +97,5 @@ if (!re.test(html)) { console.error("FIVEGUYS-Marker in index.html nicht gefunde
 fs.writeFileSync(file, html.replace(re, block), "utf8");
 
 console.log(mains.length + " Mains + " + fries.length + " Fries + " + toppings.length + " Toppings -> index.html (FIVEGUYS-Block)");
-console.log("  Burger: " + mains.filter(m => m.group === "burgers").length + ", Hot Dogs: " + mains.filter(m => m.group === "hotdogs").length + ", Sandwiches: " + mains.filter(m => m.group === "sandwiches").length);
-for (const m of mains.filter(m => m.group !== "sandwiches")) console.log(`    ${m.name}: ${m.kcal} kcal, P ${m.protein}, F ${m.fat}, C ${m.carbs}`);
+console.log("  Burger: " + mains.filter(m => m.group === "burgers").length + ", Sandwiches: " + mains.filter(m => m.group === "sandwiches").length);
+for (const m of mains.filter(m => m.group === "burgers")) console.log(`    ${m.name}: ${m.kcal} kcal, P ${m.protein}, F ${m.fat}, C ${m.carbs}`);

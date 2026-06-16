@@ -678,7 +678,8 @@ check("All: alle _resto-Werte gültig (inkl. pepes)", rAllPep.every(r => RESTOS.
 check("All: Pepe's-Treffer nutzt Plain (kein gebasteter Flavour-Name)", rAllPep.filter(r => r._resto === "pepes").every(r => r.items.every(x => !/\((Lemon & Herb|Mango & Lime|Mild|Hot|Extra Hot|Extreme)\)/.test(x.name))), true);
 
 // ── Five Guys (Build Your Own: komponierte Mains + Fries + freie Toppings) ──
-check("FiveGuys Mains (17: 8 Burger + 4 Hot Dogs + 5 Sandwiches)", T.FIVEGUYS.mains.length, 17);
+check("FiveGuys Mains (13: 8 Burger + 5 Sandwiches, Hot Dogs entfernt)", T.FIVEGUYS.mains.length, 13);
+check("FiveGuys keine Hot Dogs mehr", !T.FIVEGUYS.mains.find(m => m.group === "hotdogs"), true);
 check("FiveGuys Fries (10: 4 Plain + 4 Cajun + 2 Loaded)", T.FIVEGUYS.fries.length, 10);
 check("FiveGuys Toppings (15, Deliveroo Free-Toppings)", T.FIVEGUYS.toppings.length, 15);
 check("FiveGuys 7 Sauce-Toppings (No-sauce-Filter, inkl. Mayo)", T.FIVEGUYS.toppings.filter(x => x.sauce).length, 7);
