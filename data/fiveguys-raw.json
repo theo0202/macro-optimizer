@@ -36,9 +36,10 @@
     { "name": "Veggie Sandwich",        "kcal": 330, "fat": 7.4, "sat": 2.4, "carbs": 52, "sugars": 13,  "fibre": 5.4, "protein": 10, "salt": 1.2 },
     { "name": "Cheese Veggie Sandwich", "kcal": 428, "fat": 14,  "sat": 5.9, "carbs": 57, "sugars": 15,  "fibre": 5.9, "protein": 14, "salt": 2.5 },
     { "name": "Grilled Cheese",         "kcal": 434, "fat": 24,  "sat": 7.6, "carbs": 42, "sugars": 7.3, "fibre": 2.2, "protein": 12, "salt": 2.2 },
-    { "name": "BLT",                    "kcal": 652, "fat": 41,  "sat": 9.9, "carbs": 45, "sugars": 8.8, "fibre": 3.6, "protein": 22, "salt": 2.67 },
-    { "name": "Lettuce Wrap",           "kcal": 246, "fat": 14,  "sat": 6,   "carbs": 5,  "sugars": 3.7, "fibre": 1.8, "protein": 24, "salt": 0.76 }
+    { "name": "BLT",                    "incl": ["Lettuce", "Tomatoes"], "kcal": 652, "fat": 41,  "sat": 9.9, "carbs": 45, "sugars": 8.8, "fibre": 3.6, "protein": 22, "salt": 2.67 },
+    { "name": "Lettuce Wrap",           "incl": ["Tomatoes", "Pickles", "Grilled Onions", "Green Peppers", "Grilled Mushrooms"], "kcal": 246, "fat": 14,  "sat": 6,   "carbs": 5,  "sugars": 3.7, "fibre": 1.8, "protein": 24, "salt": 0.76 }
   ],
+  "comment_incl": "incl = Toppings, die im Listenwert des Sandwiches schon enthalten sind (Deliveroo: 'standard toppings') -> aus dem Greedy-Free-Topping-Pool fuer diesen Main ausgeschlossen, damit nichts doppelt zaehlt. Quelle: Lettuce-Wrap-Deliveroo-Fenster + BLT-Definition. Veggie/Cheese-Veggie-Sandwich ungetaggt (Fenster fehlt).",
   "fries_base": [
     { "name": "Mini Fries",    "kcal": 350,  "fat": 21, "sat": 2.84, "carbs": 37,  "sugars": 0.5, "fibre": 3.4, "protein": 5.0, "salt": 0.56 },
     { "name": "Little Fries",  "kcal": 659,  "fat": 39, "sat": 5.4,  "carbs": 70,  "sugars": 1.0, "fibre": 6.3, "protein": 10,  "salt": 1.1 },

@@ -35,6 +35,7 @@ for (const d of raw.hotdogs) {
 }
 for (const s of raw.sandwiches) {
   const o = { id: mkId(s.name), name: s.name, group: "sandwiches" };
+  if (s.incl) o.incl = s.incl.map(slug); // bereits enthaltene Toppings (Topping-IDs) -> aus dem Greedy-Pool ausschliessen
   for (const k of KEYS) o[k] = R2(s[k] || 0);
   mains.push(o);
 }
@@ -71,7 +72,7 @@ lines.push("// Quelle: Five Guys UK Naehrwerttabelle (komponenten-basiert) · St
 lines.push("const FIVEGUYS = {");
 lines.push("  // Mains: " + mains.length + " (Burger komponiert, Hot Dogs komponiert, Sandwiches fertig)");
 lines.push("  mains: [");
-for (const m of mains) lines.push(`    { id:${JSON.stringify(m.id)},name:${JSON.stringify(m.name)},group:${JSON.stringify(m.group)},${macStr(m)} },`);
+for (const m of mains) lines.push(`    { id:${JSON.stringify(m.id)},name:${JSON.stringify(m.name)},group:${JSON.stringify(m.group)}${m.incl ? ",incl:" + JSON.stringify(m.incl) : ""},${macStr(m)} },`);
 lines.push("  ],");
 lines.push("  // Fries: Plain + Cajun (=Plain + Cajun Seasoning) + Loaded");
 lines.push("  fries: [");

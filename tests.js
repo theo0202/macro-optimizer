@@ -722,6 +722,12 @@ check("FiveGuys low-carb -> Bowl/Lettuce Wrap erscheint", T.optimizeFiveGuys({ p
 const rHiPro = T.optimizeFiveGuys({ protein: 75, carbs: 40, fat: 45, kcal: 865, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
 check("FiveGuys high-protein -> Extra Patties erscheint", rHiPro.some(r => r.extraPatties > 0), true);
 check("FiveGuys Extra Patties nur bei regulaeren Burgern (nie Little)", rHiPro.every(r => !(r.main && /^Little/.test(r.main.name)) || r.extraPatties === 0), true);
+// Sandwich-incl: Lettuce Wrap/BLT bieten ihre bereits enthaltenen Toppings NICHT noch mal an (kein Doppelzaehlen)
+const lw = T.FIVEGUYS.mains.find(m => m.id === "lettuce_wrap"), blt = T.FIVEGUYS.mains.find(m => m.id === "blt");
+check("FiveGuys Lettuce Wrap/BLT haben incl-Liste", !!(lw && lw.incl && lw.incl.length === 5 && blt && blt.incl && blt.incl.length === 2), true);
+const rInclSweep = ["macros"].flatMap(() => [{ protein: 24, carbs: 6, fat: 14, kcal: 246 }, { protein: 30, carbs: 50, fat: 40, kcal: 680 }, { protein: 22, carbs: 45, fat: 41, kcal: 653 }]).flatMap(tg => T.optimizeFiveGuys({ ...tg, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true));
+check("FiveGuys Sandwiches re-adden KEINE bereits enthaltenen Toppings", rInclSweep.every(r => !(r.main && r.main.incl) || r.tops.every(tp => !r.main.incl.includes(tp.id))), true);
+check("FiveGuys Lettuce-Wrap-Ziel surface't einen Lettuce Wrap (incl-Pfad geuebt)", T.optimizeFiveGuys({ protein: 24, carbs: 6, fat: 14, kcal: 246, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true).some(r => r.main && r.main.id === "lettuce_wrap"), true);
 const rFGsmall = T.optimizeFiveGuys({ protein: 24, carbs: 38, fat: 21, kcal: 433, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
 check("FiveGuys kleines Ziel trifft Little Hamburger (Top 5)", rFGsmall.slice(0, 5).some(r => r.main && r.main.name === "Little Hamburger"), true);
 // All-restaurants: fiveguys gueltig

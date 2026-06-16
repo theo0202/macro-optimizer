@@ -1108,8 +1108,8 @@ const FIVEGUYS = {
     { id:"veggie_sandwich",name:"Veggie Sandwich",group:"sandwiches",kcal:330,fat:7.4,sat:2.4,carbs:52,sugars:13,fibre:5.4,protein:10,salt:1.2 },
     { id:"cheese_veggie_sandwich",name:"Cheese Veggie Sandwich",group:"sandwiches",kcal:428,fat:14,sat:5.9,carbs:57,sugars:15,fibre:5.9,protein:14,salt:2.5 },
     { id:"grilled_cheese",name:"Grilled Cheese",group:"sandwiches",kcal:434,fat:24,sat:7.6,carbs:42,sugars:7.3,fibre:2.2,protein:12,salt:2.2 },
-    { id:"blt",name:"BLT",group:"sandwiches",kcal:652,fat:41,sat:9.9,carbs:45,sugars:8.8,fibre:3.6,protein:22,salt:2.67 },
-    { id:"lettuce_wrap",name:"Lettuce Wrap",group:"sandwiches",kcal:246,fat:14,sat:6,carbs:5,sugars:3.7,fibre:1.8,protein:24,salt:0.76 },
+    { id:"blt",name:"BLT",group:"sandwiches",incl:["lettuce","tomatoes"],kcal:652,fat:41,sat:9.9,carbs:45,sugars:8.8,fibre:3.6,protein:22,salt:2.67 },
+    { id:"lettuce_wrap",name:"Lettuce Wrap",group:"sandwiches",incl:["tomatoes","pickles","grilled_onions","green_peppers","grilled_mushrooms"],kcal:246,fat:14,sat:6,carbs:5,sugars:3.7,fibre:1.8,protein:24,salt:0.76 },
   ],
   // Fries: Plain + Cajun (=Plain + Cajun Seasoning) + Loaded
   fries: [
@@ -1565,11 +1565,13 @@ function optimizeFiveGuys(t, mode, p, noSauce) {
       const chosenTops=[], chosenExtras=[];
       let curScore=score(sumN(base,1),t,mode,p);
       if(cfg.main){ // greedy: freie Toppings (+ Sandwich paid-extras) bis keine Score-Verbesserung
+        // Toppings, die im Sandwich-Listenwert schon enthalten sind (incl), NICHT noch mal anbieten (kein Doppelzaehlen)
+        const poolTops = cfg.main.incl ? tops.filter(tp=>!cfg.main.incl.includes(tp.id)) : tops;
         let improved=true;
         while(improved && (chosenTops.length+chosenExtras.length)<6){
           improved=false; let best=null, bestS=curScore, kind=null;
           const cur=[...base,...chosenTops,...chosenExtras.map(e=>e.comp)];
-          for(const tp of tops){
+          for(const tp of poolTops){
             if(chosenTops.indexOf(tp)>=0)continue;
             const s=score(sumN([...cur,tp],1),t,mode,p);
             if(s<bestS-1e-9){bestS=s;best=tp;kind="top";}
