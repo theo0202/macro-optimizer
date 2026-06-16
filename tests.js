@@ -537,11 +537,11 @@ check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 
 // ── "Accurate restaurants" (Teilmenge via optimizeAll-Whitelist) ──
-const ACCURATE = ["subway", "farmerj", "itsu", "pret", "ug", "wagamama", "atis", "tfc", "pepes"];
+const ACCURATE = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "atis", "tfc", "pepes"];
 const rAcc = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: liefert Ergebnisse (1..20)", rAcc.length > 0 && rAcc.length <= 20, true);
 check("Accurate: NUR Whitelist-Restaurants", rAcc.every(r => ACCURATE.includes(r._resto)), true);
-check("Accurate: kein Nando's/GDK/Chopstix/Five Guys", !rAcc.find(r => ["nandos", "gdk", "chopstix", "fiveguys"].includes(r._resto)), true);
+check("Accurate: kein GDK/Chopstix/Five Guys", !rAcc.find(r => ["gdk", "chopstix", "fiveguys"].includes(r._resto)), true);
 check("Accurate: mehrere Restaurants vertreten (>=3)", new Set(rAcc.map(r => r._resto)).size >= 3, true);
 check("Accurate: max 1 Treffer pro Restaurant", Object.values(rAcc.reduce((m, r) => { m[r._resto] = (m[r._resto] || 0) + 1; return m; }, {})).every(c => c <= 1), true);
 // Gegenprobe: ohne Whitelist (= alle) koennen die ausgeschlossenen erscheinen
