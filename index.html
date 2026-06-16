@@ -1531,19 +1531,21 @@ function optimizeChopstix(t, mode, p) {
 // Five Guys: Build Your Own (Komponenten-Daten -> komponierte Produkte). Ein Ergebnis = 1 Main (Burger/Hot Dog/
 // Sandwich) optional + 1 Fries optional (mind. eines) + freie Toppings auf dem Main (greedy, nur wenn sie den Score
 // verbessern; max 6, jedes hoechstens 1x). Eigener BYO-Optimizer (wie UG/Atis/Chopstix), volle 8 Makros.
-function optimizeFiveGuys(t, mode, p, noSauce) {
+function optimizeFiveGuys(t, mode, p, noSauce, wrapOnly) {
   const M=FIVEGUYS.mods;
   const negBun=(()=>{const o={};for(const k of KEYS)o[k]=-(M.bun[k]||0);return o;})();
   const tops=FIVEGUYS.toppings.filter(x=>!(noSauce && x.sauce));
   const friesL=[null,...FIVEGUYS.fries];
   const paid=[{name:"Extra Patty",comp:M.patty},{name:"Cheese",comp:M.cheese},{name:"Bacon",comp:M.bacon}];
-  // Konfigurierte Mains: Burger × Bun(Bun/Bowl/Wrap) × ExtraPatties; Hot Dogs/Sandwiches einfach; + "Fries only"
+  // Konfigurierte Mains: Burger × Bun(Bun/Bowl/Wrap) × ExtraPatties; Sandwiches einfach; + "Fries only"
   // Extra Patties gibt es auf Deliveroo NUR bei den regulaeren Burgern, NICHT bei den "Little"-Burgern.
+  // wrapOnly (Schalter "Lettuce Wrap"): erzwingt bei allen Burgern die Lettuce-Wrap-Bun-Option.
+  const buns = wrapOnly ? ["wrap"] : ["bun","bowl","wrap"];
   const cfgs=[];
   for(const m of FIVEGUYS.mains){
     if(m.group==="burgers"){
       const maxEp=/^Little/.test(m.name)?0:2;
-      for(const bun of ["bun","bowl","wrap"]) for(let ep=0;ep<=maxEp;ep++){
+      for(const bun of buns) for(let ep=0;ep<=maxEp;ep++){
         const parts=[m];
         if(bun==="bowl")parts.push(negBun);
         else if(bun==="wrap"){parts.push(negBun);parts.push(M.lettuce);}
@@ -1989,6 +1991,7 @@ function App() {
   const [selPep,setSelPep]=useState(null);
   const [selFG,setSelFG]=useState(null);
   const [fgNoSauce,setFGNS]=useState(true);
+  const [fgWrap,setFGWrap]=useState(false);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -2054,7 +2057,7 @@ function App() {
   const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
   const resultsChopstix=useMemo(()=>resto==="chopstix"?optimizeChopstix(targets,mode,prefs):[],[resto,targets,mode,prefs]);
   const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour?"plain":pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour,pepFlavour]);
-  const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs,fgNoSauce):[],[resto,targets,mode,prefs,fgNoSauce]);
+  const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs,fgNoSauce,fgWrap):[],[resto,targets,mode,prefs,fgNoSauce,fgWrap]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
@@ -2331,6 +2334,8 @@ function App() {
           h("input",{type:"checkbox",checked:pepNoFlavour,onChange:e=>setPepNF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No flavour"),
         resto==="fiveguys"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:fgNoSauce,onChange:e=>setFGNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
+        resto==="fiveguys"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:fgWrap,onChange:e=>setFGWrap(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Lettuce Wrap"),
         resto==="tfc"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

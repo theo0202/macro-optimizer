@@ -234,6 +234,7 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - **Sandwich-Customizing** (Deliveroo): **paid extras** Add Extra Patty (+195) / Add Cheese (+64) / Add Bacon (+78) — der Optimizer fügt sie greedy hinzu (nur Sandwiches). Sandwiches mit bereits enthaltenen Standard-Toppings (`incl`: **Lettuce Wrap** = Tomatoes/Pickles/Grilled Onions/Green Peppers/Grilled Mushrooms; **BLT** = Lettuce/Tomatoes) bieten genau diese NICHT nochmal als freies Topping an (kein Doppelzählen). Veggie/Cheese-Veggie-Sandwich ungetaggt (Deliveroo-Fenster fehlt)
 - **Fries** (10): Mini/Little/Regular/Large je Five-Guys-Style (Plain) + Cajun-Style (= Plain + Cajun Seasoning) + Loaded Fries + Loaded Cajun Fries
 - **Toppings** (15, alle frei = Deliveroos Liste): Lettuce, Tomatoes, Grilled/Fresh Onions, Grilled Mushrooms, Pickles, Green/Jalapeno Peppers, Mayonnaise, Ketchup, Mustard, BBQ/Hot/HP Sauce, Relish. **Schalter „No sauce"** (Default AN) filtert die 7 Saucen (Mayo, Ketchup, Mustard, BBQ, Hot, HP, Relish — Mayo zählt als Sauce)
+- **Schalter „Lettuce Wrap"** (`wrapOnly`, Default **AUS** — restriktiver „nur X"-Modus): erzwingt bei ALLEN Burgern die Lettuce-Wrap-Bun-Option (Low-Carb; im Optimizer nur noch `buns=["wrap"]` statt Bun/Bowl/Wrap). Betrifft nur Burger; Sandwiches/Fries unberührt. In „All restaurants" NICHT erzwungen
 - Toppings/Extras wählt der Optimizer greedy (nur Score-verbessernde, max 6, je ≤1×) und nur auf einen Main
 
 ## Bestellablauf Urban Greens (Deliveroo)
@@ -269,7 +270,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
 Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce".
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
-**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
+**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi" (würden sonst Itsu auf nur Sushi reduzieren) und Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
 
 ## Standard-Defaults (beim App-Start)
@@ -291,7 +292,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
 - **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
 - **Pepe's**: alle Kategorien aktiv, max. 5 Items, "No sauce" + "No flavour" AN (No flavour = Plain, 0 Makros; die Flavour-Chips erscheinen + wirken erst, wenn "No flavour" aus ist — Default-Chip dann Lemon & Herb)
-- **Five Guys**: Build Your Own, „No sauce" AN — der Optimizer wählt 1 Main (Burger/Sandwich) + Bun-Wahl + Extra Patties (Burger) + optional 1 Fries + freie Toppings (+ paid extras bei Sandwiches) automatisch
+- **Five Guys**: Build Your Own, „No sauce" AN, „Lettuce Wrap" AUS — der Optimizer wählt 1 Main (Burger/Sandwich) + Bun-Wahl + Extra Patties (Burger) + optional 1 Fries + freie Toppings (+ paid extras bei Sandwiches) automatisch
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -393,7 +394,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - Eigene Result-Form (`kind/box/nTop/base/tops`) → eigene Karte + eigenes Panel
 
 ### Five Guys (`optimizeFiveGuys`)
-- Eigener BYO-Optimizer (wie UG/Atis/Chopstix, NICHT AC-Alias). Signatur `optimizeFiveGuys(t, mode, p, noSauce)`. Five Guys ist komponenten-basiert → der FIVEGUYS-Block hat **komponierte** Mains (`mains[]`: 8 Burger + 5 Sandwiches mit `group`; Hot Dogs entfernt), `fries[]`, `toppings[]` (15 freie, `sauce:true` auf 7) und `mods` (patty/cheese/bacon/bun/lettuce)
+- Eigener BYO-Optimizer (wie UG/Atis/Chopstix, NICHT AC-Alias). Signatur `optimizeFiveGuys(t, mode, p, noSauce, wrapOnly)` (`wrapOnly` = Schalter „Lettuce Wrap"). Five Guys ist komponenten-basiert → der FIVEGUYS-Block hat **komponierte** Mains (`mains[]`: 8 Burger + 5 Sandwiches mit `group`; Hot Dogs entfernt), `fries[]`, `toppings[]` (15 freie, `sauce:true` auf 7) und `mods` (patty/cheese/bacon/bun/lettuce)
 - Konfigurierte Mains zur Laufzeit: Burger × **Bun-Wahl** (Bun / Bowl = −Bun / Lettuce Wrap = −Bun+Lettuce) × **Extra Patties** (regulär 0/1/2, Little 0) = 48 Burger-Varianten (4 regulär ×3×3 + 4 Little ×3×1); Sandwiches einfach; + „Fries only". Bun-Abzug/Patties via `mods` (sumN summiert auch negative Beiträge). „No sauce" filtert `sauce:true`-Toppings (inkl. Mayo)
 - Greedy-Schritt pro (Main × Fries): freie Toppings + (bei Sandwiches) paid extras (Patty/Cheese/Bacon), nur Score-verbessernd, max 6, je ≤1×. Toppings, die im Sandwich-Listenwert schon enthalten sind (Main-Feld `incl`, Topping-IDs), werden für diesen Main aus dem Pool gefiltert → kein Doppelzählen
 - Ein Ergebnis = 0/1 Main × 0/1 Fries (mind. eines) + freie Toppings auf dem Main (greedy: bestes Score-verbesserndes Topping bis keine Verbesserung, max 6, jedes ≤1×). Voll-Enumeration der ~198 Main×Fries-Kombos + Topping-Greedy, Top 20

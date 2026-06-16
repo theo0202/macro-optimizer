@@ -719,6 +719,11 @@ check("FiveGuys 'No sauce': keine Sauce-Toppings (inkl. Mayo)", T.optimizeFiveGu
 check("FiveGuys ohne 'No sauce': Sauce/Mayo moeglich (Gegenprobe)", T.optimizeFiveGuys(fgFatTgt, "macros", {}, false).some(r => r.tops.some(tp => tp.sauce)), true);
 // Bun-Wahl: low-carb-Ziel -> Bowl/Lettuce Wrap erscheint
 check("FiveGuys low-carb -> Bowl/Lettuce Wrap erscheint", T.optimizeFiveGuys({ protein: 50, carbs: 8, fat: 35, kcal: 547, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true).some(r => r.bun === "bowl" || r.bun === "wrap"), true);
+// Schalter "Lettuce Wrap" (wrapOnly): erzwingt bei ALLEN Burgern bun="wrap"
+const rWrap = T.optimizeFiveGuys({ protein: 45, carbs: 30, fat: 40, kcal: 660, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true, true);
+check("FiveGuys 'Lettuce Wrap': alle Burger-Treffer = wrap", rWrap.every(r => !(r.main && r.main.group === "burgers") || r.bun === "wrap"), true);
+check("FiveGuys 'Lettuce Wrap': kein Bun/Bowl-Burger mehr", !rWrap.find(r => r.main && r.main.group === "burgers" && (r.bun === "bun" || r.bun === "bowl")), true);
+check("FiveGuys ohne 'Lettuce Wrap': nicht-wrap Burger moeglich (Gegenprobe)", T.optimizeFiveGuys({ protein: 42, carbs: 45, fat: 35, kcal: 663, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true, false).some(r => r.main && r.main.group === "burgers" && r.bun !== "wrap"), true);
 // Extra patties: high-protein-Ziel -> Extra Patties moeglich
 const rHiPro = T.optimizeFiveGuys({ protein: 75, carbs: 40, fat: 45, kcal: 865, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true);
 check("FiveGuys high-protein -> Extra Patties erscheint", rHiPro.some(r => r.extraPatties > 0), true);
