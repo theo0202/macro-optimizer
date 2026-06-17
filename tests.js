@@ -752,9 +752,16 @@ const rAllFG = T.optimizeAll({ protein: 45, carbs: 60, fat: 35, kcal: 735, fibMi
 check("All: fiveguys-Treffer gueltig (kind + main/fries)", rAllFG.filter(r => r._resto === "fiveguys").every(r => r.kind === "fiveguys" && (r.main || r.fries)), true);
 
 // ── Pizza Express (à la carte, AC-Familie; volle PDF-Makros) ──
-check("PizzaExpress Items (229)", T.PIZZAEXPRESS.items.length, 229);
+check("PizzaExpress Items (156, Deliveroo-geprunt)", T.PIZZAEXPRESS.items.length, 156);
 check("PizzaExpress Kategorien (9)", T.PIZZAEXPRESS.cats.length, 9);
 check("PizzaExpress Desserts-Kategorie default AUS (User-Wunsch)", T.PIZZAEXPRESS.cats.find(c => c.id === "desserts").on, false);
+// Deliveroo-Prune-Guard (User 17.06.2026): nicht-bestellbare Produkte raus, Dine-Out-Suffix entfernt, Squad Sharer benannt
+check("PizzaExpress kein Padana (nicht auf Deliveroo)", !T.PIZZAEXPRESS.items.some(x => /padana/i.test(x.name)), true);
+check("PizzaExpress kein Garlic Prawn (nicht auf Deliveroo)", !T.PIZZAEXPRESS.items.some(x => /garlic prawn/i.test(x.name)), true);
+check("PizzaExpress keine Leggera-Pizza (Pomodoro raus)", !T.PIZZAEXPRESS.items.some(x => /pomodoro/i.test(x.name)), true);
+check("PizzaExpress keine '(Dine Out)'-Namen mehr", !T.PIZZAEXPRESS.items.some(x => /dine out/i.test(x.name)), true);
+check("PizzaExpress 'Squad Sharer' vorhanden (= Sharing Trio)", T.PIZZAEXPRESS.items.some(x => x.name === "Squad Sharer"), true);
+check("PizzaExpress 8 Desserts (Deliveroo)", T.PIZZAEXPRESS.items.filter(x => x.cat === "desserts").length, 8);
 check("PizzaExpress volle 8 Makros (alle Felder numerisch)", T.PIZZAEXPRESS.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("PizzaExpress Margherita (Classic) = 711 kcal", (T.PIZZAEXPRESS.items.find(x => x.id === "margherita") || {}).kcal, 711);
 check("PizzaExpress American (Classic) = 849 kcal", (T.PIZZAEXPRESS.items.find(x => x.id === "american") || {}).kcal, 849);

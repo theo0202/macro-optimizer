@@ -114,8 +114,11 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - **Noch nicht voll gegen die Deliveroo-Karte abgeglichen**: „Mini Fries" ist evtl. keine Deliveroo-Groesse; bei Bedarf wie bei Pepe's mit der Deliveroo-Karte prunen
 - **Pizza Express** (UK): offizielle Nährwert-PDF „PEX Nutritional Menu - June 26" (England/Wales/Scotland), 24 Seiten, per-Portion + per-100g. KEIN Crawler. `py -3 pizzaexpress-extract.py` (pdfplumber) parst die Food-Seiten (Dough Balls/Starters/Sides/Pizzas Classic+Romana+Large/Leggera & Al Forno/Salads/Desserts) → `data/pizzaexpress-raw.json`; `node pizzaexpress-update.js` → PIZZAEXPRESS-Block. Volle 8 Makros (per Portion: kcal/fat/sat/carbs/sugars/fibre/protein/salt = die ersten 9 Spalten ohne KJ)
   - **À-la-carte-Modell** (User-Entscheidung 16.06.2026): ganzes Food-Menü als Einzel-Items (AC-Familie), KEINE Build-Your-Own-Add-ons. Die Deliveroo-Customizing-Fenster (Crust/Extra-Toppings/Cheese/Dips) sind NICHT modelliert, weil die Deliveroo-Toppings/Dips nur kcal haben (keine vollen Makros) und nicht zur PDF passen (z.B. Deliveroo „Pepperoni 241" vs PDF „Pepperoni 101"). **Crust-Wahl = die Gluten-Free- bzw. Vegan-Zeilen** sind je eigene Items (PDF hat sie). „Garlic Crust"/„Plant Cheese"-Deltas nicht modelliert (keine sauberen Daten)
-  - 229 Items, 9 Kategorien; inkl. GF (63), Vegan (36) und „(Dine Out)"-Varianten (30) — alle als eigene Items. Extraktor: Mojibake→ASCII, Merge umbrochener Namen, kcal-Plausibilitäts-Check (4C+4P+9F)
-  - Ausgeschlossen: Drinks, Hot Drinks, Piccolo (Kids), Breakfast (nur Airport), Extra Toppings + Dips (per User-Entscheidung)
+  - Die PDF-Extraktion liefert 229 Roh-Items (inkl. GF/Vegan/„(Dine Out)"-Varianten). Extraktor: Mojibake→ASCII, Merge umbrochener Namen, kcal-Plausibilitäts-Check (4C+4P+9F). **`data/pizzaexpress-raw.json` bleibt die volle Quelle** — der Prune passiert erst in `pizzaexpress-update.js`
+  - **Deliveroo-Prune (User-Entscheidung 17.06.2026 „voll auf Deliveroo-Liste"): 229 → 156 Items.** Nur auf der Deliveroo-Bestellseite bestellbare Produkte. Regeln in `pizzaexpress-update.js` (`pruneKeep`): Pizzen = alle Rezepte auf Classic/Romana/Large + GF/Vegan AUSSER **Padana** + **Garlic Prawn** (nicht auf Deliveroo); „Double American Cheese" existiert in der PDF nur als (Dine Out) → behalten. Dough Balls/Sides = „(Dine Out)"-Dubletten raus, Dough Balls „Al Forno" raus. Leggera & Al Forno = nur die 5 Pasta (Lasagna/Cannelloni/Pollo Pesto/Peperonata/Prawn Puttanesca), die **Leggera-Pizzen** (Pomodoro etc.) gibt es auf Deliveroo nicht. Starters = explizite Deliveroo-Liste. Salads = „with GF Dough Balls"-Varianten + „Warm Roasted Veg & Chicken Bowl" raus (Basis + „with dough sticks" bleiben). Desserts = die 8 Deliveroo-Desserts
+  - **Deliveroo nutzt teils die „(Dine Out)"-Portion**: bei Calamari (675≈678), Mozzarella Sticks (552), Squad Sharer (1320 = „Sharing Trio (Dine Out)") und **allen Desserts** (Biscoff 913, Brownie Bites 988, Blondie Bites 874, Lemon&Rasp 330, Vanilla 466, Honeycomb 479, Stem Ginger 509) matchen die Deliveroo-kcal exakt die (Dine Out)-PDF-Werte → diese Variante behalten. „(Dine Out)" wird aus den Anzeigenamen entfernt; „Sharing Trio" → „Squad Sharer" (Deliveroo-Name)
+  - **Salad-Add-ons + „No Dips"-Schalter NICHT gebaut** (User-Entscheidung 17.06.2026 „bei à la carte bleiben"): Deliveroo-Dips/Extra-Toppings (Dough Sticks, Chicken/Goat's Cheese/Olives/Tuna) haben nur kcal (keine vollen Makros) und passen nicht zur PDF → kein Build-Your-Own. Die fertigen „… with dough sticks"-Salads decken die Dough-Sticks-Option ab
+  - Ausgeschlossen: Drinks, Hot Drinks (gar nicht in den Daten — „alle Getränke ignorieren"), Piccolo (Kids), Breakfast (nur Airport), Extra Toppings + Dips, sowie der gesamte Deliveroo-Prune (Padana/Garlic Prawn/Leggera-Pizzen/Sorbets/Gelato/Dolcetti/Affogato/Cajun Prawns/Meatballs etc.)
 - **Wasabi** (UK): offizielles `WAS_Nutritional_Guide` PDF (Version 32). KEIN Crawler. `py -3 wasabi-extract.py` (pdfplumber `extract_tables()`, Header-Spalten-Mapping) → `data/wasabi-raw.json`; `node wasabi-update.js` → WASABI-Block. À la carte (AC-Familie)
   - **Tabelle ist PER 100g** (ausser kcal = per Portion in eigener Spalte) → Makros werden mit `portion/100` skaliert. Fehlt die per-Portion-kcal-Spalte (cold sides/sides), wird kcal = kcal100 × portion/100 abgeleitet. **KEINE Ballaststoffe → fibre=0** (wie UG/Pepe's)
   - 158 Items, 8 Kategorien: Sushi (34), Salads (19), Cold Sides (4), Soup (6), Bento (54), Breakfast (10), Sides (18), Sauces & Dressings (13)
@@ -138,7 +141,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Chopstix**: `CHOPSTIX.bases[]` (je `reg`/`lg`-Größe mit 8 Makros) + `CHOPSTIX.toppings[]` (ein 8-Makro-Wert pro Topping, Regular=Large)
 - **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (7 Basting-Flavours inkl. Plain=0, Werte per 10 ml)
 - **Five Guys**: `FIVEGUYS.mains[]` (komponierte Burger + fertige Sandwiches, je mit `group` burgers/sandwiches; Sandwiches mit pre-included Toppings tragen `incl`=Topping-IDs; Hot Dogs entfernt) + `FIVEGUYS.fries[]` (Plain/Cajun/Loaded) + `FIVEGUYS.toppings[]` (15 freie Toppings, `sauce:true` auf den 7 Saucen) + `FIVEGUYS.mods[]` (patty/cheese/bacon/bun/lettuce — Komponenten für Bun-Wahl/Extra-Patties/Sandwich-Extras zur Optimizer-Laufzeit) — alle mit vollen 8 Makros
-- **Pizza Express**: `PIZZAEXPRESS.cats[]` + `PIZZAEXPRESS.items[]` (AC-Schema wie Itsu/Pret; 229 Items, volle 8 Makros per Portion; GF/Vegan/Dine-Out-Varianten als eigene Items) — kein Build-Your-Own
+- **Pizza Express**: `PIZZAEXPRESS.cats[]` + `PIZZAEXPRESS.items[]` (AC-Schema wie Itsu/Pret; 156 Items nach Deliveroo-Prune, volle 8 Makros per Portion; GF/Vegan-Varianten als eigene Items) — kein Build-Your-Own
 - **Wasabi**: `WASABI.cats[]` + `WASABI.items[]` (AC-Schema; 158 Items, volle Makros AUSSER `fibre:0`; per-100g→Portion skaliert). Switches via `optimizeWasabi(...,noSoup,onlySushi,noSashimi)` (`WASABI_SOUP_CAT`/`WASABI_SUSHI_CAT`)
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
@@ -253,9 +256,10 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 
 ## Bestellablauf Pizza Express (à la carte)
 - Wie Itsu/Pret/Nando's/TFC/Pepe's: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
-- 9 Kategorien (229 Items): Dough Balls (26), Starters (25), Sides (10), Pizzas - Classic (46), Pizzas - Romana (46), Pizzas - Large Classic (23), Leggera & Al Forno (13), Salads (13), Desserts (27)
-- **Kein Build-Your-Own** (User-Entscheidung): die Deliveroo-Pizza-Customizing-Fenster (Crust/Extra-Toppings/Cheese-Wahl/Dips) sind NICHT modelliert. **Crust-Wahl = das passende Item wählen** (Gluten-Free / Vegan sind eigene Zeilen in der PDF). Extra-Toppings + Dips weggelassen (Deliveroo nur kcal, passt nicht zur PDF)
-- Standard-Chips: alle Kategorien an; Max-Items 5. Keine Schalter
+- 9 Kategorien (156 Items nach Deliveroo-Prune): Dough Balls (14), Starters (12), Sides (7), Pizzas - Classic (40), Pizzas - Romana (40), Pizzas - Large Classic (20), Leggera & Al Forno (7, nur Pasta), Salads (8), Desserts (8)
+- **Kein Build-Your-Own** (User-Entscheidung): die Deliveroo-Pizza-Customizing-Fenster (Crust/Extra-Toppings/Cheese-Wahl/Dips) sind NICHT modelliert. **Crust-Wahl = das passende Item wählen** (Gluten-Free / Vegan sind eigene Zeilen in der PDF). Extra-Toppings + Dips weggelassen (Deliveroo nur kcal, passt nicht zur PDF). Auch der „No Dips"-Schalter + Salad-Add-ons wurden bewusst NICHT gebaut (User 17.06.2026, „bei à la carte bleiben")
+- **Deliveroo-Prune** (User 17.06.2026): nur bestellbare Produkte, 229→156 (Details + Regeln siehe Datenquellen-Block). Padana/Garlic Prawn/Leggera-Pizzen/Dine-Out-Dubletten/Sorbets etc. raus
+- Standard-Chips: alle Kategorien an **außer Desserts** (default AUS); Max-Items 5. Keine Schalter
 - Optimizer-Pool = aktive Kategorie-Chips (`optimizePizzaExpress` filtert nur nach `activeCats`)
 
 ## Bestellablauf Wasabi (à la carte)
@@ -401,7 +405,7 @@ Pool-Bildung:
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 - **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
 - **Pepe's**: aktive Kategorie-Chips MINUS `sauce:true`-Items (Schalter "No sauce"). VOR `alaCarteCombos` wird der effektive Flavour (bei "No flavour" → Plain, sonst der gewählte) in jedes `flavourMl>0`-Item eingerechnet (Makros + Name) → der Optimizer sieht fertige, geflavourte Items; mit Plain (0 Makros) behalten sie ihre Basiswerte
-- **Pizza Express**: aktive Kategorie-Chips (kein Filter-Schalter). 229 Items, volle 8 Makros aus der PDF
+- **Pizza Express**: aktive Kategorie-Chips (kein Filter-Schalter). 156 Items (Deliveroo-geprunt), volle 8 Makros aus der PDF
 
 UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
@@ -507,7 +511,7 @@ Essen bestellen Claude Tool/
     ├── tfc-raw.json         ← The-Fitness-Chef-Daten aus User-Copy-Paste (33 Items, size wl/ml/wg, sodium in mg)
     ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (51 Items, Deliveroo-abgeglichen, + 7 Flavours inkl. Plain, sauce/flavourMl-Flags, keine Ballaststoffe)
     ├── fiveguys-raw.json    ← Five-Guys-Daten: Komponenten (Patty/Bun/Cheese/Bacon) + Kompositionsregeln (Burger) + Sandwiches/Fries/Loaded/Toppings (offizielle Nährwerttabelle, per-component; Hot Dogs entfernt)
-    ├── pizzaexpress-raw.json ← Pizza-Express-Daten aus der offiziellen PDF (pizzaexpress-extract.py): 229 Items, 9 Kategorien, volle 8 Makros, à la carte
+    ├── pizzaexpress-raw.json ← Pizza-Express-Daten aus der offiziellen PDF (pizzaexpress-extract.py): 229 Roh-Items (volle PDF, Quelle der Wahrheit), 9 Kategorien, volle 8 Makros; Deliveroo-Prune (→156) erst in pizzaexpress-update.js
     ├── wasabi-raw.json       ← Wasabi-Daten aus dem PDF (wasabi-extract.py): 158 Items, 8 Kategorien, per-Portion (aus per-100g skaliert), fibre=0; Bento-Seite 14 ausgelassen (redundant + leerer sat-Header)
     ├── Wasabi-Nutritional-Guide.pdf ← Original Wasabi Nutritional Guide (Quelle für wasabi-extract.py)
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
