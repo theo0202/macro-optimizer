@@ -1,7 +1,7 @@
-# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC + Chopstix + Pepe's + Five Guys)
+# Macro Optimizer (Subway UK + Farmer J + Itsu + Pret + Nando's + Urban Greens + Wagamama + GDK + Atis + TFC + Chopstix + Pepe's + Five Guys + Pizza Express)
 
 ## Projektübersicht
-Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) **The Fitness Chef / TFC** (UK, Meal-Prep), **Chopstix Noodle Bar** (UK, Build-a-Box), **Pepe's Piri Piri** (UK) und **Five Guys** (UK, Build-Your-Own Burger/Sandwich + Fries), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es zwei restaurantsübergreifende Tabs (ganz vorne in der Tab-Zeile): **„Accurate restaurants"** (nur die 10 Restaurants mit verlässlichen Daten: Subway, Farmer J, Itsu, Pret, Nando's, Urban Greens, Wagamama, Atis, Fitness Chef, Pepe's) und rechts daneben **„All restaurants"** (alle 13). Beide berechnen restaurantsübergreifend die besten Bestellungen.
+Standalone PWA (single HTML file) zur Optimierung von Restaurant-Bestellungen basierend auf Makro-Zielen. Zielplattform: iPhone Home Screen via "Add to Home Screen" in Safari (live auf GitHub Pages, siehe Deployment). Restaurants: **Subway UK**, **Farmer J** (London), **Itsu** (UK), **Pret A Manger** (UK), **Nando's** (UK), **Urban Greens** (London), **Wagamama** (UK), **German Doner Kebab / GDK** (UK), **Atis** (atisfood.com, London) **The Fitness Chef / TFC** (UK, Meal-Prep), **Chopstix Noodle Bar** (UK, Build-a-Box), **Pepe's Piri Piri** (UK) **Five Guys** (UK, Build-Your-Own Burger/Sandwich + Fries) und **Pizza Express** (UK, à la carte aus der offiziellen Nährwert-PDF), umschaltbar per Tabs im UI. Weitere Restaurants sollen folgen. Zusätzlich gibt es zwei restaurantsübergreifende Tabs (ganz vorne in der Tab-Zeile): **„Accurate restaurants"** (nur die 11 Restaurants mit verlässlichen Daten: Subway, Farmer J, Itsu, Pret, Nando's, Urban Greens, Wagamama, Atis, Fitness Chef, Pepe's, Pizza Express) und rechts daneben **„All restaurants"** (alle 14). Beide berechnen restaurantsübergreifend die besten Bestellungen.
 
 ## Deployment / Sync
 Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `theo0202/macro-optimizer`). Nach JEDER getesteten Änderung an index.html: `git push` (GitHub CLI unter `C:\Program Files\GitHub CLI\gh.exe`, nicht im PATH) → Theodors iPhone-Home-Screen-App zeigt die neue Version nach ~1 Min + Neustart der App. Die App ist self-contained (alles in index.html, CDN für React/Fonts).
@@ -32,6 +32,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - `node tfc-update.js` generiert den TFC-Block aus `data/tfc-raw.json` (KEIN Crawler — User liefert Copy-Paste; Skript komponiert Größen-Namen + rechnet sodium→salt)
 - `node pepes-update.js` generiert den PEPES-Block aus `data/pepes-raw.json` (KEIN Crawler — User liefert offizielle Nährwerttabelle als Copy-Paste; Skript setzt fibre=0 + schreibt cats/flavours/items). Validierung: `node verify-pepes.js`
 - `node fiveguys-update.js` generiert den FIVEGUYS-Block aus `data/fiveguys-raw.json` (KEIN Crawler — User liefert die offizielle Five-Guys-Nährwerttabelle, die KOMPONENTEN-basiert ist). Das Skript **komponiert** Burger aus Komponenten (Patty/Bun/Cheese/Bacon), generiert Cajun-Fries (= Fries + Cajun Seasoning) und schreibt mains/fries/toppings. Validierung: `node verify-fiveguys.js`
+- `py -3 pizzaexpress-extract.py "<pfad>.pdf"` extrahiert die Pizza-Express-Naehrwerte aus der offiziellen PDF (pdfplumber; per-Portion-Makros, Mojibake-Bereinigung, Merge umbrochener Namen) → `data/pizzaexpress-raw.json`. Dann `node pizzaexpress-update.js` → PIZZAEXPRESS-Block (Marker `__PIZZAEXPRESS_DATA_START__`/`__PIZZAEXPRESS_DATA_END__`). KEIN Crawler — die PDF ist die Quelle
 - Preview-Server: `.claude/launch.json` → "macro-optimizer" (py -3 -m http.server 8321)
 
 ## Datenquellen
@@ -110,6 +111,10 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - **Deliveroo-vs-Komponenten-kcal-Konflikt** (siehe `_meta.deliveroo_kcal_note`): Deliveroo zeigt z.B. **Bacon Cheeseburger 904 kcal**, die Komponenten-Summe ergibt **834**; gleichzeitig sagt dieselbe Deliveroo-Seite „Add Bacon +78" (1 Portion) — die 904 sind also NICHT aus den Komponenten reproduzierbar. Wir nutzen die offizielle, in sich konsistente Komponenten-Tabelle (volle Makros); Deliveroo-Anzeige kann ~70 kcal höher sein. Falls Deliveroo-genaue kcal gewünscht: User müsste die Deliveroo-Produkt-kcal je Burger liefern
   - **AUSGESCHLOSSEN**: Bulk Peanuts (nur per-100g, keine Portion), Getraenke (nicht in den Screenshots), die Diced-Loaded-Fries-Sub-Toppings (Loaded Fries sind als fertige Produkte drin)
   - **Noch nicht voll gegen die Deliveroo-Karte abgeglichen**: „Mini Fries" ist evtl. keine Deliveroo-Groesse; bei Bedarf wie bei Pepe's mit der Deliveroo-Karte prunen
+- **Pizza Express** (UK): offizielle Nährwert-PDF „PEX Nutritional Menu - June 26" (England/Wales/Scotland), 24 Seiten, per-Portion + per-100g. KEIN Crawler. `py -3 pizzaexpress-extract.py` (pdfplumber) parst die Food-Seiten (Dough Balls/Starters/Sides/Pizzas Classic+Romana+Large/Leggera & Al Forno/Salads/Desserts) → `data/pizzaexpress-raw.json`; `node pizzaexpress-update.js` → PIZZAEXPRESS-Block. Volle 8 Makros (per Portion: kcal/fat/sat/carbs/sugars/fibre/protein/salt = die ersten 9 Spalten ohne KJ)
+  - **À-la-carte-Modell** (User-Entscheidung 16.06.2026): ganzes Food-Menü als Einzel-Items (AC-Familie), KEINE Build-Your-Own-Add-ons. Die Deliveroo-Customizing-Fenster (Crust/Extra-Toppings/Cheese/Dips) sind NICHT modelliert, weil die Deliveroo-Toppings/Dips nur kcal haben (keine vollen Makros) und nicht zur PDF passen (z.B. Deliveroo „Pepperoni 241" vs PDF „Pepperoni 101"). **Crust-Wahl = die Gluten-Free- bzw. Vegan-Zeilen** sind je eigene Items (PDF hat sie). „Garlic Crust"/„Plant Cheese"-Deltas nicht modelliert (keine sauberen Daten)
+  - 229 Items, 9 Kategorien; inkl. GF (63), Vegan (36) und „(Dine Out)"-Varianten (30) — alle als eigene Items. Extraktor: Mojibake→ASCII, Merge umbrochener Namen, kcal-Plausibilitäts-Check (4C+4P+9F)
+  - Ausgeschlossen: Drinks, Hot Drinks, Piccolo (Kids), Breakfast (nur Airport), Extra Toppings + Dips (per User-Entscheidung)
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
@@ -126,6 +131,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Chopstix**: `CHOPSTIX.bases[]` (je `reg`/`lg`-Größe mit 8 Makros) + `CHOPSTIX.toppings[]` (ein 8-Makro-Wert pro Topping, Regular=Large)
 - **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (7 Basting-Flavours inkl. Plain=0, Werte per 10 ml)
 - **Five Guys**: `FIVEGUYS.mains[]` (komponierte Burger + fertige Sandwiches, je mit `group` burgers/sandwiches; Sandwiches mit pre-included Toppings tragen `incl`=Topping-IDs; Hot Dogs entfernt) + `FIVEGUYS.fries[]` (Plain/Cajun/Loaded) + `FIVEGUYS.toppings[]` (15 freie Toppings, `sauce:true` auf den 7 Saucen) + `FIVEGUYS.mods[]` (patty/cheese/bacon/bun/lettuce — Komponenten für Bun-Wahl/Extra-Patties/Sandwich-Extras zur Optimizer-Laufzeit) — alle mit vollen 8 Makros
+- **Pizza Express**: `PIZZAEXPRESS.cats[]` + `PIZZAEXPRESS.items[]` (AC-Schema wie Itsu/Pret; 229 Items, volle 8 Makros per Portion; GF/Vegan/Dine-Out-Varianten als eigene Items) — kein Build-Your-Own
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -237,6 +243,13 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - **Schalter „Lettuce Wrap"** (`wrapOnly`, Default **AUS** — restriktiver „nur X"-Modus): erzwingt bei ALLEN Burgern die Lettuce-Wrap-Bun-Option (Low-Carb; im Optimizer nur noch `buns=["wrap"]` statt Bun/Bowl/Wrap). Betrifft nur Burger; Sandwiches/Fries unberührt. In „All restaurants" NICHT erzwungen
 - Toppings/Extras wählt der Optimizer greedy (nur Score-verbessernde, max 6, je ≤1×) und nur auf einen Main
 
+## Bestellablauf Pizza Express (à la carte)
+- Wie Itsu/Pret/Nando's/TFC/Pepe's: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
+- 9 Kategorien (229 Items): Dough Balls (26), Starters (25), Sides (10), Pizzas - Classic (46), Pizzas - Romana (46), Pizzas - Large Classic (23), Leggera & Al Forno (13), Salads (13), Desserts (27)
+- **Kein Build-Your-Own** (User-Entscheidung): die Deliveroo-Pizza-Customizing-Fenster (Crust/Extra-Toppings/Cheese-Wahl/Dips) sind NICHT modelliert. **Crust-Wahl = das passende Item wählen** (Gluten-Free / Vegan sind eigene Zeilen in der PDF). Extra-Toppings + Dips weggelassen (Deliveroo nur kcal, passt nicht zur PDF)
+- Standard-Chips: alle Kategorien an; Max-Items 5. Keine Schalter
+- Optimizer-Pool = aktive Kategorie-Chips (`optimizePizzaExpress` filtert nur nach `activeCats`)
+
 ## Bestellablauf Urban Greens (Deliveroo)
 Zwei Modi (Umschalt-Buttons): **"BYO Salad"** und **"BYO Tray"** — fertige Gerichte gibt es in der App NICHT (User-Entscheidung, siehe Datenquellen).
 (Getrennte Modi statt gemischter Ergebnisse: Salads dominieren Trays im Score fast immer, weil sie mehr Freiheitsgrade haben.)
@@ -293,6 +306,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
 - **Pepe's**: alle Kategorien aktiv, max. 5 Items, "No sauce" + "No flavour" AN (No flavour = Plain, 0 Makros; die Flavour-Chips erscheinen + wirken erst, wenn "No flavour" aus ist — Default-Chip dann Lemon & Herb)
 - **Five Guys**: Build Your Own, „No sauce" AN, „Lettuce Wrap" AUS — der Optimizer wählt 1 Main (Burger/Sandwich) + Bun-Wahl + Extra Patties (Burger) + optional 1 Fries + freie Toppings (+ paid extras bei Sandwiches) automatisch
+- **Pizza Express**: alle Kategorien aktiv, max. 5 Items; à la carte (keine Schalter); volle PDF-Makros
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -306,7 +320,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (**Accurate restaurants** / **All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's / Five Guys)
+4. Restaurant-Tabs (**Accurate restaurants** / **All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's / Five Guys / Pizza Express)
 5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items + "No fish" (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
@@ -357,7 +371,7 @@ Button **"Import from screenshot"** (unter den Modus-Tabs, in beiden Modi sichtb
 3. Set Fieldtrays/Fieldbowls/Solo-Salate laufen als Einzel-Kandidaten mit
 4. Gleiche Score-Funktion, Top 20/Top 8 wie Subway
 
-### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`), GDK (`optimizeGDK`), The Fitness Chef (`optimizeTFC`) und Pepe's (`optimizePepes`)
+### À la carte: Itsu (`optimizeItsu`), Pret (`optimizePret`), Nando's (`optimizeNandos`), Wagamama (`optimizeWaga`), GDK (`optimizeGDK`), The Fitness Chef (`optimizeTFC`), Pepe's (`optimizePepes`) und Pizza Express (`optimizePizzaExpress`)
 Alle nutzen den gemeinsamen Kern `alaCarteCombos`:
 1. Enumeriert alle Singles und Paare (Duplikate erlaubt, i<=j)
 2. Triples per Beam-Suche: nur Erweiterungen der besten 80 Paare (dedupliziert) — bleibt auch mit großem Pool flott
@@ -372,6 +386,7 @@ Pool-Bildung:
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 - **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
 - **Pepe's**: aktive Kategorie-Chips MINUS `sauce:true`-Items (Schalter "No sauce"). VOR `alaCarteCombos` wird der effektive Flavour (bei "No flavour" → Plain, sonst der gewählte) in jedes `flavourMl>0`-Item eingerechnet (Makros + Name) → der Optimizer sieht fertige, geflavourte Items; mit Plain (0 Makros) behalten sie ihre Basiswerte
+- **Pizza Express**: aktive Kategorie-Chips (kein Filter-Schalter). 229 Items, volle 8 Makros aus der PDF
 
 UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
@@ -401,7 +416,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - Eigene Result-Form (`kind/main/fries/tops`) → eigene Karte + eigenes Panel. `resultsFiveGuys`-Memo nur bei aktivem Five-Guys-Tab. Volle 8 Makros. Keine Schalter (v1)
 
 ### „All restaurants" + „Accurate restaurants" (`optimizeAll`)
-- `optimizeAll(t, mode, p, subSize, only)` — `only` = optionale Restaurant-Whitelist (Array von `_resto`-Keys). Ohne `only` = **All restaurants** (alle 13); mit `only = ACCURATE_RESTOS` = **Accurate restaurants** (`["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes"]` — ohne GDK/Chopstix/Five Guys, da Komposition/Anomalien; Nando's drin, da Live-Order-API mit vollen Makros). Pro Restaurant ein `if(ok(rt))`-Guard
+- `optimizeAll(t, mode, p, subSize, only)` — `only` = optionale Restaurant-Whitelist (Array von `_resto`-Keys). Ohne `only` = **All restaurants** (alle 14); mit `only = ACCURATE_RESTOS` = **Accurate restaurants** (`["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes","pizzaexpress"]` — ohne GDK/Chopstix/Five Guys, da Komposition/Anomalien; Nando's + Pizza Express drin, da Live-Order-API bzw. offizielle PDF mit vollen Makros). Pro Restaurant ein `if(ok(rt))`-Guard
 - Zwei Tabs ganz vorne: `"accurate"` (links) + `"all"`; beide teilen die Cross-Restaurant-Karte/`selectAcross`. `resultsAccurate`-Memo rechnet nur im `"accurate"`-Tab
 - Ruft JEDEN (erlaubten) Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Bun-Wahl + Extra Patties + Fries + Toppings, No sauce)
 - Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 1 Treffer pro Restaurant** (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant), Top 20 → Top 8 angezeigt
@@ -413,7 +428,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - **Subway**: Extras (inkl. Double Meat/Cheese), Salad togglen ("✦ Mein Standard"), Saucen (max 2), Seasonings
 - **Farmer J**: Toppings togglen, Sauce/Dip/Topping togglen (max 1, UI erzwingt das); bei Sets keine Add-ons
 - **Farmer J Set-Browser**: alle 13 Sets gruppiert (Set Fieldtrays / Set Fieldbowls / The Salad, Solo), Klick wählt das Set aus und öffnet das Detail-Panel
-- **À-la-carte-Familie (Itsu / Pret / Nando's / Wagamama / GDK / The Fitness Chef / Pepe's)** (gemeinsames Panel über AC-Alias): Item-Aufschlüsselung (kcal + Protein je Item), keine Add-ons; Bestellanleitung = Stückliste mit Mengen (z.B. "2× chicken gyoza", "1× Chicken Supreme (Weight Loss)", "1× Tender Strips - 3 (Lemon & Herb)")
+- **À-la-carte-Familie (Itsu / Pret / Nando's / Wagamama / GDK / The Fitness Chef / Pepe's / Pizza Express)** (gemeinsames Panel über AC-Alias): Item-Aufschlüsselung (kcal + Protein je Item), keine Add-ons; Bestellanleitung = Stückliste mit Mengen (z.B. "2× chicken gyoza", "1× Chicken Supreme (Weight Loss)", "1× Tender Strips - 3 (Lemon & Herb)")
 - **Urban Greens**: Komponenten-Aufschlüsselung nach Gruppen + Bestellanleitung (Salad: 11 Schritte, Tray: 10, fertig: 2); KEINE Fibre/Salt-Bars (keine Daten); fertige Salads tragen den Hinweis "Werte ohne Dressing"
 - **Chopstix** (eigenes Panel, Build-a-Box): Komponenten (Base in Box-Größe + Toppings mit kcal) + Bestellanleitung (Box-Typ → Base → Toppings mit Mengen); volle Makro-Bars
 - **Atis** (eigenes Panel, Power Plate): Komponenten-Aufschlüsselung nach Gruppen (doublePlate-Items mit "×2" + verdoppeltem kcal) + Hinweis "×2 = double portion" + Bestellanleitung (8 Schritte); volle Makro-Bars
@@ -427,7 +442,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 
 ## Design
 - Dark Mode (#0d0d0d Background)
-- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81), Chopstix-Header in Orange (#f97316→#9a3412), Pepe's-Header in Gold→Rot (#f2b705→#c1121f), Five-Guys-Header in Rot (#d52b1e→#a01913), „All restaurants"-Header in Violett (#7c3aed→#4c1d95), „Accurate restaurants"-Header in Blau (#0284c7→#0c4a6e). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
+- Subway Green (#009743) als Akzentfarbe; Farmer-J-Header in Olivgrün (#8a9a2b→#5c671d); Atis-Header in Teal-Emerald (#1fae8c→#0c6b54), TFC-Header in Indigo (#4f46e5→#312e81), Chopstix-Header in Orange (#f97316→#9a3412), Pepe's-Header in Gold→Rot (#f2b705→#c1121f), Five-Guys-Header in Rot (#d52b1e→#a01913), „All restaurants"-Header in Violett (#7c3aed→#4c1d95), „Accurate restaurants"-Header in Blau (#0284c7→#0c4a6e), Pizza-Express-Header in Dunkel-Teal (#14564d→#082d28). Restaurant-Header-Gradients sind alle in der `resto`-Ternary in App() gepflegt
 - Fonts: DM Sans (UI), DM Mono (Zahlen/Labels)
 - iPhone-optimiert: safe-area-inset, touch-optimierte Buttons
 - PWA-fähig: apple-mobile-web-app-capable, Vollbild-Modus
@@ -455,6 +470,8 @@ Essen bestellen Claude Tool/
 ├── verify-pepes.js          ← Sanity-Check der Pepe's-Werte (kcal↔Makros ohne Ballaststoffe, gesättigt≤Fett, Item-Counts)
 ├── fiveguys-update.js       ← Generiert FIVEGUYS-Block (komponiert Burger aus Komponenten + Cajun-Fries) aus data/fiveguys-raw.json
 ├── verify-fiveguys.js       ← Sanity-Check der Five-Guys-Komposition (kcal↔Makros, gesättigt≤Fett, Counts)
+├── pizzaexpress-extract.py  ← Extrahiert Pizza-Express-Daten aus der offiziellen PDF (pdfplumber) → data/pizzaexpress-raw.json
+├── pizzaexpress-update.js   ← Generiert PIZZAEXPRESS-Block in index.html aus data/pizzaexpress-raw.json (à la carte)
 ├── tfc-update.js            ← Generiert TFC-Block in index.html aus data/tfc-raw.json (Größen-Namen + sodium→salt)
 ├── .claude/launch.json      ← Preview-Server-Konfiguration
 └── data/
@@ -473,6 +490,7 @@ Essen bestellen Claude Tool/
     ├── tfc-raw.json         ← The-Fitness-Chef-Daten aus User-Copy-Paste (33 Items, size wl/ml/wg, sodium in mg)
     ├── pepes-raw.json       ← Pepe's-Piri-Piri-Daten aus User-Copy-Paste (51 Items, Deliveroo-abgeglichen, + 7 Flavours inkl. Plain, sauce/flavourMl-Flags, keine Ballaststoffe)
     ├── fiveguys-raw.json    ← Five-Guys-Daten: Komponenten (Patty/Bun/Cheese/Bacon) + Kompositionsregeln (Burger) + Sandwiches/Fries/Loaded/Toppings (offizielle Nährwerttabelle, per-component; Hot Dogs entfernt)
+    ├── pizzaexpress-raw.json ← Pizza-Express-Daten aus der offiziellen PDF (pizzaexpress-extract.py): 229 Items, 9 Kategorien, volle 8 Makros, à la carte
     ├── subway-optimizer.jsx ← React-Komponente mit vollständigen Subway-Daten (inkl. Toasties, Wraps, etc.)
     ├── Farmer J _ Nutritional Info.xlsx ← Original-Erfassung Farmer J
     └── UKIandROINutritionalInformationJan2026.pdf ← Original-PDF Subway

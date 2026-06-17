@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizeAll, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeAll, sortResults, parseMacroScreenshot };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -527,7 +527,7 @@ check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -537,7 +537,7 @@ check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 
 // ── "Accurate restaurants" (Teilmenge via optimizeAll-Whitelist) ──
-const ACCURATE = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "atis", "tfc", "pepes"];
+const ACCURATE = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "atis", "tfc", "pepes", "pizzaexpress"];
 const rAcc = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: liefert Ergebnisse (1..20)", rAcc.length > 0 && rAcc.length <= 20, true);
 check("Accurate: NUR Whitelist-Restaurants", rAcc.every(r => ACCURATE.includes(r._resto)), true);
@@ -750,6 +750,25 @@ check("FiveGuys kleines Ziel trifft Little Hamburger (Top 5)", rFGsmall.slice(0,
 // All-restaurants: fiveguys gueltig
 const rAllFG = T.optimizeAll({ protein: 45, carbs: 60, fat: 35, kcal: 735, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, "footlong");
 check("All: fiveguys-Treffer gueltig (kind + main/fries)", rAllFG.filter(r => r._resto === "fiveguys").every(r => r.kind === "fiveguys" && (r.main || r.fries)), true);
+
+// ── Pizza Express (à la carte, AC-Familie; volle PDF-Makros) ──
+check("PizzaExpress Items (229)", T.PIZZAEXPRESS.items.length, 229);
+check("PizzaExpress Kategorien (9)", T.PIZZAEXPRESS.cats.length, 9);
+check("PizzaExpress volle 8 Makros (alle Felder numerisch)", T.PIZZAEXPRESS.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
+check("PizzaExpress Margherita (Classic) = 711 kcal", (T.PIZZAEXPRESS.items.find(x => x.id === "margherita") || {}).kcal, 711);
+check("PizzaExpress American (Classic) = 849 kcal", (T.PIZZAEXPRESS.items.find(x => x.id === "american") || {}).kcal, 849);
+const pxBad = T.PIZZAEXPRESS.items.filter(x => { const est = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - est) > 60 && Math.abs(x.kcal - est) / Math.max(x.kcal, 1) > 0.15; });
+check("PizzaExpress alle Items kcal-plausibel (est=4C+4P+9F)", pxBad.length, 0);
+const allPX = {}; T.PIZZAEXPRESS.cats.forEach(c => allPX[c.id] = true);
+const rPX = T.optimizePizzaExpress({ protein: 40, carbs: 60, fat: 25, kcal: 625, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPX, 3);
+check("PizzaExpress liefert Ergebnisse (1..20)", rPX.length > 0 && rPX.length <= 20, true);
+check("PizzaExpress Nutrition == Summe der Items", rPX.every(r => approx(r.nutrition.kcal, Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10)), true);
+check("PizzaExpress 1–3 Items", rPX.every(r => r.items.length >= 1 && r.items.length <= 3), true);
+const onlyClassic = {}; T.PIZZAEXPRESS.cats.forEach(c => onlyClassic[c.id] = (c.id === "classic"));
+check("PizzaExpress Kategorie-Filter (nur Classic)", T.optimizePizzaExpress({ protein: 40, carbs: 90, fat: 35, kcal: 835, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, onlyClassic, 1).every(r => r.items.every(x => x.cat === "classic")), true);
+// All + Accurate: pizzaexpress integriert
+const rAccPX = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
+check("Accurate: pizzaexpress in Whitelist + alle Treffer gueltig", ACCURATE.includes("pizzaexpress") && rAccPX.every(r => ACCURATE.includes(r._resto)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
