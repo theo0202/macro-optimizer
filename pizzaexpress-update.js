@@ -17,13 +17,16 @@ const items = raw.items.map(it => ({
   sugars: num(it.sugars), fibre: num(it.fibre), protein: num(it.protein), salt: num(it.salt),
 }));
 
+// Kategorien, die per Default AUS sind (User-Wunsch 16.06.2026: Desserts ausschliessen — Items bleiben, Chip nur default off)
+const DEFAULT_OFF = new Set(["desserts"]);
+
 const lines = [];
 lines.push("// __PIZZAEXPRESS_DATA_START__ (generiert via: node pizzaexpress-update.js aus data/pizzaexpress-raw.json — nicht von Hand editieren)");
 lines.push("// Quelle: offizielle PizzaExpress-Naehrwert-PDF (England/Wales/Scotland) · Juni 2026 · " + items.length +
   " Items · per-Portion, volle 8 Makros. À la carte (AC-Alias). GF/Vegan/Dine-Out-Varianten sind eigene Items.");
 lines.push("const PIZZAEXPRESS = {");
 lines.push("  cats: [");
-for (const c of raw.cats) lines.push(`    { id:${q(c.id)},name:${q(c.name)},on:${c.on !== false} },`);
+for (const c of raw.cats) lines.push(`    { id:${q(c.id)},name:${q(c.name)},on:${c.on !== false && !DEFAULT_OFF.has(c.id)} },`);
 lines.push("  ],");
 lines.push("  items: [");
 for (const x of items) lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)},${macStr(x)} },`);

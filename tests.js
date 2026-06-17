@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeAll, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, optimizeAll, sortResults, parseMacroScreenshot };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -527,7 +527,7 @@ check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -537,7 +537,7 @@ check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 
 // ── "Accurate restaurants" (Teilmenge via optimizeAll-Whitelist) ──
-const ACCURATE = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "atis", "tfc", "pepes", "pizzaexpress"];
+const ACCURATE = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "atis", "tfc", "pepes", "pizzaexpress", "wasabi"];
 const rAcc = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: liefert Ergebnisse (1..20)", rAcc.length > 0 && rAcc.length <= 20, true);
 check("Accurate: NUR Whitelist-Restaurants", rAcc.every(r => ACCURATE.includes(r._resto)), true);
@@ -754,6 +754,7 @@ check("All: fiveguys-Treffer gueltig (kind + main/fries)", rAllFG.filter(r => r.
 // ── Pizza Express (à la carte, AC-Familie; volle PDF-Makros) ──
 check("PizzaExpress Items (229)", T.PIZZAEXPRESS.items.length, 229);
 check("PizzaExpress Kategorien (9)", T.PIZZAEXPRESS.cats.length, 9);
+check("PizzaExpress Desserts-Kategorie default AUS (User-Wunsch)", T.PIZZAEXPRESS.cats.find(c => c.id === "desserts").on, false);
 check("PizzaExpress volle 8 Makros (alle Felder numerisch)", T.PIZZAEXPRESS.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("PizzaExpress Margherita (Classic) = 711 kcal", (T.PIZZAEXPRESS.items.find(x => x.id === "margherita") || {}).kcal, 711);
 check("PizzaExpress American (Classic) = 849 kcal", (T.PIZZAEXPRESS.items.find(x => x.id === "american") || {}).kcal, 849);
@@ -769,6 +770,36 @@ check("PizzaExpress Kategorie-Filter (nur Classic)", T.optimizePizzaExpress({ pr
 // All + Accurate: pizzaexpress integriert
 const rAccPX = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: pizzaexpress in Whitelist + alle Treffer gueltig", ACCURATE.includes("pizzaexpress") && rAccPX.every(r => ACCURATE.includes(r._resto)), true);
+
+// ── Wasabi (à la carte, AC-Familie; per-100g -> per-Portion skaliert; Itsu-artige Switches) ──
+check("Wasabi Items (158)", T.WASABI.items.length, 158);
+check("Wasabi Kategorien (8)", T.WASABI.cats.length, 8);
+check("Wasabi fibre=0 (keine Quelle)", T.WASABI.items.every(x => x.fibre === 0), true);
+check("Wasabi keine Platters (Sharing ausgeschlossen)", !T.WASABI.items.find(x => /platter/i.test(x.name)), true);
+// Regression-Guard fuer den Bento-Fix (Seite 14 raus): keine doppelten Bento-Namen, kein sat=0 durch leeren Header
+const wBento = T.WASABI.items.filter(x => x.cat === "bento");
+const wBNames = wBento.map(x => x.name.toLowerCase().replace(/ bento$/, "").trim());
+check("Wasabi Bento ohne Namens-Duplikate (S.14-Dedup)", wBNames.every((n, i) => wBNames.indexOf(n) === i), true);
+check("Wasabi Bento kein sat=0 (leerer Header gefixt)", wBento.every(x => x.sat > 0), true);
+const wbad = T.WASABI.items.filter(x => { const est = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - est) > 60 && Math.abs(x.kcal - est) / Math.max(x.kcal, 1) > 0.25; });
+check("Wasabi kcal-plausibel (<=2 bekannte PDF-Anomalien)", wbad.length <= 2, true);
+const allW = {}; T.WASABI.cats.forEach(c => allW[c.id] = true);
+const tgtW = { protein: 25, carbs: 60, fat: 15, kcal: 475, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rW = T.optimizeWasabi(tgtW, "macros", {}, allW, 3, false, false, false);
+check("Wasabi liefert Ergebnisse (1..20)", rW.length > 0 && rW.length <= 20, true);
+check("Wasabi Nutrition == Summe", rW.every(r => approx(r.nutrition.kcal, Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10)), true);
+check("Wasabi 1–3 Items", rW.every(r => r.items.length >= 1 && r.items.length <= 3), true);
+// Schalter "No soups": keine Soup-Items
+check("Wasabi 'No soups': keine Soup-Items", T.optimizeWasabi(tgtW, "macros", {}, allW, 2, true, false, false).every(r => r.items.every(x => x.cat !== "soup")), true);
+check("Wasabi ohne 'No soups': Soup moeglich (Gegenprobe)", T.optimizeWasabi({ protein: 18, carbs: 8, fat: 5, kcal: 150, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allW, 1, false, false, false).some(r => r.items.some(x => x.cat === "soup")) || T.WASABI.items.some(x => x.cat === "soup"), true);
+// Schalter "only sushi": nur Sushi-Kategorie
+check("Wasabi 'only sushi': nur Sushi-Items", T.optimizeWasabi(tgtW, "macros", {}, allW, 3, false, true, false).every(r => r.items.every(x => x.cat === "sushi")), true);
+// "only sushi w/o sashimi": Sushi ohne Sashimi-Namen
+check("Wasabi 'only sushi w/o sashimi': kein Sashimi", T.optimizeWasabi(tgtW, "macros", {}, allW, 3, false, false, true).every(r => r.items.every(x => x.cat === "sushi" && !/sashimi/i.test(x.name))), true);
+check("Wasabi hat Sashimi-Items (Switch wirkt)", T.WASABI.items.some(x => /sashimi/i.test(x.name)), true);
+// All + Accurate: wasabi integriert
+const rAccW = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
+check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes("wasabi") && rAccW.every(r => ACCURATE.includes(r._resto)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
