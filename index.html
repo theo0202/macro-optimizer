@@ -23,7 +23,7 @@
 <!-- Tesseract.js (OCR) für den Screenshot-Import; defer = blockiert den App-Start nicht, ist beim Klick bereit -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js" defer></script>
 <script>
-const { useState, useMemo, createElement: h } = React;
+const { useState, useMemo, useEffect, createElement: h } = React;
 
 const D = {
   breads: [
@@ -2008,6 +2008,44 @@ function optimizeAll(t, mode, p, subSize, only) {
 // "Accurate restaurants": Teilmenge mit verlaesslicheren Daten (ohne GDK/Chopstix/Five Guys — Komposition/Anomalien)
 const ACCURATE_RESTOS = ["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes","pizzaexpress","wasabi"];
 const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi"};
+
+// ── "Add own order" — restaurantsuebergreifender Such-Index (zum nachtraeglichen Tracken eines gekauften Gerichts) ──
+// Sammelt jedes Food-Item/jede Komponente mit echten 8 Makros aus ALLEN Restaurants in eine flache, durchsuchbare Liste.
+// Bewusst ausgelassen: Pepe's per-10ml-Flavours, Five-Guys-`mods` (Bun/Patty-Deltas, teils negativ), Atis Large-Dubletten (basesL/saucesL, ungenutzt).
+function buildSearchIndex(){
+  const out=[];
+  const push=(resto,name,it)=>{ if(it && typeof it.kcal==="number" && name) out.push({resto,name,
+    kcal:it.kcal, fat:it.fat||0, sat:it.sat||0, carbs:it.carbs||0, sugars:it.sugars||0, fibre:it.fibre||0, protein:it.protein||0, salt:it.salt||0}); };
+  const addArr=(resto,arr)=>{ (arr||[]).forEach(it=>push(resto,it.name,it)); };
+  addArr("Itsu",ITSU.items); addArr("Pret",PRET.items); addArr("Nando's",NANDOS.items);
+  addArr("Wagamama",WAGA.items); addArr("GDK",GDK.items); addArr("The Fitness Chef",TFC.items);
+  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items);
+  ["breads","proteins","cheeses","extras","salads","sauces","seasonings"].forEach(k=>addArr("Subway",D[k]));
+  ["mains","bases","sides","toppings","sdt","sets"].forEach(k=>addArr("Farmer J",FJ[k]));
+  ["greens","carbs","prots","veg","tops","dress","scoops"].forEach(k=>addArr("Urban Greens",UG[k]));
+  ["bases","mixed","ingredients","proteins","sauces","crunches","addons"].forEach(k=>addArr("Atis",ATIS[k]));
+  ["mains","fries","toppings"].forEach(k=>addArr("Five Guys",FIVEGUYS[k]));
+  addArr("Chopstix",CHOPSTIX.toppings);
+  (CHOPSTIX.bases||[]).forEach(b=>{ if(b.reg)push("Chopstix",b.name+" (Regular)",b.reg); if(b.lg)push("Chopstix",b.name+" (Large)",b.lg); });
+  // exakte Duplikate (gleiches Restaurant+Name+kcal, z.B. Wasabi-Item in 2 Kategorien) entfernen
+  const seen=new Set(), uniq=[];
+  for(const x of out){ const k=x.resto+"|"+x.name+"|"+x.kcal; if(seen.has(k))continue; seen.add(k); uniq.push(x); }
+  return uniq;
+}
+const SEARCH_INDEX = buildSearchIndex();
+// Substring-Suche (alle Begriffe muessen in Name+Restaurant vorkommen), nach kuerzestem Namen (= bester Treffer) sortiert
+function searchItems(query, limit){
+  const q=(query||"").trim().toLowerCase(); if(!q) return [];
+  const terms=q.split(/\s+/);
+  return SEARCH_INDEX.filter(x=>{const hay=(x.name+" "+x.resto).toLowerCase(); return terms.every(t=>hay.includes(t));})
+    .sort((a,b)=>a.name.length-b.name.length).slice(0, limit||60);
+}
+// Summe der Makros einer eigenen Bestellung ([{item,qty}]) — wie sumN, 1 Dezimale
+function orderTotal(entries){
+  const KS=["kcal","fat","sat","carbs","sugars","fibre","protein","salt"], t={}; KS.forEach(k=>t[k]=0);
+  (entries||[]).forEach(e=>{ const it=e.item||{}, q=e.qty||0; KS.forEach(k=>t[k]+=(it[k]||0)*q); });
+  KS.forEach(k=>t[k]=Math.round(t[k]*10)/10); return t;
+}
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
   const rt=r._resto;
@@ -2380,6 +2418,20 @@ function App() {
   const [wasNoSashimi,setWasNoSashimi]=useState(false);
   const [selWas,setSelWas]=useState(null);
 
+  // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (in localStorage gespeichert)
+  const [searchQ,setSearchQ]=useState("");
+  const [myOrder,setMyOrder]=useState(()=>{try{const v=JSON.parse(localStorage.getItem("mo_own_order")||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}});
+  useEffect(()=>{try{localStorage.setItem("mo_own_order",JSON.stringify(myOrder));}catch(e){}},[myOrder]);
+  const moKey=it=>it.resto+"|"+it.name+"|"+it.kcal;
+  const addToOrder=it=>setMyOrder(o=>{const idx=o.findIndex(e=>moKey(e.item)===moKey(it));
+    if(idx>=0){const n=o.slice();n[idx]={...n[idx],qty:n[idx].qty+1};return n;} return [...o,{item:it,qty:1}];});
+  const changeQty=(i,d)=>setMyOrder(o=>o.map((e,j)=>j===i?{...e,qty:Math.max(1,e.qty+d)}:e));
+  const removeFromOrder=i=>setMyOrder(o=>o.filter((_,j)=>j!==i));
+  const clearOrder=()=>setMyOrder([]);
+  const moTotal=useMemo(()=>orderTotal(myOrder),[myOrder]);
+  const moResults=useMemo(()=>resto==="search"?searchItems(searchQ,60):[],[resto,searchQ]);
+  const r1=x=>Math.round(x*10)/10;
+
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
 
@@ -2501,9 +2553,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -2537,7 +2589,7 @@ function App() {
             h(NumIn,{label:"Carbs",value:tC,onChange:setTC,placeholder:"45",unit:"g"}),
             h(NumIn,{label:"Fat",value:tF,onChange:setTF,placeholder:"12",unit:"g"})
           ),
-          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":resto==="chopstix"?"Build a Box · 2–3 toppings":resto==="fiveguys"?"Build your own · burger/sandwich + fries":resto==="accurate"?"across accurate restaurants — best picks":resto==="all"?"across all restaurants — best picks":resto==="pizzaexpress"?"à la carte · 1–"+(maxPX===Infinity?"∞":maxPX)+" Items":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
+          h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":resto==="chopstix"?"Build a Box · 2–3 toppings":resto==="fiveguys"?"Build your own · burger/sandwich + fries":resto==="accurate"?"across accurate restaurants — best picks":resto==="all"?"across all restaurants — best picks":resto==="search"?"your target — compare your own order below":resto==="pizzaexpress"?"à la carte · 1–"+(maxPX===Infinity?"∞":maxPX)+" Items":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
         ):h("div",null,
           h("div",{style:{marginBottom:12}},h(NumIn,{label:"Calorie target",value:tK,onChange:setTK,placeholder:"450",unit:"kcal"})),
           h("div",{style:{fontSize:10,color:"#666",marginBottom:8,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Macro preferences"),
@@ -2567,7 +2619,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto)
+        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto)
       ),
 
       // Size (nur Subway)
@@ -2775,8 +2827,60 @@ function App() {
           h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Free items only")
       ),
 
+      // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (zum Nachtraeglich-Tracken)
+      resto==="search" && h("div",{style:{marginBottom:20}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:6}},"Add own order"),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:10,lineHeight:1.5}},"Search any dish across all restaurants and add what you actually ordered — the macros are summed below so you can track it."),
+        h("input",{type:"text",value:searchQ,onChange:e=>setSearchQ(e.target.value),placeholder:"Search a dish or restaurant…",
+          style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"11px 14px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:12}}),
+        searchQ.trim()&&h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:18}},
+          moResults.length===0
+            ? h("div",{style:{fontSize:12,color:"#666",fontFamily:S.mono}},"No matches.")
+            : moResults.map((it,i)=>h("div",{key:i,style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,background:"#141414",border:"1px solid #222",borderRadius:9,padding:"9px 11px"}},
+                h("div",{style:{minWidth:0,flex:1}},
+                  h("div",{style:{display:"flex",alignItems:"center",gap:7,marginBottom:2}},
+                    h("span",{style:{fontSize:8,fontWeight:700,color:"#93c5fd",background:"rgba(37,99,235,0.16)",border:"1px solid rgba(37,99,235,0.4)",borderRadius:5,padding:"2px 5px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},it.resto),
+                    h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},it.name)),
+                  h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888"}},it.kcal+" kcal · P "+it.protein+" · C "+it.carbs+" · F "+it.fat)),
+                h("button",{onClick:()=>addToOrder(it),style:{flexShrink:0,background:S.green,border:"none",color:"#fff",borderRadius:8,padding:"7px 12px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:S.font}},"+ Add")
+              ))
+        ),
+        h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"My order"+(myOrder.length?" · "+myOrder.reduce((s,e)=>s+e.qty,0)+" items":"")),
+          myOrder.length>0&&h("button",{onClick:clearOrder,style:{background:"none",border:"none",color:"#777",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},"Clear")
+        ),
+        myOrder.length===0
+          ? h("div",{style:{fontSize:12,color:"#666",marginBottom:16}},"Nothing added yet. Search above and tap “+ Add”.")
+          : h("div",null,
+              h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:14}},
+                ...myOrder.map((e,i)=>h("div",{key:i,style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,background:"#151515",border:"1px solid #222",borderRadius:9,padding:"8px 10px"}},
+                  h("div",{style:{minWidth:0,flex:1}},
+                    h("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:2}},
+                      h("span",{style:{fontSize:8,fontWeight:700,color:"#93c5fd",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},e.item.resto),
+                      h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},e.item.name)),
+                    h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888"}},Math.round(e.item.kcal*e.qty)+" kcal · P "+r1(e.item.protein*e.qty)+" · C "+r1(e.item.carbs*e.qty)+" · F "+r1(e.item.fat*e.qty))),
+                  h("div",{style:{display:"flex",alignItems:"center",gap:6,flexShrink:0}},
+                    h("button",{onClick:()=>changeQty(i,-1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"−"),
+                    h("span",{style:{fontSize:13,fontFamily:S.mono,color:"#fff",minWidth:18,textAlign:"center"}},e.qty),
+                    h("button",{onClick:()=>changeQty(i,1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"+"),
+                    h("button",{onClick:()=>removeFromOrder(i),style:{width:26,height:26,borderRadius:7,border:"1px solid #3a2a2a",background:"#1c1414",color:"#f87171",fontSize:13,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"✕")
+                  )
+                ))
+              ),
+              h("div",{style:{background:"#0d0d0d",borderRadius:10,padding:14,border:"1px solid #2a2a2a"}},
+                h("div",{style:{fontSize:10,color:"#888",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:10}},mode==="macros"?"Order total vs target":(tK?"Order total vs "+tK+" kcal":"Order total")),
+                h(MacroBar,{label:"Calories",value:moTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+                h(MacroBar,{label:"Protein",value:moTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+                h(MacroBar,{label:"Carbs",value:moTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+                h(MacroBar,{label:"Fat",value:moTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+                h(MacroBar,{label:"Fibre",value:moTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+                h(MacroBar,{label:"Salt",value:moTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+              )
+            )
+      ),
+
       // Results header + Sort by (Accuracy-Sortierung)
-      h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
+      resto!=="search" && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top results"),
         h("div",{style:{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}},
           h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Sort by"),
@@ -2791,7 +2895,7 @@ function App() {
       ),
 
       // Results list
-      h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
+      resto!=="search" && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
         ...sortResults(resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
           if(resto==="all"||resto==="accurate"){
             return h("button",{key:i,onClick:()=>selectAcross(r),style:{
@@ -3486,7 +3590,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="search"?"Add own order: search any dish across all 15 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }

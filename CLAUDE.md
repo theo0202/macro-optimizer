@@ -340,7 +340,7 @@ Ziele zuerst, Restaurant danach — beim Restaurantwechsel bleiben alle Eingaben
 1. Modus-Tabs (Makros eingeben / Kalorien + Präferenzen)
 2. Eingabekarte (P/C/F bzw. kcal + Präferenz-Chips)
 3. Fibre/Salt-Constraints (aufklappbar)
-4. Restaurant-Tabs (**Accurate restaurants** / **All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's / Five Guys / Pizza Express / Wasabi)
+4. Restaurant-Tabs (**➕ Add own order** / **Accurate restaurants** / **All restaurants** / Subway / Farmer J / Itsu / Pret / Nando's / Urban Greens / Wagamama / GDK / Atis / Fitness Chef / Chopstix / Pepe's / Five Guys / Pizza Express / Wasabi)
 5. Restaurant-spezifisch: Größe + Brot + Käse/Sauce-Checkboxen (Subway), "Nur Gratis-Items" (Farmer J), Kategorien + Max-Items + Schalter (Itsu, Pret, Nando's, Wagamama, GDK), Kategorien + Max-Items + "No fish" (The Fitness Chef), 2 Modus-Buttons (BYO Salad / BYO Tray) + 'No "2 Toppings" / Nuts etc.'/"No Dressing" (Urban Greens), "No sauce" + "No crunch" (Atis, Power Plate)
 6. Top Ergebnisse (mit **"Sort by"-Chips**: Score / Kalorien / Protein / Carbs / Fat — sortiert die Top-20-Kandidaten nach |Ist−Ziel| der gewählten Dimension; Protein/Carbs/Fat nur im Makro-Modus sichtbar, Default Score; gilt für ALLE Restaurants, `sortResults`) → Detail-Panel
 7. Farmer J zusätzlich: "Alle Sets & Salate durchsuchen" (aufklappbarer Set-Browser unter den Ergebnissen)
@@ -444,6 +444,15 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
 - Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt
 
+## „Add own order" — restaurantsübergreifende Suche + eigener Tracker (`resto==="search"`)
+Eigener Tab **„➕ Add own order"** (ganz links in der Tab-Zeile) zum **nachträglichen Tracken** eines spontan gekauften Gerichts — KEIN Optimizer, sondern Suche + manueller Warenkorb.
+- **`SEARCH_INDEX`** (Modul-Level, `buildSearchIndex()`): flache, durchsuchbare Liste ALLER Food-Items/Komponenten mit echten 8 Makros aus allen 15 Restaurants (~1100 Einträge nach Dedup). Sammelt `.items` der AC-Restaurants + alle Komponenten-Arrays von Subway/FJ/UG/Atis/Five Guys + Chopstix-Toppings + Chopstix-Bases (zu „… (Regular)"/„… (Large)" expandiert). **Bewusst ausgelassen**: Pepe's `flavours` (per-10 ml), Five-Guys-`mods` (Bun/Patty-Deltas, teils negativ), Atis `basesL`/`saucesL` (ungenutzte Large-Dubletten). Dedup per `resto|name|kcal`. Jeder Eintrag: `{resto (Anzeigename), name, kcal, fat, sat, carbs, sugars, fibre, protein, salt}`
+- **`searchItems(query, limit=60)`** (rein, getestet): Substring-Suche, alle Leerzeichen-getrennten Begriffe müssen in `name + resto` vorkommen (Mehrwort-AND, z.B. „wasabi katsu"), Treffer nach kürzestem Namen sortiert (= bester Match zuerst)
+- **`orderTotal(entries)`** (rein, getestet): summiert `item × qty` über `[{item, qty}]` → 8 Makros, 1 Dezimale (wie `sumN`)
+- **State in App**: `searchQ`, `myOrder` (`[{item, qty}]`), `moResults` (Memo aus searchItems), `moTotal` (Memo aus orderTotal). **`myOrder` ist in `localStorage` (`mo_own_order`) persistiert** (via `useEffect`) → überlebt App-Neustart. Handler: `addToOrder` (gleiches `resto|name|kcal` → qty++), `changeQty(i,±1)` (min 1), `removeFromOrder(i)`, `clearOrder`
+- **UI** (gerendert wenn `resto==="search"`, statt Optimizer-Ergebnisliste): Suchfeld → Trefferliste (Restaurant-Badge + Makros + „+ Add") → „My order"-Warenkorb (Items mit −/+/✕-Steppern) → „Order total"-Karte mit `MacroBar`s gegen die aktuellen Ziele (wie das Detail-Panel). Die Ziel-Eingabekarte oben bleibt sichtbar (Vergleich gegen Tagesrest). Header-Gradient Slate (#475569→#1e293b), Label „ADD OWN ORDER · TRACK"
+- **Wichtig**: `AC` ist für `resto==="search"` `null` → Ergebnisliste + „Top results"-Header sind mit `resto!=="search" &&` geguardet (sonst `AC.res`-Crash). Neue restaurant-spezifische Render-Blöcke ebenfalls so guarden
+
 ## Detail-Panel (nach Ergebnis-Auswahl)
 - Macro-Bars mit Live-Vergleich zu Zielen (beide Restaurants)
 - **Subway**: Extras (inkl. Double Meat/Cheese), Salad togglen ("✦ Mein Standard"), Saucen (max 2), Seasonings
@@ -534,5 +543,5 @@ Essen bestellen Claude Tool/
 - Urban Greens: Makros für die ausgeschlossenen Deliveroo-Items besorgen (Piri Piri Chicken/Shrimp, Lemon & Herb Chicken, Red Rice [Warm], Piri Piri Caesar Dressing) und ergänzen
 - Subway: Wraps, Toasties, Salads, Spuds als weitere Kategorien (Daten in subway-optimizer.jsx vorhanden)
 - Sides und Cookies in Gesamtberechnung einbeziehen
-- Favoritenspeicherung (localStorage)
-- Mehrere Mahlzeiten pro Tag tracken
+- Favoritenspeicherung (localStorage) — teilweise da: „Add own order" speichert den Warenkorb in localStorage (`mo_own_order`)
+- Mehrere Mahlzeiten pro Tag tracken — „Add own order" deckt das Nachtragen einer einzelnen Bestellung ab; echtes Tages-Tracking (mehrere Mahlzeiten, Reset, Historie) wäre der nächste Schritt

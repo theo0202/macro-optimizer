@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, optimizeAll, sortResults, parseMacroScreenshot };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -814,6 +814,27 @@ check("Wasabi 'good meals only' ueberstimmt aktive Chips (Gegenprobe: ohne Schal
 // All + Accurate: wasabi integriert
 const rAccW = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes("wasabi") && rAccW.every(r => ACCURATE.includes(r._resto)), true);
+
+// ── "Add own order" — restaurantsuebergreifender Such-Index + Order-Summe ──
+check("Search-Index gefuellt (>900 Items)", T.SEARCH_INDEX.length > 900, true);
+check("Search-Index: alle Eintraege haben resto+name+8 Makros", T.SEARCH_INDEX.every(x => x.resto && x.name && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
+check("Search-Index: keine exakten Duplikate (resto|name|kcal)", (() => { const s = new Set(); return T.SEARCH_INDEX.every(x => { const k = x.resto + "|" + x.name + "|" + x.kcal; if (s.has(k)) return false; s.add(k); return true; }); })(), true);
+check("Search-Index deckt alle 15 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 15);
+check("searchItems leere Query -> []", T.searchItems("").length, 0);
+const sKatsu = T.searchItems("katsu");
+check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);
+check("searchItems 'katsu': jeder Treffer matcht den Begriff", sKatsu.every(x => /katsu/i.test(x.name + " " + x.resto)), true);
+check("searchItems Mehrwort-AND ('wasabi katsu')", T.searchItems("wasabi katsu").every(x => /katsu/i.test(x.name) && /wasabi/i.test(x.resto)), true);
+check("searchItems respektiert limit", T.searchItems("a", 5).length <= 5, true);
+check("searchItems matcht auch Restaurantname ('subway')", T.searchItems("subway").every(x => x.resto === "Subway") && T.searchItems("subway").length > 0, true);
+// orderTotal: Summe x qty, 1 Dezimale
+const oi1 = { resto: "X", name: "A", kcal: 100, fat: 5, sat: 1, carbs: 10, sugars: 2, fibre: 1, protein: 8, salt: 0.5 };
+const oi2 = { resto: "X", name: "B", kcal: 200, fat: 10, sat: 2, carbs: 20, sugars: 4, fibre: 2, protein: 16, salt: 1 };
+const ot = T.orderTotal([{ item: oi1, qty: 2 }, { item: oi2, qty: 1 }]);
+check("orderTotal kcal (2x100 + 1x200 = 400)", ot.kcal, 400);
+check("orderTotal protein (2x8 + 1x16 = 32)", ot.protein, 32);
+check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
+check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
