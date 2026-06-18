@@ -1977,27 +1977,28 @@ function optimizeWasabi(t, mode, p, activeCats, maxN, noSoup, onlySushi, noSashi
 // "All restaurants": restaurantsübergreifend die besten Bestellungen. Jedes Restaurant läuft mit ALLEN
 // Exclude-Schaltern AN (Itsu only-sushi/w-o-sashimi AUS, User-Vorgabe), Default-Kategorien, à-la-carte max 5,
 // Subway-Brot frei + aktuelle Größe. Jedes Ergebnis bekommt _resto; gemerged + nach Score sortiert; Top 20.
-function optimizeAll(t, mode, p, subSize, only) {
+function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   const def = cats => { const o={}; cats.forEach(c=>o[c.id]=c.on); return o; };
   const tag = (arr, rt) => (arr||[]).map(r=>{ r._resto=rt; return r; });
   const ok = rt => !only || only.includes(rt);   // only = optionale Whitelist (z.B. "Accurate restaurants")
+  const N = acMaxN || 5;                          // max items pro à-la-carte-Bestellung (Cross-Restaurant-Chip; Default 5)
   let all = [];
   if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize),"subway"));   // No cheese + No sauce, Brot frei
   if(ok("farmerj")) all = all.concat(tag(optimizeFJ(t,mode,p,true),"farmerj"));                  // Free items only
-  if(ok("itsu")) all = all.concat(tag(optimizeItsu(t,mode,p,def(ITSU.cats),5,true,false,false),"itsu"));   // No soups…; only-sushi AUS
-  if(ok("pret")) all = all.concat(tag(optimizePret(t,mode,p,def(PRET.cats),5,true,true),"pret"));          // only relevant + Salads only
-  if(ok("nandos")) all = all.concat(tag(optimizeNandos(t,mode,p,def(NANDOS.cats),5,true,true,true,true,true),"nandos"));
-  if(ok("wagamama")) all = all.concat(tag(optimizeWaga(t,mode,p,def(WAGA.cats),5,true),"wagamama"));        // No Ramen
-  if(ok("gdk")) all = all.concat(tag(optimizeGDK(t,mode,p,def(GDK.cats),5,true,true),"gdk"));              // No Sauce + No rice bowl
+  if(ok("itsu")) all = all.concat(tag(optimizeItsu(t,mode,p,def(ITSU.cats),N,true,false,false),"itsu"));   // No soups…; only-sushi AUS
+  if(ok("pret")) all = all.concat(tag(optimizePret(t,mode,p,def(PRET.cats),N,true,true),"pret"));          // only relevant + Salads only
+  if(ok("nandos")) all = all.concat(tag(optimizeNandos(t,mode,p,def(NANDOS.cats),N,true,true,true,true,true),"nandos"));
+  if(ok("wagamama")) all = all.concat(tag(optimizeWaga(t,mode,p,def(WAGA.cats),N,true),"wagamama"));        // No Ramen
+  if(ok("gdk")) all = all.concat(tag(optimizeGDK(t,mode,p,def(GDK.cats),N,true,true),"gdk"));              // No Sauce + No rice bowl
   if(ok("atis")) all = all.concat(tag(optimizeAtis(t,mode,p,"plate",true,true),"atis"));                   // No crunch + No sauce
-  if(ok("tfc")) all = all.concat(tag(optimizeTFC(t,mode,p,def(TFC.cats),5,true),"tfc"));                   // No fish
+  if(ok("tfc")) all = all.concat(tag(optimizeTFC(t,mode,p,def(TFC.cats),N,true),"tfc"));                   // No fish
   if(ok("ug")){ all = all.concat(tag(optimizeUG(t,mode,p,"salad",true,true),"ug"));                        // BYO Salad, No nuts + No dressing
     all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true),"ug")); }                                   // BYO Tray
   if(ok("chopstix")) all = all.concat(tag(optimizeChopstix(t,mode,p),"chopstix"));                         // Build-a-Box (2 + 3 Toppings)
-  if(ok("pepes")) all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),5,true,"plain"),"pepes"));   // à la carte, No Sauce, No Flavour (Plain)
+  if(ok("pepes")) all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),N,true,"plain"),"pepes"));   // à la carte, No Sauce, No Flavour (Plain)
   if(ok("fiveguys")) all = all.concat(tag(optimizeFiveGuys(t,mode,p,true),"fiveguys"));                    // Build your own: Main + Fries + Toppings, No sauce
-  if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),5),"pizzaexpress")); // à la carte (volle PDF-Makros)
-  if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),5,false,false,false,true),"wasabi")); // "good meals only" (Salads&Boxes/Bento/Kobachi/Sides) = neuer Default
+  if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),N),"pizzaexpress")); // à la carte (volle PDF-Makros)
+  if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),N,false,false,false,true),"wasabi")); // "good meals only" (Salads&Boxes/Bento/Kobachi/Sides) = neuer Default
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -2409,6 +2410,9 @@ function App() {
   const [pxCats,setPXC]=useState(()=>{const o={};PIZZAEXPRESS.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxPX,setMaxPX]=useState(5);
   const [selPX,setSelPX]=useState(null);
+  // Cross-Restaurant (All/Accurate): max items pro à-la-carte-Bestellung
+  const [maxAll,setMaxAll]=useState(5);
+
   // Wasabi (à la carte, AC-Alias; Itsu-artige Switches)
   const [wasCats,setWasC]=useState(()=>{const o={};WASABI.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxWas,setMaxWas]=useState(5);
@@ -2502,8 +2506,8 @@ function App() {
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
-  const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
-  const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS):[],[resto,targets,mode,prefs,subSize]);
+  const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
+  const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   // À-la-carte-Alias: bündelt Daten/Selektion/Ergebnisse für Itsu, Pret, Nando's, Wagamama & GDK (gemeinsame Card- und Panel-Renderer)
   const AC=resto==="itsu"?{D:ITSU,sel:selI,setSel:setSelI,res:resultsItsu,maxN:maxIt}
          :resto==="pret"?{D:PRET,sel:selP,setSel:setSelP,res:resultsPret,maxN:maxP}
@@ -2620,6 +2624,15 @@ function App() {
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
         btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto)
+      ),
+
+      // All / Accurate restaurants: max items pro à-la-carte-Bestellung (gilt fuer die AC-Restaurants im Cross-Restaurant-Mix)
+      (resto==="all"||resto==="accurate")&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:16,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
+        h("div",{style:{display:"flex",gap:5,marginBottom:8}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxAll===n,onClick:()=>setMaxAll(n),small:true}))
+        ),
+        h("div",{style:{fontSize:10,color:"#666",lineHeight:1.4}},"Applies to à-la-carte restaurants (Itsu, Pret, Nando's, Wagamama, GDK, Fitness Chef, Pepe's, Pizza Express, Wasabi). Subway / Farmer J / Urban Greens / Atis / Chopstix / Five Guys build one composed order regardless.")
       ),
 
       // Size (nur Subway)

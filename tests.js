@@ -535,6 +535,13 @@ check("All: mehrere Restaurants vertreten (>=3)", new Set(rAll.map(r => r._resto
 check("All: max 1 Treffer pro Restaurant (User-Wunsch)", Object.values(rAll.reduce((m, r) => { m[r._resto] = (m[r._resto] || 0) + 1; return m; }, {})).every(c => c <= 1), true);
 check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto)), true);
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
+// acMaxN: Cross-Restaurant Max-Items-Chip steuert die à-la-carte-Restaurants
+const AC_RESTOS = ["itsu", "pret", "nandos", "wagamama", "gdk", "tfc", "pepes", "pizzaexpress", "wasabi"];
+const rAllMax1 = T.optimizeAll(tAllT, "macros", {}, "footlong", null, 1);
+check("All acMaxN=1: AC-Restaurants liefern genau 1 Item", rAllMax1.filter(r => AC_RESTOS.includes(r._resto)).every(r => r.items.length === 1), true);
+const rAllMax2 = T.optimizeAll(tAllT, "macros", {}, "footlong", null, 2);
+check("All acMaxN=2: AC-Restaurants <= 2 Items", rAllMax2.filter(r => AC_RESTOS.includes(r._resto)).every(r => r.items.length <= 2), true);
+check("All acMaxN default (=5) wie ohne Param", JSON.stringify(T.optimizeAll(tAllT, "macros", {}, "footlong", null, 5).map(r => r._resto + ":" + (r.items ? r.items.length : "-"))) === JSON.stringify(rAll.map(r => r._resto + ":" + (r.items ? r.items.length : "-"))), true);
 
 // ── "Accurate restaurants" (Teilmenge via optimizeAll-Whitelist) ──
 const ACCURATE = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "atis", "tfc", "pepes", "pizzaexpress", "wasabi"];
