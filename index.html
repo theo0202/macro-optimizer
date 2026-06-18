@@ -1964,9 +1964,12 @@ function optimizePizzaExpress(t, mode, p, activeCats, maxN) {
 // Wasabi: à la carte (AC-Alias, wie Itsu). Volle Makros AUSSER Ballaststoffe (fibre=0). Getränke nicht in den Daten.
 // Schalter: "No soups" (Soup-Kategorie raus), "only sushi" (nur Sushi), "only sushi w/o sashimi" (Sushi ohne Sashimi-Namen).
 const WASABI_SOUP_CAT="soup", WASABI_SUSHI_CAT="sushi";
-function optimizeWasabi(t, mode, p, activeCats, maxN, noSoup, onlySushi, noSashimi) {
+// "good meals only"-Schalter: nur Salads&Boxes (salads) + Hot Bento & Kobachi (bento) + Sides — kein Sushi/Soup/Cold Sides/Breakfast/Sauces
+const WASABI_GOODMEAL_CATS=["salads","bento","sides"];
+function optimizeWasabi(t, mode, p, activeCats, maxN, noSoup, onlySushi, noSashimi, goodMeals) {
   let pool;
   if(onlySushi||noSashimi) pool=WASABI.items.filter(x=>x.cat===WASABI_SUSHI_CAT && !(noSashimi && x.name.toLowerCase().includes("sashimi")));
+  else if(goodMeals) pool=WASABI.items.filter(x=>WASABI_GOODMEAL_CATS.includes(x.cat));
   else pool=WASABI.items.filter(x=>activeCats[x.cat] && !(noSoup && x.cat===WASABI_SOUP_CAT));
   return alaCarteCombos(t, mode, p, pool, maxN);
 }
@@ -1994,7 +1997,7 @@ function optimizeAll(t, mode, p, subSize, only) {
   if(ok("pepes")) all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),5,true,"plain"),"pepes"));   // à la carte, No Sauce, No Flavour (Plain)
   if(ok("fiveguys")) all = all.concat(tag(optimizeFiveGuys(t,mode,p,true),"fiveguys"));                    // Build your own: Main + Fries + Toppings, No sauce
   if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),5),"pizzaexpress")); // à la carte (volle PDF-Makros)
-  if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),5,true,false,false),"wasabi")); // No soups; only-sushi AUS
+  if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),5,false,false,false,true),"wasabi")); // "good meals only" (Salads&Boxes/Bento/Kobachi/Sides) = neuer Default
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -2371,7 +2374,8 @@ function App() {
   // Wasabi (à la carte, AC-Alias; Itsu-artige Switches)
   const [wasCats,setWasC]=useState(()=>{const o={};WASABI.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxWas,setMaxWas]=useState(5);
-  const [wasNoSoup,setWasNoSoup]=useState(true);
+  const [wasGoodMeals,setWasGoodMeals]=useState(true); // neuer Default-Schalter: "good meals only" (Salads&Boxes/Bento/Kobachi/Sides)
+  const [wasNoSoup,setWasNoSoup]=useState(false);
   const [wasOnlySushi,setWasOnlySushi]=useState(false);
   const [wasNoSashimi,setWasNoSashimi]=useState(false);
   const [selWas,setSelWas]=useState(null);
@@ -2444,7 +2448,7 @@ function App() {
   const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour?"plain":pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour,pepFlavour]);
   const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs,fgNoSauce,fgWrap):[],[resto,targets,mode,prefs,fgNoSauce,fgWrap]);
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
-  const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi]);
+  const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize):[],[resto,targets,mode,prefs,subSize]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS):[],[resto,targets,mode,prefs,subSize]);
@@ -2717,6 +2721,8 @@ function App() {
           h("input",{type:"checkbox",checked:onlySushi,onChange:e=>setOnlySushi(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only sushi"),
         resto==="itsu"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noSashimi,onChange:e=>setNoSashimi(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only sushi w/o sashimi"),
+        resto==="wasabi"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:wasGoodMeals,onChange:e=>setWasGoodMeals(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sushi or soups & w/o sauces (good meals only)"),
         resto==="wasabi"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:wasNoSoup,onChange:e=>setWasNoSoup(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No soups"),
         resto==="wasabi"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

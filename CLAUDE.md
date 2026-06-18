@@ -142,7 +142,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Pepe's**: `PEPES.cats[]` + `PEPES.items[]` (AC-Schema; Items zusätzlich `sauce:true` für "No sauce" und `flavourMl` für die Add-Flavour-Mechanik; `fibre:0` immer) + `PEPES.flavours[]` (7 Basting-Flavours inkl. Plain=0, Werte per 10 ml)
 - **Five Guys**: `FIVEGUYS.mains[]` (komponierte Burger + fertige Sandwiches, je mit `group` burgers/sandwiches; Sandwiches mit pre-included Toppings tragen `incl`=Topping-IDs; Hot Dogs entfernt) + `FIVEGUYS.fries[]` (Plain/Cajun/Loaded) + `FIVEGUYS.toppings[]` (15 freie Toppings, `sauce:true` auf den 7 Saucen) + `FIVEGUYS.mods[]` (patty/cheese/bacon/bun/lettuce — Komponenten für Bun-Wahl/Extra-Patties/Sandwich-Extras zur Optimizer-Laufzeit) — alle mit vollen 8 Makros
 - **Pizza Express**: `PIZZAEXPRESS.cats[]` + `PIZZAEXPRESS.items[]` (AC-Schema wie Itsu/Pret; 156 Items nach Deliveroo-Prune, volle 8 Makros per Portion; GF/Vegan-Varianten als eigene Items) — kein Build-Your-Own
-- **Wasabi**: `WASABI.cats[]` + `WASABI.items[]` (AC-Schema; 158 Items, volle Makros AUSSER `fibre:0`; per-100g→Portion skaliert). Switches via `optimizeWasabi(...,noSoup,onlySushi,noSashimi)` (`WASABI_SOUP_CAT`/`WASABI_SUSHI_CAT`)
+- **Wasabi**: `WASABI.cats[]` + `WASABI.items[]` (AC-Schema; 158 Items, volle Makros AUSSER `fibre:0`; per-100g→Portion skaliert). Switches via `optimizeWasabi(...,noSoup,onlySushi,noSashimi,goodMeals)` (`WASABI_SOUP_CAT`/`WASABI_SUSHI_CAT`/`WASABI_GOODMEAL_CATS=["salads","bento","sides"]`)
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -265,7 +265,8 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 ## Bestellablauf Wasabi (à la carte)
 - Wie Itsu/Pret: 1–∞ Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`, AC-Alias)
 - 8 Kategorien (158 Items): Sushi (34), Salads (19), Cold Sides (4), Soup (6), Bento (54), Breakfast (10), Sides (18), Sauces & Dressings (13)
-- **3 Schalter (wie Itsu)**: **„No soups"** (Default AN, schließt die Soup-Kategorie aus), **„only sushi"** (nur Sushi-Kategorie, überstimmt Chips), **„only sushi w/o sashimi"** (Sushi ohne Items mit „sashimi" im Namen) — die beiden „only sushi"-Modi default AUS
+- **4 Schalter**: **„No sushi or soups & w/o sauces (good meals only)"** (`goodMeals`, **Default AN — der einzige aktive Schalter**): Pool = nur `WASABI_GOODMEAL_CATS` = **Salads & Boxes (`salads`) + Hot Bento & Kobachi (`bento`) + Sides (`sides`)** → kein Sushi/Soup/Cold Sides/Breakfast/Sauces. „Kobachi" (Beef/Chicken biang biang kobachi) liegt in `bento`. Überstimmt die Kategorie-Chips (wie die „only sushi"-Modi). Außerdem **„No soups"** (schließt Soup-Kategorie aus), **„only sushi"** (nur Sushi, überstimmt Chips), **„only sushi w/o sashimi"** (Sushi ohne „sashimi"-Items) — diese 3 **default AUS**
+- Priorität in `optimizeWasabi`: `onlySushi`/`noSashimi` (Sushi-Modus) > `goodMeals` (salads/bento/sides) > Chips minus Soup (wenn `noSoup`)
 - Getränke (hot beverages) sind gar nicht in den Daten. Standard-Chips: alle Kategorien an
 
 ## Bestellablauf Urban Greens (Deliveroo)
@@ -299,7 +300,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce", Wasabi "No soups". Pizza Express hat keine Schalter, aber die Desserts-Kategorie startet AUS.
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce", Wasabi "No sushi or soups & w/o sauces (good meals only)" (der einzige aktive Wasabi-Schalter; "No soups" startet hier AUS, weil "good meals only" Soup ohnehin ausschließt). Pizza Express hat keine Schalter, aber die Desserts-Kategorie startet AUS.
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren) und Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -325,7 +326,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Pepe's**: alle Kategorien aktiv, max. 5 Items, "No sauce" + "No flavour" AN (No flavour = Plain, 0 Makros; die Flavour-Chips erscheinen + wirken erst, wenn "No flavour" aus ist — Default-Chip dann Lemon & Herb)
 - **Five Guys**: Build Your Own, „No sauce" AN, „Lettuce Wrap" AUS — der Optimizer wählt 1 Main (Burger/Sandwich) + Bun-Wahl + Extra Patties (Burger) + optional 1 Fries + freie Toppings (+ paid extras bei Sandwiches) automatisch
 - **Pizza Express**: alle Kategorien aktiv **außer Desserts** (User-Wunsch: Desserts default AUS, in `pizzaexpress-update.js` `DEFAULT_OFF`), max. 5 Items; à la carte (keine Schalter); volle PDF-Makros. Dips & Drinks sind gar nicht im Modell
-- **Wasabi**: alle Kategorien aktiv, max. 5 Items, „No soups" AN, „only sushi" + „only sushi w/o sashimi" AUS; Getränke nicht in den Daten
+- **Wasabi**: alle Kategorien aktiv, max. 5 Items, **„No sushi or soups & w/o sauces (good meals only)" AN (einziger aktiver Schalter)**, „No soups" + „only sushi" + „only sushi w/o sashimi" AUS; Getränke nicht in den Daten
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:
@@ -406,6 +407,7 @@ Pool-Bildung:
 - **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
 - **Pepe's**: aktive Kategorie-Chips MINUS `sauce:true`-Items (Schalter "No sauce"). VOR `alaCarteCombos` wird der effektive Flavour (bei "No flavour" → Plain, sonst der gewählte) in jedes `flavourMl>0`-Item eingerechnet (Makros + Name) → der Optimizer sieht fertige, geflavourte Items; mit Plain (0 Makros) behalten sie ihre Basiswerte
 - **Pizza Express**: aktive Kategorie-Chips (kein Filter-Schalter). 156 Items (Deliveroo-geprunt), volle 8 Makros aus der PDF
+- **Wasabi**: `goodMeals` (Default) → nur `WASABI_GOODMEAL_CATS` (salads/bento/sides); sonst `onlySushi`/`noSashimi` → nur Sushi; sonst aktive Chips MINUS Soup (Schalter „No soups"). Priorität: onlySushi/noSashimi > goodMeals > Chips
 
 UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teilen sich Ergebnis-Karten und Detail-Panel über den `AC`-Alias in App()
 
@@ -437,7 +439,7 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 ### „All restaurants" + „Accurate restaurants" (`optimizeAll`)
 - `optimizeAll(t, mode, p, subSize, only)` — `only` = optionale Restaurant-Whitelist (Array von `_resto`-Keys). Ohne `only` = **All restaurants** (alle 15); mit `only = ACCURATE_RESTOS` = **Accurate restaurants** (`["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes","pizzaexpress","wasabi"]` — ohne GDK/Chopstix/Five Guys, da Komposition/Anomalien; Nando's/Pizza Express/Wasabi drin, da Live-Order-API bzw. offizielle PDFs mit vollen Makros). Pro Restaurant ein `if(ok(rt))`-Guard
 - Zwei Tabs ganz vorne: `"accurate"` (links) + `"all"`; beide teilen die Cross-Restaurant-Karte/`selectAcross`. `resultsAccurate`-Memo rechnet nur im `"accurate"`-Tab
-- Ruft JEDEN (erlaubten) Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Bun-Wahl + Extra Patties + Fries + Toppings, No sauce)
+- Ruft JEDEN (erlaubten) Restaurant-Optimizer mit ALLEN Exclude-Schaltern AN auf (Itsu only-sushi/w-o-sashimi AUS — User-Vorgabe), Default-Kategorien, à-la-carte max 5, Subway-Brot frei + aktuelle Größe, UG beide Modi (salad+tray), Atis Power Plate, TFC No fish, Chopstix Build-a-Box (2+3 Toppings), Pepe's No sauce + No flavour (Plain), Five Guys Build Your Own (Main + Bun-Wahl + Extra Patties + Fries + Toppings, No sauce), Wasabi „good meals only" (Salads&Boxes/Bento/Kobachi/Sides)
 - Jedes Ergebnis bekommt `_resto`; gemerged, nach Score sortiert, **max. 1 Treffer pro Restaurant** (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant), Top 20 → Top 8 angezeigt
 - Karte zeigt Restaurant-Badge + Order-Zusammenfassung (`summarizeAcross`, dispatch nach `_resto`) + Makros. **Klick → `selectAcross`**: wechselt zum jeweiligen Restaurant-Tab + setzt dessen Selektion → das bestehende, restaurant-spezifische Detail-Panel + Bestellanleitung öffnet sich (verifiziert für UG/AC/Subway)
 - Läuft nur wenn der „all"-Tab aktiv ist (`resultsAll`-Memo). Im „all"-Modus werden keine restaurant-spezifischen Config-Blöcke gezeigt

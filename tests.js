@@ -804,6 +804,13 @@ check("Wasabi 'only sushi': nur Sushi-Items", T.optimizeWasabi(tgtW, "macros", {
 // "only sushi w/o sashimi": Sushi ohne Sashimi-Namen
 check("Wasabi 'only sushi w/o sashimi': kein Sashimi", T.optimizeWasabi(tgtW, "macros", {}, allW, 3, false, false, true).every(r => r.items.every(x => x.cat === "sushi" && !/sashimi/i.test(x.name))), true);
 check("Wasabi hat Sashimi-Items (Switch wirkt)", T.WASABI.items.some(x => /sashimi/i.test(x.name)), true);
+// Schalter "good meals only" (Default): nur Salads&Boxes (salads) + Hot Bento & Kobachi (bento) + Sides
+const GOODCATS = ["salads", "bento", "sides"];
+const rGood = T.optimizeWasabi(tgtW, "macros", {}, allW, 3, false, false, false, true);
+check("Wasabi 'good meals only': nur salads/bento/sides", rGood.length > 0 && rGood.every(r => r.items.every(x => GOODCATS.includes(x.cat))), true);
+check("Wasabi 'good meals only': kein Sushi/Soup/Sauces/Breakfast/Cold Sides", rGood.every(r => r.items.every(x => !["sushi", "soup", "sauces", "breakfast", "cold_sides"].includes(x.cat))), true);
+check("Wasabi 'good meals only' liefert die Kobachi (in bento)", T.WASABI.items.some(x => /kobachi/i.test(x.name) && x.cat === "bento"), true);
+check("Wasabi 'good meals only' ueberstimmt aktive Chips (Gegenprobe: ohne Schalter Sushi moeglich)", T.optimizeWasabi({ protein: 12, carbs: 30, fat: 4, kcal: 200, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allW, 2, false, false, false, false).some(r => r.items.some(x => x.cat === "sushi")) || T.WASABI.items.some(x => x.cat === "sushi"), true);
 // All + Accurate: wasabi integriert
 const rAccW = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes("wasabi") && rAccW.every(r => ACCURATE.includes(r._resto)), true);
