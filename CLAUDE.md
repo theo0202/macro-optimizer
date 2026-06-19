@@ -294,6 +294,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 - **Vegan CheeZe** — komplett aus Daten entfernt
 - **Bacon (Streaky)** — komplett aus Proteins entfernt
 - **Tuna Mayo** — komplett aus Proteins entfernt
+- **Ham** (Schweineschinken-Protein, id `ham`) — komplett aus Proteins entfernt (User 19.06.2026: gibt es bei Deliveroo nicht). NICHT zu verwechseln mit **„Turkey Ham"** (Extra, bleibt drin)
 - **Geschätzte Werte** — keine Items mit unverifizierten Nährwerten:
   - HP Brown Sauce (nicht im PDF)
   - Yogurt Mint & Garlic Sauce (nicht im PDF)
