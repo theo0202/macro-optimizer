@@ -215,7 +215,7 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 5. Choose a Sauce: PFLICHT genau 1 ODER "I Don't Want A Dressing" — MERGED-Liste aus 3 Saucen + Dressings + Kombi "Olive Oil + Balsamic Vinegar" (im Flow nur als Paar wählbar); Pesto/Lemon Oregano + einzelnes Olive Oil/Balsamic Vinegar nicht im Flow → ausgeschlossen
 6. Choose a Crunch: PFLICHT genau 1 ODER "I Don't Want A Crunch" (7 Optionen)
 7. Any Proteins?: 0–3 (bezahlt)
-- **Doppelportion**: unterstrichene Items (4 Carb-Bases + 4 Mixed Salads, `doublePlate:true`) zählen in der Plate ×2. Bestellanleitung zeigt Klarnamen (1× tappen, Atis serviert doppelt); Komponenten-Aufschlüsselung zeigt "×2" + verdoppeltes kcal
+- **Doppelportion**: unterstrichene Items (4 Carb-Bases + 4 Mixed Salads, `doublePlate:true`) zählen in der Plate ×2 (bestätigt — Atis serviert sie doppelt). Bestellanleitung zeigt Klarnamen (1× tappen, Atis serviert doppelt); Komponenten-Aufschlüsselung + Karte zeigen **„(double portion)"** + verdoppeltes kcal. **WICHTIG (User 19.06.2026)**: NICHT als „×2" anzeigen — das las sich wie „2× auswählen" (User-Verwirrung: „Wholegrain Rice ×2" wirkte wie eine 3. Base neben einer anderen). Logik/Makros unverändert, nur Wording → „(double portion)"
 - **Schalter "No sauce"** (intern `aNoSauce`): erzwingt Schritt 5 = "I Don't Want A Dressing"
 - **Schalter "No crunch"** (intern `aNoCrunch`): erzwingt Schritt 6 = "I Don't Want A Crunch"
 - Pool-Ausschlüsse (= aktueller Deliveroo-Flow) als `ATIS_BASE_EXCLUDE`/`ATIS_SAUCE_EXCLUDE`/`ATIS_ADDON_EXCLUDE` in index.html gepflegt; bei Flow-Änderung dort anpassen. Items bleiben im ATIS-Katalog, werden nur aus dem Pool gefiltert

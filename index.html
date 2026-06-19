@@ -3016,7 +3016,7 @@ function App() {
           }
           if(resto==="atis"){
             const isSelA=selA===r;
-            const nm=it=>it.name+(atisMode!=="bowl"&&it.doublePlate?" ×2":"");
+            const nm=it=>it.name+(atisMode!=="bowl"&&it.doublePlate?" (double portion)":"");
             const title=r.prots.length?r.prots.map(x=>x.name).join(" + "):"No protein";
             const sub="Power Plate · "+r.bases.map(nm).join(", ")+" · "+nm(r.mixed)+" · "+r.ing.map(nm).join(", ")
                +(r.sauce?" · "+r.sauce.name:"")+(r.crunch?" · "+r.crunch.name:"")
@@ -3486,7 +3486,7 @@ function App() {
         // Komponenten (doublePlate-Items mit ×2 + verdoppeltem kcal)
         (()=>{
           const dk=it=>(atisMode!=="bowl"&&it.doublePlate)?it.kcal*2:it.kcal;
-          const dn=it=>it.name+((atisMode!=="bowl"&&it.doublePlate)?" ×2":"");
+          const dn=it=>it.name+((atisMode!=="bowl"&&it.doublePlate)?" (double portion)":"");
           return h("div",{style:{marginBottom:6}},
             h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Components"),
             ...[["Bases",selA.bases],["Mixed Salad",[selA.mixed]],["Ingredients",selA.ing],
@@ -3498,7 +3498,7 @@ function App() {
               ))
           );
         })(),
-        h("div",{style:{fontSize:10,color:"#666",marginBottom:14,fontFamily:S.mono}},"×2 = double portion in the Power Plate"),
+        h("div",{style:{fontSize:10,color:"#666",marginBottom:14,fontFamily:S.mono}},"\"double portion\" = select once, Atis serves it double in the Power Plate (counts 2× in macros)"),
 
         // Order guide (Atis, Deliveroo-Schritte)
         (()=>{
