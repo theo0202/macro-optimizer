@@ -292,11 +292,19 @@ check("UG Extras: nie Cucumber als Extra", ubX.every(r => r.extras.every(e => !(
 
 // ── Wagamama (Copy-Paste-Batches, wächst) ──
 check("Wagamama Items vorhanden (>=20, wächst mit Batches)", T.WAGA.items.length >= 20, true);
-check("Wagamama Kategorien (5)", T.WAGA.cats.length, 5);
+check("Wagamama Kategorien (6, inkl. curries)", T.WAGA.cats.length, 6);
 check("Wagamama grilled duck donburi kcal", T.WAGA.items.find(x => x.id === "grilled_duck_donburi").kcal, 1085);
 check("Wagamama grilled duck donburi Protein", T.WAGA.items.find(x => x.id === "grilled_duck_donburi").protein, 53.9);
 check("Wagamama grilled chicken ramen kcal", T.WAGA.items.find(x => x.id === "grilled_chicken_ramen").kcal, 490);
 check("Wagamama tea-stained egg kcal", T.WAGA.items.find(x => x.id === "tea_stained_egg").kcal, 69);
+// Curries-Kategorie (Batch 3) + seasonal buldak bibimbap
+check("Wagamama curries-Kategorie vorhanden", T.WAGA.cats.some(c => c.id === "curries"), true);
+check("Wagamama 10 Curries", T.WAGA.items.filter(x => x.cat === "curries").length, 10);
+check("Wagamama chicken katsu curry kcal", T.WAGA.items.find(x => x.id === "chicken_katsu_curry").kcal, 988);
+check("Wagamama chicken katsu curry Protein", T.WAGA.items.find(x => x.id === "chicken_katsu_curry").protein, 43.9);
+check("Wagamama hot yasai katsu curry kcal", T.WAGA.items.find(x => x.id === "hot_yasai_katsu_curry").kcal, 1350);
+check("Wagamama tofu firecracker salt", T.WAGA.items.find(x => x.id === "tofu_firecracker").salt, 5.1);
+check("Wagamama buldak bibimbap kcal + cat=donburi", (() => { const b = T.WAGA.items.find(x => x.id === "buldak_bibimbap"); return b && b.kcal === 1012 && b.cat === "donburi"; })(), true);
 
 const wagAll = {};
 T.WAGA.cats.forEach(c => wagAll[c.id] = true);

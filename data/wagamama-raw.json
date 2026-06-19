@@ -2,9 +2,9 @@
   "_meta": {
     "source": "wagamama.com Produkt-Popups (allergens + nutritional information), per-Serving-Werte",
     "workflow": "User liefert Daten als Copy-Paste-Batches -> Items hier ergänzen -> node wagamama-update.js",
-    "updated": "2026-06-12",
-    "batches": 2,
-    "note": "Kategorien (cat) selbst zugeordnet: donburi, ramen, teppanyaki (alle soba/udon-Gerichte), salads, sides"
+    "updated": "2026-06-19",
+    "batches": 3,
+    "note": "Kategorien (cat) selbst zugeordnet: donburi, ramen, teppanyaki (alle soba/udon-Gerichte), salads, sides, curries. buldak bibimbap (seasonal rice bowl) -> donburi. per-Serving-Spalte; kcal-Tausenderkomma entfernt"
   },
   "items": [
     {
@@ -36,6 +36,11 @@
       "name": "pulled shiitake donburi", "cat": "donburi",
       "kcal": 951, "fat": 32.4, "sat": 11.0, "carbs": 135.3, "sugars": 25.6, "fibre": 24.7, "protein": 29.6, "salt": 6.5,
       "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)", "sesame", "soya", "sulphites"]
+    },
+    {
+      "name": "buldak bibimbap", "cat": "donburi",
+      "kcal": 1012, "fat": 46.1, "sat": 7.3, "carbs": 109.0, "sugars": 26.0, "fibre": 8.5, "protein": 38.8, "salt": 6.1,
+      "veggie": false, "vegan": false, "allergens": ["celery", "gluten (wheat)", "eggs", "sesame", "soya", "sulphites"]
     },
     {
       "name": "tantanmen beef brisket ramen", "cat": "ramen",
@@ -111,6 +116,56 @@
       "name": "thai beef salad", "cat": "salads",
       "kcal": 496, "fat": 23.3, "sat": 3.2, "carbs": 27.7, "sugars": 20.3, "fibre": 4.9, "protein": 41.0, "salt": 3.5,
       "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "mustard", "soya", "sulphites"]
+    },
+    {
+      "name": "chicken katsu curry", "cat": "curries",
+      "kcal": 988, "fat": 41.8, "sat": 8.8, "carbs": 110.0, "sugars": 7.0, "fibre": 7.9, "protein": 43.9, "salt": 2.8,
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "mustard", "soya"]
+    },
+    {
+      "name": "yasai katsu curry", "cat": "curries",
+      "kcal": 1223, "fat": 55.3, "sat": 9.3, "carbs": 159.3, "sugars": 13.8, "fibre": 10.6, "protein": 21.5, "salt": 2.7,
+      "veggie": true, "vegan": true, "allergens": ["gluten (wheat)", "mustard", "soya"]
+    },
+    {
+      "name": "hot chicken katsu curry", "cat": "curries",
+      "kcal": 1115, "fat": 51.6, "sat": 9.6, "carbs": 117.9, "sugars": 13.1, "fibre": 9.9, "protein": 45.0, "salt": 4.5,
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "mustard", "soya", "sulphites"]
+    },
+    {
+      "name": "hot yasai katsu curry", "cat": "curries",
+      "kcal": 1350, "fat": 65.2, "sat": 10.0, "carbs": 167.3, "sugars": 19.8, "fibre": 12.6, "protein": 22.5, "salt": 4.4,
+      "veggie": true, "vegan": true, "allergens": ["gluten (wheat)", "mustard", "soya", "sulphites"]
+    },
+    {
+      "name": "prawn raisukaree", "cat": "curries",
+      "kcal": 1022, "fat": 42.1, "sat": 13.9, "carbs": 131.1, "sugars": 13.0, "fibre": 8.0, "protein": 27.6, "salt": 4.7,
+      "veggie": false, "vegan": false, "allergens": ["crustaceans", "sesame", "soya"]
+    },
+    {
+      "name": "chicken raisukaree", "cat": "curries",
+      "kcal": 1092, "fat": 45.2, "sat": 14.2, "carbs": 131.2, "sugars": 13.2, "fibre": 8.4, "protein": 38.4, "salt": 3.2,
+      "veggie": false, "vegan": false, "allergens": ["sesame", "soya"]
+    },
+    {
+      "name": "tofu raisukaree", "cat": "curries",
+      "kcal": 1135, "fat": 53.4, "sat": 14.8, "carbs": 133.1, "sugars": 13.8, "fibre": 8.5, "protein": 28.6, "salt": 3.1,
+      "veggie": true, "vegan": true, "allergens": ["sesame", "soya"]
+    },
+    {
+      "name": "prawn firecracker", "cat": "curries",
+      "kcal": 1139, "fat": 38.7, "sat": 3.8, "carbs": 156.0, "sugars": 34.8, "fibre": 10.6, "protein": 28.2, "salt": 6.7,
+      "veggie": false, "vegan": false, "allergens": ["crustaceans", "sesame", "soya", "sulphites"]
+    },
+    {
+      "name": "chicken firecracker", "cat": "curries",
+      "kcal": 1239, "fat": 42.8, "sat": 4.3, "carbs": 156.0, "sugars": 35.1, "fibre": 11.1, "protein": 44.4, "salt": 5.2,
+      "veggie": false, "vegan": false, "allergens": ["sesame", "soya", "sulphites"]
+    },
+    {
+      "name": "tofu firecracker", "cat": "curries",
+      "kcal": 1252, "fat": 50.1, "sat": 4.7, "carbs": 157.9, "sugars": 35.6, "fibre": 11.1, "protein": 29.1, "salt": 5.1,
+      "veggie": true, "vegan": true, "allergens": ["sesame", "soya", "sulphites"]
     }
   ]
 }

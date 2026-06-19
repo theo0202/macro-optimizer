@@ -71,7 +71,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Wagamama**: wagamama.com Produkt-Popups ("allergens + nutritional information", per-Serving-Spalte) — KEIN Crawler, **User liefert die Daten als Copy-Paste-Batches im Chat**
   - Workflow: neue Items in `data/wagamama-raw.json` ergänzen (Name, cat, 8 Makros; Sodium weglassen, Salt reicht) → `node wagamama-update.js` → WAGAMAMA-Block in index.html (Marker `__WAGAMAMA_DATA_START__`/`__WAGAMAMA_DATA_END__`)
   - Kategorien sind selbst zugeordnet (donburi, ramen, teppanyaki = alle soba/udon-Gerichte, salads, sides) und entstehen automatisch aus den `cat`-Feldern
-  - Stand Juni 2026: 21 Items aus 2 Batches; weitere folgen
+  - Stand Juni 2026: 32 Items aus 3 Batches; weitere folgen. Batch 3: neue Kategorie **curries** (10: chicken/yasai/hot-chicken/hot-yasai katsu curry, prawn/chicken/tofu raisukaree, prawn/chicken/tofu firecracker) + seasonal **buldak bibimbap** (in donburi). Die 3 Firecracker haben hohen Zucker (~35 g) → kcal liegt ~4-5% über 4C+4P+9F (Atwater-Näherung, echte Werte)
 - **German Doner Kebab (GDK)**: offizielle Nährwerttabelle (per-Serving-Spalte) — KEIN Crawler, **User liefert Copy-Paste**
   - Workflow: Items in `data/gdk-raw.json` (Name, cat, `sauce:true` wenn Sauce drin, 8 Makros) → `node gdk-update.js` → GDK-Block (Marker `__GDK_DATA_START__`/`__GDK_DATA_END__`)
   - 69 Items, 8 Kategorien (kebabs, wraps, burritos, quesadillas, rice_bowls, boxes, sides, juniors); Juniors standardmäßig AUS (Kids-Menü, wie Nando's Nandinos). Sides (9 Items: Fries/Flaming/Doner-Seasoned je Regular+Large, Chilli Cheese Bites, Hash Brown Bites ±Doner Seasoned) per Copy-Paste-Batch nachgeliefert
@@ -193,7 +193,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 
 ## Bestellablauf Wagamama (à la carte)
 - Wie Itsu/Pret/Nando's: 1–3 Items, Duplikate möglich, gemeinsamer Optimizer (`alaCarteCombos`)
-- Kategorien (Stand Juni 2026, wachsen mit Batches): sides (2), donburi (4), ramen (4), teppanyaki (10), salads (1)
+- Kategorien (Stand Juni 2026, wachsen mit Batches): sides (2), donburi (5), ramen (4), teppanyaki (10), salads (1), curries (10)
 - **Schalter "No Ramen"**: schließt die komplette ramen-Kategorie aus (tantanmen beef brisket, grilled chicken, chilli chicken, kare burosu — und automatisch alle künftig ergänzten Ramen)
 - Standard-Chips: alle an
 
