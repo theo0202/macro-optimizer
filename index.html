@@ -2003,8 +2003,8 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   if(ok("gdk")) all = all.concat(tag(optimizeGDK(t,mode,p,def(GDK.cats),N,true,true),"gdk"));              // No Sauce + No rice bowl
   if(ok("atis")) all = all.concat(tag(optimizeAtis(t,mode,p,"plate",true,true),"atis"));                   // No crunch + No sauce
   if(ok("tfc")) all = all.concat(tag(optimizeTFC(t,mode,p,def(TFC.cats),N,true),"tfc"));                   // No fish
-  if(ok("ug")){ all = all.concat(tag(optimizeUG(t,mode,p,"salad",true,true),"ug"));                        // BYO Salad, No nuts + No dressing
-    all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true),"ug")); }                                   // BYO Tray
+  if(ok("ug")){ all = all.concat(tag(optimizeUG(t,mode,p,"salad",true,true,true),"ug"));                   // BYO Salad, No nuts + No dressing + cap pickles
+    all = all.concat(tag(optimizeUG(t,mode,p,"tray",true,true,true),"ug")); }                              // BYO Tray
   if(ok("chopstix")) all = all.concat(tag(optimizeChopstix(t,mode,p),"chopstix"));                         // Build-a-Box (2 + 3 Toppings)
   if(ok("pepes")) all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),N,true,"plain"),"pepes"));   // à la carte, No Sauce, No Flavour (Plain)
   if(ok("fiveguys")) all = all.concat(tag(optimizeFiveGuys(t,mode,p,true),"fiveguys"));                    // Build your own: Main + Fries + Toppings, No sauce
@@ -2078,7 +2078,7 @@ function summarizeAcross(r){
 const UG_VEG_TRIPLES=(()=>{const v=UG.veg,out=[];
   for(let i=0;i<v.length;i++)for(let j=i+1;j<v.length;j++)for(let k=j+1;k<v.length;k++)out.push([v[i],v[j],v[k]]);
   return out;})();
-function optimizeUG(t, mode, p, ugMode, noNuts, noDress) {
+function optimizeUG(t, mode, p, ugMode, noNuts, noDress, capPickles) {
   // BYO Salad und BYO Tray als getrennte Beam-Pipelines (ugMode "salad" | "tray").
   // Performance: alles über vorberechnete kcal/P/F/C-Summen; _s = ungerundete Laufsumme,
   // nutrition = gerundete Anzeige-Kopie (sat/sugars/fibre/salt = 0, keine Daten im Guide).
@@ -2114,6 +2114,15 @@ function optimizeUG(t, mode, p, ugMode, noNuts, noDress) {
   };
   // Extras (alle "Any ...?"-Schritte): Extra-Veg (ohne Cucumber, + Leafy Greens), Scoops/Premiums,
   // Toppings (außer "No nuts"), Extra-Dressings (außer "No Dressing") — bis 2, nur bei Verbesserung
+  // Schalter "Max 1x ...": diese 3 Items duerfen pro Bestellung max. 1x vorkommen (Triple-Veg + Extra-Veg zusammen).
+  // Duplikate entstehen nur in addExtras (Triples sind i<j<k); hier also pruefen, bevor ein gecapptes Item ergaenzt wird.
+  const CAP_IDS = new Set(["tajin_sweetcorn","pickled_onions","pickled_cabbage"]);
+  const capOk = (r, addIts) => {
+    if(!capPickles) return true;
+    const c={}; const tally=it=>{ if(it && CAP_IDS.has(it.id)) c[it.id]=(c[it.id]||0)+1; };
+    (r.veg||[]).forEach(tally); (r.extras||[]).forEach(e=>tally(e.it)); addIts.forEach(tally);
+    return Object.values(c).every(n=>n<=1);
+  };
   const addExtras=cands=>{
     const pool=[
       {it:UG.greens[0],kind:"veg"},
@@ -2124,10 +2133,12 @@ function optimizeUG(t, mode, p, ugMode, noNuts, noDress) {
     ].map(e=>({...e,sum:mac([e.it])}));
     const next=[...cands];
     for(const r of cands.slice(0,100))for(let i=0;i<pool.length;i++){
+      if(!capOk(r,[pool[i].it]))continue;
       const v=fin({...r,extras:[pool[i]]},addM(r._s,pool[i].sum));
       if(v.score>=r.score)continue;
       next.push(v);
       for(let j=i;j<pool.length;j++){
+        if(!capOk(r,[pool[i].it,pool[j].it]))continue;
         const v2=fin({...v,extras:[pool[i],pool[j]]},addM(v._s,pool[j].sum));
         if(v2.score<v.score)next.push(v2);
       }
@@ -2381,6 +2392,7 @@ function App() {
   const [ugMode,setUgMode]=useState("salad");
   const [noNuts,setNoNuts]=useState(true);
   const [noDressUG,setNoDressUG]=useState(true);
+  const [ugCap,setUgCap]=useState(true); // Tajin Sweetcorn / Pickled Onions / Pickled Cabbage je max. 1x
   const [selU,setSelU]=useState(null);
   // Wagamama
   const [wagCats,setWC]=useState(()=>{const o={};WAGA.cats.forEach(c=>o[c.id]=c.on);return o;});
@@ -2506,7 +2518,7 @@ function App() {
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
   const resultsNandos=useMemo(()=>optimizeNandos(targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce,noPineapple,noWings,noCorn),[targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce,noPineapple,noWings,noCorn]);
-  const resultsUG=useMemo(()=>resto==="ug"?optimizeUG(targets,mode,prefs,ugMode,noNuts,noDressUG):[],[resto,targets,mode,prefs,ugMode,noNuts,noDressUG]);
+  const resultsUG=useMemo(()=>resto==="ug"?optimizeUG(targets,mode,prefs,ugMode,noNuts,noDressUG,ugCap):[],[resto,targets,mode,prefs,ugMode,noNuts,noDressUG,ugCap]);
   const resultsWaga=useMemo(()=>optimizeWaga(targets,mode,prefs,wagCats,maxW,noRamen),[targets,mode,prefs,wagCats,maxW,noRamen]);
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
   const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
@@ -2809,6 +2821,8 @@ function App() {
           h("input",{type:"checkbox",checked:noNuts,onChange:e=>setNoNuts(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),'No "2 Toppings" / Nuts etc.'),
         resto==="ug"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noDressUG,onChange:e=>setNoDressUG(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Dressing"),
+        resto==="ug"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:ugCap,onChange:e=>setUgCap(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Max 1× Tajin Sweetcorn / Pickled Onions / Pickled Cabbage"),
         resto==="pret"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:onlyRel,onChange:e=>setOR(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only relevant items, no bullshit"),
         resto==="pret"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

@@ -290,6 +290,16 @@ check("UG 'No Dressing': kein Dressing", ud.every(r => !r.dress && r.extras.ever
 const ubX = [...ub, ...ut, ...un, ...ud];
 check("UG Extras: nie Cucumber als Extra", ubX.every(r => r.extras.every(e => !(e.kind === "veg" && e.it.id === "cucumber"))), true);
 
+// Schalter "Max 1x" für Tajin Sweetcorn / Pickled Onions / Pickled Cabbage (jeweils max. 1x über Triple-Veg + Extras)
+const UG_CAP_IDS = ["tajin_sweetcorn", "pickled_onions", "pickled_cabbage"];
+const ugCapCount = r => { const c = {}; (r.veg || []).forEach(x => { if (x) c[x.id] = (c[x.id] || 0) + 1; }); (r.extras || []).forEach(e => { if (e.it) c[e.it.id] = (c[e.it.id] || 0) + 1; }); return c; };
+const ugMaxDup = rs => Math.max(0, ...rs.map(r => Math.max(0, ...UG_CAP_IDS.map(id => ugCapCount(r)[id] || 0))));
+const tCarb = { protein: 8, carbs: 80, fat: 4, kcal: 388, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const ugCapOn = [...T.optimizeUG(tCarb, "macros", {}, "salad", true, true, true), ...T.optimizeUG(tCarb, "macros", {}, "tray", true, true, true)];
+const ugCapOff = [...T.optimizeUG(tCarb, "macros", {}, "salad", true, true, false), ...T.optimizeUG(tCarb, "macros", {}, "tray", true, true, false)];
+check("UG 'Max 1x': Tajin/Pickled Onions/Pickled Cabbage je <=1 pro Bestellung", ugMaxDup(ugCapOn) <= 1, true);
+check("UG Gegenprobe ohne Schalter: Doppelung möglich (>=2)", ugCapOff.length > 0 && ugMaxDup(ugCapOff) >= 2, true);
+
 // ── Wagamama (Copy-Paste-Batches, wächst) ──
 check("Wagamama Items vorhanden (>=20, wächst mit Batches)", T.WAGA.items.length >= 20, true);
 check("Wagamama Kategorien (6, inkl. curries)", T.WAGA.cats.length, 6);
