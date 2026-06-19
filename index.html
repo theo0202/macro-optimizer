@@ -1603,7 +1603,13 @@ function parseMacroScreenshot(ocrText) {
   let posKcal = null;
   for (let i=0;i<lines.length && posKcal==null;i++){                 // Label + Zahl in DERSELBEN Zeile
     if (!hasUbrig(lines[i]) || isMacroBar(lines[i])) continue;
-    const nb = numsIn(lines[i]); if (nb.length) posKcal = Math.max.apply(null, nb);
+    const nb = numsIn(lines[i]); if (!nb.length) continue;
+    // NICHT Math.max: steht der ganze Ring auf EINER Zeile ("1.688 Gegessen 1.112 Übrig 0 Verbrannt"),
+    // würde max die GEGESSEN-Zahl (1688) statt Übrig (1112) greifen. Stattdessen die Zahl der Zeile nehmen,
+    // die dem Makro-Rest am nächsten liegt (= der Übrig-Wert). Nur bei kaputtem Rest (g->9-Fall, >6000) -> Math.max.
+    posKcal = (computedKcal>0 && computedKcal<=6000)
+      ? nb.reduce((a,b)=>Math.abs(b-computedKcal)<Math.abs(a-computedKcal)?b:a)
+      : Math.max.apply(null, nb);
   }
   if (posKcal==null) for (let j=0;j<lines.length && posKcal==null;j++){  // Zahlen in Nachbarzeile ±1..2 → Index 1 = Übrig
     if (!hasUbrig(lines[j])) continue;

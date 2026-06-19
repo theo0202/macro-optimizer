@@ -592,6 +592,11 @@ const OCR_CASES = [
   { name: "fat_trimmed_to_fit_kcal", t: "Gegessen Ubrig Verbrannt\n50 1.000 0\nKohlenhydrate 0 / 100 g\nEiweiss 0 / 100 g\nFett 0 / 50 g", e: { carbs: 100, protein: 100, fat: 22.2, kcal: 1000 } },
   // Carbs+Protein allein schon über "Übrig" (1600 > 1000) -> Fett auf 0 (mehr geht über Fett nicht)
   { name: "fat_trimmed_to_zero", t: "Gegessen Ubrig Verbrannt\n50 1.000 0\nKohlenhydrate 0 / 200 g\nEiweiss 0 / 200 g\nFett 0 / 50 g", e: { carbs: 200, protein: 200, fat: 0, kcal: 1000 } },
+  // REALER FEHLER (User 19.06.2026): neues App-Layout, ganzer Ring auf EINER Zeile -> Math.max griff "Gegessen"
+  // (1688) statt "Übrig" (1112). Muss jetzt 1112 nehmen (Zahl der Übrig-Zeile, die zum Makro-Rest 1073 passt).
+  { name: "ring_one_line_picks_ubrig_not_gegessen", t: "Heute\nWoche 64\nUbersicht  Details\n1.688 Gegessen 1.112 Ubrig 0 Verbrannt\nKohlenhydrate\nEiweiss\nFett\n187 / 341 g\n126 / 184 g\n44 / 69 g\nErnahrung\nFruhstuck 533 / 840 kcal\nMittagessen 819 / 1.120 kcal", e: { carbs: 154, protein: 58, fat: 25, kcal: 1112 } },
+  // dasselbe Layout, aber Ring-Zahlen jede auf eigener Zeile (mit Labels verschachtelt) -> Sicherheitsnetz/Übrig = 1112
+  { name: "ring_separate_lines_eaten_total_macros", t: "Heute\n1.688\nGegessen\n1.112\nUbrig\n0\nVerbrannt\nKohlenhydrate\n187 / 341 g\nEiweiss\n126 / 184 g\nFett\n44 / 69 g\nFruhstuck 533 / 840 kcal\nMittagessen 819 / 1.120 kcal", e: { carbs: 154, protein: 58, fat: 25, kcal: 1112 } },
 ];
 for (const c of OCR_CASES) {
   const r = T.parseMacroScreenshot(c.t) || {};
