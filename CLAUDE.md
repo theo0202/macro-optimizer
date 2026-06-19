@@ -295,6 +295,8 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 - **Bacon (Streaky)** — komplett aus Proteins entfernt
 - **Tuna Mayo** — komplett aus Proteins entfernt
 - **Ham** (Schweineschinken-Protein, id `ham`) — komplett aus Proteins entfernt (User 19.06.2026: gibt es bei Deliveroo nicht). NICHT zu verwechseln mit **„Turkey Ham"** (Extra, bleibt drin)
+- **Breaded Chicken** (Protein `breaded_chicken` + Extra `breaded_chicken_extra`) — entfernt (User 19.06.2026): fehlt komplett in der Nährwert-PDF „UKI June 2026" (weder Komponente noch fertiger Sub) → offenbar vom Menü
+- **Falafel** (Protein „Falafel Bites" `falafel` + Extra „Smashed Falafel" `smashed_falafel`) — entfernt (User 19.06.2026): fehlt ebenfalls komplett in der June-2026-PDF → offenbar vom Menü
 - **Geschätzte Werte** — keine Items mit unverifizierten Nährwerten:
   - HP Brown Sauce (nicht im PDF)
   - Yogurt Mint & Garlic Sauce (nicht im PDF)
