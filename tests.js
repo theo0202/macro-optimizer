@@ -34,10 +34,28 @@ const foot = T.sumN([bread, prot, cheese], 2, T.STD_SALAD);
 check("Subway Footlong kcal (Salad ×1)", foot.kcal, 2 * (bread.kcal + prot.kcal) + saladKcal);
 
 const t1 = { protein: 60, carbs: 90, fat: 24, kcal: 816, fibMin: null, fibMax: null, sMin: null, sMax: null };
-const res = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong");
+const res = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true); // noSides=true: Kernlogik (Footlong-Doppelung) ohne Side
 const top = res[0];
 const doubled = [top.bread, top.protein, top.cheese, ...top.extras, ...top.sauces].reduce((s, x) => s + x.kcal, 0);
-check("Subway Optimizer Footlong Top-1", top.nutrition.kcal, 2 * doubled + saladKcal);
+check("Subway Optimizer Footlong Top-1 (subs only)", top.nutrition.kcal, 2 * doubled + saladKcal);
+
+// ── Subway Sides (Baked Beans Snack Pot, Coleslaw Regular/Double) + "only Subs"-Schalter ──
+check("Subway D.sides (3)", T.D.sides.length, 3);
+check("Subway Baked Beans Snack Pot kcal (PDF)", T.D.sides.find(s => s.id === "baked_beans_snack_pot").kcal, 109);
+check("Subway Coleslaw Double kcal (PDF)", T.D.sides.find(s => s.id === "coleslaw_double").kcal, 119);
+// noSides=true: kein Ergebnis hat eine Side
+const resNoSide = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true);
+check("Subway 'only Subs': keine Side in Ergebnissen", resNoSide.every(r => !r.side), true);
+// Sides erlaubt: bei passendem Ziel taucht eine Side auf, und Nutrition = Sub + Side (Side ×1, NICHT footlong-verdoppelt)
+const tSide = { protein: 45, carbs: 70, fat: 18, kcal: 622, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const resSide = T.optimize(tSide, "macros", {}, true, true, "wholegrain", "footlong", false);
+const withS = resSide.find(r => r.side);
+check("Subway Sides erlaubt: mind. ein Ergebnis mit Side", !!withS, true);
+if (withS) {
+  const subItems = [withS.bread, withS.protein, withS.cheese, ...withS.extras, ...withS.sauces];
+  const expKcal = Math.round((2 * subItems.reduce((s, x) => s + x.kcal, 0) + saladKcal + withS.side.kcal) * 10) / 10;
+  check("Subway Side ×1 (nicht footlong-verdoppelt) + Sub ×2", approx(withS.nutrition.kcal, expKcal), true);
+}
 
 // ── Farmer J: Datenumfang ──
 check("FJ Mains", T.FJ.mains.length, 5);

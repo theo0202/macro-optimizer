@@ -88,6 +88,12 @@ const D = {
     { id:"mixed_pepper",name:"Mixed Peppercorns",servingG:1,kcal:3,fat:0,sat:0,carbs:0.4,sugars:0,fibre:0.2,protein:0.1,salt:0 },
     { id:"crispy_onions",name:"Crispy Onions",servingG:7,kcal:41,fat:3,sat:1,carbs:2.9,sugars:0.6,fibre:0.3,protein:0.4,salt:0 },
   ],
+  // Sides (eigenständige Beilagen, NICHT footlong-verdoppelt) — Werte aus UKI June 2026 PDF (Seite 2, Sides)
+  sides: [
+    { id:"baked_beans_snack_pot",name:"Baked Beans Snack Pot",servingG:140,kcal:109,fat:0.3,sat:0,carbs:18,sugars:6.6,fibre:5.2,protein:6.6,salt:0.8 },
+    { id:"coleslaw_regular",name:"Coleslaw Regular",servingG:40,kcal:60,fat:5.2,sat:0.4,carbs:2.4,sugars:2.1,fibre:0.8,protein:0,salt:0.2 },
+    { id:"coleslaw_double",name:"Coleslaw Double",servingG:80,kcal:119,fat:10,sat:0.8,carbs:4.8,sugars:4.2,fibre:1.6,protein:1,salt:0.5 },
+  ],
 };
 
 // Farmer J (eigene Erfassung, data/farmerj.json). Order Rule (Deliveroo):
@@ -1695,7 +1701,7 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, lockedBread, sz) {
+function optimize(t, mode, p, noSauce, noCheese, lockedBread, sz, noSides) {
   const m = sz==="footlong"?2:1;
   const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : D.cheeses;
   const br = lockedBread ? D.breads.filter(b=>b.id===lockedBread) : D.breads;
@@ -1717,7 +1723,20 @@ function optimize(t, mode, p, noSauce, noCheese, lockedBread, sz) {
     }
   }
   R.sort((a,b)=>a.score-b.score);
-  return R.slice(0,20);
+  if(noSides) return R.slice(0,20);
+  // Sides: optional EINE Beilage (×1, NICHT footlong-verdoppelt). Die besten Subs um Side-Varianten + "ohne Side"
+  // erweitern, neu scoren — der Optimizer nimmt nur dann eine Side, wenn sie den Score verbessert.
+  const withSide=(n,sd)=>{const o={};for(const k of KEYS)o[k]=Math.round(((n[k]||0)+(sd[k]||0))*10)/10;return o;};
+  const out=[];
+  for(const r of R.slice(0,40)){
+    out.push(r);
+    for(const sd of D.sides){
+      const n=withSide(r.nutrition,sd);
+      out.push({...r,side:sd,nutrition:n,score:score(n,t,mode,p)});
+    }
+  }
+  out.sort((a,b)=>a.score-b.score);
+  return out.slice(0,20);
 }
 
 // Farmer J: Custom Fieldtray = Main × Base × (0–2 Sides). Sets laufen als fertige Alternativen mit.
@@ -1994,7 +2013,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   const ok = rt => !only || only.includes(rt);   // only = optionale Whitelist (z.B. "Accurate restaurants")
   const N = acMaxN || 5;                          // max items pro à-la-carte-Bestellung (Cross-Restaurant-Chip; Default 5)
   let all = [];
-  if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize),"subway"));   // No cheese + No sauce, Brot frei
+  if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize,true),"subway"));   // No cheese + No sauce, Brot frei, subs-only (Sides nur im Subway-Tab)
   if(ok("farmerj")) all = all.concat(tag(optimizeFJ(t,mode,p,true),"farmerj"));                  // Free items only
   if(ok("itsu")) all = all.concat(tag(optimizeItsu(t,mode,p,def(ITSU.cats),N,true,false,false),"itsu"));   // No soups…; only-sushi AUS
   if(ok("pret")) all = all.concat(tag(optimizePret(t,mode,p,def(PRET.cats),N,true,true),"pret"));          // only relevant + Salads only
@@ -2354,12 +2373,14 @@ function App() {
   const [sMax,setSMax]=useState("");
   const [noSauce,setNS]=useState(true);
   const [noCheese,setNC]=useState(true);
+  const [onlySubs,setOnlySubs]=useState(false); // "only Subs (no sides)" — Default AUS, damit die Sides berücksichtigt werden
   const [lockedBread,setLB]=useState("wholegrain");
   const [sel,setSel]=useState(null);
   const [mSal,setMSal]=useState({});
   const [mSau,setMSau]=useState({});
   const [mSea,setMSea]=useState({});
   const [mExt,setMExt]=useState({});
+  const [mSide,setMSide]=useState(""); // gewählte Side im Detail-Panel (id oder "")
   // Farmer J
   const [freeOnly,setFO]=useState(true);
   const [showSets,setShowSets]=useState(false);
@@ -2513,7 +2534,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,lockedBread,subSize),[targets,mode,prefs,noSauce,noCheese,lockedBread,subSize]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,lockedBread,subSize,onlySubs),[targets,mode,prefs,noSauce,noCheese,lockedBread,subSize,onlySubs]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -2552,8 +2573,9 @@ function App() {
     D.sauces.forEach(s=>{if(mSau[s.id])items.push(s);});
     D.seasonings.forEach(s=>{if(mSea[s.id])items.push(s);});
     const saladItems=D.salads.filter(s=>mSal[s.id]);
-    return sumN(items,m,saladItems);
-  },[sel,mSal,mSau,mSea,mExt,subSize]);
+    const sideItem=D.sides.find(s=>s.id===mSide);   // Side wird ×1 gerechnet (nicht footlong-verdoppelt) → singleItems
+    return sumN(items,m,sideItem?[...saladItems,sideItem]:saladItems);
+  },[sel,mSal,mSau,mSea,mExt,mSide,subSize]);
 
   const selFTotal=useMemo(()=>{
     if(!selF)return null;
@@ -2861,6 +2883,8 @@ function App() {
           h("input",{type:"checkbox",checked:noCheese,onChange:e=>setNC(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noSauce,onChange:e=>setNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:onlySubs,onChange:e=>setOnlySubs(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only Subs (no sides)"),
         resto==="farmerj"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Free items only")
       ),
@@ -3132,7 +3156,7 @@ function App() {
             );
           }
           const isSel=sel===r;
-          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt({});},style:{
+          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt({});setMSide(isSel?"":(r.side?r.side.id:""));},style:{
             background:isSel?"rgba(0,151,67,0.08)":"#151515",
             border:isSel?"1px solid "+S.green:"1px solid #222",
             borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
@@ -3144,7 +3168,8 @@ function App() {
                   r.bread.name,
                   r.cheese.id!=="none"&&" · "+r.cheese.name,
                   r.extras.length>0&&" · +"+r.extras.map(e=>e.name).join(", +"),
-                  r.sauces.length>0&&" · "+r.sauces.map(s=>s.name).join(", ")
+                  r.sauces.length>0&&" · "+r.sauces.map(s=>s.name).join(", "),
+                  r.side&&" · + "+r.side.name
                 )
               ),
               h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
@@ -3260,6 +3285,15 @@ function App() {
           )
         ),
 
+        // Side (optional, max 1 — eigenständige Beilage, nicht footlong-verdoppelt)
+        !onlySubs&&h("div",{style:{marginBottom:16}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Side (optional, max 1)"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...D.sides.map(s=>h(Chip,{key:s.id,label:s.name+" (+"+s.kcal+")",small:true,active:mSide===s.id,
+              onClick:()=>setMSide(mSide===s.id?"":s.id)}))
+          )
+        ),
+
         // Order guide
         (()=>{
           const aE=[...(sel.extras||[]),...D.extras.filter(e=>mExt[e.id])];
@@ -3275,6 +3309,7 @@ function App() {
             {l:"Salad",v:aSal.map(s=>s.name).join(", ")||"–"},
             {l:"Sauce",v:noSauce?"None":(aS.map(s=>s.name).join(", ")||"–")},
             {l:"Seasonings",v:aSea.map(s=>s.name).join(", ")||"–"},
+            ...(mSide?[{l:"Side",v:(D.sides.find(s=>s.id===mSide)||{}).name+" (separate item)"}]:[]),
           ];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},

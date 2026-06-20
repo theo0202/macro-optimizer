@@ -40,6 +40,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Subway**: UK & ROI Nutritional Information January 2026 PDF (`data/UKIandROINutritionalInformationJan2026.pdf`)
   - Alle Nährwerte **per 6-inch Serving** (Footlong = ×2, excluding salads)
   - Component-level Daten von Seite 3 des PDFs
+  - **Sides** (`D.sides`: Baked Beans Snack Pot, Coleslaw Regular, Coleslaw Double) aus der neueren **UKI June 2026 PDF** (Seite 2, „Sides") — eigenständige Beilagen, werden ×1 gerechnet (kein Footlong-×2). Sanity-Check 19.06.2026 bestätigte die übrigen Komponenten weitgehend unverändert ggü. Jan 2026 (Breaded Chicken + Falafel fehlen in June → entfernt)
 - **Farmer J**: Nährwerte von farmerj.com (Stand Juni 2026); Struktur & Order Rules aus `data/Farmer J _ Nutritional Info.xlsx` (Sheets: "Nutrition per Serving" + "Order Rule")
   - Alle Werte pro Serving, keine Größenvarianten
   - `data/farmerj.json` wird mit `node export-farmerj.js` aus dem FJ-Objekt in index.html regeneriert — index.html ist die Quelle der Wahrheit
@@ -128,7 +129,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 
 ## Daten-Architektur
 - Alle Nährwertdaten als JS-Objekte direkt in der HTML eingebettet
-- **Subway**: `D.breads[]`, `D.proteins[]`, `D.cheeses[]`, `D.extras[]`, `D.salads[]`, `D.sauces[]`, `D.seasonings[]`
+- **Subway**: `D.breads[]`, `D.proteins[]`, `D.cheeses[]`, `D.extras[]`, `D.salads[]`, `D.sauces[]`, `D.seasonings[]`, `D.sides[]` (Baked Beans Snack Pot, Coleslaw Regular/Double — eigenständige Beilagen, ×1)
 - **Farmer J**: `FJ.mains[]`, `FJ.bases[]`, `FJ.sides[]` (Warm Sides + Salads, `group`-Feld), `FJ.toppings[]`, `FJ.sdt[]` ("Sauce, Dip or Topping"-Kategorie: 4 Saucen + Egg/Avo/Hummus/Baba Ghanoush), `FJ.sets[]` (Set Fieldtrays/Fieldbowls/Solo-Salate als fertige Alternativen)
 - **Itsu**: `ITSU.cats[]` (id, name, `on` = Default-Filter, `drink:true` = nie im Optimizer) + `ITSU.items[]` (flache Liste, `cat`-Feld = Primärkategorie)
 - **Pret**: `PRET.cats[]` (gleiches Schema wie Itsu) + `PRET.items[]` (zusätzlich `rel:true` = Whitelist für "only relevant items, no bullshit")
@@ -155,6 +156,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 6. **Salad** (beliebig viele, je max 1×): Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Olives, Red Onions, Jalapeños, Sweetcorn
 7. **Sauce** (max 2): Sweet Chilli, Chipotle Southwest, Sweet Onion, Honey Mustard, Ketchup, X-Spy Chipotle, Garlic & Herb, Teriyaki, Lite Mayo, BBQ Sauce
 8. **Seasonings** (beliebig viele, je max 1×): Sea Salt, Mixed Peppercorns, Crispy Onions
+9. **Side** (optional, max 1 — eigenständiges Produkt, NICHT footlong-verdoppelt): Baked Beans Snack Pot, Coleslaw Regular, Coleslaw Double (Werte aus UKI June 2026 PDF, Seite 2). Der Optimizer fügt 0–1 Side hinzu (nur wenn sie den Score verbessert). **Schalter „only Subs (no sides)"** (Default AUS — „only X"-Modus) schaltet die Sides komplett aus. Side wird im Subway-`optimize` über das `singleItems`-Argument von `sumN` ×1 gerechnet (footlong verdoppelt nur den Sub). In „All/Accurate" läuft Subway subs-only (Sides nur im Subway-Tab)
 
 ## Bestellablauf Farmer J (Deliveroo, laut Order-Rule-Sheet)
 - **Custom Fieldtray**: 1× Main + 1× Base + 2× Sides — alles frei (im Preis enthalten)
@@ -305,7 +307,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
 Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing"+"Max 1× Tajin/Pickled Onions/Pickled Cabbage", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce", Wasabi "No sushi or soups & w/o sauces (good meals only)" (der einzige aktive Wasabi-Schalter; "No soups" startet hier AUS, weil "good meals only" Soup ohnehin ausschließt). Pizza Express hat keine Schalter, aber die Desserts-Kategorie startet AUS.
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
-**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren) und Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
+**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren), Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap) und Subway "only Subs (no sides)" (würde sonst die gerade erst hinzugefügten Sides verstecken). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
 
 ## Standard-Defaults (beim App-Start)
@@ -314,6 +316,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Brot**: Wholegrain (locked, kann aber gewechselt werden)
 - **Käse**: Kein Käse (Checkbox aktiv)
 - **Sauce**: Keine Sauce (Checkbox aktiv)
+- **Sides**: „only Subs (no sides)" **AUS** (Sides werden berücksichtigt; „only X"-Modus, daher default aus)
 - **Salad**: Standard-Salad automatisch vorausgewählt bei Ergebnis-Auswahl
 - **Standard-Salad**: Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions (alles AUSSER Jalapeños, Sweetcorn, Olives)
 - **Makro-Präferenzen** (Kalorien-Modus): High Protein + Low Fat vorausgewählt
@@ -387,7 +390,8 @@ Button **"Import from screenshot"** (unter den Modus-Tabs, in beiden Modi sichtb
 3. Probiert 0-2 Extras (gefiltert auf Score-Verbesserung)
 4. Probiert 0-1 Sauces (wenn Sauce erlaubt und Base-Score < 3)
 5. Scoring: gewichtete Abweichung von Ziel-Makros
-6. Sortiert nach Score, gibt Top 20 zurück, zeigt Top 8 an
+6. Sortiert nach Score; dann (außer `noSides`) die besten 40 Subs um 0–1 Side erweitert (Side ×1, nicht footlong-verdoppelt; nur wenn Score-verbessernd), neu sortiert. Top 20 zurück, zeigt Top 8 an
+7. `optimize(t,mode,p,noSauce,noCheese,lockedBread,sz,noSides)` — `noSides` = Schalter „only Subs"
 
 ### Farmer J (`optimizeFJ`)
 1. Enumeriert Main × Base × (0–2 Sides aus allen 9)
