@@ -2377,7 +2377,7 @@ function App() {
   const [sMin,setSMin]=useState("");
   const [sMax,setSMax]=useState("");
   const [noSauce,setNS]=useState(true);
-  const [noCheese,setNC]=useState(true);
+  const [noCheese,setNC]=useState(false); // "No cheese" — Default AUS (User 20.06.2026: Käse soll standardmäßig erlaubt sein)
   const [onlySubs,setOnlySubs]=useState(false); // "only Subs (no sides)" — Default AUS, damit die Sides berücksichtigt werden
   const [noRoast,setNoRoast]=useState(true); // "No Roast Chicken Breast" — Exclude-Schalter, Default AN (Konvention)
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
