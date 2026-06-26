@@ -56,6 +56,10 @@ const rMultiBread = T.optimize(t1, "macros", {}, true, true, { wholegrain: true,
 check("Subway Mehrfach-Brot: nur erlaubte Brote", rMultiBread.length > 0 && rMultiBread.every(r => r.bread.id === "wholegrain" || r.bread.id === "italian_white"), true);
 check("Subway Brot {} = alle Brote", new Set(T.optimize(t1, "macros", {}, true, true, {}, "footlong", true).map(r => r.bread.id)).size > 1, true);
 check("Subway Brot Legacy-String (1 Brot) weiterhin ok", T.optimize(t1, "macros", {}, true, true, "honey_oat", "footlong", true).every(r => r.bread.id === "honey_oat"), true);
+// Schalter "No Roast Chicken Breast"
+const tChick = { protein: 50, carbs: 60, fat: 8, kcal: 512, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Subway 'No Roast Chicken': kein roast_chicken-Protein", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, true).every(r => r.protein.id !== "roast_chicken"), true);
+check("Subway ohne Schalter: Roast Chicken möglich (Gegenprobe)", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, false).some(r => r.protein.id === "roast_chicken"), true);
 // noSides=true: kein Ergebnis hat eine Side
 const resNoSide = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true);
 check("Subway 'only Subs': keine Side in Ergebnissen", resNoSide.every(r => !r.side), true);

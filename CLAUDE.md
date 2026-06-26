@@ -307,7 +307,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
   - Shawarma Spiced Chicken (nicht im PDF)
 
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
-Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing"+"Max 1× Tajin/Pickled Onions/Pickled Cabbage", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce", Wasabi "No sushi or soups & w/o sauces (good meals only)" (der einzige aktive Wasabi-Schalter; "No soups" startet hier AUS, weil "good meals only" Soup ohnehin ausschließt). Pizza Express hat keine Schalter, aber die Desserts-Kategorie startet AUS.
+Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Kein Käse"+"Keine Sauce"+"No Roast Chicken Breast", Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing"+"Max 1× Tajin/Pickled Onions/Pickled Cabbage", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce", Wasabi "No sushi or soups & w/o sauces (good meals only)" (der einzige aktive Wasabi-Schalter; "No soups" startet hier AUS, weil "good meals only" Soup ohnehin ausschließt). Pizza Express hat keine Schalter, aber die Desserts-Kategorie startet AUS.
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren), Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap) und Subway "only Subs (no sides)" (würde sonst die gerade erst hinzugefügten Sides verstecken). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
@@ -318,6 +318,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Brot**: Wholegrain vorausgewählt — **Mehrfachauswahl** möglich (mehrere erlaubte Brote angeben, Optimizer wählt je Ergebnis das beste; „All breads" = alle erlaubt)
 - **Käse**: Kein Käse (Checkbox aktiv)
 - **Sauce**: Keine Sauce (Checkbox aktiv)
+- **No Roast Chicken Breast**: AN (Exclude-Schalter, Default AN per Konvention — schließt das `roast_chicken`-Protein aus; gilt auch in All/Accurate)
 - **Sides**: „only Subs (no sides)" **AUS** (Sides werden berücksichtigt; „only X"-Modus, daher default aus)
 - **Salad**: Standard-Salad automatisch vorausgewählt bei Ergebnis-Auswahl
 - **Standard-Salad**: Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions (alles AUSSER Jalapeños, Sweetcorn, Olives)
@@ -393,7 +394,7 @@ Button **"Import from screenshot"** (unter den Modus-Tabs, in beiden Modi sichtb
 4. Probiert 0-1 Sauces (wenn Sauce erlaubt und Base-Score < 3)
 5. Scoring: gewichtete Abweichung von Ziel-Makros
 6. Sortiert nach Score; dann (außer `noSides`) die besten 40 Subs um 0–1 Side erweitert (Side ×1, nicht footlong-verdoppelt; nur wenn Score-verbessernd), neu sortiert. Top 20 zurück, zeigt Top 8 an
-7. `optimize(t,mode,p,noSauce,noCheese,breadsOk,sz,noSides)` — `noSides` = Schalter „only Subs". **`breadsOk`** = Brot-Auswahl: `null`/leeres Objekt = alle Brote, `{id:true,…}` = nur diese erlaubten Brote (Optimizer wählt je Ergebnis das beste daraus), String = genau ein Brot (Legacy). In „All/Accurate" wird `null` (alle Brote) übergeben
+7. `optimize(t,mode,p,noSauce,noCheese,breadsOk,sz,noSides,noRoastChicken)` — `noSides` = Schalter „only Subs"; `noRoastChicken` = Schalter „No Roast Chicken Breast" (filtert das `roast_chicken`-Protein). **`breadsOk`** = Brot-Auswahl: `null`/leeres Objekt = alle Brote, `{id:true,…}` = nur diese erlaubten Brote (Optimizer wählt je Ergebnis das beste daraus), String = genau ein Brot (Legacy). In „All/Accurate" wird `null` (alle Brote) übergeben + `noRoastChicken=true`
 
 ### Farmer J (`optimizeFJ`)
 1. Enumeriert Main × Base × (0–2 Sides aus allen 9)

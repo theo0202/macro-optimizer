@@ -1701,16 +1701,17 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides) {
+function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken) {
   const m = sz==="footlong"?2:1;
   const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : D.cheeses;
+  const prots = noRoastChicken ? D.proteins.filter(x=>x.id!=="roast_chicken") : D.proteins; // Schalter "No Roast Chicken Breast"
   // breadsOk: null/undefined = alle Brote · String = genau ein Brot (Legacy) · Objekt {id:true,...} = erlaubte Auswahl
   // (leeres Objekt bzw. nichts ausgewählt → alle Brote). Der Optimizer wählt je Ergebnis das best-passende erlaubte Brot.
   const breadOk = b => { if(!breadsOk) return true; if(typeof breadsOk==="string") return b.id===breadsOk;
     const sel=D.breads.filter(x=>breadsOk[x.id]); return sel.length ? !!breadsOk[b.id] : true; };
   const br = D.breads.filter(breadOk);
   const R = [];
-  for(const b of br) for(const pr of D.proteins) for(const c of ch) {
+  for(const b of br) for(const pr of prots) for(const c of ch) {
     const base=[b,pr,c], bn=sumN(base,m,STD_SALAD), bs=score(bn,t,mode,p);
     R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
     for(let i=0;i<D.extras.length;i++){
@@ -2017,7 +2018,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   const ok = rt => !only || only.includes(rt);   // only = optionale Whitelist (z.B. "Accurate restaurants")
   const N = acMaxN || 5;                          // max items pro à-la-carte-Bestellung (Cross-Restaurant-Chip; Default 5)
   let all = [];
-  if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize,true),"subway"));   // No cheese + No sauce, Brot frei, subs-only (Sides nur im Subway-Tab)
+  if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize,true,true),"subway"));   // No cheese + No sauce, Brot frei, subs-only, No roast chicken
   if(ok("farmerj")) all = all.concat(tag(optimizeFJ(t,mode,p,true),"farmerj"));                  // Free items only
   if(ok("itsu")) all = all.concat(tag(optimizeItsu(t,mode,p,def(ITSU.cats),N,true,false,false),"itsu"));   // No soups…; only-sushi AUS
   if(ok("pret")) all = all.concat(tag(optimizePret(t,mode,p,def(PRET.cats),N,true,true),"pret"));          // only relevant + Salads only
@@ -2378,6 +2379,7 @@ function App() {
   const [noSauce,setNS]=useState(true);
   const [noCheese,setNC]=useState(true);
   const [onlySubs,setOnlySubs]=useState(false); // "only Subs (no sides)" — Default AUS, damit die Sides berücksichtigt werden
+  const [noRoast,setNoRoast]=useState(true); // "No Roast Chicken Breast" — Exclude-Schalter, Default AN (Konvention)
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
   const [sel,setSel]=useState(null);
   const [mSal,setMSal]=useState({});
@@ -2538,7 +2540,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -2889,6 +2891,8 @@ function App() {
           h("input",{type:"checkbox",checked:noSauce,onChange:e=>setNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:onlySubs,onChange:e=>setOnlySubs(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only Subs (no sides)"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noRoast,onChange:e=>setNoRoast(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Roast Chicken Breast"),
         resto==="farmerj"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Free items only")
       ),
