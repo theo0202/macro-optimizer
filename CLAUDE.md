@@ -41,6 +41,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
   - Alle Nährwerte **per 6-inch Serving** (Footlong = ×2, excluding salads)
   - Component-level Daten von Seite 3 des PDFs
   - **Sides** (`D.sides`: Baked Beans Snack Pot, Coleslaw Regular, Coleslaw Double) aus der neueren **UKI June 2026 PDF** (Seite 2, „Sides") — eigenständige Beilagen, werden ×1 gerechnet (kein Footlong-×2). Sanity-Check 19.06.2026 bestätigte die übrigen Komponenten weitgehend unverändert ggü. Jan 2026 (Breaded Chicken + Falafel fehlen in June → entfernt)
+  - **Meatball Marinara** (`meatball_marinara`) nutzt bewusst die **HALAL Meatballs (in marinara sauce)** = 229 kcal (137 g; F14/sat5.9/C13/sug6.7/fib2.7/P14/Salz1), NICHT die Pork-&-Beef-Variante (193 kcal). User 20.06.2026: Subway nutzt die Halal-Meatballs generell, egal ob Halal-Filiale oder nicht
 - **Farmer J**: Nährwerte von farmerj.com (Stand Juni 2026); Struktur & Order Rules aus `data/Farmer J _ Nutritional Info.xlsx` (Sheets: "Nutrition per Serving" + "Order Rule")
   - Alle Werte pro Serving, keine Größenvarianten
   - `data/farmerj.json` wird mit `node export-farmerj.js` aus dem FJ-Objekt in index.html regeneriert — index.html ist die Quelle der Wahrheit

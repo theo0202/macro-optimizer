@@ -49,6 +49,9 @@ check("Subway Spicy Italian = Salami+Pepperoni (146 kcal)", T.D.proteins.find(p 
 check("Subway Spicy Italian Protein-Summe (7.6g)", T.D.proteins.find(p => p.id === "spicy_italian").protein, 7.6);
 check("Subway Classic B.M.T. = Pepperoni+Salami+Turkey Ham (175 kcal)", T.D.proteins.find(p => p.id === "classic_bmt").kcal, 175);
 check("Subway Pepperoni/Salami bleiben Extras", T.D.extras.filter(e => /pepperoni|salami/i.test(e.name)).length, 2);
+// Meatball Marinara nutzt die HALAL Meatballs (in marinara sauce) = 229 kcal (User 20.06.2026; Subway nutzt sie generell)
+check("Subway Meatball Marinara = HALAL marinara (229 kcal)", T.D.proteins.find(p => p.id === "meatball_marinara").kcal, 229);
+check("Subway Meatball Marinara Fett (14)", T.D.proteins.find(p => p.id === "meatball_marinara").fat, 14);
 // Lincolnshire Sausage entfernt (steht nicht in Deliveroos Build-Your-Own-Liste)
 check("Subway kein Lincolnshire Sausage (Protein)", !T.D.proteins.some(p => /lincolnshire/i.test(p.id + p.name)), true);
 // Brot-Mehrfachauswahl: Optimizer nutzt nur die erlaubten Brote; leeres Objekt = alle Brote
