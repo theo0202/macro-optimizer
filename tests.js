@@ -49,6 +49,13 @@ check("Subway Spicy Italian = Salami+Pepperoni (146 kcal)", T.D.proteins.find(p 
 check("Subway Spicy Italian Protein-Summe (7.6g)", T.D.proteins.find(p => p.id === "spicy_italian").protein, 7.6);
 check("Subway Classic B.M.T. = Pepperoni+Salami+Turkey Ham (175 kcal)", T.D.proteins.find(p => p.id === "classic_bmt").kcal, 175);
 check("Subway Pepperoni/Salami bleiben Extras", T.D.extras.filter(e => /pepperoni|salami/i.test(e.name)).length, 2);
+// Lincolnshire Sausage entfernt (steht nicht in Deliveroos Build-Your-Own-Liste)
+check("Subway kein Lincolnshire Sausage (Protein)", !T.D.proteins.some(p => /lincolnshire/i.test(p.id + p.name)), true);
+// Brot-Mehrfachauswahl: Optimizer nutzt nur die erlaubten Brote; leeres Objekt = alle Brote
+const rMultiBread = T.optimize(t1, "macros", {}, true, true, { wholegrain: true, italian_white: true }, "footlong", true);
+check("Subway Mehrfach-Brot: nur erlaubte Brote", rMultiBread.length > 0 && rMultiBread.every(r => r.bread.id === "wholegrain" || r.bread.id === "italian_white"), true);
+check("Subway Brot {} = alle Brote", new Set(T.optimize(t1, "macros", {}, true, true, {}, "footlong", true).map(r => r.bread.id)).size > 1, true);
+check("Subway Brot Legacy-String (1 Brot) weiterhin ok", T.optimize(t1, "macros", {}, true, true, "honey_oat", "footlong", true).every(r => r.bread.id === "honey_oat"), true);
 // noSides=true: kein Ergebnis hat eine Side
 const resNoSide = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true);
 check("Subway 'only Subs': keine Side in Ergebnissen", resNoSide.every(r => !r.side), true);
