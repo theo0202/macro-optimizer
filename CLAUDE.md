@@ -148,11 +148,11 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
 ## Bestellablauf Subway (Deliveroo UK)
-1. **Protein** (ein Protein wählen)
+1. **Protein** (ein Protein wählen) — die Proteine entsprechen **Deliveroos Build-Your-Own-Subs**. **Pepperoni und Salami gibt es dort NICHT als Einzel-Protein**, nur in den Combo-Subs: **Spicy Italian** (= Salami + Pepperoni) und **Classic B.M.T.** (= Pepperoni + Salami + Turkey Ham). Diese Combos sind als eigene Proteine modelliert, Makros = **Summe der Komponenten** (User-Entscheidung 20.06.2026; 3+3 bzw. 3+3+3 Scheiben — kann ggü. Deliveroos Combo leicht unterzählen, aber verifizierte Komponentenwerte). Pepperoni/Salami bleiben als **Extra** wählbar
 2. **Größe** (6 Inch / Footlong)
 3. **Bread** (ein Brot wählen)
 4. **Cheese** (optional, max 1)
-5. **Extras** (beliebig viele): Double Meat, Double Cheese, Turkey Rashers, Pepperoni, Hash Browns, Chicken Strips, Turkey Ham, Poached Egg, Salami, Breaded Chicken, Smashed Falafel, Philly-Style Steak, Chicken Tikka
+5. **Extras** (beliebig viele): Double Meat, Double Cheese, Turkey Rashers, Pepperoni, Hash Browns, Chicken Strips, Turkey Ham, Poached Egg, Salami, Philly-Style Steak, Chicken Tikka
 6. **Salad** (beliebig viele, je max 1×): Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Olives, Red Onions, Jalapeños, Sweetcorn
 7. **Sauce** (max 2): Sweet Chilli, Chipotle Southwest, Sweet Onion, Honey Mustard, Ketchup, X-Spy Chipotle, Garlic & Herb, Teriyaki, Lite Mayo, BBQ Sauce
 8. **Seasonings** (beliebig viele, je max 1×): Sea Salt, Mixed Peppercorns, Crispy Onions
@@ -299,6 +299,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 - **Ham** (Schweineschinken-Protein, id `ham`) — komplett aus Proteins entfernt (User 19.06.2026: gibt es bei Deliveroo nicht). NICHT zu verwechseln mit **„Turkey Ham"** (Extra, bleibt drin)
 - **Breaded Chicken** (Protein `breaded_chicken` + Extra `breaded_chicken_extra`) — entfernt (User 19.06.2026): fehlt komplett in der Nährwert-PDF „UKI June 2026" (weder Komponente noch fertiger Sub) → offenbar vom Menü
 - **Falafel** (Protein „Falafel Bites" `falafel` + Extra „Smashed Falafel" `smashed_falafel`) — entfernt (User 19.06.2026): fehlt ebenfalls komplett in der June-2026-PDF → offenbar vom Menü
+- **Pepperoni & Salami als Einzel-Protein** (`pepperoni_main`/`salami_main`) — entfernt (User 20.06.2026): auf Deliveroos Build-Your-Own gibt es sie nicht als eigenständigen Sub, nur in den Combos. Stattdessen `spicy_italian` (Salami+Pepperoni) + `classic_bmt` (Pepperoni+Salami+Turkey Ham) als Proteine. Pepperoni/Salami bleiben als **Extra** (`pepperoni_extra`/`salami_extra`)
 - **Geschätzte Werte** — keine Items mit unverifizierten Nährwerten:
   - HP Brown Sauce (nicht im PDF)
   - Yogurt Mint & Garlic Sauce (nicht im PDF)

@@ -43,6 +43,12 @@ check("Subway Optimizer Footlong Top-1 (subs only)", top.nutrition.kcal, 2 * dou
 check("Subway D.sides (3)", T.D.sides.length, 3);
 check("Subway Baked Beans Snack Pot kcal (PDF)", T.D.sides.find(s => s.id === "baked_beans_snack_pot").kcal, 109);
 check("Subway Coleslaw Double kcal (PDF)", T.D.sides.find(s => s.id === "coleslaw_double").kcal, 119);
+// Combo-Proteine: Deliveroo Build-Your-Own hat Pepperoni/Salami nur in Combos (Spicy Italian / Classic B.M.T.)
+check("Subway kein standalone Pepperoni/Salami als Protein", !T.D.proteins.some(p => p.id === "pepperoni_main" || p.id === "salami_main"), true);
+check("Subway Spicy Italian = Salami+Pepperoni (146 kcal)", T.D.proteins.find(p => p.id === "spicy_italian").kcal, 146);
+check("Subway Spicy Italian Protein-Summe (7.6g)", T.D.proteins.find(p => p.id === "spicy_italian").protein, 7.6);
+check("Subway Classic B.M.T. = Pepperoni+Salami+Turkey Ham (175 kcal)", T.D.proteins.find(p => p.id === "classic_bmt").kcal, 175);
+check("Subway Pepperoni/Salami bleiben Extras", T.D.extras.filter(e => /pepperoni|salami/i.test(e.name)).length, 2);
 // noSides=true: kein Ergebnis hat eine Side
 const resNoSide = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true);
 check("Subway 'only Subs': keine Side in Ergebnissen", resNoSide.every(r => !r.side), true);
