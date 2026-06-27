@@ -1511,6 +1511,77 @@ const WASABI = {
 };
 // __WASABI_DATA_END__
 
+// __LEON_DATA_START__ (generiert via: node leon-update.js aus data/leon-raw.json — nicht von Hand editieren)
+// Quelle: leon.co/menu/all-day/ · 52 Items · volle 8 Makros (Gesamtfett=max(Fat,sat+mono+poly)). À la carte (AC-Alias). Sauces ausgeschlossen.
+const LEON = {
+  cats: [
+    { id:"wraps",name:"Wraps",on:true },
+    { id:"sides",name:"Sides",on:true },
+    { id:"rice-boxes",name:"Rice Boxes",on:true },
+    { id:"superfood-salads",name:"Superfood Salads",on:true },
+    { id:"burgers",name:"Burgers",on:true },
+    { id:"kids-all-day",name:"Kids' All Day",on:false },
+    { id:"nuggets",name:"Nuggets",on:true },
+    { id:"fries",name:"Fries",on:true },
+    { id:"plant-boxes",name:"Warm Salads",on:true },
+  ],
+  items: [
+    { id:"chicken_chorizo_club_wrap",name:"Chicken & Chorizo Club Wrap",cat:"wraps",kcal:647,fat:34,sat:8.7,carbs:51,sugars:8.4,fibre:3.7,protein:35,salt:1.75 },
+    { id:"charred_broccoli_with_preserved_lemon",name:"Charred Broccoli with Preserved Lemon",cat:"sides",kcal:243,fat:18,sat:3,carbs:7.2,sugars:3.8,fibre:5.6,protein:6.7,salt:1.22 },
+    { id:"salsa_verde_big_box",name:"Salsa Verde Big Box",cat:"rice-boxes",kcal:788,fat:41,sat:7,carbs:77,sugars:6.4,fibre:6.2,protein:29,salt:2.82 },
+    { id:"chicken_avocado_superfood_salad",name:"Chicken & Avocado Superfood Salad",cat:"superfood-salads",kcal:601,fat:43,sat:7.6,carbs:25,sugars:11,fibre:8.2,protein:27,salt:1.47 },
+    { id:"the_original_superfood_salad",name:"The Original Superfood Salad",cat:"superfood-salads",kcal:494,fat:30.1,sat:8.3,carbs:32,sugars:6.2,fibre:12,protein:19,salt:1.45 },
+    { id:"mushroom_magic_romesco_big_box",name:"Mushroom Magic Romesco Big Box",cat:"rice-boxes",kcal:662,fat:32,sat:4.8,carbs:80,sugars:8.4,fibre:7.2,protein:14,salt:3.02 },
+    { id:"satay_chicken",name:"Satay Chicken",cat:"rice-boxes",kcal:690,fat:31,sat:8.2,carbs:74,sugars:6.2,fibre:1.8,protein:29,salt:2.5 },
+    { id:"mushroom_magic_romesco",name:"Mushroom Magic Romesco",cat:"rice-boxes",kcal:570,fat:26.1,sat:3.9,carbs:73,sugars:5.2,fibre:3.6,protein:11,salt:2.2 },
+    { id:"mushroom_magic_aioli_big_box",name:"Mushroom Magic Aioli Big Box",cat:"rice-boxes",kcal:703,fat:39,sat:5.4,carbs:77,sugars:6.2,fibre:6.4,protein:13,salt:2.26 },
+    { id:"garlic_marinated_chicken_mezze",name:"Garlic Marinated Chicken Mezze",cat:"sides",kcal:190,fat:13,sat:2.6,carbs:2.4,sugars:1.4,fibre:0.3,protein:17,salt:0.92 },
+    { id:"chicken_super_salad",name:"Chicken Super Salad",cat:"superfood-salads",kcal:413,fat:28,sat:4.2,carbs:19,sugars:7.2,fibre:7,protein:23,salt:1.82 },
+    { id:"leon_slaw",name:"LEON Slaw",cat:"sides",kcal:117,fat:8.7,sat:1.1,carbs:6,sugars:3.6,fibre:2.7,protein:3.6,salt:0.43 },
+    { id:"chargrilled_chicken_burger",name:"Chargrilled Chicken Burger",cat:"burgers",kcal:439,fat:19.5,sat:2.7,carbs:38,sugars:4.2,fibre:1.9,protein:27,salt:2.1 },
+    { id:"love_burger",name:"LOVe Burger",cat:"burgers",kcal:504,fat:25,sat:7.6,carbs:46,sugars:5.1,fibre:3.7,protein:20,salt:0.77 },
+    { id:"chicken_aioli_wrap",name:"Chicken Aioli Wrap",cat:"wraps",kcal:566,fat:29.1,sat:4.9,carbs:50,sugars:7.4,fibre:2.7,protein:27,salt:1.45 },
+    { id:"aioli_chicken_big_box",name:"Aioli Chicken Big Box",cat:"rice-boxes",kcal:806,fat:43,sat:6.6,carbs:77,sugars:6.3,fibre:5.9,protein:29,salt:2.82 },
+    { id:"satay_chicken_big_box",name:"Satay Chicken Big Box",cat:"rice-boxes",kcal:812,fat:40.1,sat:9.3,carbs:81,sugars:9.5,fibre:6.1,protein:32,salt:3.3 },
+    { id:"aioli_chicken",name:"Aioli Chicken",cat:"rice-boxes",kcal:714,fat:37,sat:5.8,carbs:70,sugars:2.9,fibre:2.4,protein:27,salt:2.4 },
+    { id:"brazilian_black_beans_small",name:"Brazilian Black Beans Small",cat:"rice-boxes",kcal:547,fat:15.1,sat:1.5,carbs:84,sugars:4.1,fibre:17,protein:17,salt:2.36 },
+    { id:"black_bean_chilli_rice_pot",name:"Black Bean Chilli Rice Pot",cat:"rice-boxes",kcal:379,fat:12.6,sat:1,carbs:57,sugars:3,fibre:8.6,protein:12,salt:1.65 },
+    { id:"fish_finger_wrap1",name:"Fish Finger Wrap",cat:"wraps",kcal:627,fat:25,sat:0.3,carbs:74,sugars:10,fibre:4.1,protein:26,salt:1.84 },
+    { id:"gfc_crispy_chicken_nuggets",name:"GFC - Crispy Chicken Nuggets",cat:"sides",kcal:451,fat:21,sat:3.5,carbs:43,sugars:0.5,fibre:2.4,protein:22,salt:1.7 },
+    { id:"paprika_chicken_yemeni_zhoug_bowld",name:"Paprika Chicken & Yemeni Zhoug (Bowl'd)",cat:"rice-boxes",kcal:814,fat:35,sat:5.7,carbs:89,sugars:5.7,fibre:7.5,protein:32,salt:2.3 },
+    { id:"spicy_chicken_zhoug_wrap",name:"Spicy Chicken Zhoug Wrap",cat:"wraps",kcal:479,fat:20.1,sat:3.1,carbs:48,sugars:6.9,fibre:4,protein:29,salt:1.78 },
+    { id:"gfc_fries",name:"Kids GFC Nuggets with Fries",cat:"kids-all-day",kcal:523,fat:19,sat:2.9,carbs:65,sugars:9.2,fibre:6.9,protein:19,salt:2.2 },
+    { id:"lentil_masala",name:"Lentil Masala",cat:"rice-boxes",kcal:584,fat:21,sat:12,carbs:80,sugars:4.1,fibre:7.8,protein:14,salt:2.47 },
+    { id:"honey_sriracha_gfc_chicken_nuggets",name:"Honey Sriracha GFC Chicken Nuggets",cat:"nuggets",kcal:521,fat:21.1,sat:3.5,carbs:61,sugars:17,fibre:3,protein:23,salt:2.11 },
+    { id:"chicken_caesar_burger",name:"Chicken Caesar Burger",cat:"burgers",kcal:645,fat:35.1,sat:6.9,carbs:50,sugars:5.8,fibre:5.5,protein:28,salt:2.7 },
+    { id:"build_your_own_super_bowl",name:"Build Your Own Super Bowl",cat:"superfood-salads",kcal:217,fat:12,sat:1.4,carbs:17,sugars:5.6,fibre:5.3,protein:6.7,salt:0.52 },
+    { id:"falafel_super_salad",name:"Falafel Super Salad",cat:"superfood-salads",kcal:438,fat:23,sat:3,carbs:35,sugars:8.4,fibre:12,protein:18,salt:1.7 },
+    { id:"grilled_halloumi_wrap",name:"Grilled Halloumi Wrap",cat:"wraps",kcal:556,fat:29,sat:13,carbs:46,sugars:9.9,fibre:4,protein:26,salt:2.3 },
+    { id:"peanut_satay_chicken_bowld",name:"Peanut Satay Chicken (Bowl'd)",cat:"rice-boxes",kcal:867,fat:35,sat:8.6,carbs:98,sugars:11,fibre:4.6,protein:36,salt:2.3 },
+    { id:"peasnseeds",name:"Peas'N'Seeds",cat:"sides",kcal:174,fat:9.7,sat:1.3,carbs:12,sugars:1.4,fibre:6.4,protein:7.7,salt:0.03 },
+    { id:"moroccan_meatballs_bowld",name:"Moroccan Meatballs (Bowl'd)",cat:"rice-boxes",kcal:895,fat:40,sat:8.4,carbs:101,sugars:9.8,fibre:8.8,protein:27,salt:2.6 },
+    { id:"hot_honey_gfc_chicken_nuggets",name:"Hot Honey GFC Chicken Nuggets",cat:"sides",kcal:529,fat:21,sat:3.5,carbs:61,sugars:17,fibre:2.6,protein:23,salt:2.4 },
+    { id:"crunchy_korean_chicken_wrap",name:"Crunchy Korean Chicken Wrap",cat:"wraps",kcal:619,fat:26,sat:4,carbs:72,sugars:9,fibre:6.4,protein:22,salt:2.5 },
+    { id:"cheddar_black_pepper_mac_bites",name:"Cheddar & Black Pepper Mac Bites",cat:"sides",kcal:323,fat:15,sat:5.5,carbs:35,sugars:4,fibre:2.5,protein:9.7,salt:1.1 },
+    { id:"baked_fries",name:"Baked Fries",cat:"fries",kcal:242,fat:7.5,sat:0.9,carbs:38,sugars:0.7,fibre:3.4,protein:3.6,salt:1.1 },
+    { id:"chicken_caesar_salad",name:"Chicken Caesar Salad",cat:"superfood-salads",kcal:388,fat:23.1,sat:4.9,carbs:13,sugars:3.4,fibre:3.2,protein:30,salt:1.7 },
+    { id:"truffle_mushroom_arancini",name:"Truffle & Mushroom Arancini",cat:"sides",kcal:275,fat:12,sat:2.6,carbs:35,sugars:2.1,fibre:1.9,protein:6,salt:1.3 },
+    { id:"gfc_nuggets_10_pieces",name:"GFC - Crispy Chicken Nuggets (10 pieces)",cat:"sides",kcal:903,fat:42,sat:7,carbs:87,sugars:0.7,fibre:4.8,protein:44,salt:3.3 },
+    { id:"kimchi",name:"Kimchi",cat:"sides",kcal:19,fat:0,sat:0,carbs:2.7,sugars:2.2,fibre:1.4,protein:1,salt:1.5 },
+    { id:"hummus",name:"Hummus",cat:"sides",kcal:395,fat:28,sat:4.1,carbs:17,sugars:0.6,fibre:11,protein:12,salt:1 },
+    { id:"winter_slaw",name:"Winter Slaw",cat:"sides",kcal:155,fat:13,sat:1.5,carbs:6.4,sugars:4.3,fibre:3,protein:3,salt:0.1 },
+    { id:"hotsmoked_salmon_lime_jalapeno",name:"Hot-Smoked Salmon, Lime & Jalapeño",cat:"superfood-salads",kcal:494,fat:31,sat:4.4,carbs:24,sugars:7.1,fibre:6.9,protein:26,salt:2.1 },
+    { id:"keralan_chicken_curry",name:"Keralan Chicken Curry",cat:"rice-boxes",kcal:580,fat:24,sat:8.3,carbs:66,sugars:6.2,fibre:7.9,protein:22,salt:2.8 },
+    { id:"roasted_summer_veg_grilled_aubergine",name:"Roasted Summer Veg + Grilled Aubergine",cat:"plant-boxes",kcal:266,fat:21,sat:4.5,carbs:12,sugars:6.5,fibre:5.3,protein:4.4,salt:2.7 },
+    { id:"keep_it_classic_san_diego",name:"Keep it Classic, San Diego",cat:"burgers",kcal:578,fat:34,sat:7.5,carbs:51,sugars:5.3,fibre:3.5,protein:14,salt:3 },
+    { id:"herbie_fully_loaded_chickn",name:"Herbie, Fully Loaded Chick’n",cat:"burgers",kcal:539,fat:32,sat:5.6,carbs:48,sugars:4.4,fibre:3.3,protein:13,salt:2.8 },
+    { id:"classic_crispy_gfc_burger",name:"Classic Crispy GFC Burger",cat:"burgers",kcal:474,fat:26,sat:3.5,carbs:45,sugars:2.8,fibre:2.3,protein:16,salt:2.1 },
+    { id:"seasonal_british_veg",name:"Seasonal British Veg",cat:"sides",kcal:69,fat:2.8,sat:0.5,carbs:6.1,sugars:4.3,fibre:2.7,protein:2.9,salt:1.3 },
+    { id:"satay_loaded_fries",name:"Satay Loaded Fries",cat:"fries",kcal:333,fat:22.8,sat:5.2,carbs:28,sugars:3.8,fibre:4.3,protein:6.3,salt:1.6 },
+  ],
+};
+// __LEON_DATA_END__
+
 const KEYS = ["kcal","fat","sat","carbs","sugars","fibre","protein","salt"];
 
 // singleItems (Salads) werden NIE multipliziert: Footlong = ×2 für alles AUSSER Salads
@@ -1996,6 +2067,11 @@ function optimizePizzaExpress(t, mode, p, activeCats, maxN) {
   return alaCarteCombos(t, mode, p, PIZZAEXPRESS.items.filter(x=>activeCats[x.cat]), maxN);
 }
 
+// Leon: à la carte (AC-Alias, wie Itsu/Pizza Express). All-Day-Menü, volle 8 Makros. Sauces nicht in den Daten.
+function optimizeLeon(t, mode, p, activeCats, maxN) {
+  return alaCarteCombos(t, mode, p, LEON.items.filter(x=>activeCats[x.cat]), maxN);
+}
+
 // Wasabi: à la carte (AC-Alias, wie Itsu). Volle Makros AUSSER Ballaststoffe (fibre=0). Getränke nicht in den Daten.
 // Schalter: "No soups" (Soup-Kategorie raus), "only sushi" (nur Sushi), "only sushi w/o sashimi" (Sushi ohne Sashimi-Namen).
 const WASABI_SOUP_CAT="soup", WASABI_SUSHI_CAT="sushi";
@@ -2034,6 +2110,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   if(ok("fiveguys")) all = all.concat(tag(optimizeFiveGuys(t,mode,p,true),"fiveguys"));                    // Build your own: Main + Fries + Toppings, No sauce
   if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),N),"pizzaexpress")); // à la carte (volle PDF-Makros)
   if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),N,false,false,false,true),"wasabi")); // "good meals only" (Salads&Boxes/Bento/Kobachi/Sides) = neuer Default
+  if(ok("leon")) all = all.concat(tag(optimizeLeon(t,mode,p,def(LEON.cats),N),"leon")); // à la carte (All-Day)
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -2043,7 +2120,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
 }
 // "Accurate restaurants": Teilmenge mit verlaesslicheren Daten (ohne GDK/Chopstix/Five Guys — Komposition/Anomalien)
 const ACCURATE_RESTOS = ["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes","pizzaexpress","wasabi"];
-const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi"};
+const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi",leon:"Leon"};
 
 // ── "Add own order" — restaurantsuebergreifender Such-Index (zum nachtraeglichen Tracken eines gekauften Gerichts) ──
 // Sammelt jedes Food-Item/jede Komponente mit echten 8 Makros aus ALLEN Restaurants in eine flache, durchsuchbare Liste.
@@ -2055,7 +2132,7 @@ function buildSearchIndex(){
   const addArr=(resto,arr)=>{ (arr||[]).forEach(it=>push(resto,it.name,it)); };
   addArr("Itsu",ITSU.items); addArr("Pret",PRET.items); addArr("Nando's",NANDOS.items);
   addArr("Wagamama",WAGA.items); addArr("GDK",GDK.items); addArr("The Fitness Chef",TFC.items);
-  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items);
+  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items); addArr("Leon",LEON.items);
   ["breads","proteins","cheeses","extras","salads","sauces","seasonings"].forEach(k=>addArr("Subway",D[k]));
   ["mains","bases","sides","toppings","sdt","sets"].forEach(k=>addArr("Farmer J",FJ[k]));
   ["greens","carbs","prots","veg","tops","dress","scoops"].forEach(k=>addArr("Urban Greens",UG[k]));
@@ -2472,6 +2549,11 @@ function App() {
   const [wasNoSashimi,setWasNoSashimi]=useState(false);
   const [selWas,setSelWas]=useState(null);
 
+  // Leon (à la carte, AC-Alias; All-Day-Menü)
+  const [leonCats,setLeonC]=useState(()=>{const o={};LEON.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxLeon,setMaxLeon]=useState(5);
+  const [selLeon,setSelLeon]=useState(null);
+
   // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (in localStorage gespeichert)
   const [searchQ,setSearchQ]=useState("");
   const [myOrder,setMyOrder]=useState(()=>{try{const v=JSON.parse(localStorage.getItem("mo_own_order")||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}});
@@ -2529,6 +2611,7 @@ function App() {
     else if(rt==="fiveguys")setSelFG(r);
     else if(rt==="pizzaexpress")setSelPX(r);
     else if(rt==="wasabi")setSelWas(r);
+    else if(rt==="leon")setSelLeon(r);
   };
 
   const targets=useMemo(()=>{
@@ -2555,6 +2638,7 @@ function App() {
   const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs,fgNoSauce,fgWrap):[],[resto,targets,mode,prefs,fgNoSauce,fgWrap]);
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
+  const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -2567,7 +2651,8 @@ function App() {
          :resto==="tfc"?{D:TFC,sel:selTFC,setSel:setSelTFC,res:resultsTFC,maxN:maxTFC}
          :resto==="pepes"?{D:PEPES,sel:selPep,setSel:setSelPep,res:resultsPepes,maxN:maxPep}
          :resto==="pizzaexpress"?{D:PIZZAEXPRESS,sel:selPX,setSel:setSelPX,res:resultsPX,maxN:maxPX}
-         :resto==="wasabi"?{D:WASABI,sel:selWas,setSel:setSelWas,res:resultsWasabi,maxN:maxWas}:null;
+         :resto==="wasabi"?{D:WASABI,sel:selWas,setSel:setSelWas,res:resultsWasabi,maxN:maxWas}
+         :resto==="leon"?{D:LEON,sel:selLeon,setSel:setSelLeon,res:resultsLeon,maxN:maxLeon}:null;
 
   const selTotal=useMemo(()=>{
     if(!sel)return null;
@@ -2608,9 +2693,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -2674,7 +2759,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto)
+        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto)
       ),
 
       // All / Accurate restaurants: max items pro à-la-carte-Bestellung (gilt fuer die AC-Restaurants im Cross-Restaurant-Mix)
@@ -2803,6 +2888,19 @@ function App() {
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
         h("div",{style:{display:"flex",gap:5}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxWas===n,onClick:()=>setMaxWas(n),small:true}))
+        )
+      ),
+
+      // Leon: Kategorien + Anzahl Items (à la carte, All-Day-Menü)
+      resto==="leon"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...LEON.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!leonCats[c.id],
+            onClick:()=>setLeonC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
+        h("div",{style:{display:"flex",gap:5}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxLeon===n,onClick:()=>setMaxLeon(n),small:true}))
         )
       ),
 
@@ -3671,7 +3769,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="search"?"Add own order: search any dish across all 15 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="search"?"Add own order: search any dish across all 16 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }

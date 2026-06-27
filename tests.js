@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -580,10 +580,28 @@ const rFishOn = T.optimizeTFC(tFish, "macros", {}, tfcAll, 2, true);
 check("TFC 'No fish' filtert alle fish-Items (inkl. Salmon/Tuna-Pasta)", rFishOn.every(r => r.items.every(x => !x.fish)), true);
 check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 
+// ── Leon (à la carte, AC-Familie; All-Day-Menü von leon.co) ──
+check("Leon Items (52)", T.LEON.items.length, 52);
+check("Leon Kategorien (9)", T.LEON.cats.length, 9);
+check("Leon volle 8 Makros (numerisch)", T.LEON.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
+check("Leon keine Sauces-Kategorie (User-Vorgabe)", !T.LEON.cats.some(c => /sauce/i.test(c.id + c.name)), true);
+check("Leon sat <= fat (Fett-Fix max(Fat,sat+mono+poly))", T.LEON.items.every(x => x.sat <= x.fat + 0.05), true);
+const leonBad = T.LEON.items.filter(x => { const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - e) > 60 && Math.abs(x.kcal - e) / Math.max(x.kcal, 1) > 0.25; });
+check("Leon kcal-plausibel (kaputte Leon-Daten ausgeschlossen)", leonBad.length, 0);
+check("Leon Mushroom Magic Romesco Big Box = 662 kcal", T.LEON.items.find(x => x.id === "mushroom_magic_romesco_big_box").kcal, 662);
+check("Leon Mushroom Magic Romesco Fett-Fix (>20, nicht 2.6)", T.LEON.items.find(x => x.id === "mushroom_magic_romesco").fat > 20, true);
+const allLeon = {}; T.LEON.cats.forEach(c => allLeon[c.id] = true);
+const tLeon = { protein: 25, carbs: 60, fat: 20, kcal: 520, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rLeon = T.optimizeLeon(tLeon, "macros", {}, allLeon, 3);
+check("Leon liefert Ergebnisse (1..20)", rLeon.length > 0 && rLeon.length <= 20, true);
+check("Leon Nutrition == Summe", rLeon.every(r => approx(r.nutrition.kcal, Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10)), true);
+check("Leon 1–3 Items", rLeon.every(r => r.items.length >= 1 && r.items.length <= 3), true);
+check("Leon Kategorie-Filter (nur Burgers)", T.optimizeLeon(tLeon, "macros", {}, { burgers: true }, 1).every(r => r.items.every(x => x.cat === "burgers")), true);
+
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -592,7 +610,7 @@ check("All: max 1 Treffer pro Restaurant (User-Wunsch)", Object.values(rAll.redu
 check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto)), true);
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 // acMaxN: Cross-Restaurant Max-Items-Chip steuert die à-la-carte-Restaurants
-const AC_RESTOS = ["itsu", "pret", "nandos", "wagamama", "gdk", "tfc", "pepes", "pizzaexpress", "wasabi"];
+const AC_RESTOS = ["itsu", "pret", "nandos", "wagamama", "gdk", "tfc", "pepes", "pizzaexpress", "wasabi", "leon"];
 const rAllMax1 = T.optimizeAll(tAllT, "macros", {}, "footlong", null, 1);
 check("All acMaxN=1: AC-Restaurants liefern genau 1 Item", rAllMax1.filter(r => AC_RESTOS.includes(r._resto)).every(r => r.items.length === 1), true);
 const rAllMax2 = T.optimizeAll(tAllT, "macros", {}, "footlong", null, 2);
@@ -887,7 +905,7 @@ check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes(
 check("Search-Index gefuellt (>900 Items)", T.SEARCH_INDEX.length > 900, true);
 check("Search-Index: alle Eintraege haben resto+name+8 Makros", T.SEARCH_INDEX.every(x => x.resto && x.name && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Search-Index: keine exakten Duplikate (resto|name|kcal)", (() => { const s = new Set(); return T.SEARCH_INDEX.every(x => { const k = x.resto + "|" + x.name + "|" + x.kcal; if (s.has(k)) return false; s.add(k); return true; }); })(), true);
-check("Search-Index deckt alle 15 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 15);
+check("Search-Index deckt alle 16 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 16);
 check("searchItems leere Query -> []", T.searchItems("").length, 0);
 const sKatsu = T.searchItems("katsu");
 check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);
