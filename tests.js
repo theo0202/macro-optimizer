@@ -580,11 +580,20 @@ const rFishOn = T.optimizeTFC(tFish, "macros", {}, tfcAll, 2, true);
 check("TFC 'No fish' filtert alle fish-Items (inkl. Salmon/Tuna-Pasta)", rFishOn.every(r => r.items.every(x => !x.fish)), true);
 check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 
-// ── Leon (à la carte, AC-Familie; All-Day-Menü von leon.co) ──
-check("Leon Items (52)", T.LEON.items.length, 52);
-check("Leon Kategorien (9)", T.LEON.cats.length, 9);
+// ── Leon (à la carte, AC-Familie; auf Deliveroo-Karte geprunt + 3 Kids-Meals) ──
+check("Leon Items (26, Deliveroo-geprunt + 3 Kids)", T.LEON.items.length, 26);
+check("Leon Kategorien (8)", T.LEON.cats.length, 8);
 check("Leon volle 8 Makros (numerisch)", T.LEON.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Leon keine Sauces-Kategorie (User-Vorgabe)", !T.LEON.cats.some(c => /sauce/i.test(c.id + c.name)), true);
+// Deliveroo-Prune: nicht-bestellbare Items raus, Renames auf Deliveroo-Namen
+check("Leon kein 'Spicy Chicken Zhoug Wrap' (nicht auf Deliveroo)", !T.LEON.items.some(x => /zhoug wrap/i.test(x.name)), true);
+check("Leon kein 'Keralan Chicken Curry' (nicht auf Deliveroo)", !T.LEON.items.some(x => /keralan/i.test(x.name)), true);
+check("Leon Rename: 'Aioli Chicken Wrap' vorhanden", T.LEON.items.some(x => x.name === "Aioli Chicken Wrap"), true);
+check("Leon Rename: 'Mushroom Magic Romesco Big Rice Box' vorhanden", T.LEON.items.some(x => x.name === "Mushroom Magic Romesco Big Rice Box"), true);
+// 3 Kids-Meals (Kategorie Kids' All Day, default AN)
+check("Leon 3 Kids-Meals", T.LEON.items.filter(x => x.cat === "kids-all-day").length, 3);
+check("Leon Kids' All Day default AN", T.LEON.cats.find(c => c.id === "kids-all-day").on, true);
+check("Leon Kids: Chargrilled Chicken Rice Box (382)", T.LEON.items.find(x => x.name === "Chargrilled Chicken Rice Box").kcal, 382);
 check("Leon sat <= fat (Fett-Fix max(Fat,sat+mono+poly))", T.LEON.items.every(x => x.sat <= x.fat + 0.05), true);
 const leonBad = T.LEON.items.filter(x => { const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - e) > 60 && Math.abs(x.kcal - e) / Math.max(x.kcal, 1) > 0.25; });
 check("Leon kcal-plausibel (kaputte Leon-Daten ausgeschlossen)", leonBad.length, 0);

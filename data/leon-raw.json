@@ -1,22 +1,15 @@
 {
  "_meta": {
-  "source": "leon.co/menu/all-day/ (__NEXT_DATA__ initialReduxState.data.menuItems) · Stand 2026-06-27",
-  "note": "Nur menuType all-day; Kategorie Sauces ausgeschlossen. nutritionInfo→8 Makros (Energy/Protein/Carbohydrate/Carbs of which sugar/Fat/Saturated fat/Salt/Fibre). Gesamtfett=max(Fat-Feld, sat+mono+poly) wegen fehlerhaftem Fat-Feld bei manchen Items. Mono/Poly/GI/Portionsgewicht sonst ignoriert. Items mit in sich kaputten Leon-Daten (kcal≠Makros) ausgeschlossen.",
+  "source": "leon.co (__NEXT_DATA__ menuItems) · Stand 2026-06-27",
+  "note": "Nur auf der Deliveroo-Bestellseite vorhandene Produkte (DELIVEROO_KEEP, Renames auf Deliveroo-Namen, Größen per kcal verifiziert) + 3 Kids-Meals (leon.co/menu/kids, Kategorie Kids' All Day default AN). Gesamtfett=max(Fat,sat+mono+poly). In sich kaputte Items (kcal≠Makros) ausgeschlossen. Sauces/Drinks/Coffee/Cookies/Cakes nicht modelliert.",
   "crawler": "node leon-crawl.js",
-  "dropped": [
-   "Salsa Verde and Aioli Chicken Mezze Pot [Sides] kcal 309 vs Makros ~130",
-   "Vegan Harissa Chick'n Wrap [Wraps] kcal 412 vs Makros ~519"
-  ]
+  "dropped": [],
+  "missing": []
  },
  "cats": [
   {
    "id": "wraps",
    "name": "Wraps",
-   "on": true
-  },
-  {
-   "id": "sides",
-   "name": "Sides",
    "on": true
   },
   {
@@ -35,9 +28,9 @@
    "on": true
   },
   {
-   "id": "kids-all-day",
-   "name": "Kids' All Day",
-   "on": false
+   "id": "sides",
+   "name": "Sides",
+   "on": true
   },
   {
    "id": "nuggets",
@@ -50,8 +43,8 @@
    "on": true
   },
   {
-   "id": "plant-boxes",
-   "name": "Warm Salads",
+   "id": "kids-all-day",
+   "name": "Kids' All Day",
    "on": true
   }
  ],
@@ -70,21 +63,8 @@
    "salt": 1.75
   },
   {
-   "slug": "charred-broccoli-with-preserved-lemon",
-   "name": "Charred Broccoli with Preserved Lemon",
-   "cat": "sides",
-   "kcal": 243,
-   "fat": 18,
-   "sat": 3,
-   "carbs": 7.2,
-   "sugars": 3.8,
-   "fibre": 5.6,
-   "protein": 6.7,
-   "salt": 1.22
-  },
-  {
    "slug": "salsa-verde-big-box",
-   "name": "Salsa Verde Big Box",
+   "name": "Salsa Verde Chicken Big Rice Box",
    "cat": "rice-boxes",
    "kcal": 788,
    "fat": 41,
@@ -123,7 +103,7 @@
   },
   {
    "slug": "mushroom-magic-romesco-big-box",
-   "name": "Mushroom Magic Romesco Big Box",
+   "name": "Mushroom Magic Romesco Big Rice Box",
    "cat": "rice-boxes",
    "kcal": 662,
    "fat": 32,
@@ -136,7 +116,7 @@
   },
   {
    "slug": "satay-chicken",
-   "name": "Satay Chicken",
+   "name": "Satay Chicken Small Rice Box",
    "cat": "rice-boxes",
    "kcal": 690,
    "fat": 31,
@@ -149,7 +129,7 @@
   },
   {
    "slug": "mushroom-magic-romesco",
-   "name": "Mushroom Magic Romesco",
+   "name": "Mushroom Magic Romesco Small Rice Box",
    "cat": "rice-boxes",
    "kcal": 570,
    "fat": 26.1,
@@ -162,7 +142,7 @@
   },
   {
    "slug": "mushroom-magic-aioli-big-box",
-   "name": "Mushroom Magic Aioli Big Box",
+   "name": "Mushroom Magic Aioli Big Rice Box",
    "cat": "rice-boxes",
    "kcal": 703,
    "fat": 39,
@@ -172,45 +152,6 @@
    "fibre": 6.4,
    "protein": 13,
    "salt": 2.26
-  },
-  {
-   "slug": "garlic-marinated-chicken-mezze",
-   "name": "Garlic Marinated Chicken Mezze",
-   "cat": "sides",
-   "kcal": 190,
-   "fat": 13,
-   "sat": 2.6,
-   "carbs": 2.4,
-   "sugars": 1.4,
-   "fibre": 0.3,
-   "protein": 17,
-   "salt": 0.92
-  },
-  {
-   "slug": "chicken-super-salad",
-   "name": "Chicken Super Salad",
-   "cat": "superfood-salads",
-   "kcal": 413,
-   "fat": 28,
-   "sat": 4.2,
-   "carbs": 19,
-   "sugars": 7.2,
-   "fibre": 7,
-   "protein": 23,
-   "salt": 1.82
-  },
-  {
-   "slug": "leon-slaw",
-   "name": "LEON Slaw",
-   "cat": "sides",
-   "kcal": 117,
-   "fat": 8.7,
-   "sat": 1.1,
-   "carbs": 6,
-   "sugars": 3.6,
-   "fibre": 2.7,
-   "protein": 3.6,
-   "salt": 0.43
   },
   {
    "slug": "chargrilled-chicken-burger",
@@ -227,7 +168,7 @@
   },
   {
    "slug": "love-burger",
-   "name": "LOVe Burger",
+   "name": "The LoVe Burger (VG)",
    "cat": "burgers",
    "kcal": 504,
    "fat": 25,
@@ -240,7 +181,7 @@
   },
   {
    "slug": "chicken-aioli-wrap",
-   "name": "Chicken Aioli Wrap",
+   "name": "Aioli Chicken Wrap",
    "cat": "wraps",
    "kcal": 566,
    "fat": 29.1,
@@ -253,7 +194,7 @@
   },
   {
    "slug": "aioli-chicken-big-box",
-   "name": "Aioli Chicken Big Box",
+   "name": "Aioli Chicken Big Rice Box",
    "cat": "rice-boxes",
    "kcal": 806,
    "fat": 43,
@@ -266,7 +207,7 @@
   },
   {
    "slug": "satay-chicken-big-box",
-   "name": "Satay Chicken Big Box",
+   "name": "Satay Chicken Big Rice Box",
    "cat": "rice-boxes",
    "kcal": 812,
    "fat": 40.1,
@@ -279,7 +220,7 @@
   },
   {
    "slug": "aioli-chicken",
-   "name": "Aioli Chicken",
+   "name": "Aioli Chicken Small Rice Box",
    "cat": "rice-boxes",
    "kcal": 714,
    "fat": 37,
@@ -292,7 +233,7 @@
   },
   {
    "slug": "brazilian-black-beans-small",
-   "name": "Brazilian Black Beans Small",
+   "name": "Brazilian Black Beans Small Rice Box",
    "cat": "rice-boxes",
    "kcal": 547,
    "fat": 15.1,
@@ -304,21 +245,8 @@
    "salt": 2.36
   },
   {
-   "slug": "black-bean-chilli-rice-pot",
-   "name": "Black Bean Chilli Rice Pot",
-   "cat": "rice-boxes",
-   "kcal": 379,
-   "fat": 12.6,
-   "sat": 1,
-   "carbs": 57,
-   "sugars": 3,
-   "fibre": 8.6,
-   "protein": 12,
-   "salt": 1.65
-  },
-  {
    "slug": "fish-finger-wrap1",
-   "name": "Fish Finger Wrap",
+   "name": "The Fish Finger Wrap",
    "cat": "wraps",
    "kcal": 627,
    "fat": 25,
@@ -331,7 +259,7 @@
   },
   {
    "slug": "gfc-crispy-chicken-nuggets",
-   "name": "GFC - Crispy Chicken Nuggets",
+   "name": "GFC – Crispy Chicken Nuggets (5 pieces)",
    "cat": "sides",
    "kcal": 451,
    "fat": 21,
@@ -343,60 +271,8 @@
    "salt": 1.7
   },
   {
-   "slug": "paprika-chicken-yemeni-zhoug-bowld",
-   "name": "Paprika Chicken & Yemeni Zhoug (Bowl'd)",
-   "cat": "rice-boxes",
-   "kcal": 814,
-   "fat": 35,
-   "sat": 5.7,
-   "carbs": 89,
-   "sugars": 5.7,
-   "fibre": 7.5,
-   "protein": 32,
-   "salt": 2.3
-  },
-  {
-   "slug": "spicy-chicken-zhoug-wrap",
-   "name": "Spicy Chicken Zhoug Wrap",
-   "cat": "wraps",
-   "kcal": 479,
-   "fat": 20.1,
-   "sat": 3.1,
-   "carbs": 48,
-   "sugars": 6.9,
-   "fibre": 4,
-   "protein": 29,
-   "salt": 1.78
-  },
-  {
-   "slug": "gfc-fries",
-   "name": "Kids GFC Nuggets with Fries",
-   "cat": "kids-all-day",
-   "kcal": 523,
-   "fat": 19,
-   "sat": 2.9,
-   "carbs": 65,
-   "sugars": 9.2,
-   "fibre": 6.9,
-   "protein": 19,
-   "salt": 2.2
-  },
-  {
-   "slug": "lentil-masala",
-   "name": "Lentil Masala",
-   "cat": "rice-boxes",
-   "kcal": 584,
-   "fat": 21,
-   "sat": 12,
-   "carbs": 80,
-   "sugars": 4.1,
-   "fibre": 7.8,
-   "protein": 14,
-   "salt": 2.47
-  },
-  {
    "slug": "honey-sriracha-gfc-chicken-nuggets",
-   "name": "Honey Sriracha GFC Chicken Nuggets",
+   "name": "Honey Sriracha GFC Chicken Nuggets (5 pieces)",
    "cat": "nuggets",
    "kcal": 521,
    "fat": 21.1,
@@ -406,45 +282,6 @@
    "fibre": 3,
    "protein": 23,
    "salt": 2.11
-  },
-  {
-   "slug": "chicken-caesar-burger",
-   "name": "Chicken Caesar Burger",
-   "cat": "burgers",
-   "kcal": 645,
-   "fat": 35.1,
-   "sat": 6.9,
-   "carbs": 50,
-   "sugars": 5.8,
-   "fibre": 5.5,
-   "protein": 28,
-   "salt": 2.7
-  },
-  {
-   "slug": "build-your-own-super-bowl",
-   "name": "Build Your Own Super Bowl",
-   "cat": "superfood-salads",
-   "kcal": 217,
-   "fat": 12,
-   "sat": 1.4,
-   "carbs": 17,
-   "sugars": 5.6,
-   "fibre": 5.3,
-   "protein": 6.7,
-   "salt": 0.52
-  },
-  {
-   "slug": "falafel-super-salad",
-   "name": "Falafel Super Salad",
-   "cat": "superfood-salads",
-   "kcal": 438,
-   "fat": 23,
-   "sat": 3,
-   "carbs": 35,
-   "sugars": 8.4,
-   "fibre": 12,
-   "protein": 18,
-   "salt": 1.7
   },
   {
    "slug": "grilled-halloumi-wrap",
@@ -458,58 +295,6 @@
    "fibre": 4,
    "protein": 26,
    "salt": 2.3
-  },
-  {
-   "slug": "peanut-satay-chicken-bowld",
-   "name": "Peanut Satay Chicken (Bowl'd)",
-   "cat": "rice-boxes",
-   "kcal": 867,
-   "fat": 35,
-   "sat": 8.6,
-   "carbs": 98,
-   "sugars": 11,
-   "fibre": 4.6,
-   "protein": 36,
-   "salt": 2.3
-  },
-  {
-   "slug": "peasnseeds",
-   "name": "Peas'N'Seeds",
-   "cat": "sides",
-   "kcal": 174,
-   "fat": 9.7,
-   "sat": 1.3,
-   "carbs": 12,
-   "sugars": 1.4,
-   "fibre": 6.4,
-   "protein": 7.7,
-   "salt": 0.03
-  },
-  {
-   "slug": "moroccan-meatballs-bowld",
-   "name": "Moroccan Meatballs (Bowl'd)",
-   "cat": "rice-boxes",
-   "kcal": 895,
-   "fat": 40,
-   "sat": 8.4,
-   "carbs": 101,
-   "sugars": 9.8,
-   "fibre": 8.8,
-   "protein": 27,
-   "salt": 2.6
-  },
-  {
-   "slug": "hot-honey-gfc-chicken-nuggets",
-   "name": "Hot Honey GFC Chicken Nuggets",
-   "cat": "sides",
-   "kcal": 529,
-   "fat": 21,
-   "sat": 3.5,
-   "carbs": 61,
-   "sugars": 17,
-   "fibre": 2.6,
-   "protein": 23,
-   "salt": 2.4
   },
   {
    "slug": "crunchy-korean-chicken-wrap",
@@ -526,7 +311,7 @@
   },
   {
    "slug": "cheddar-black-pepper-mac-bites",
-   "name": "Cheddar & Black Pepper Mac Bites",
+   "name": "Cheddar & Black Pepper Mac Bites (4 Pieces)",
    "cat": "sides",
    "kcal": 323,
    "fat": 15,
@@ -539,7 +324,7 @@
   },
   {
    "slug": "baked-fries",
-   "name": "Baked Fries",
+   "name": "LEON Baked Fries",
    "cat": "fries",
    "kcal": 242,
    "fat": 7.5,
@@ -551,34 +336,8 @@
    "salt": 1.1
   },
   {
-   "slug": "chicken-caesar-salad",
-   "name": "Chicken Caesar Salad",
-   "cat": "superfood-salads",
-   "kcal": 388,
-   "fat": 23.1,
-   "sat": 4.9,
-   "carbs": 13,
-   "sugars": 3.4,
-   "fibre": 3.2,
-   "protein": 30,
-   "salt": 1.7
-  },
-  {
-   "slug": "truffle-mushroom-arancini",
-   "name": "Truffle & Mushroom Arancini",
-   "cat": "sides",
-   "kcal": 275,
-   "fat": 12,
-   "sat": 2.6,
-   "carbs": 35,
-   "sugars": 2.1,
-   "fibre": 1.9,
-   "protein": 6,
-   "salt": 1.3
-  },
-  {
    "slug": "gfc-nuggets-10-pieces",
-   "name": "GFC - Crispy Chicken Nuggets (10 pieces)",
+   "name": "GFC – Crispy Chicken Nuggets (10 pieces)",
    "cat": "sides",
    "kcal": 903,
    "fat": 42,
@@ -590,147 +349,43 @@
    "salt": 3.3
   },
   {
-   "slug": "kimchi",
-   "name": "Kimchi",
-   "cat": "sides",
-   "kcal": 19,
-   "fat": 0,
-   "sat": 0,
-   "carbs": 2.7,
-   "sugars": 2.2,
-   "fibre": 1.4,
-   "protein": 1,
-   "salt": 1.5
+   "slug": "chargrilled-chicken-rice-box",
+   "name": "Chargrilled Chicken Rice Box",
+   "cat": "kids-all-day",
+   "kcal": 382,
+   "fat": 8,
+   "sat": 1.7,
+   "carbs": 56,
+   "sugars": 9.2,
+   "fibre": 3.6,
+   "protein": 21,
+   "salt": 1.41
   },
   {
-   "slug": "hummus",
-   "name": "Hummus",
-   "cat": "sides",
-   "kcal": 395,
-   "fat": 28,
-   "sat": 4.1,
-   "carbs": 17,
-   "sugars": 0.6,
+   "slug": "brazilian-black-bean-with-rice",
+   "name": "Brazilian Black Beans with Rice",
+   "cat": "kids-all-day",
+   "kcal": 415,
+   "fat": 11,
+   "sat": 1.2,
+   "carbs": 58,
+   "sugars": 6,
    "fibre": 11,
-   "protein": 12,
-   "salt": 1
-  },
-  {
-   "slug": "winter-slaw",
-   "name": "Winter Slaw",
-   "cat": "sides",
-   "kcal": 155,
-   "fat": 13,
-   "sat": 1.5,
-   "carbs": 6.4,
-   "sugars": 4.3,
-   "fibre": 3,
-   "protein": 3,
-   "salt": 0.1
-  },
-  {
-   "slug": "hotsmoked-salmon-lime-jalapeno",
-   "name": "Hot-Smoked Salmon, Lime & Jalapeño",
-   "cat": "superfood-salads",
-   "kcal": 494,
-   "fat": 31,
-   "sat": 4.4,
-   "carbs": 24,
-   "sugars": 7.1,
-   "fibre": 6.9,
-   "protein": 26,
-   "salt": 2.1
-  },
-  {
-   "slug": "keralan-chicken-curry",
-   "name": "Keralan Chicken Curry",
-   "cat": "rice-boxes",
-   "kcal": 580,
-   "fat": 24,
-   "sat": 8.3,
-   "carbs": 66,
-   "sugars": 6.2,
-   "fibre": 7.9,
-   "protein": 22,
-   "salt": 2.8
-  },
-  {
-   "slug": "roasted-summer-veg-grilled-aubergine",
-   "name": "Roasted Summer Veg + Grilled Aubergine",
-   "cat": "plant-boxes",
-   "kcal": 266,
-   "fat": 21,
-   "sat": 4.5,
-   "carbs": 12,
-   "sugars": 6.5,
-   "fibre": 5.3,
-   "protein": 4.4,
-   "salt": 2.7
-  },
-  {
-   "slug": "keep-it-classic-san-diego",
-   "name": "Keep it Classic, San Diego",
-   "cat": "burgers",
-   "kcal": 578,
-   "fat": 34,
-   "sat": 7.5,
-   "carbs": 51,
-   "sugars": 5.3,
-   "fibre": 3.5,
-   "protein": 14,
-   "salt": 3
-  },
-  {
-   "slug": "herbie-fully-loaded-chickn",
-   "name": "Herbie, Fully Loaded Chick’n",
-   "cat": "burgers",
-   "kcal": 539,
-   "fat": 32,
-   "sat": 5.6,
-   "carbs": 48,
-   "sugars": 4.4,
-   "fibre": 3.3,
-   "protein": 13,
-   "salt": 2.8
-  },
-  {
-   "slug": "classic-crispy-gfc-burger",
-   "name": "Classic Crispy GFC Burger",
-   "cat": "burgers",
-   "kcal": 474,
-   "fat": 26,
-   "sat": 3.5,
-   "carbs": 45,
-   "sugars": 2.8,
-   "fibre": 2.3,
-   "protein": 16,
-   "salt": 2.1
-  },
-  {
-   "slug": "seasonal-british-veg",
-   "name": "Seasonal British Veg",
-   "cat": "sides",
-   "kcal": 69,
-   "fat": 2.8,
-   "sat": 0.5,
-   "carbs": 6.1,
-   "sugars": 4.3,
-   "fibre": 2.7,
-   "protein": 2.9,
-   "salt": 1.3
-  },
-  {
-   "slug": "satay-loaded-fries",
-   "name": "Satay Loaded Fries",
-   "cat": "fries",
-   "kcal": 333,
-   "fat": 22.8,
-   "sat": 5.2,
-   "carbs": 28,
-   "sugars": 3.8,
-   "fibre": 4.3,
-   "protein": 6.3,
+   "protein": 15,
    "salt": 1.6
+  },
+  {
+   "slug": "gfc-crispy-chicken-nuggets-baked-fries",
+   "name": "GFC – Crispy Chicken Nuggets & Baked Fries",
+   "cat": "kids-all-day",
+   "kcal": 523,
+   "fat": 19,
+   "sat": 2.9,
+   "carbs": 65,
+   "sugars": 9.2,
+   "fibre": 6.9,
+   "protein": 19,
+   "salt": 2.2
   }
  ]
 }
