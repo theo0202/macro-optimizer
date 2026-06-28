@@ -1756,18 +1756,18 @@ function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastC
   const br = D.breads.filter(breadOk);
   const R = [];
   for(const b of br) for(const pr of prots) for(const c of ch) {
-    const base=[b,pr,c], bn=sumN(base,m,STD_SALAD), bs=score(bn,t,mode,p);
+    const base=[b,pr,c,...STD_SALAD], bn=sumN(base,m), bs=score(bn,t,mode,p); // Std-Salad (Vegetables) gehört zum Sub → ×m (footlong verdoppelt)
     R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
     for(let i=0;i<D.extras.length;i++){
-      const n1=sumN([...base,D.extras[i]],m,STD_SALAD), s1=score(n1,t,mode,p);
+      const n1=sumN([...base,D.extras[i]],m), s1=score(n1,t,mode,p);
       if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[D.extras[i]],sauces:[],nutrition:n1,score:s1});
       for(let j=i+1;j<D.extras.length;j++){
-        const n2=sumN([...base,D.extras[i],D.extras[j]],m,STD_SALAD), s2=score(n2,t,mode,p);
+        const n2=sumN([...base,D.extras[i],D.extras[j]],m), s2=score(n2,t,mode,p);
         if(s2<bs+0.3) R.push({bread:b,protein:pr,cheese:c,extras:[D.extras[i],D.extras[j]],sauces:[],nutrition:n2,score:s2});
       }
     }
     if(!noSauce&&bs<3) for(const sc of D.sauces){
-      const ns=sumN([...base,sc],m,STD_SALAD);
+      const ns=sumN([...base,sc],m);
       R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[sc],nutrition:ns,score:score(ns,t,mode,p)});
     }
   }
@@ -2637,9 +2637,9 @@ function App() {
     D.extras.forEach(e=>{if(mExt[e.id])items.push(e);});
     D.sauces.forEach(s=>{if(mSau[s.id])items.push(s);});
     D.seasonings.forEach(s=>{if(mSea[s.id])items.push(s);});
-    const saladItems=D.salads.filter(s=>mSal[s.id]);
-    const sideItem=D.sides.find(s=>s.id===mSide);   // Side wird ×1 gerechnet (nicht footlong-verdoppelt) → singleItems
-    return sumN(items,m,sideItem?[...saladItems,sideItem]:saladItems);
+    D.salads.forEach(s=>{if(mSal[s.id])items.push(s);}); // Gemüse-Toppings (PDF "Vegetables") gehören zum Sub → ×m
+    const sideItem=D.sides.find(s=>s.id===mSide);   // Side = eigenständiges Produkt → ×1 (nicht footlong-verdoppelt) → singleItems
+    return sumN(items,m,sideItem?[sideItem]:[]);
   },[sel,mSal,mSau,mSea,mExt,mSide,subSize]);
 
   const selFTotal=useMemo(()=>{

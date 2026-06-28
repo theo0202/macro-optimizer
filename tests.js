@@ -21,23 +21,27 @@ const check = (name, actual, expected) => {
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}: ${actual}${typeof expected === "boolean" ? "" : ` (erwartet ${expected})`}`);
 };
 
-// ── Subway: Footlong-Salad-Regel ──
+// ── Subway: Footlong-Doppelung (Gemüse-Toppings = PDF "Vegetables" gehören zum Sub → ×2; nur eigenständige Salads/Spuds/Sides ×1) ──
 const bread = T.D.breads.find(b => b.id === "wholegrain");
 const prot = T.D.proteins.find(p => p.id === "roast_chicken");
 const cheese = T.D.cheeses.find(c => c.id === "none");
 const saladKcal = T.STD_SALAD.reduce((s, x) => s + x.kcal, 0);
 
-const six = T.sumN([bread, prot, cheese], 1, T.STD_SALAD);
+const six = T.sumN([bread, prot, cheese, ...T.STD_SALAD], 1);
 check("Subway 6inch kcal", six.kcal, bread.kcal + prot.kcal + saladKcal);
 
-const foot = T.sumN([bread, prot, cheese], 2, T.STD_SALAD);
-check("Subway Footlong kcal (Salad ×1)", foot.kcal, 2 * (bread.kcal + prot.kcal) + saladKcal);
+// Footlong: Gemüse-Toppings werden jetzt MITverdoppelt (User 20.06.2026: "Vegetables" ≠ die ausgenommenen "Salads")
+const foot = T.sumN([bread, prot, cheese, ...T.STD_SALAD], 2);
+check("Subway Footlong kcal (Gemüse ×2 wie Sub)", foot.kcal, 2 * (bread.kcal + prot.kcal + saladKcal));
+// Side bleibt ×1 (eigenständiges Produkt, via singleItems-Argument)
+const sideTest = T.D.sides[0];
+check("Subway Side ×1 bei Footlong (singleItems)", T.sumN([bread, prot, cheese], 2, [sideTest]).kcal, 2 * (bread.kcal + prot.kcal) + sideTest.kcal);
 
 const t1 = { protein: 60, carbs: 90, fat: 24, kcal: 816, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const res = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true); // noSides=true: Kernlogik (Footlong-Doppelung) ohne Side
 const top = res[0];
 const doubled = [top.bread, top.protein, top.cheese, ...top.extras, ...top.sauces].reduce((s, x) => s + x.kcal, 0);
-check("Subway Optimizer Footlong Top-1 (subs only)", top.nutrition.kcal, 2 * doubled + saladKcal);
+check("Subway Optimizer Footlong Top-1 (Sub + Gemüse je ×2)", top.nutrition.kcal, 2 * (doubled + saladKcal));
 
 // ── Subway Sides (Baked Beans Snack Pot, Coleslaw Regular/Double) + "only Subs"-Schalter ──
 check("Subway D.sides (3)", T.D.sides.length, 3);
@@ -78,8 +82,8 @@ const withS = resSide.find(r => r.side);
 check("Subway Sides erlaubt: mind. ein Ergebnis mit Side", !!withS, true);
 if (withS) {
   const subItems = [withS.bread, withS.protein, withS.cheese, ...withS.extras, ...withS.sauces];
-  const expKcal = Math.round((2 * subItems.reduce((s, x) => s + x.kcal, 0) + saladKcal + withS.side.kcal) * 10) / 10;
-  check("Subway Side ×1 (nicht footlong-verdoppelt) + Sub ×2", approx(withS.nutrition.kcal, expKcal), true);
+  const expKcal = Math.round((2 * (subItems.reduce((s, x) => s + x.kcal, 0) + saladKcal) + withS.side.kcal) * 10) / 10; // Sub+Gemüse ×2, Side ×1
+  check("Subway Side ×1 (nicht footlong-verdoppelt), Sub+Gemüse ×2", approx(withS.nutrition.kcal, expKcal), true);
 }
 
 // ── Farmer J: Datenumfang ──

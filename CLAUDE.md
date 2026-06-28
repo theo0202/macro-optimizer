@@ -39,7 +39,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 
 ## Datenquellen
 - **Subway**: UK & ROI Nutritional Information January 2026 PDF (`data/UKIandROINutritionalInformationJan2026.pdf`)
-  - Alle Nährwerte **per 6-inch Serving** (Footlong = ×2, excluding salads)
+  - Alle Nährwerte **per 6-inch Serving** (Footlong = ×2, inkl. Gemüse-Toppings „Vegetables"; nur eigenständige Sides/standalone-Salads ×1 — siehe Footlong-Logik)
   - Component-level Daten von Seite 3 des PDFs
   - **Sides** (`D.sides`: Baked Beans Snack Pot, Coleslaw Regular, Coleslaw Double) aus der neueren **UKI June 2026 PDF** (Seite 2, „Sides") — eigenständige Beilagen, werden ×1 gerechnet (kein Footlong-×2). Sanity-Check 19.06.2026 bestätigte die übrigen Komponenten weitgehend unverändert ggü. Jan 2026 (Breaded Chicken + Falafel fehlen in June → entfernt)
   - **Meatball Marinara** (`meatball_marinara`) nutzt bewusst die **HALAL Meatballs (in marinara sauce)** = 229 kcal (137 g; F14/sat5.9/C13/sug6.7/fib2.7/P14/Salz1), NICHT die Pork-&-Beef-Variante (193 kcal). User 20.06.2026: Subway nutzt die Halal-Meatballs generell, egal ob Halal-Filiale oder nicht
@@ -489,10 +489,10 @@ Eigener Tab **„➕ Add own order"** (ganz links in der Tab-Zeile) zum **nachtr
 - **Bestellanleitung (Deliveroo)**: nummerierte Schritt-für-Schritt-Liste, aktualisiert sich live
 
 ## Footlong-Logik (Subway) — GEFIXT
-- Footlong: alle Component-Nährwerte ×2, **AUSSER Salads + Sides** (×1), gemäß PDF-Fußnote „Double values for footlong … excluding Spuds and Salads"
-- Implementiert über `sumN(items, mult, singleItems)`: `items` werden mit `mult` skaliert, `singleItems` (Salads + Side) immer ×1
-- Der frühere Bug (Salads wurden mitverdoppelt) ist behoben; `node tests.js` sichert das ab
-- **Detail-Panel-Chips zeigen den footlong-korrekten kcal-Wert** (User 20.06.2026): Extras + Seasonings zeigen bei Footlong `kcal×2` in der Klammer (z.B. „Poached Egg (+124)"), da sie verdoppelt werden; Double Meat/Cheese taten das schon. Salad-Chips zeigen keinen kcal-Wert (und werden nicht verdoppelt), Side-Chips zeigen ×1 (Sides werden nicht verdoppelt). Vorher zeigten Extras/Seasonings den 6-Inch-Wert, obwohl korrekt ×2 addiert wurde (reiner Anzeigefehler, Rechnung war immer richtig)
+- Footlong: alle Component-Nährwerte ×2 — **inkl. der Gemüse-Toppings** (Lettuce/Tomatoes/Cucumber/Pickles/Peppers/Olives/Red Onions/Jalapeños/Sweetcorn = PDF-Kategorie **„Vegetables"**, sie gehören zum Sub und werden mitverdoppelt). **Nur eigenständige Beilagen sind ×1**: die `D.sides` (Baked Beans/Coleslaw) und — falls je modelliert — die ausgenommenen **standalone Salads + Spuds** der PDF-Fußnote „Double values for footlong … excluding Spuds and Salads". **WICHTIG (User 20.06.2026)**: „Salads" in der Fußnote = die Salat-MAHLZEITEN, die Subway unabhängig vom Sandwich verkauft, NICHT die Gemüse-Toppings. Früher wurden die Std-Salad-Toppings fälschlich ×1 gelassen → behoben, jetzt ×m
+- Implementiert über `sumN(items, mult, singleItems)`: `items` (Brot + Protein + Käse + Gemüse-Toppings + Extras + Saucen) werden mit `mult` skaliert; `singleItems` jetzt **nur noch die Side** (×1). In `optimize()` liegt `STD_SALAD` direkt in `base=[b,pr,c,...STD_SALAD]` (also ×m); in `selTotal` werden gewählte `D.salads` in `items` gepusht (×m), nur `sideItem` bleibt singleItem
+- `node tests.js` sichert ab: „Subway Footlong kcal (Gemüse ×2 wie Sub)", „Subway Side ×1 bei Footlong (singleItems)", „Subway Optimizer Footlong Top-1 (Sub + Gemüse je ×2)"
+- **Detail-Panel-Chips zeigen den footlong-korrekten kcal-Wert** (User 20.06.2026): Extras + Seasonings zeigen bei Footlong `kcal×2` in der Klammer (z.B. „Poached Egg (+124)"), da sie verdoppelt werden; Double Meat/Cheese taten das schon. Side-Chips zeigen ×1 (Sides werden nicht verdoppelt). Salad-Chips zeigen keinen kcal-Wert, werden in der Berechnung aber jetzt mitverdoppelt
 
 ## Design
 - Dark Mode (#0d0d0d Background)
