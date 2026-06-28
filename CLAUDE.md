@@ -489,9 +489,10 @@ Eigener Tab **„➕ Add own order"** (ganz links in der Tab-Zeile) zum **nachtr
 - **Bestellanleitung (Deliveroo)**: nummerierte Schritt-für-Schritt-Liste, aktualisiert sich live
 
 ## Footlong-Logik (Subway) — GEFIXT
-- Footlong: alle Component-Nährwerte ×2, **AUSSER Salads** (×1), gemäß PDF-Fußnote
-- Implementiert über `sumN(items, mult, singleItems)`: `items` werden mit `mult` skaliert, `singleItems` (Salads) immer ×1
+- Footlong: alle Component-Nährwerte ×2, **AUSSER Salads + Sides** (×1), gemäß PDF-Fußnote „Double values for footlong … excluding Spuds and Salads"
+- Implementiert über `sumN(items, mult, singleItems)`: `items` werden mit `mult` skaliert, `singleItems` (Salads + Side) immer ×1
 - Der frühere Bug (Salads wurden mitverdoppelt) ist behoben; `node tests.js` sichert das ab
+- **Detail-Panel-Chips zeigen den footlong-korrekten kcal-Wert** (User 20.06.2026): Extras + Seasonings zeigen bei Footlong `kcal×2` in der Klammer (z.B. „Poached Egg (+124)"), da sie verdoppelt werden; Double Meat/Cheese taten das schon. Salad-Chips zeigen keinen kcal-Wert (und werden nicht verdoppelt), Side-Chips zeigen ×1 (Sides werden nicht verdoppelt). Vorher zeigten Extras/Seasonings den 6-Inch-Wert, obwohl korrekt ×2 addiert wurde (reiner Anzeigefehler, Rechnung war immer richtig)
 
 ## Design
 - Dark Mode (#0d0d0d Background)

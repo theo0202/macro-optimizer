@@ -3321,7 +3321,7 @@ function App() {
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Add extras"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)).map(e=>
-              h(Chip,{key:e.id,label:e.name+" (+"+e.kcal+")",small:true,active:!!mExt[e.id],
+              h(Chip,{key:e.id,label:e.name+" (+"+(e.kcal*(subSize==="footlong"?2:1))+")",small:true,active:!!mExt[e.id],
                 onClick:()=>setMExt(p=>({...p,[e.id]:!p[e.id]}))})
             ),
             h(Chip,{key:"dm",label:"Double Meat (+"+sel.protein.kcal*(subSize==="footlong"?2:1)+")",small:true,
@@ -3362,7 +3362,7 @@ function App() {
         h("div",{style:{marginBottom:16}},
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Seasonings"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
-            ...D.seasonings.map(s=>h(Chip,{key:s.id,label:s.name+" (+"+s.kcal+")",small:true,active:!!mSea[s.id],
+            ...D.seasonings.map(s=>h(Chip,{key:s.id,label:s.name+" (+"+(s.kcal*(subSize==="footlong"?2:1))+")",small:true,active:!!mSea[s.id],
               onClick:()=>setMSea(p=>({...p,[s.id]:!p[s.id]}))}))
           )
         ),
