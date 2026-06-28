@@ -387,6 +387,10 @@ check("Wagamama nur 1 yasai yaki soba (Deliveroo-Variante)", T.WAGA.items.filter
 check("Wagamama yasai yaki soba | mushroom = 660 kcal (Deliveroo-Match)", T.WAGA.items.find(x => x.id === "yasai_yaki_soba_mushroom").kcal, 660);
 check("Wagamama tofu firecracker salt", T.WAGA.items.find(x => x.id === "tofu_firecracker").salt, 5.1);
 check("Wagamama buldak bibimbap kcal + cat=donburi", (() => { const b = T.WAGA.items.find(x => x.id === "buldak_bibimbap"); return b && b.kcal === 1012 && b.cat === "donburi"; })(), true);
+// Deliveroo-Rice-Bowls (User 28.06.2026 nachgereicht, volle wagamama.com-Makros) -> donburi
+check("Wagamama gochujang salmon rice bowl kcal", T.WAGA.items.find(x => x.id === "gochujang_salmon_rice_bowl").kcal, 786);
+check("Wagamama chicken + prawn turmeric rice bowl Protein", T.WAGA.items.find(x => x.id === "chicken_prawn_turmeric_rice_bowl").protein, 32.4);
+check("Wagamama 7 Donburi (inkl. 2 neue Rice Bowls)", T.WAGA.items.filter(x => x.cat === "donburi").length, 7);
 
 const wagAll = {};
 T.WAGA.cats.forEach(c => wagAll[c.id] = true);

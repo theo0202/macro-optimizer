@@ -5,7 +5,7 @@
     "updated": "2026-06-28",
     "batches": 3,
     "note": "Kategorien (cat) selbst zugeordnet: donburi, ramen, teppanyaki (alle soba/udon-Gerichte), sides, curries. buldak bibimbap (seasonal rice bowl) -> donburi. per-Serving-Spalte; kcal-Tausenderkomma entfernt",
-    "deliveroo_prune": "2026-06-28 auf die Deliveroo-Karte (Canary Wharf) geprunt: 32 -> 27 Items. Entfernt: thai beef salad (keine Salads auf Deliveroo -> Kategorie salads weg), hot chicken katsu curry + hot yasai katsu curry (Deliveroo hat nur die nicht-scharfen Katsu-Currys), yasai yaki soba | udon (638, nicht auf Deliveroo) + yasai yaki soba | mushroom (768). Deliveroo fuehrt nur EINE yasai yaki soba (660 kcal, rice-noodle-Basis, Anzeigename 'mushroom'): der behaltene 660er-Eintrag (frueher '| rice noodles') wurde auf den Deliveroo-Namen 'yasai yaki soba | mushroom' umbenannt (Makros = 660, exakter Deliveroo-Match). kcal-Diffs Deliveroo<->wagamama.com bleiben (wagamama.com-Werte gelten, volle Makros)."
+    "deliveroo_prune": "2026-06-28 auf die Deliveroo-Karte (Canary Wharf) geprunt: 32 -> 27 Items. Entfernt: thai beef salad (keine Salads auf Deliveroo -> Kategorie salads weg), hot chicken katsu curry + hot yasai katsu curry (Deliveroo hat nur die nicht-scharfen Katsu-Currys), yasai yaki soba | udon (638, nicht auf Deliveroo) + yasai yaki soba | mushroom (768). Deliveroo fuehrt nur EINE yasai yaki soba (660 kcal, rice-noodle-Basis, Anzeigename 'mushroom'): der behaltene 660er-Eintrag (frueher '| rice noodles') wurde auf den Deliveroo-Namen 'yasai yaki soba | mushroom' umbenannt (Makros = 660, exakter Deliveroo-Match). kcal-Diffs Deliveroo<->wagamama.com bleiben (wagamama.com-Werte gelten, volle Makros). Danach +2 Deliveroo-Rice-Bowls aufgenommen (gochujang salmon rice bowl 786, chicken + prawn turmeric rice bowl 677; cat donburi, volle Makros aus den wagamama.com-Popups) -> 29 Items."
   },
   "items": [
     {
@@ -42,6 +42,16 @@
       "name": "buldak bibimbap", "cat": "donburi",
       "kcal": 1012, "fat": 46.1, "sat": 7.3, "carbs": 109.0, "sugars": 26.0, "fibre": 8.5, "protein": 38.8, "salt": 6.1,
       "veggie": false, "vegan": false, "allergens": ["celery", "gluten (wheat)", "eggs", "sesame", "soya", "sulphites"]
+    },
+    {
+      "name": "gochujang salmon rice bowl", "cat": "donburi",
+      "kcal": 786, "fat": 39.4, "sat": 4.9, "carbs": 69.7, "sugars": 20.8, "fibre": 5.4, "protein": 36.3, "salt": 4.0,
+      "veggie": false, "vegan": false, "allergens": ["fish", "sesame", "soya"]
+    },
+    {
+      "name": "chicken + prawn turmeric rice bowl", "cat": "donburi",
+      "kcal": 677, "fat": 34.1, "sat": 4.9, "carbs": 57.4, "sugars": 11.1, "fibre": 5.5, "protein": 32.4, "salt": 2.5,
+      "veggie": false, "vegan": false, "allergens": ["crustaceans", "eggs", "sesame", "soya", "sulphites"]
     },
     {
       "name": "tantanmen beef brisket ramen", "cat": "ramen",
