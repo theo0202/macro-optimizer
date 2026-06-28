@@ -370,17 +370,21 @@ check("UG Gegenprobe ohne Schalter: Doppelung möglich (>=2)", ugCapOff.length >
 
 // ── Wagamama (Copy-Paste-Batches, wächst) ──
 check("Wagamama Items vorhanden (>=20, wächst mit Batches)", T.WAGA.items.length >= 20, true);
-check("Wagamama Kategorien (6, inkl. curries)", T.WAGA.cats.length, 6);
+check("Wagamama Kategorien (5: sides/donburi/ramen/teppanyaki/curries; salads Deliveroo-gepruned)", T.WAGA.cats.length, 5);
 check("Wagamama grilled duck donburi kcal", T.WAGA.items.find(x => x.id === "grilled_duck_donburi").kcal, 1085);
 check("Wagamama grilled duck donburi Protein", T.WAGA.items.find(x => x.id === "grilled_duck_donburi").protein, 53.9);
 check("Wagamama grilled chicken ramen kcal", T.WAGA.items.find(x => x.id === "grilled_chicken_ramen").kcal, 490);
 check("Wagamama tea-stained egg kcal", T.WAGA.items.find(x => x.id === "tea_stained_egg").kcal, 69);
 // Curries-Kategorie (Batch 3) + seasonal buldak bibimbap
 check("Wagamama curries-Kategorie vorhanden", T.WAGA.cats.some(c => c.id === "curries"), true);
-check("Wagamama 10 Curries", T.WAGA.items.filter(x => x.cat === "curries").length, 10);
+check("Wagamama 8 Curries (hot chicken/yasai katsu Deliveroo-gepruned)", T.WAGA.items.filter(x => x.cat === "curries").length, 8);
 check("Wagamama chicken katsu curry kcal", T.WAGA.items.find(x => x.id === "chicken_katsu_curry").kcal, 988);
 check("Wagamama chicken katsu curry Protein", T.WAGA.items.find(x => x.id === "chicken_katsu_curry").protein, 43.9);
-check("Wagamama hot yasai katsu curry kcal", T.WAGA.items.find(x => x.id === "hot_yasai_katsu_curry").kcal, 1350);
+// Deliveroo-Prune (Canary Wharf, 2026-06-28): hot katsu currys + thai beef salad raus; yasai yaki soba auf die 1 Deliveroo-Variante (660, "| mushroom") reduziert
+check("Wagamama hot katsu currys entfernt (nicht auf Deliveroo)", !T.WAGA.items.some(x => x.id === "hot_chicken_katsu_curry" || x.id === "hot_yasai_katsu_curry"), true);
+check("Wagamama thai beef salad + salads-Kategorie entfernt", !T.WAGA.items.some(x => x.id === "thai_beef_salad") && !T.WAGA.cats.some(c => c.id === "salads"), true);
+check("Wagamama nur 1 yasai yaki soba (Deliveroo-Variante)", T.WAGA.items.filter(x => x.name.startsWith("yasai yaki soba")).length, 1);
+check("Wagamama yasai yaki soba | mushroom = 660 kcal (Deliveroo-Match)", T.WAGA.items.find(x => x.id === "yasai_yaki_soba_mushroom").kcal, 660);
 check("Wagamama tofu firecracker salt", T.WAGA.items.find(x => x.id === "tofu_firecracker").salt, 5.1);
 check("Wagamama buldak bibimbap kcal + cat=donburi", (() => { const b = T.WAGA.items.find(x => x.id === "buldak_bibimbap"); return b && b.kcal === 1012 && b.cat === "donburi"; })(), true);
 

@@ -2,9 +2,10 @@
   "_meta": {
     "source": "wagamama.com Produkt-Popups (allergens + nutritional information), per-Serving-Werte",
     "workflow": "User liefert Daten als Copy-Paste-Batches -> Items hier ergänzen -> node wagamama-update.js",
-    "updated": "2026-06-19",
+    "updated": "2026-06-28",
     "batches": 3,
-    "note": "Kategorien (cat) selbst zugeordnet: donburi, ramen, teppanyaki (alle soba/udon-Gerichte), salads, sides, curries. buldak bibimbap (seasonal rice bowl) -> donburi. per-Serving-Spalte; kcal-Tausenderkomma entfernt"
+    "note": "Kategorien (cat) selbst zugeordnet: donburi, ramen, teppanyaki (alle soba/udon-Gerichte), sides, curries. buldak bibimbap (seasonal rice bowl) -> donburi. per-Serving-Spalte; kcal-Tausenderkomma entfernt",
+    "deliveroo_prune": "2026-06-28 auf die Deliveroo-Karte (Canary Wharf) geprunt: 32 -> 27 Items. Entfernt: thai beef salad (keine Salads auf Deliveroo -> Kategorie salads weg), hot chicken katsu curry + hot yasai katsu curry (Deliveroo hat nur die nicht-scharfen Katsu-Currys), yasai yaki soba | udon (638, nicht auf Deliveroo) + yasai yaki soba | mushroom (768). Deliveroo fuehrt nur EINE yasai yaki soba (660 kcal, rice-noodle-Basis, Anzeigename 'mushroom'): der behaltene 660er-Eintrag (frueher '| rice noodles') wurde auf den Deliveroo-Namen 'yasai yaki soba | mushroom' umbenannt (Makros = 660, exakter Deliveroo-Match). kcal-Diffs Deliveroo<->wagamama.com bleiben (wagamama.com-Werte gelten, volle Makros)."
   },
   "items": [
     {
@@ -79,18 +80,8 @@
     },
     {
       "name": "yasai yaki soba | mushroom", "cat": "teppanyaki",
-      "kcal": 768, "fat": 34.6, "sat": 3.8, "carbs": 80.5, "sugars": 12.1, "fibre": 6.5, "protein": 28.2, "salt": 3.8,
-      "veggie": true, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "sesame", "soya"]
-    },
-    {
-      "name": "yasai yaki soba | rice noodles", "cat": "teppanyaki",
       "kcal": 660, "fat": 24.8, "sat": 2.2, "carbs": 87.3, "sugars": 11.8, "fibre": 5.9, "protein": 16.9, "salt": 2.6,
-      "veggie": true, "vegan": false, "allergens": ["gluten (barley, wheat)", "sesame", "soya"]
-    },
-    {
-      "name": "yasai yaki soba | udon", "cat": "teppanyaki",
-      "kcal": 638, "fat": 18.4, "sat": 1.6, "carbs": 87.1, "sugars": 14.0, "fibre": 10.1, "protein": 22.6, "salt": 3.2,
-      "veggie": true, "vegan": false, "allergens": ["gluten (barley, wheat)", "sesame", "soya"]
+      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)", "sesame", "soya"]
     },
     {
       "name": "steak teriyaki soba", "cat": "teppanyaki",
@@ -113,11 +104,6 @@
       "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "crustaceans", "eggs", "fish", "sesame", "soya"]
     },
     {
-      "name": "thai beef salad", "cat": "salads",
-      "kcal": 496, "fat": 23.3, "sat": 3.2, "carbs": 27.7, "sugars": 20.3, "fibre": 4.9, "protein": 41.0, "salt": 3.5,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "mustard", "soya", "sulphites"]
-    },
-    {
       "name": "chicken katsu curry", "cat": "curries",
       "kcal": 988, "fat": 41.8, "sat": 8.8, "carbs": 110.0, "sugars": 7.0, "fibre": 7.9, "protein": 43.9, "salt": 2.8,
       "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "mustard", "soya"]
@@ -126,16 +112,6 @@
       "name": "yasai katsu curry", "cat": "curries",
       "kcal": 1223, "fat": 55.3, "sat": 9.3, "carbs": 159.3, "sugars": 13.8, "fibre": 10.6, "protein": 21.5, "salt": 2.7,
       "veggie": true, "vegan": true, "allergens": ["gluten (wheat)", "mustard", "soya"]
-    },
-    {
-      "name": "hot chicken katsu curry", "cat": "curries",
-      "kcal": 1115, "fat": 51.6, "sat": 9.6, "carbs": 117.9, "sugars": 13.1, "fibre": 9.9, "protein": 45.0, "salt": 4.5,
-      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "mustard", "soya", "sulphites"]
-    },
-    {
-      "name": "hot yasai katsu curry", "cat": "curries",
-      "kcal": 1350, "fat": 65.2, "sat": 10.0, "carbs": 167.3, "sugars": 19.8, "fibre": 12.6, "protein": 22.5, "salt": 4.4,
-      "veggie": true, "vegan": true, "allergens": ["gluten (wheat)", "mustard", "soya", "sulphites"]
     },
     {
       "name": "prawn raisukaree", "cat": "curries",
