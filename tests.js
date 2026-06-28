@@ -63,6 +63,11 @@ check("Subway Brot Legacy-String (1 Brot) weiterhin ok", T.optimize(t1, "macros"
 const tChick = { protein: 50, carbs: 60, fat: 8, kcal: 512, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway 'No Roast Chicken': kein roast_chicken-Protein", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, true).every(r => r.protein.id !== "roast_chicken"), true);
 check("Subway ohne Schalter: Roast Chicken möglich (Gegenprobe)", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, false).some(r => r.protein.id === "roast_chicken"), true);
+// Schalter "Cheese" (forceCheese, 10. Param): immer einer der beiden Käse (kein "none")
+const tCh2 = { protein: 30, carbs: 50, fat: 18, kcal: 482, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Subway 'Cheese': jedes Ergebnis hat Käse (kein none)", T.optimize(tCh2, "macros", {}, true, false, {}, "footlong", true, false, true).every(r => r.cheese.id !== "none"), true);
+check("Subway 'Cheese': nur american/mozzarella_cheddar", T.optimize(tCh2, "macros", {}, true, false, {}, "footlong", true, false, true).every(r => ["american", "mozzarella_cheddar"].includes(r.cheese.id)), true);
+check("Subway ohne 'Cheese': none möglich (Gegenprobe)", T.optimize(tCh2, "macros", {}, true, false, {}, "footlong", true, false, false).some(r => r.cheese.id === "none"), true);
 // noSides=true: kein Ergebnis hat eine Side
 const resNoSide = T.optimize(t1, "macros", {}, true, true, "wholegrain", "footlong", true);
 check("Subway 'only Subs': keine Side in Ergebnissen", resNoSide.every(r => !r.side), true);
