@@ -291,6 +291,27 @@ check("Nando's 'No Corn': keine corn:true-Items", rnNoCorn.every(r => r.items.ev
 const rnCornOff = T.optimizeNandos(tCorn, "macros", {}, nanAll, 2, false, false, false, false, false);
 check("Nando's ohne Schalter: Corn erlaubt (Gegenprobe)", rnCornOff.some(r => r.items.some(x => x.corn)), true);
 
+// Schalter "Main + two sides": genau 1 Main (PERi-PERi Chicken | Burgers, Pittas, Wraps) + genau 2 Sides (ausser Rostinas)
+const tM2S = { protein: 50, carbs: 80, fat: 25, kcal: 745, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const MAIN_CATS = new Set(["peri_peri_chicken", "burgers_pittas_wraps"]);
+// letzter Arg mainTwoSides=true; nanAll als activeCats — der Modus muss die Chips ueberstimmen
+const rnM2S = T.optimizeNandos(tM2S, "macros", {}, nanAll, 5, true, true, true, true, true, true);
+check("Nando's Main+2Sides: jedes Ergebnis hat genau 3 Items", rnM2S.length > 0 && rnM2S.every(r => r.items.length === 3), true);
+check("Nando's Main+2Sides: genau 1 Main aus den 2 Kategorien", rnM2S.every(r => r.items.filter(x => MAIN_CATS.has(x.cat)).length === 1), true);
+check("Nando's Main+2Sides: genau 2 Sides", rnM2S.every(r => r.items.filter(x => x.cat === "sides").length === 2), true);
+check("Nando's Main+2Sides: niemals Rostinas", rnM2S.every(r => r.items.every(x => x.id !== "rostinas")), true);
+check("Nando's Main+2Sides: mit 'No wings' keine Wings als Main", rnM2S.every(r => r.items.every(x => !x.wings)), true);
+// Modus ueberstimmt leere Chips (Beweis: liefert trotzdem Ergebnisse)
+const rnM2SnoCats = T.optimizeNandos(tM2S, "macros", {}, {}, 5, true, true, true, true, true, true);
+check("Nando's Main+2Sides: ueberstimmt leere Kategorie-Chips", rnM2SnoCats.length > 0, true);
+// Gegenprobe: Wings als Main moeglich, wenn 'No wings' aus
+const rnM2Swings = T.optimizeNandos(tM2S, "macros", {}, nanAll, 5, true, true, true, false, true, true);
+check("Nando's Main+2Sides: ohne 'No wings' koennen Wings Main sein (Pool enthaelt sie)",
+  T.NANDOS.items.some(x => MAIN_CATS.has(x.cat) && x.wings) ? rnM2Swings.length > 0 : true, true);
+// Modus AUS = normaler a-la-carte-Optimizer (Items koennen != 3 sein, Pool != nur main+sides)
+const rnM2Soff = T.optimizeNandos(tM2S, "macros", {}, nanAll, 5, true, true, true, true, true, false);
+check("Nando's Main+2Sides AUS: normaler Optimizer (nicht zwingend 3 Items)", rnM2Soff.some(r => r.items.length !== 3) || rnM2Soff.some(r => r.items.some(x => !MAIN_CATS.has(x.cat) && x.cat !== "sides")), true);
+
 // ── Urban Greens (NUR Build Your Own — fertige Gerichte bewusst entfernt) ──
 check("UG: keine fertigen Gerichte mehr (nur BYO)", T.UG.pre === undefined, true);
 check("UG Komponenten (greens/carbs/prots/veg/tops/dress/scoops)",

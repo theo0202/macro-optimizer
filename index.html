@@ -1913,9 +1913,26 @@ function optimizePret(t, mode, p, activeCats, maxN, onlyRel, saladsOnly) {
 // Nando's: Drinks sind gar nicht erst in den Daten (User-Vorgabe). Schalter "No desserts, Lunch Fix &
 // platters" nimmt Desserts + The Lunch Fix + Sharing Platters raus.
 const NANDOS_SWITCH_CATS=new Set(["desserts","the_lunch_fix","sharing_platters"]);
-// Schalter: "No sauces" (sauce:true raus), "No grilled pineapple" (Pineapple-Item raus),
-// "No wings / chicken livers" (wings:true raus), "No Corn on the Cob" (corn:true raus).
-function optimizeNandos(t, mode, p, activeCats, maxN, noDesserts, noSauces, noPineapple, noWings, noCorn) {
+// "Main + two sides"-Modus: genau 1 Hauptgericht (Kategorie PERi-PERi Chicken ODER Burgers, Pittas, Wraps)
+// + genau 2 Sides. Sides = alle cat:"sides" AUSSER Rostinas (User-Vorgabe; Duplikate erlaubt, z.B. 2× Chips).
+// Wings respektieren den "No wings"-Schalter (Standard AN), sonst tauchen 10/5/3 Wings als "Main" auf.
+const NANDOS_MAIN_CATS=new Set(["peri_peri_chicken","burgers_pittas_wraps"]);
+function nandosMainTwoSides(t, mode, p, noWings){
+  const mains=NANDOS.items.filter(x=>NANDOS_MAIN_CATS.has(x.cat)&&!(noWings&&x.wings));
+  const sides=NANDOS.items.filter(x=>x.cat==="sides"&&x.id!=="rostinas");
+  const R=[];
+  for(const m of mains)for(let i=0;i<sides.length;i++)for(let j=i;j<sides.length;j++){
+    const items=[m,sides[i],sides[j]],n=sumN(items,1);
+    R.push({items,nutrition:n,score:score(n,t,mode,p)});
+  }
+  R.sort((a,b)=>a.score-b.score);
+  return R.slice(0,20);
+}
+// Schalter: "Main + two sides" (eigener Modus, überstimmt alles), "No sauces" (sauce:true raus),
+// "No grilled pineapple" (Pineapple-Item raus), "No wings / chicken livers" (wings:true raus),
+// "No Corn on the Cob" (corn:true raus).
+function optimizeNandos(t, mode, p, activeCats, maxN, noDesserts, noSauces, noPineapple, noWings, noCorn, mainTwoSides) {
+  if(mainTwoSides) return nandosMainTwoSides(t,mode,p,noWings);
   const pool=NANDOS.items.filter(x=>activeCats[x.cat]&&!(noDesserts&&NANDOS_SWITCH_CATS.has(x.cat))&&!(noSauces&&x.sauce)&&!(noPineapple&&x.id==="grilled_pineapple")&&!(noWings&&x.wings)&&!(noCorn&&x.corn));
   return alaCarteCombos(t,mode,p,pool,maxN);
 }
@@ -2465,6 +2482,7 @@ function App() {
   const [noPineapple,setNP]=useState(true);
   const [noWings,setNW]=useState(true);
   const [noCorn,setNCC]=useState(true);
+  const [nanMainTwoSides,setNM2S]=useState(false); // restriktiver "nur X"-Modus → default AUS
   const [selN,setSelN]=useState(null);
   // Urban Greens
   const [ugMode,setUgMode]=useState("salad");
@@ -2601,7 +2619,7 @@ function App() {
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
-  const resultsNandos=useMemo(()=>optimizeNandos(targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce,noPineapple,noWings,noCorn),[targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce,noPineapple,noWings,noCorn]);
+  const resultsNandos=useMemo(()=>optimizeNandos(targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce,noPineapple,noWings,noCorn,nanMainTwoSides),[targets,mode,prefs,nanCats,maxNa,noDess,nanNoSauce,noPineapple,noWings,noCorn,nanMainTwoSides]);
   const resultsUG=useMemo(()=>resto==="ug"?optimizeUG(targets,mode,prefs,ugMode,noNuts,noDressUG,ugCap):[],[resto,targets,mode,prefs,ugMode,noNuts,noDressUG,ugCap]);
   const resultsWaga=useMemo(()=>optimizeWaga(targets,mode,prefs,wagCats,maxW,noRamen),[targets,mode,prefs,wagCats,maxW,noRamen]);
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
@@ -2927,6 +2945,10 @@ function App() {
           h("input",{type:"checkbox",checked:onlyRel,onChange:e=>setOR(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only relevant items, no bullshit"),
         resto==="pret"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:saladsOnly,onChange:e=>setSO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Salads and protein pots only"),
+        resto==="nandos"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:nanMainTwoSides,onChange:e=>setNM2S(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Main + two sides (1 chicken/burger main + 2 sides)"),
+        resto==="nandos"&&h("div",{style:{flexBasis:"100%",fontSize:11,color:"#7a7",fontStyle:"italic",margin:"-8px 0 0 22px",lineHeight:1.4}},
+          "Builds a 1 main (PERi-PERi Chicken or Burgers, Pittas, Wraps) + 2 sides combo (any side except Rostinas). Good option to stay under the £23 HSBC meal limit."),
         resto==="nandos"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noDess,onChange:e=>setND(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No desserts, Lunch Fix & platters"),
         resto==="nandos"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

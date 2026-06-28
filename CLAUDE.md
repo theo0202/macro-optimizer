@@ -200,7 +200,8 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Schalter "No grilled pineapple"**: schließt das Einzel-Item "Grilled Pineapple" (id `grilled_pineapple`) aus — Parameter `noPineapple` in optimizeNandos
 - **Schalter "No wings / chicken livers"**: schließt alle 10 `wings:true`-Items aus (10/5/3 Chicken Wings + 10/5/3 Extra Saucy Wings + Wing Roulette + Chicken Livers + XL Wing Platter; "3 Chicken Wings" trifft PERi-PERi UND Nandinos). XL Wing Platter ist zusätzlich über den Platter-Schalter abdeckbar. Geflaggt in nandos-update.js (`WINGS_NAMES`) — überlebt Re-Crawls. (Früher harter Ausschluss, jetzt Schalter — User-Wunsch 12.06.2026)
 - **Schalter "No Corn on the Cob"**: schließt die 2 `corn:true`-Items aus (Corn on the Cob Regular/Large) — Name beginnt mit "Corn on the Cob"
-- Standard-Chips: alle an außer Nandinos (Kids)
+- **Schalter "Main + two sides"** (restriktiver „nur X"-Modus, **Default AUS**, `nanMainTwoSides`/`mainTwoSides`): überstimmt Chips + Max-Items komplett und baut Kombos aus **genau 1 Hauptgericht** (Kategorie **PERi-PERi Chicken** ODER **Burgers, Pittas, Wraps**) **+ genau 2 Sides**. Sides = alle `cat:"sides"` **AUSSER Rostinas** (User-Vorgabe; Duplikate erlaubt → z.B. „2× Chips (Regular)"). Mains respektieren den „No wings"-Schalter (Default AN), sonst tauchen 10/5/3 Wings als „Main" auf. Eigene Funktion `nandosMainTwoSides` (Voll-Enumeration mains × Side-Paare i≤j, Top-20; Result-Form `{items,nutrition,score}` wie `alaCarteCombos` → AC-Karte/Panel/Bestellanleitung unverändert). UI-Hinweis unter dem Schalter: gute Option, um unter dem **£23-HSBC-Limit** zu bleiben. Gilt NUR im Nando's-Tab (in All/Accurate läuft Nando's normal, `mainTwoSides` undefined)
+- Standard-Chips: alle an außer Nandinos (Kids); „Main + two sides" default AUS
 - Dips & Extras-Kategorie = Add-ons (Grilled Chicken Breast, Halloumi, 1/2 Avocado, Brote, Dips) — als Pool-Items nützlich für Makro-Feintuning
 
 ## Bestellablauf Wagamama (à la carte)
@@ -319,7 +320,7 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 ## Schalter-Defaults: ALLE Exclude-Schalter starten AN (User-Wunsch 12.06.2026)
 Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der User sie nicht jedes Mal neu anschalten muss: Subway "Keine Sauce"+"No Roast Chicken Breast" ("No cheese" startet AUS — User 20.06.2026, Käse standardmäßig erlaubt), Farmer J "Nur Gratis-Items", Itsu "No soups, desserts, snacks etc.", Pret "only relevant items, no bullshit", Nando's "No desserts/Lunch Fix/platters"+"No sauces"+"No grilled pineapple"+"No wings / chicken livers"+"No Corn on the Cob", Wagamama "No Ramen", GDK "No Sauce"+"No rice bowl", Urban Greens 'No "2 Toppings" / Nuts etc.'+"No Dressing"+"Max 1× Tajin/Pickled Onions/Pickled Cabbage", Atis "No sauce"+"No crunch", The Fitness Chef "No fish", Pepe's "No sauce"+"No flavour", Five Guys "No sauce", Wasabi "No sushi or soups & w/o sauces (good meals only)" (der einzige aktive Wasabi-Schalter; "No soups" startet hier AUS, weil "good meals only" Soup ohnehin ausschließt). Pizza Express hat keine Schalter, aber die Desserts-Kategorie startet AUS.
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
-**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren), Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap) und Subway "only Subs (no sides)" (würde sonst die gerade erst hinzugefügten Sides verstecken). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
+**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren), Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap), Subway "only Subs (no sides)" (würde sonst die gerade erst hinzugefügten Sides verstecken) und Nando's "Main + two sides" (würde sonst alles auf 1 Main + 2 Sides reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
 
 ## Standard-Defaults (beim App-Start)
@@ -336,7 +337,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Farmer J**: "Nur Gratis-Items" aktiv (keine bezahlten Toppings/Saucen in Vorschlägen)
 - **Itsu**: nur Food-Kategorien aktiv, max. 5 Items pro Bestellung, Schalter "No soups, desserts, snacks etc." AN, Getränke immer ignoriert
 - **Pret**: 8 Food-Kategorien aktiv, max. 5 Items, "only relevant items" AN + "Salads and protein pots only" AN (= nur Salads/Protein Pots), Getränke immer ignoriert
-- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 5 Items, alle 5 Schalter AN (No desserts/Lunch Fix/platters, No sauces, No grilled pineapple, No wings/chicken livers, No Corn on the Cob), Drinks nicht in den Daten
+- **Nando's**: alle Kategorien aktiv außer Nandinos (Kids), max. 5 Items, die 5 Exclude-Schalter AN (No desserts/Lunch Fix/platters, No sauces, No grilled pineapple, No wings/chicken livers, No Corn on the Cob), „Main + two sides" AUS (restriktiver Modus); Drinks nicht in den Daten
 - **Wagamama**: alle Kategorien aktiv, max. 5 Items, "No Ramen" AN
 - **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 5 Items, "No Sauce" + "No rice bowl" AN
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" + "Max 1× Tajin/Pickled Onions/Pickled Cabbage" AN
@@ -423,7 +424,7 @@ Alle nutzen den gemeinsamen Kern `alaCarteCombos`:
 Pool-Bildung:
 - **Itsu**: "only sushi"/"w/o sashimi" → nur sushi_poke (ggf. ohne Sashimi), überstimmt alles; sonst aktive Chips MINUS Getränke (immer) MINUS soups/noodles/desserts (Schalter, `ITSU_LIGHT_CATS`)
 - **Pret**: Getränke immer raus; dann Vorrang: "Salads and protein pots only" > "only relevant items, no bullshit" (rel-Whitelist) > Chips
-- **Nando's**: aktive Chips MINUS Desserts/Lunch Fix/Sharing Platters (`NANDOS_SWITCH_CATS`) MINUS Saucen (`sauce:true`) MINUS Grilled Pineapple MINUS Wings/Livers (`wings:true`) MINUS Corn (`corn:true`) — je nach Schalter; Drinks sind nicht in den Daten
+- **Nando's**: bei „Main + two sides" → eigener Zweig `nandosMainTwoSides` (1 Main aus PERi-PERi Chicken/Burgers,Pittas,Wraps × 2 Sides ausser Rostinas, Wings je nach „No wings"), überstimmt alles. Sonst: aktive Chips MINUS Desserts/Lunch Fix/Sharing Platters (`NANDOS_SWITCH_CATS`) MINUS Saucen (`sauce:true`) MINUS Grilled Pineapple MINUS Wings/Livers (`wings:true`) MINUS Corn (`corn:true`) — je nach Schalter; Drinks sind nicht in den Daten
 - **Wagamama**: aktive Chips MINUS ramen-Kategorie (Schalter "No Ramen")
 - **GDK**: aktive Chips MINUS sauce:true-Items (Schalter "No Sauce") MINUS rice_bowls (Schalter "No rice bowl")
 - **TFC**: aktive Kategorie-Chips MINUS `fish:true`-Items (Schalter "No fish"). Dishes liegen in 3 Größen als eigene Items → der Optimizer wählt die passende Größe automatisch
