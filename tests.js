@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -313,6 +313,7 @@ const rnM2Soff = T.optimizeNandos(tM2S, "macros", {}, nanAll, 5, true, true, tru
 check("Nando's Main+2Sides AUS: normaler Optimizer (nicht zwingend 3 Items)", rnM2Soff.some(r => r.items.length !== 3) || rnM2Soff.some(r => r.items.some(x => !MAIN_CATS.has(x.cat) && x.cat !== "sides")), true);
 
 // ── Corn cakes (restaurantsuebergreifender Carb-Fueller) ──
+check("Corn cake Markenname (Kallo)", T.CORN_CAKE.name === "Kallo Lightly salted low fat corn cakes", true);
 check("Corn cake per-unit kcal (386 x 0.0728)", T.CORN_CAKE.kcal, 28.1);
 check("Corn cake per-unit carbs (86 x 0.0728)", T.CORN_CAKE.carbs, 6.26);
 check("Corn cake per-unit protein (6.9 x 0.0728)", T.CORN_CAKE.protein, 0.5);
@@ -344,6 +345,21 @@ const ccClose = { nutrition: { kcal: 540, fat: 5, sat: 1, carbs: 75, sugars: 1, 
 const ccSorted = T.applyCornCakes([ccFar, ccClose], true, ccHi, "macros", {}); // bewusst in falscher Reihenfolge
 check("Corn: applyCornCakes(on) sortiert aufsteigend nach corn-Score", ccSorted[0].score <= ccSorted[1].score, true);
 check("Corn: bestes Ergebnis (naeher am Ziel) steht nach Re-Sort vorne", ccSorted[0].nutrition.carbs > 60, true);
+// Cap "max % der Carbs aus Cakes": groesste Stueckzahl <= capPct% des Carb-Ziels (harte Obergrenze, floor)
+check("Corn cap: capN bei 30% von 150g Ziel = floor(7.19)=7", T.cornCapCount({ carbs: 150 }, 30), 7);
+check("Corn cap: capN bei 30% von 80g Ziel = floor(3.83)=3", T.cornCapCount(ccHi, 30), 3);
+check("Corn cap: 0% = kein Cap (CORN_CAKE_MAX)", T.cornCapCount(ccHi, 0), T.CORN_CAKE_MAX);
+check("Corn cap: 100% = kein Cap (CORN_CAKE_MAX)", T.cornCapCount(ccHi, 100), T.CORN_CAKE_MAX);
+// ccR0 (Carbs 10) bei ccHi (Ziel 80, Protein/Fett passen) -> ~11 Cakes ungecappt; Cap 30% = 3 muss strikt begrenzen
+const ccCapN = T.cornCapCount(ccHi, 30); // 3
+const ccCapped = T.bestCornCakes(ccR0.nutrition, ccHi, "macros", {}, 30);
+const ccUncapped = T.bestCornCakes(ccR0.nutrition, ccHi, "macros", {}, 0);
+check("Corn cap: bestCornCakes respektiert Cap (<= capN)", ccCapped <= ccCapN, true);
+check("Corn cap: gecappte Stueckzahl deckt NIE mehr als 30% ab", ccCapped * T.CORN_CAKE.carbs <= 0.30 * ccHi.carbs, true);
+check("Corn cap: ohne Cap deutlich mehr Cakes als mit (Gegenprobe)", ccUncapped > ccCapped, true);
+// Cap bindet nicht, wenn die optimale Stueckzahl ohnehin unter dem Cap liegt (Basis schon nah am Carb-Ziel)
+const ccNear = { kcal: 380, fat: 5, sat: 1, carbs: 70, sugars: 1, fibre: 2, protein: 30, salt: 1 };
+check("Corn cap: optimale Stueckzahl < Cap -> Cap bindet nicht", T.bestCornCakes(ccNear, ccHi, "macros", {}, 50) < T.cornCapCount(ccHi, 50), true);
 
 // ── Urban Greens (NUR Build Your Own — fertige Gerichte bewusst entfernt) ──
 check("UG: keine fertigen Gerichte mehr (nur BYO)", T.UG.pre === undefined, true);
