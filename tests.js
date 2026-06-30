@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -311,6 +311,39 @@ check("Nando's Main+2Sides: ohne 'No wings' koennen Wings Main sein (Pool enthae
 // Modus AUS = normaler a-la-carte-Optimizer (Items koennen != 3 sein, Pool != nur main+sides)
 const rnM2Soff = T.optimizeNandos(tM2S, "macros", {}, nanAll, 5, true, true, true, true, true, false);
 check("Nando's Main+2Sides AUS: normaler Optimizer (nicht zwingend 3 Items)", rnM2Soff.some(r => r.items.length !== 3) || rnM2Soff.some(r => r.items.some(x => !MAIN_CATS.has(x.cat) && x.cat !== "sides")), true);
+
+// ── Corn cakes (restaurantsuebergreifender Carb-Fueller) ──
+check("Corn cake per-unit kcal (386 x 0.0728)", T.CORN_CAKE.kcal, 28.1);
+check("Corn cake per-unit carbs (86 x 0.0728)", T.CORN_CAKE.carbs, 6.26);
+check("Corn cake per-unit protein (6.9 x 0.0728)", T.CORN_CAKE.protein, 0.5);
+check("Corn cake keine Ballaststoffe", T.CORN_CAKE.fibre, 0);
+const ccR0 = { nutrition: { kcal: 200, fat: 5, sat: 1, carbs: 10, sugars: 1, fibre: 2, protein: 30, salt: 1 }, score: 0 };
+const ccHi = { protein: 30, carbs: 80, fat: 5, kcal: 560, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const ccK = T.bestCornCakes(ccR0.nutrition, ccHi, "macros", {});
+check("Corn: offene Carbs -> Stueckzahl > 0", ccK > 0, true);
+const ccAug = T.withCornCake(ccR0, true, ccHi, "macros", {});
+check("Corn: augmentierte Carbs naeher am Ziel als Basis", Math.abs(ccAug.nutrition.carbs - 80) < Math.abs(10 - 80), true);
+check("Corn: augmentierte kcal > Basis", ccAug.nutrition.kcal > 200, true);
+check("Corn: speichert Stueckzahl + corn-freie Basis", ccAug.corn === ccK && ccAug._base.carbs === 10, true);
+// Carb-Ziel bereits getroffen -> keine Cakes
+const ccMet = { protein: 30, carbs: 10, fat: 5, kcal: 360, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Corn: 0 Stueck wenn Carbs schon getroffen", T.bestCornCakes(ccR0.nutrition, ccMet, "macros", {}), 0);
+// Ohne Carb-Ziel -> nie Cakes (sonst ziellos)
+check("Corn: 0 Stueck ohne Carb-Ziel", T.bestCornCakes(ccR0.nutrition, { protein: 30, carbs: 0, fat: 5, kcal: 165, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}), 0);
+// Schalter aus -> Liste unveraendert (Identitaet)
+check("Corn: applyCornCakes(off) = unveraenderte Identitaet", T.applyCornCakes([ccR0], false, ccHi, "macros", {})[0] === ccR0, true);
+const ccOn = T.applyCornCakes([ccR0], true, ccHi, "macros", {});
+check("Corn: applyCornCakes(on) augmentiert (neues Objekt + corn-Feld)", ccOn[0] !== ccR0 && ccOn[0].corn === ccK, true);
+// withCornCake(off) = identisch
+check("Corn: withCornCake(off) = unveraendert", T.withCornCake(ccR0, false, ccHi, "macros", {}) === ccR0, true);
+// Kalorien-Modus: NIE Cakes (Carb-Gap existiert nur im Makro-Modus; sonst wuerde der ganze kcal-Gap mit Cakes gefuellt)
+check("Corn: 0 Stueck im Kalorien-Modus (auch mit grossem kcal-Gap)", T.bestCornCakes(ccR0.nutrition, { protein: 0, carbs: 0, fat: 0, kcal: 2000, fibMin: null, fibMax: null, sMin: null, sMax: null }, "calories", { hc: true }), 0);
+// applyCornCakes(on) re-sortiert nach corn-inklusivem Score (Default-"Score"-Ansicht spiegelt die Cakes wider)
+const ccFar = { nutrition: { kcal: 200, fat: 5, sat: 1, carbs: 10, sugars: 1, fibre: 2, protein: 50, salt: 1 }, score: 0 };
+const ccClose = { nutrition: { kcal: 540, fat: 5, sat: 1, carbs: 75, sugars: 1, fibre: 2, protein: 30, salt: 1 }, score: 99 };
+const ccSorted = T.applyCornCakes([ccFar, ccClose], true, ccHi, "macros", {}); // bewusst in falscher Reihenfolge
+check("Corn: applyCornCakes(on) sortiert aufsteigend nach corn-Score", ccSorted[0].score <= ccSorted[1].score, true);
+check("Corn: bestes Ergebnis (naeher am Ziel) steht nach Re-Sort vorne", ccSorted[0].nutrition.carbs > 60, true);
 
 // ── Urban Greens (NUR Build Your Own — fertige Gerichte bewusst entfernt) ──
 check("UG: keine fertigen Gerichte mehr (nur BYO)", T.UG.pre === undefined, true);

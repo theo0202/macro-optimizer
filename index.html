@@ -1582,6 +1582,42 @@ function score(a, t, mode, p) {
   return s;
 }
 
+// "Lightly salted low fat corn cakes": fast reine Carb-Quelle, nur in ganzen Stueck essbar (1 Stueck = 7.28 g).
+// Naehrwerte pro 100 g: 386 kcal, Fat 1.2, sat 0.3, Carbs 86.0, sugars 0.3, Protein 6.9, Salt 0.2 (KEINE Ballaststoffe).
+// Per-Stueck = per-100g × 0.0728. Restaurantsuebergreifender Schalter: der Optimizer haengt 0..N Cakes an JEDES
+// Ergebnis, um offene Carbs zu fuellen — aber nur wenn sie den Score verbessern (→ 0, wenn Carbs nicht offen sind).
+const CORN_CAKE={name:"Lightly salted low fat corn cakes",kcal:28.1,fat:0.09,sat:0.02,carbs:6.26,sugars:0.02,fibre:0,protein:0.5,salt:0.01};
+const CORN_CAKE_MAX=40; // Obergrenze der Stueck-Suche (40 Stueck ≈ 250 g Carbs / ~1124 kcal)
+// Optimale ganzzahlige Stueckzahl, die den Score gegen das Ziel minimiert. 0 wenn Cakes nichts verbessern.
+// NUR im Makro-Modus mit Carb-Ziel: Corn Cakes fuellen einen CARB-Gap, den es nur dort gibt. Im Kalorien-Modus
+// (nur kcal-Ziel, keine Carb-Vorgabe) wuerden sie den GANZEN kcal-Gap mit reiner Carb-Quelle fuellen → bis zum
+// 40er-Cap eskalieren; das ist sinnlos, daher dort immer 0.
+function bestCornCakes(n, t, mode, p){
+  if(mode!=="macros"||!(t.carbs>0)) return 0;
+  let bestK=0, bestS=score(n,t,mode,p);
+  const cur={}; for(const k of KEYS) cur[k]=n[k]||0;
+  for(let k=1;k<=CORN_CAKE_MAX;k++){
+    for(const key of KEYS) cur[key]+=CORN_CAKE[key];
+    const s=score(cur,t,mode,p);
+    if(s<bestS-1e-9){bestS=s;bestK=k;}
+  }
+  return bestK;
+}
+// Augmentiert EIN Ergebnis um die optimale Cake-Anzahl: neue nutrition (inkl. Cakes, fuer Karten+Ranking),
+// .corn (Stueckzahl), ._base (corn-freie nutrition, fuer Live-Recompute im Detail-Panel) + neuer score.
+function withCornCake(r, on, t, mode, p){
+  if(!on) return r;
+  const base=r.nutrition;
+  const k=bestCornCakes(base, t, mode, p);
+  if(!k) return Object.assign({}, r, {corn:0, _base:base});
+  const nn={}; for(const key of KEYS) nn[key]=Math.round(((base[key]||0)+k*CORN_CAKE[key])*10)/10;
+  return Object.assign({}, r, {corn:k, _base:base, nutrition:nn, score:score(nn,t,mode,p)});
+}
+// Augmentiert + re-sortiert nach dem corn-inklusiven Score (sonst zeigt die Default-"Score"-Sortierung die
+// PRE-corn-Reihenfolge des Optimizers; Karten waeren nicht nach ihrer echten Qualitaet inkl. Cakes geordnet).
+// Bleibt durch das Top-20-Slicing der Optimizer begrenzt, ordnet aber die angezeigten Kandidaten korrekt.
+function applyCornCakes(arr, on, t, mode, p){ return on?arr.map(r=>withCornCake(r,on,t,mode,p)).sort((a,b)=>a.score-b.score):arr; }
+
 // "Sort by": sortiert die Top-20-Kandidaten des Optimizers nach Accuracy EINER Dimension
 // (|Ist − Ziel|, Tie-Breaker: Gesamt-Score). sortBy="score" = unverändert (Optimizer-Reihenfolge).
 function sortResults(arr, sortBy, tgts) {
@@ -2439,6 +2475,7 @@ function App() {
   const [fibMax,setFibMax]=useState("");
   const [sMin,setSMin]=useState("");
   const [sMax,setSMax]=useState("");
+  const [cornCakes,setCornCakes]=useState(true); // restaurantsuebergreifend: Corn Cakes als Carb-Fueller anhaengen (Default AN)
   const [noSauce,setNS]=useState(true);
   const [noCheese,setNC]=useState(false); // "No cheese" — Default AUS (User 20.06.2026: Käse soll standardmäßig erlaubt sein)
   const [forceCheese,setForceCheese]=useState(false); // "Cheese" — erzwingt immer einen der beiden Käse (kein "none")
@@ -2642,6 +2679,20 @@ function App() {
          :resto==="wasabi"?{D:WASABI,sel:selWas,setSel:setSelWas,res:resultsWasabi,maxN:maxWas}
          :resto==="leon"?{D:LEON,sel:selLeon,setSel:setSelLeon,res:resultsLeon,maxN:maxLeon}:null;
 
+  // Corn Cakes (restaurantsuebergreifend): die aktive Ergebnisliste EINMAL augmentieren (Karten + Ranking).
+  // Memoisiert → stabile Objekt-Identitaet, damit die Selektion-Markierung (sel===r) heil bleibt.
+  const activeRaw=resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:(AC?AC.res:[]);
+  const activeResults=useMemo(()=>applyCornCakes(activeRaw,cornCakes,targets,mode,prefs),[activeRaw,cornCakes,targets,mode,prefs]);
+  // Live-Berechnung der Cake-Anzahl fuers Detail-Panel (reagiert sofort auf Ziel-Aenderung / Schalter).
+  // base = corn-freie nutrition (sel._base falls augmentiert, sonst sel.nutrition). Liefert {n, total}.
+  const cornTot=(base)=>{
+    if(!base) return {n:0,total:base};
+    const n=cornCakes?bestCornCakes(base,targets,mode,prefs):0;
+    if(!n) return {n:0,total:base};
+    const tot={}; for(const k of KEYS) tot[k]=Math.round((((base[k]||0)+n*CORN_CAKE[k]))*10)/10;
+    return {n,total:tot};
+  };
+
   const selTotal=useMemo(()=>{
     if(!sel)return null;
     const m=subSize==="footlong"?2:1;
@@ -2666,6 +2717,20 @@ function App() {
   },[selF,fTop,fSdt]);
 
   const autoK=mode==="macros"?(tP||0)*4+(tC||0)*4+(tF||0)*9:tK;
+
+  // Corn-Cake-Totals fuers jeweils offene Detail-Panel (live aus Basis + aktuellem Ziel/Schalter; {n,total}).
+  // base = corn-freie nutrition (selTotal/selFTotal werden corn-frei berechnet; ._base bei den .nutrition-Panels).
+  const ccSub=cornTot(selTotal);
+  const ccFJ=cornTot(selFTotal);
+  const ccAC=cornTot(AC&&AC.sel?(AC.sel._base||AC.sel.nutrition):null);
+  const ccUG=cornTot(selU?(selU._base||selU.nutrition):null);
+  const ccAt=cornTot(selA?(selA._base||selA.nutrition):null);
+  const ccCh=cornTot(selCh?(selCh._base||selCh.nutrition):null);
+  const ccFG=cornTot(selFG?(selFG._base||selFG.nutrition):null);
+  // Order-guide-Schritt (Stueckzahl) als wiederverwendbarer Eintrag, oder [] wenn keine Cakes.
+  const cornStep=cc=>cc.n>0?[{l:"Supplement",v:cc.n+"× "+CORN_CAKE.name}]:[];
+  // Karten-Suffix: " · +N× corn cakes" (r ist bereits via applyCornCakes augmentiert → r.corn).
+  const cornLbl=r=>(r&&r.corn>0)?" · +"+r.corn+"× corn cakes":"";
 
   // Sort by: im Kalorien-Modus gibt es keine Makro-Ziele → Protein/Carbs/Fat fallen auf Score zurück
   const effSort=(mode==="macros"||sortBy==="score"||sortBy==="kcal")?sortBy:"score";
@@ -2743,6 +2808,15 @@ function App() {
           h(NumIn,{label:"Salt Min",value:sMin,onChange:setSMin,placeholder:"–",unit:"g"}),
           h(NumIn,{label:"Salt Max",value:sMax,onChange:setSMax,placeholder:"–",unit:"g"})
         )
+      ),
+
+      // Corn cakes (cross-restaurant carb filler) — gilt fuer ALLE Restaurants (nicht im "Add own order"-Tracker)
+      resto!=="search"&&h("div",{style:{background:"#151515",borderRadius:12,padding:"12px 14px",marginBottom:16,border:"1px solid #222"}},
+        h("label",{style:{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:"#ddd",fontWeight:600}},
+          h("input",{type:"checkbox",checked:cornCakes,onChange:e=>setCornCakes(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),
+          "Top up carbs with corn cakes"),
+        h("div",{style:{fontSize:11,color:"#7a7",fontStyle:"italic",margin:"5px 0 0 24px",lineHeight:1.4}},
+          "Adds whole Lightly salted low fat corn cakes (≈28 kcal · 6.3g carbs each) on top of any restaurant order to fill remaining carbs. Only added when they improve the macro match — works across every restaurant.")
       ),
 
       // Restaurant
@@ -3058,7 +3132,7 @@ function App() {
 
       // Results list
       resto!=="search" && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
-        ...sortResults(resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:AC.res,effSort,sortTgts).slice(0,8).map((r,i)=>{
+        ...sortResults(activeResults,effSort,sortTgts).slice(0,8).map((r,i)=>{
           if(resto==="all"||resto==="accurate"){
             return h("button",{key:i,onClick:()=>selectAcross(r),style:{
               background:"#151515",border:"1px solid #222",borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
@@ -3067,7 +3141,7 @@ function App() {
                 h("div",null,
                   h("div",{style:{display:"flex",alignItems:"center",gap:7,marginBottom:3}},
                     h("span",{style:{fontSize:9,fontWeight:700,color:"#c4b5fd",background:"rgba(124,58,237,0.18)",border:"1px solid rgba(124,58,237,0.4)",borderRadius:5,padding:"2px 6px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},RESTO_NAME[r._resto]||r._resto),
-                    h("span",{style:{fontSize:13,fontWeight:600,color:"#fff"}},summarizeAcross(r))
+                    h("span",{style:{fontSize:13,fontWeight:600,color:"#fff"}},summarizeAcross(r)+cornLbl(r))
                   )
                 ),
                 h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono,whiteSpace:"nowrap"}},
@@ -3091,7 +3165,8 @@ function App() {
                +(r.scoop?" · "+r.scoop.name:"")
                +(r.tops.length?" · +"+r.tops.map(x=>x.name).join(", +"):"")
                +(r.dress?" · "+r.dress.name:"")
-               +(r.extras.length?" · +"+r.extras.map(e=>e.it.name).join(", +"):"");
+               +(r.extras.length?" · +"+r.extras.map(e=>e.it.name).join(", +"):"")
+               +cornLbl(r);
             return h("button",{key:i,onClick:()=>setSelU(isSelU?null:r),style:{
               background:isSelU?"rgba(0,151,67,0.08)":"#151515",
               border:isSelU?"1px solid "+S.green:"1px solid #222",
@@ -3115,7 +3190,7 @@ function App() {
           if(resto==="chopstix"){
             const isSelCh=selCh===r;
             const title=r.base.name+" + "+itsuLabel(r.tops);
-            const sub=r.box==="large"?"Large Box · 3 toppings":"Regular Box · 2 toppings";
+            const sub=(r.box==="large"?"Large Box · 3 toppings":"Regular Box · 2 toppings")+cornLbl(r);
             return h("button",{key:i,onClick:()=>setSelCh(isSelCh?null:r),style:{
               background:isSelCh?"rgba(0,151,67,0.08)":"#151515",
               border:isSelCh?"1px solid "+S.green:"1px solid #222",
@@ -3144,7 +3219,8 @@ function App() {
             const title=r.prots.length?r.prots.map(x=>x.name).join(" + "):"No protein";
             const sub="Power Plate · "+r.bases.map(nm).join(", ")+" · "+nm(r.mixed)+" · "+r.ing.map(nm).join(", ")
                +(r.sauce?" · "+r.sauce.name:"")+(r.crunch?" · "+r.crunch.name:"")
-               +(r.addons.length?" · +"+r.addons.map(x=>x.name).join(", +"):"");
+               +(r.addons.length?" · +"+r.addons.map(x=>x.name).join(", +"):"")
+               +cornLbl(r);
             return h("button",{key:i,onClick:()=>setSelA(isSelA?null:r),style:{
               background:isSelA?"rgba(0,151,67,0.08)":"#151515",
               border:isSelA?"1px solid "+S.green:"1px solid #222",
@@ -3176,7 +3252,8 @@ function App() {
                r.extraPatties?"+"+r.extraPatties+" patty":null,
                r.extras&&r.extras.length?"+ "+r.extras.join(", "):null,
                r.tops&&r.tops.length?"+ "+r.tops.map(x=>x.name).join(", "):null,
-               r.main&&r.fries?r.fries.name:null].filter(Boolean).join(" · ");
+               r.main&&r.fries?r.fries.name:null,
+               r.corn>0?"+"+r.corn+"× corn cakes":null].filter(Boolean).join(" · ");
             return h("button",{key:i,onClick:()=>setSelFG(isSelF?null:r),style:{
               background:isSelF?"rgba(0,151,67,0.08)":"#151515",
               border:isSelF?"1px solid "+S.green:"1px solid #222",
@@ -3211,7 +3288,7 @@ function App() {
                 h("div",null,
                   h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},itsuLabel(r.items)),
                   h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
-                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · "))
+                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · ")+cornLbl(r))
                 ),
                 h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
@@ -3240,7 +3317,8 @@ function App() {
                     r.fjBase.name
                     +(r.sides.length>0?" · "+r.sides.map(s=>s.name).join(" + "):" · no sides")
                     +(r.tops.length>0?" · +"+r.tops.map(x=>x.name).join(", +"):"")
-                    +(r.sdt.length>0?" · +"+r.sdt.map(x=>x.name).join(", +"):"")
+                    +(r.sdt.length>0?" · +"+r.sdt.map(x=>x.name).join(", +"):""),
+                    cornLbl(r)
                   )
                 ),
                 h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
@@ -3269,7 +3347,8 @@ function App() {
                   r.cheese.id!=="none"&&" · "+r.cheese.name,
                   r.extras.length>0&&" · +"+r.extras.map(e=>e.name).join(", +"),
                   r.sauces.length>0&&" · "+r.sauces.map(s=>s.name).join(", "),
-                  r.side&&" · + "+r.side.name
+                  r.side&&" · + "+r.side.name,
+                  cornLbl(r)
                 )
               ),
               h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
@@ -3324,14 +3403,14 @@ function App() {
           sel.bread.name," · ",subSize==="footlong"?"Footlong":"6 Inch",
           sel.cheese.id!=="none"&&" · "+sel.cheese.name),
 
-        // Macro bars
+        // Macro bars (inkl. Corn Cakes, falls Schalter an)
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:selTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:selTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:selTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:selTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
-          h(MacroBar,{label:"Fibre",value:selTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
-          h(MacroBar,{label:"Salt",value:selTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+          h(MacroBar,{label:"Calories",value:ccSub.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccSub.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccSub.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccSub.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:ccSub.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:ccSub.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
 
         // Extras
@@ -3410,6 +3489,7 @@ function App() {
             {l:"Sauce",v:noSauce?"None":(aS.map(s=>s.name).join(", ")||"–")},
             {l:"Seasonings",v:aSea.map(s=>s.name).join(", ")||"–"},
             ...(mSide?[{l:"Side",v:(D.sides.find(s=>s.id===mSide)||{}).name+" (separate item)"}]:[]),
+            ...cornStep(ccSub),
           ];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
@@ -3432,12 +3512,12 @@ function App() {
 
         // Macro bars
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:selFTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:selFTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:selFTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:selFTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
-          h(MacroBar,{label:"Fibre",value:selFTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
-          h(MacroBar,{label:"Salt",value:selFTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+          h(MacroBar,{label:"Calories",value:ccFJ.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccFJ.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccFJ.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccFJ.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:ccFJ.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:ccFJ.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
 
         // Toppings (nur Custom Builds)
@@ -3478,6 +3558,7 @@ function App() {
           if(selF.set) return box([
             {l:"Kategorie",v:"Set "+selF.set.group},
             {l:"Item",v:selF.set.name},
+            ...cornStep(ccFJ),
           ]);
           const aT=[...selF.tops,...FJ.toppings.filter(x=>fTop[x.id])];
           const aS=[...selF.sdt,...FJ.sdt.filter(x=>fSdt[x.id])];
@@ -3488,6 +3569,7 @@ function App() {
             {l:"Sides (2 free)",v:selF.sides.map(s=>s.name).join(", ")||"–"},
             {l:"Topping",v:aT.map(x=>x.name).join(", ")||"–"},
             {l:"Sauce/Dip",v:aS.map(x=>x.name).join(", ")||"–"},
+            ...cornStep(ccFJ),
           ]);
         })()
       ),
@@ -3499,12 +3581,12 @@ function App() {
 
         // Macro bars
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:AC.sel.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:AC.sel.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:AC.sel.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:AC.sel.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
-          h(MacroBar,{label:"Fibre",value:AC.sel.nutrition.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
-          h(MacroBar,{label:"Salt",value:AC.sel.nutrition.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+          h(MacroBar,{label:"Calories",value:ccAC.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccAC.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccAC.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:ccAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:ccAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
 
         // Einzelne Items mit kcal
@@ -3513,7 +3595,10 @@ function App() {
           ...AC.sel.items.map((x,xi)=>h("div",{key:xi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:xi<AC.sel.items.length-1?"1px solid #1f1f1f":"none"}},
             h("span",{style:{color:"#e0e0e0"}},x.name),
             h("span",{style:{color:"#999",fontFamily:S.mono}},x.kcal+" kcal · P "+x.protein+"g")
-          ))
+          )),
+          ccAC.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+            h("span",{style:{color:"#7a7"}},ccAC.n+"× "+CORN_CAKE.name),
+            h("span",{style:{color:"#999",fontFamily:S.mono}},Math.round(ccAC.n*CORN_CAKE.kcal*10)/10+" kcal · C "+Math.round(ccAC.n*CORN_CAKE.carbs*10)/10+"g"))
         ),
 
         // Order guide (à la carte)
@@ -3521,7 +3606,7 @@ function App() {
           const counts={};AC.sel.items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
           const uniq=[];const seenIds=new Set();
           AC.sel.items.forEach(x=>{if(!seenIds.has(x.id)){seenIds.add(x.id);uniq.push(x);}});
-          const steps=uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name}));
+          const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name})),...cornStep(ccAC)];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
               h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
@@ -3543,10 +3628,10 @@ function App() {
 
         // Macro bars (UG hat keine Fibre/Salt-Daten)
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:selU.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:selU.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:selU.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:selU.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"})
+          h(MacroBar,{label:"Calories",value:ccUG.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccUG.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccUG.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccUG.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
 
         // Komponenten
@@ -3560,7 +3645,10 @@ function App() {
             h("div",{key:gi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:"1px solid #1f1f1f"}},
               h("span",{style:{color:"#777",fontFamily:S.mono,fontSize:10,minWidth:90}},l),
               h("span",{style:{color:"#e0e0e0",textAlign:"right",flex:1}},arr.map(x=>x.name+" ("+x.kcal+")").join(", "))
-            ))
+            )),
+          ccUG.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+            h("span",{style:{color:"#7a7",fontFamily:S.mono,fontSize:10,minWidth:90}},"Supplement"),
+            h("span",{style:{color:"#7a7",textAlign:"right",flex:1}},ccUG.n+"× "+CORN_CAKE.name+" ("+Math.round(ccUG.n*CORN_CAKE.kcal*10)/10+")"))
         ),
 
         // Order guide (Urban Greens, Deliveroo-Schritte)
@@ -3588,6 +3676,7 @@ function App() {
             {l:"2 Toppings",v:selU.tops.length?selU.tops.map(x=>x.name).join(", "):"–"},
             {l:"Extra Dressing?",v:xDress.join(", ")||"–"},
             {l:"Extra Scoops etc.?",v:xScoop.join(", ")||"–"},
+            ...cornStep(ccUG),
           ]);
           return box([
             {l:"Dish",v:"BYO Salad"},
@@ -3601,6 +3690,7 @@ function App() {
             {l:"Dressing",v:selU.dress?selU.dress.name:"–"},
             {l:"Extra Dressing?",v:xDress.join(", ")||"–"},
             {l:"Extra Scoops etc.?",v:xScoop.join(", ")||"–"},
+            ...cornStep(ccUG),
           ]);
         })()
       ),
@@ -3612,10 +3702,10 @@ function App() {
         h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},"Build Your Own Power Plate"),
 
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:selA.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:selA.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:selA.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:selA.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"})
+          h(MacroBar,{label:"Calories",value:ccAt.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccAt.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccAt.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccAt.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
 
         // Komponenten (doublePlate-Items mit ×2 + verdoppeltem kcal)
@@ -3630,7 +3720,10 @@ function App() {
               h("div",{key:gi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:"1px solid #1f1f1f"}},
                 h("span",{style:{color:"#777",fontFamily:S.mono,fontSize:10,minWidth:90}},l),
                 h("span",{style:{color:"#e0e0e0",textAlign:"right",flex:1}},arr.map(x=>dn(x)+" ("+dk(x)+")").join(", "))
-              ))
+              )),
+            ccAt.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+              h("span",{style:{color:"#7a7",fontFamily:S.mono,fontSize:10,minWidth:90}},"Supplement"),
+              h("span",{style:{color:"#7a7",textAlign:"right",flex:1}},ccAt.n+"× "+CORN_CAKE.name+" ("+Math.round(ccAt.n*CORN_CAKE.kcal*10)/10+")"))
           );
         })(),
         h("div",{style:{fontSize:10,color:"#666",marginBottom:14,fontFamily:S.mono}},"\"double portion\" = select once, Atis serves it double in the Power Plate (counts 2× in macros)"),
@@ -3655,6 +3748,7 @@ function App() {
             {l:"Sauce",v:selA.sauce?selA.sauce.name:"I Don't Want A Dressing"},
             {l:"Crunch",v:selA.crunch?selA.crunch.name:"I Don't Want A Crunch"},
             {l:"Proteins?",v:selA.prots.length?selA.prots.map(x=>x.name).join(", "):"–"},
+            ...cornStep(ccAt),
           ]);
         })()
       ),
@@ -3666,10 +3760,10 @@ function App() {
           (selCh.box==="large"?"Large Box · 3 toppings":"Regular Box · 2 toppings")+" · "+selCh.base.name),
 
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:selCh.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:selCh.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:selCh.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:selCh.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"})
+          h(MacroBar,{label:"Calories",value:ccCh.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccCh.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccCh.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccCh.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
 
         // Komponenten (Base in Box-Größe + Toppings)
@@ -3682,7 +3776,10 @@ function App() {
               h("div",{key:gi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:"1px solid #1f1f1f"}},
                 h("span",{style:{color:"#777",fontFamily:S.mono,fontSize:10,minWidth:90}},l),
                 h("span",{style:{color:"#e0e0e0",textAlign:"right",flex:1}},arr.join(", "))
-              ))
+              )),
+            ccCh.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+              h("span",{style:{color:"#7a7",fontFamily:S.mono,fontSize:10,minWidth:90}},"Supplement"),
+              h("span",{style:{color:"#7a7",textAlign:"right",flex:1}},ccCh.n+"× "+CORN_CAKE.name+" ("+Math.round(ccCh.n*CORN_CAKE.kcal*10)/10+")"))
           );
         })(),
 
@@ -3701,6 +3798,7 @@ function App() {
             {l:"Box",v:selCh.box==="large"?"Triple Topper (3 Toppings) / Large Box":"Build a Box (2 Toppings) / Regular"},
             {l:"Base",v:selCh.base.name},
             {l:"Toppings",v:itsuLabel(selCh.tops)},
+            ...cornStep(ccCh),
           ]);
         })()
       ),
@@ -3712,12 +3810,12 @@ function App() {
           "Five Guys · build your own"+(selFG.main&&selFG.fries?" · "+selFG.fries.name:"")),
 
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:selFG.nutrition.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:selFG.nutrition.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Carbs",value:selFG.nutrition.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Fat",value:selFG.nutrition.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
-          h(MacroBar,{label:"Fibre",value:selFG.nutrition.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
-          h(MacroBar,{label:"Salt",value:selFG.nutrition.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+          h(MacroBar,{label:"Calories",value:ccFG.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Protein",value:ccFG.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Carbs",value:ccFG.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Fat",value:ccFG.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:ccFG.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:ccFG.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
 
         // Komponenten (Main + Toppings + Fries)
@@ -3733,7 +3831,10 @@ function App() {
             h("div",{key:gi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:"1px solid #1f1f1f"}},
               h("span",{style:{color:"#777",fontFamily:S.mono,fontSize:10,minWidth:90}},l),
               h("span",{style:{color:"#e0e0e0",textAlign:"right",flex:1}},arr.join(", "))
-            ))
+            )),
+          ccFG.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+            h("span",{style:{color:"#7a7",fontFamily:S.mono,fontSize:10,minWidth:90}},"Supplement"),
+            h("span",{style:{color:"#7a7",textAlign:"right",flex:1}},ccFG.n+"× "+CORN_CAKE.name+" ("+Math.round(ccFG.n*CORN_CAKE.kcal*10)/10+")"))
         ),
 
         // Order guide (Five Guys, Deliveroo-Schritte)
@@ -3757,6 +3858,7 @@ function App() {
             if(g==="sandwiches"&&selFG.extras&&selFG.extras.length)steps.push({l:"Extras",v:selFG.extras.join(", ")});
           }
           if(selFG.fries)steps.push({l:"Fries",v:selFG.fries.name});
+          cornStep(ccFG).forEach(s=>steps.push(s));
           return box(steps);
         })()
       ),
