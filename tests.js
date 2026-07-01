@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, CORN_GOOD, cornCapCount, bestCornCakes, smartCornCakes, withCornCake, applyCornCakes, score };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -360,6 +360,38 @@ check("Corn cap: ohne Cap deutlich mehr Cakes als mit (Gegenprobe)", ccUncapped 
 // Cap bindet nicht, wenn die optimale Stueckzahl ohnehin unter dem Cap liegt (Basis schon nah am Carb-Ziel)
 const ccNear = { kcal: 380, fat: 5, sat: 1, carbs: 70, sugars: 1, fibre: 2, protein: 30, salt: 1 };
 check("Corn cap: optimale Stueckzahl < Cap -> Cap bindet nicht", T.bestCornCakes(ccNear, ccHi, "macros", {}, 50) < T.cornCapCount(ccHi, 50), true);
+
+// ── Corn cakes: Smart "only when needed" (cornAuto) ──
+const CC_KEYS = ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"];
+const addCakes = (n, k) => { const o = {}; CC_KEYS.forEach(key => o[key] = (n[key] || 0) + k * T.CORN_CAKE[key]); return o; };
+const smTgt = { protein: 40, carbs: 80, fat: 15, kcal: 615, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const smBad = { kcal: 438, fat: 14, sat: 3, carbs: 40, sugars: 3, fibre: 3, protein: 38, salt: 1 }; // Carb-Loch -> schlechter Score
+const smSmart = T.smartCornCakes(smBad, smTgt, "macros", {}, 0);
+const smBest = T.bestCornCakes(smBad, smTgt, "macros", {}, 0);
+check("Smart: schlechtes Carb-Loch -> Cakes > 0", smSmart > 0, true);
+check("Smart: <= Score-Minimum-Stueckzahl (so wenig wie moeglich)", smSmart <= smBest, true);
+check("Smart: erreicht guten Score (<= CORN_GOOD)", T.score(addCakes(smBad, smSmart), smTgt, "macros", {}) <= T.CORN_GOOD, true);
+check("Smart: eine weniger ist NICHT mehr gut (fewest)", smSmart >= 1 && T.score(addCakes(smBad, smSmart - 1), smTgt, "macros", {}) > T.CORN_GOOD, true);
+// Basis schon gut -> 0 Cakes (kein faelschliches +1 durch die k>=1-Schleife)
+const smGood = { kcal: 600, fat: 15, sat: 3, carbs: 78, sugars: 3, fibre: 3, protein: 40, salt: 1 };
+check("Smart: gute Basis (Score <= CORN_GOOD) -> 0 Cakes", T.smartCornCakes(smGood, smTgt, "macros", {}, 0), 0);
+// Gate: existiert ein gutes No-Cake-Ergebnis -> Liste unveraendert (keine Cakes), gleiche Referenz
+const smGoodRes = { nutrition: smGood, score: 0.2 };
+const smBadRes = { nutrition: smBad, score: 1.2 };
+const gateIn = [smGoodRes, smBadRes];
+check("Smart-Gate: gutes Ergebnis vorhanden -> Liste unveraendert", T.applyCornCakes(gateIn, true, smTgt, "macros", {}, 0, true) === gateIn, true);
+// Gate: alle schlecht -> Cakes angewandt (mind. ein Ergebnis bekommt corn > 0)
+const allBad = T.applyCornCakes([smBadRes, { nutrition: smBad, score: 1.1 }], true, smTgt, "macros", {}, 0, true);
+check("Smart-Gate: alle schlecht -> Cakes angewandt", allBad.some(r => r.corn > 0), true);
+// Manueller Modus (auto=false) ignoriert das Gate -> fuellt immer, wenn es hilft
+const manual = T.applyCornCakes(gateIn, true, smTgt, "macros", {}, 0, false);
+check("Manuell (auto=false): Gate ignoriert -> Cakes auch bei gutem Ergebnis-Mix", manual.some(r => r.corn > 0), true);
+// Smart-Gate PRO Restaurant (All/Accurate, Ergebnisse tragen _resto): gutes Restaurant cake-frei, schlechtes bekommt Cakes
+const gGood = { nutrition: smGood, score: 0.2, _resto: "subway" };
+const gBad = { nutrition: smBad, score: 1.2, _resto: "itsu" };
+const perResto = T.applyCornCakes([gGood, gBad], true, smTgt, "macros", {}, 0, true);
+check("Smart per-Restaurant: gutes Restaurant bleibt cake-frei", !perResto.find(r => r._resto === "subway").corn, true);
+check("Smart per-Restaurant: schlechtes Restaurant bekommt Cakes", perResto.find(r => r._resto === "itsu").corn > 0, true);
 
 // ── Urban Greens (NUR Build Your Own — fertige Gerichte bewusst entfernt) ──
 check("UG: keine fertigen Gerichte mehr (nur BYO)", T.UG.pre === undefined, true);

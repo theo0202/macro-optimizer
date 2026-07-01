@@ -1610,12 +1610,31 @@ function bestCornCakes(n, t, mode, p, capPct){
   }
   return bestK;
 }
+// "Smart"-Modus-Schwelle: Score <= CORN_GOOD = Makros im Wesentlichen getroffen (Makro-Modus). Empirisch kalibriert.
+const CORN_GOOD=0.5;
+// Smart-Stueckzahl: die WENIGSTEN Cakes, die einen guten Score (<=CORN_GOOD) erreichen ("so wenig wie moeglich,
+// so viel wie noetig"); ist "gut" nicht erreichbar (z.B. Score schlecht wegen Protein/Fett), bestes Bemuehen
+// (Score-Minimum) — das ist 0, wenn Cakes ueberhaupt nichts verbessern. Cap + Modus-Guards wie bestCornCakes.
+function smartCornCakes(n, t, mode, p, capPct){
+  if(mode!=="macros"||!(t.carbs>0)) return 0;
+  let bestK=0, bestS=score(n,t,mode,p);
+  if(bestS<=CORN_GOOD) return 0;           // Basis schon gut → keine Cakes (so wenige wie moeglich)
+  const maxN=Math.min(CORN_CAKE_MAX, cornCapCount(t, capPct||0));
+  const cur={}; for(const k of KEYS) cur[k]=n[k]||0;
+  for(let k=1;k<=maxN;k++){
+    for(const key of KEYS) cur[key]+=CORN_CAKE[key];
+    const s=score(cur,t,mode,p);
+    if(s<=CORN_GOOD) return k;              // gut genug → so wenige wie moeglich, sofort Stop
+    if(s<bestS-1e-9){bestS=s;bestK=k;}
+  }
+  return bestK;                            // "gut" unerreichbar → bestes Bemuehen (0, wenn Cakes nichts bringen)
+}
 // Augmentiert EIN Ergebnis um die optimale Cake-Anzahl: neue nutrition (inkl. Cakes, fuer Karten+Ranking),
 // .corn (Stueckzahl), ._base (corn-freie nutrition, fuer Live-Recompute im Detail-Panel) + neuer score.
-function withCornCake(r, on, t, mode, p, capPct){
+function withCornCake(r, on, t, mode, p, capPct, auto){
   if(!on) return r;
   const base=r.nutrition;
-  const k=bestCornCakes(base, t, mode, p, capPct);
+  const k=auto?smartCornCakes(base,t,mode,p,capPct):bestCornCakes(base,t,mode,p,capPct);
   if(!k) return Object.assign({}, r, {corn:0, _base:base});
   const nn={}; for(const key of KEYS) nn[key]=Math.round(((base[key]||0)+k*CORN_CAKE[key])*10)/10;
   return Object.assign({}, r, {corn:k, _base:base, nutrition:nn, score:score(nn,t,mode,p)});
@@ -1623,7 +1642,22 @@ function withCornCake(r, on, t, mode, p, capPct){
 // Augmentiert + re-sortiert nach dem corn-inklusiven Score (sonst zeigt die Default-"Score"-Sortierung die
 // PRE-corn-Reihenfolge des Optimizers; Karten waeren nicht nach ihrer echten Qualitaet inkl. Cakes geordnet).
 // Bleibt durch das Top-20-Slicing der Optimizer begrenzt, ordnet aber die angezeigten Kandidaten korrekt.
-function applyCornCakes(arr, on, t, mode, p, capPct){ return on?arr.map(r=>withCornCake(r,on,t,mode,p,capPct)).sort((a,b)=>a.score-b.score):arr; }
+// auto = "Smart only-when-needed": Cakes NUR, wenn das beste No-Cake-Ergebnis schlecht ist (Score > CORN_GOOD);
+// gibt es schon ein gutes Ergebnis, bleibt die Liste cake-frei (User: "nur wenn sonst nur schlechte Scores").
+// Bestes No-Cake-Score je Restaurant-Gruppe (in All/Accurate tragen Ergebnisse _resto; sonst 1 Gruppe).
+function cornGroupBest(arr){
+  const gb={}; for(const r of arr){const g=r._resto||"_"; if(gb[g]===undefined||r.score<gb[g]) gb[g]=r.score;} return gb;
+}
+function applyCornCakes(arr, on, t, mode, p, capPct, auto){
+  if(!on) return arr;
+  if(auto){
+    // Smart-Gate PRO Restaurant: nur Gruppen, deren bestes No-Cake-Ergebnis schlecht ist (>CORN_GOOD), bekommen Cakes.
+    const gb=cornGroupBest(arr);
+    if(!Object.keys(gb).some(g=>gb[g]>CORN_GOOD)) return arr;   // jede Gruppe hat ein gutes Ergebnis → keine Cakes
+    return arr.map(r=>(gb[r._resto||"_"]>CORN_GOOD)?withCornCake(r,on,t,mode,p,capPct,auto):r).sort((a,b)=>a.score-b.score);
+  }
+  return arr.map(r=>withCornCake(r,on,t,mode,p,capPct,auto)).sort((a,b)=>a.score-b.score);
+}
 
 // "Sort by": sortiert die Top-20-Kandidaten des Optimizers nach Accuracy EINER Dimension
 // (|Ist − Ziel|, Tie-Breaker: Gesamt-Score). sortBy="score" = unverändert (Optimizer-Reihenfolge).
@@ -2482,7 +2516,8 @@ function App() {
   const [fibMax,setFibMax]=useState("");
   const [sMin,setSMin]=useState("");
   const [sMax,setSMax]=useState("");
-  const [cornCakes,setCornCakes]=useState(false); // restaurantsuebergreifend: Corn Cakes als Carb-Fueller anhaengen (Default AUS, User 30.06.2026)
+  const [cornCakes,setCornCakes]=useState(false); // manuell: Corn Cakes immer anhaengen, wenn sie helfen (Default AUS, User 30.06.2026)
+  const [cornAuto,setCornAuto]=useState(false);    // smart: Cakes NUR wenn das beste No-Cake-Ergebnis schlecht ist (Default AUS); exklusiv zu cornCakes
   const [cornCap,setCornCap]=useState(0);          // max % der Carbs aus Cakes (0 = kein Cap; Presets 20/30/40/50 + frei)
   const [noSauce,setNS]=useState(true);
   const [noCheese,setNC]=useState(false); // "No cheese" — Default AUS (User 20.06.2026: Käse soll standardmäßig erlaubt sein)
@@ -2690,12 +2725,17 @@ function App() {
   // Corn Cakes (restaurantsuebergreifend): die aktive Ergebnisliste EINMAL augmentieren (Karten + Ranking).
   // Memoisiert → stabile Objekt-Identitaet, damit die Selektion-Markierung (sel===r) heil bleibt.
   const activeRaw=resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:(AC?AC.res:[]);
-  const activeResults=useMemo(()=>applyCornCakes(activeRaw,cornCakes,targets,mode,prefs,cornCap),[activeRaw,cornCakes,targets,mode,prefs,cornCap]);
+  // Smart-Modus: ist (pro Restaurant-Gruppe) mindestens eine schlecht (bestes No-Cake-Score > CORN_GOOD)? Nur dann Cakes.
+  // Auf Einzel-Restaurant-Tabs = genau dieses Restaurant; in All/Accurate = "irgendein Restaurant braucht Cakes".
+  const cornAutoActive=cornAuto&&activeRaw.length>0&&(()=>{const gb=cornGroupBest(activeRaw);return Object.keys(gb).some(g=>gb[g]>CORN_GOOD);})();
+  const activeResults=useMemo(()=>applyCornCakes(activeRaw,cornCakes||cornAuto,targets,mode,prefs,cornCap,cornAuto),[activeRaw,cornCakes,cornAuto,targets,mode,prefs,cornCap]);
   // Live-Berechnung der Cake-Anzahl fuers Detail-Panel (reagiert sofort auf Ziel-Aenderung / Schalter / Cap).
   // base = corn-freie nutrition (sel._base falls augmentiert, sonst sel.nutrition). Liefert {n, total}.
+  // Smart-Modus zieht nur, wenn das Restaurant gated-in ist (cornAutoActive); dann smartCornCakes statt bestCornCakes.
   const cornTot=(base)=>{
     if(!base) return {n:0,total:base};
-    const n=cornCakes?bestCornCakes(base,targets,mode,prefs,cornCap):0;
+    const on=cornCakes||cornAutoActive;
+    const n=on?(cornAuto?smartCornCakes(base,targets,mode,prefs,cornCap):bestCornCakes(base,targets,mode,prefs,cornCap)):0;
     if(!n) return {n:0,total:base};
     const tot={}; for(const k of KEYS) tot[k]=Math.round((((base[k]||0)+n*CORN_CAKE[k]))*10)/10;
     return {n,total:tot};
@@ -2820,13 +2860,22 @@ function App() {
 
       // Corn cakes (cross-restaurant carb filler) — gilt fuer ALLE Restaurants (nicht im "Add own order"-Tracker)
       resto!=="search"&&h("div",{style:{background:"#151515",borderRadius:12,padding:"12px 14px",marginBottom:16,border:"1px solid #222"}},
+        // Manueller Modus: immer anhaengen, wenn sie helfen. Exklusiv zum Smart-Modus.
         h("label",{style:{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:"#ddd",fontWeight:600}},
-          h("input",{type:"checkbox",checked:cornCakes,onChange:e=>setCornCakes(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),
+          h("input",{type:"checkbox",checked:cornCakes,onChange:e=>{setCornCakes(e.target.checked);if(e.target.checked)setCornAuto(false);},style:{accentColor:S.green,width:16,height:16}}),
           "Top up carbs with corn cakes"),
         h("div",{style:{fontSize:11,color:"#7a7",fontStyle:"italic",margin:"5px 0 0 24px",lineHeight:1.4}},
           "Adds whole Kallo Lightly salted low fat corn cakes (≈28 kcal · 6.3g carbs each) on top of any restaurant order to fill remaining carbs. Only added when they improve the macro match — works across every restaurant (in 'Enter macros' mode)."),
+        // Smart-Modus: nur wenn das beste No-Cake-Ergebnis schlecht ist, dann so wenige wie noetig. Exklusiv zum manuellen.
+        h("label",{style:{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:"#ddd",fontWeight:600,marginTop:10}},
+          h("input",{type:"checkbox",checked:cornAuto,onChange:e=>{setCornAuto(e.target.checked);if(e.target.checked)setCornCakes(false);},style:{accentColor:S.green,width:16,height:16}}),
+          "Smart: only when needed"),
+        h("div",{style:{fontSize:11,color:"#7a7",fontStyle:"italic",margin:"5px 0 0 24px",lineHeight:1.4}},
+          "Only brings in corn cakes where even the best restaurant order otherwise misses your macros — and then as few as possible to hit them. Leaves good orders cake-free (in 'Enter macros' mode)."),
+        cornAuto&&mode==="macros"&&h("div",{style:{fontSize:11,fontFamily:S.mono,margin:"6px 0 0 24px",color:cornAutoActive?"#4ade80":"#777"}},
+          cornAutoActive?"● Active — the best order otherwise scores poorly, so corn cakes are added":"○ Not needed here — a good order is available without corn cakes"),
         // Cap: max % der Carbs, die durch Corn Cakes abgedeckt werden duerfen (verhindert Mini-Bestellung + viele Cakes)
-        cornCakes&&mode==="macros"&&h("div",{style:{marginTop:10,paddingTop:10,borderTop:"1px solid #222"}},
+        (cornCakes||cornAuto)&&mode==="macros"&&h("div",{style:{marginTop:10,paddingTop:10,borderTop:"1px solid #222"}},
           h("div",{style:{fontSize:10,color:"#666",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Max % of carbs from corn cakes"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,alignItems:"center"}},
             h(Chip,{label:"No limit",small:true,active:!cornCap,onClick:()=>setCornCap(0)}),
