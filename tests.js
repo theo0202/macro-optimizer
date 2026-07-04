@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -733,6 +733,23 @@ check("Bagel Factory 'No snacks & sweet treats' filtert sweets", rBF.every(r => 
 const rBFsw = T.optimizeBagelFactory({ protein: 5, carbs: 45, fat: 20, kcal: 380, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allBF, 1, false);
 check("Bagel Factory ohne Schalter: Sweets erlaubt (Gegenprobe)", rBFsw.some(r => r.items.some(x => x.cat === "sweets")), true);
 check("Bagel Factory Kategorie-Filter (nur Deli)", T.optimizeBagelFactory(tBF, "macros", {}, { deli: true }, 1, true).every(r => r.items.every(x => x.cat === "deli")), true);
+// Bun-Wahl: 6 Buns, Plain als Referenz; vollwertige Bagels swappbar, Mini/Sweets nicht
+const bfPlainBun = T.BAGELFACTORY.buns.find(b => b.plain);
+const bfMulti = T.BAGELFACTORY.buns.find(b => b.id === "multigrain");
+check("Bagel Factory 6 Buns + Plain-Referenz", T.BAGELFACTORY.buns.length === 6 && !!bfPlainBun, true);
+check("Bagel Factory bunSwap nur auf vollwertigen Bagels", T.BAGELFACTORY.items.every(x => (["spread", "breakfast", "veggie", "seafood", "deli"].includes(x.cat)) === !!x.bunSwap), true);
+const ccBase = T.BAGELFACTORY.items.find(x => x.id === "cream_cheese_bagel");
+// bfSwap-Mathe: Bagel − Plain Bun + gewählter Bun (auf die Nachkommastelle)
+check("Bagel Factory bfSwap kcal (Bagel − Plain + Multigrain)", T.bfSwap(ccBase, bfMulti).kcal, Math.round((ccBase.kcal - bfPlainBun.kcal + bfMulti.kcal) * 10) / 10);
+check("Bagel Factory bfSwap carbs", T.bfSwap(ccBase, bfMulti).carbs, Math.round((ccBase.carbs - bfPlainBun.carbs + bfMulti.carbs) * 10) / 10);
+check("Bagel Factory bfSwap Name-Suffix", T.bfSwap(ccBase, bfMulti).name === "Cream Cheese Bagel (Multigrain)", true);
+check("Bagel Factory bfSwap Plain = Item unverändert (Identität)", T.bfSwap(ccBase, bfPlainBun) === ccBase, true);
+// Bun-Filter: nur Multigrain erlaubt -> alle vollwertigen Ergebnisse tragen (Multigrain)
+const rMulti = T.optimizeBagelFactory({ protein: 12, carbs: 48, fat: 17, kcal: 404, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { spread: true }, 1, true, { multigrain: true });
+check("Bagel Factory Bun-Filter: nur Multigrain-Varianten", rMulti.length > 0 && rMulti.every(r => r.items.every(x => /\(Multigrain\)$/.test(x.name))), true);
+// leere Bun-Auswahl (bunsOk mit nichts) -> alle Buns (wie Subway)
+const rAllBuns = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 2, true, {});
+check("Bagel Factory leere Bun-Auswahl = alle Buns (Varianten vorhanden)", rAllBuns.some(r => r.items.some(x => /\((Poppy|Sesame|Multigrain|Everything|Cheese)/.test(x.name))), true);
 
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };

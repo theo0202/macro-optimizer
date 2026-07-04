@@ -1552,8 +1552,9 @@ const LEON = {
 // __LEON_DATA_END__
 
 // __BAGELFACTORY_DATA_START__ (generiert via: node bagelfactory-update.js aus data/bagelfactory-raw.json — nicht von Hand editieren)
-// Quelle: Bagel Factory 'Full Ingredient List' PDF (Issue 20, 13/04/2026) · 43 Items · per-portion, Werte = Plain Bun.
-// NUR Set-Menue: EXTRAS/SAUCES der PDF sind per-100g ohne Portionsgroessen -> BYO/Customizing nicht abbildbar.
+// Quelle: Bagel Factory 'Full Ingredient List' PDF (Issue 20, 13/04/2026) · 43 Items + 6 Buns · per-portion.
+// Bagels = Werte fuer den Plain Bun; bunSwap:true-Items koennen umgerechnet werden = Bagel - Plain Bun + gewaehlter Bun.
+// EXTRAS/SAUCES (Fillings) der PDF sind per-100g ohne Portionsgroessen -> Fillings/BYO nicht abbildbar.
 const BAGELFACTORY = {
   cats: [
     { id:"spread",name:"Spread Bagels",on:true },
@@ -1564,38 +1565,46 @@ const BAGELFACTORY = {
     { id:"mini",name:"Mini Bagels",on:true },
     { id:"sweets",name:"Sweet Treats",on:true },
   ],
+  buns: [
+    { id:"plain",name:"Plain",plain:true,kcal:296,fat:1.8,sat:0.2,carbs:57.5,sugars:5.8,fibre:3.6,protein:10.5,salt:0.73 },
+    { id:"poppy",name:"Poppy",plain:false,kcal:289,fat:2.6,sat:0.8,carbs:56.6,sugars:5.5,fibre:3.2,protein:8.3,salt:1.14 },
+    { id:"sesame",name:"Sesame",plain:false,kcal:290,fat:2.8,sat:0.8,carbs:56.4,sugars:5.5,fibre:3.1,protein:8.3,salt:1.07 },
+    { id:"multigrain",name:"Multigrain",plain:false,kcal:267,fat:4.7,sat:0.7,carbs:46,sugars:2.6,fibre:3.9,protein:8.1,salt:1.03 },
+    { id:"everything",name:"Everything",plain:false,kcal:292,fat:2.9,sat:0.8,carbs:56.2,sugars:3.5,fibre:3.4,protein:8.4,salt:1.1 },
+    { id:"cheese_jalapeno",name:"Cheese and Jalapeno",plain:false,kcal:296,fat:3.8,sat:1.7,carbs:54.5,sugars:2.7,fibre:3,protein:9.4,salt:1.55 },
+  ],
   items: [
-    { id:"cream_cheese_bagel",name:"Cream Cheese Bagel",cat:"spread",kcal:435,fat:14.4,sat:8.1,carbs:60,sugars:7.8,fibre:3.6,protein:14.5,salt:1.02 },
-    { id:"garlic_herbs_cream_cheese_bagel",name:"Garlic & Herbs Cream Cheese Bagel",cat:"spread",kcal:435,fat:14.4,sat:8.1,carbs:60,sugars:7.8,fibre:3.6,protein:14.5,salt:1.02 },
-    { id:"chives_cream_cheese_bagel",name:"Chives Cream Cheese Bagel",cat:"spread",kcal:435,fat:14.4,sat:8.1,carbs:60,sugars:7.8,fibre:3.6,protein:14.5,salt:1.02 },
-    { id:"jalapeno_cream_cheese_bagel",name:"Jalapeno Cream Cheese Bagel",cat:"spread",kcal:436,fat:14.4,sat:8.1,carbs:60.1,sugars:7.8,fibre:3.6,protein:14.5,salt:1.5 },
-    { id:"vegan_cream_cheese_bagel",name:"Vegan Cream Cheese Bagel",cat:"spread",kcal:422,fat:13.9,sat:10.4,carbs:58.6,sugars:6.2,fibre:4.7,protein:13.4,salt:1.3 },
-    { id:"nutella_bagel",name:"Nutella Bagel",cat:"spread",kcal:511,fat:14.2,sat:4.5,carbs:80.5,sugars:28.3,fibre:6.1,protein:10.5,salt:0.8 },
-    { id:"crunchy_peanut_butter_bagel",name:"Crunchy Peanut Butter Bagel",cat:"spread",kcal:548,fat:22.2,sat:3,carbs:63.1,sugars:8.1,fibre:6.3,protein:20.5,salt:1.1 },
-    { id:"smooth_peanut_butter_bagel",name:"Smooth Peanut Butter Bagel",cat:"spread",kcal:534,fat:20.2,sat:4.2,carbs:72.7,sugars:8.6,fibre:6.8,protein:21.7,salt:1.2 },
-    { id:"strawberry_jam_bagel",name:"Strawberry Jam Bagel",cat:"spread",kcal:388,fat:2,sat:0.3,carbs:92.9,sugars:7.2,fibre:3.6,protein:10.7,salt:0.8 },
-    { id:"egg_mayo_bagel",name:"Egg Mayo Bagel",cat:"spread",kcal:425,fat:13.4,sat:2.2,carbs:57.9,sugars:5.9,fibre:3.6,protein:16.4,salt:1.3 },
-    { id:"bacon_bagel",name:"Bacon Bagel",cat:"breakfast",kcal:470,fat:15.4,sat:5.2,carbs:59.5,sugars:6.9,fibre:3.8,protein:21.4,salt:1.8 },
-    { id:"bacon_egg_bagel",name:"Bacon & Egg Bagel",cat:"breakfast",kcal:578,fat:23.3,sat:6.5,carbs:61.3,sugars:8.6,fibre:4,protein:28.3,salt:2.1 },
-    { id:"sausage_bagel",name:"Sausage Bagel",cat:"breakfast",kcal:455,fat:13.6,sat:4.6,carbs:61,sugars:7.3,fibre:4.7,protein:20,salt:1.6 },
-    { id:"sausage_egg_bagel",name:"Sausage & Egg Bagel",cat:"breakfast",kcal:625,fat:26.6,sat:7.7,carbs:62.8,sugars:9,fibre:5,protein:31,salt:2.2 },
-    { id:"veggie_breakfast_bagel",name:"Veggie Breakfast Bagel",cat:"breakfast",kcal:630,fat:28.8,sat:9.4,carbs:62.3,sugars:9.9,fibre:5.1,protein:27.4,salt:1.9 },
-    { id:"egg_mayo_and_salmon_bagel",name:"Egg Mayo and Salmon Bagel",cat:"breakfast",kcal:491,fat:16.9,sat:3,carbs:60,sugars:6.2,fibre:4.7,protein:24.4,salt:2.6 },
-    { id:"breakfast_deluxe",name:"Breakfast Deluxe",cat:"breakfast",kcal:750,fat:31.1,sat:8.3,carbs:84.3,sugars:8.3,fibre:6.7,protein:29.1,salt:2.9 },
-    { id:"halloumi_melt_bagel",name:"Halloumi Melt Bagel",cat:"veggie",kcal:612,fat:26.6,sat:13.5,carbs:61.3,sugars:9.5,fibre:4.3,protein:29.6,salt:3.4 },
-    { id:"vegan_cream_cheese_stack_bagel",name:"Vegan Cream Cheese Stack Bagel",cat:"veggie",kcal:550,fat:26.9,sat:12.5,carbs:59.9,sugars:6.7,fibre:6,protein:14.3,salt:1.5 },
-    { id:"honey_heat_halloumi",name:"Honey Heat Halloumi",cat:"veggie",kcal:682,fat:28.7,sat:13.9,carbs:73.5,sugars:16.5,fibre:6.6,protein:31.6,salt:3.9 },
-    { id:"vlt_bagel",name:"VLT Bagel",cat:"veggie",kcal:476,fat:16.6,sat:1.3,carbs:60.4,sugars:8.5,fibre:6.2,protein:18.4,salt:1.9 },
-    { id:"the_classic",name:"The Classic",cat:"seafood",kcal:501,fat:17.9,sat:9,carbs:62,sugars:8.1,fibre:4.6,protein:22.5,salt:2.3 },
-    { id:"tuna_melt",name:"Tuna Melt",cat:"seafood",kcal:667,fat:31.4,sat:10.2,carbs:60.8,sugars:7.9,fibre:4.1,protein:33.2,salt:2.6 },
-    { id:"the_new_yorker",name:"The New Yorker",cat:"seafood",kcal:522,fat:18.1,sat:9.1,carbs:65.6,sugars:11,fibre:5.7,protein:23.1,salt:3.3 },
-    { id:"chicken_club",name:"Chicken Club",cat:"deli",kcal:637,fat:26.8,sat:8.4,carbs:60.2,sugars:8,fibre:4.2,protein:36.6,salt:2.2 },
-    { id:"salt_beef_melt",name:"Salt Beef Melt",cat:"deli",kcal:560,fat:18.6,sat:10.2,carbs:58.5,sugars:6.8,fibre:4.3,protein:36.9,salt:3.8 },
-    { id:"smoky_pulled_pork",name:"Smoky Pulled Pork",cat:"deli",kcal:715,fat:29.9,sat:14.5,carbs:65.7,sugars:10.6,fibre:5.3,protein:41.8,salt:3 },
-    { id:"spicy_chicken",name:"Spicy Chicken",cat:"deli",kcal:560,fat:16.9,sat:9.2,carbs:63.8,sugars:10.5,fibre:4,protein:36.1,salt:3.4 },
-    { id:"deli_turkey",name:"Deli Turkey",cat:"deli",kcal:603,fat:22.7,sat:11.4,carbs:63.5,sugars:8.9,fibre:4.1,protein:33.4,salt:3 },
-    { id:"chicken_avo",name:"Chicken & Avo",cat:"deli",kcal:565,fat:23.8,sat:3.4,carbs:58.6,sugars:6.2,fibre:4.9,protein:26.6,salt:1.3 },
-    { id:"ham_cheese",name:"Ham & Cheese",cat:"deli",kcal:541,fat:18.3,sat:9.7,carbs:57.8,sugars:5.9,fibre:3.9,protein:34.4,salt:2.7 },
+    { id:"cream_cheese_bagel",name:"Cream Cheese Bagel",cat:"spread",bunSwap:true,kcal:435,fat:14.4,sat:8.1,carbs:60,sugars:7.8,fibre:3.6,protein:14.5,salt:1.02 },
+    { id:"garlic_herbs_cream_cheese_bagel",name:"Garlic & Herbs Cream Cheese Bagel",cat:"spread",bunSwap:true,kcal:435,fat:14.4,sat:8.1,carbs:60,sugars:7.8,fibre:3.6,protein:14.5,salt:1.02 },
+    { id:"chives_cream_cheese_bagel",name:"Chives Cream Cheese Bagel",cat:"spread",bunSwap:true,kcal:435,fat:14.4,sat:8.1,carbs:60,sugars:7.8,fibre:3.6,protein:14.5,salt:1.02 },
+    { id:"jalapeno_cream_cheese_bagel",name:"Jalapeno Cream Cheese Bagel",cat:"spread",bunSwap:true,kcal:436,fat:14.4,sat:8.1,carbs:60.1,sugars:7.8,fibre:3.6,protein:14.5,salt:1.5 },
+    { id:"vegan_cream_cheese_bagel",name:"Vegan Cream Cheese Bagel",cat:"spread",bunSwap:true,kcal:422,fat:13.9,sat:10.4,carbs:58.6,sugars:6.2,fibre:4.7,protein:13.4,salt:1.3 },
+    { id:"nutella_bagel",name:"Nutella Bagel",cat:"spread",bunSwap:true,kcal:511,fat:14.2,sat:4.5,carbs:80.5,sugars:28.3,fibre:6.1,protein:10.5,salt:0.8 },
+    { id:"crunchy_peanut_butter_bagel",name:"Crunchy Peanut Butter Bagel",cat:"spread",bunSwap:true,kcal:548,fat:22.2,sat:3,carbs:63.1,sugars:8.1,fibre:6.3,protein:20.5,salt:1.1 },
+    { id:"smooth_peanut_butter_bagel",name:"Smooth Peanut Butter Bagel",cat:"spread",bunSwap:true,kcal:534,fat:20.2,sat:4.2,carbs:72.7,sugars:8.6,fibre:6.8,protein:21.7,salt:1.2 },
+    { id:"strawberry_jam_bagel",name:"Strawberry Jam Bagel",cat:"spread",bunSwap:true,kcal:388,fat:2,sat:0.3,carbs:92.9,sugars:7.2,fibre:3.6,protein:10.7,salt:0.8 },
+    { id:"egg_mayo_bagel",name:"Egg Mayo Bagel",cat:"spread",bunSwap:true,kcal:425,fat:13.4,sat:2.2,carbs:57.9,sugars:5.9,fibre:3.6,protein:16.4,salt:1.3 },
+    { id:"bacon_bagel",name:"Bacon Bagel",cat:"breakfast",bunSwap:true,kcal:470,fat:15.4,sat:5.2,carbs:59.5,sugars:6.9,fibre:3.8,protein:21.4,salt:1.8 },
+    { id:"bacon_egg_bagel",name:"Bacon & Egg Bagel",cat:"breakfast",bunSwap:true,kcal:578,fat:23.3,sat:6.5,carbs:61.3,sugars:8.6,fibre:4,protein:28.3,salt:2.1 },
+    { id:"sausage_bagel",name:"Sausage Bagel",cat:"breakfast",bunSwap:true,kcal:455,fat:13.6,sat:4.6,carbs:61,sugars:7.3,fibre:4.7,protein:20,salt:1.6 },
+    { id:"sausage_egg_bagel",name:"Sausage & Egg Bagel",cat:"breakfast",bunSwap:true,kcal:625,fat:26.6,sat:7.7,carbs:62.8,sugars:9,fibre:5,protein:31,salt:2.2 },
+    { id:"veggie_breakfast_bagel",name:"Veggie Breakfast Bagel",cat:"breakfast",bunSwap:true,kcal:630,fat:28.8,sat:9.4,carbs:62.3,sugars:9.9,fibre:5.1,protein:27.4,salt:1.9 },
+    { id:"egg_mayo_and_salmon_bagel",name:"Egg Mayo and Salmon Bagel",cat:"breakfast",bunSwap:true,kcal:491,fat:16.9,sat:3,carbs:60,sugars:6.2,fibre:4.7,protein:24.4,salt:2.6 },
+    { id:"breakfast_deluxe",name:"Breakfast Deluxe",cat:"breakfast",bunSwap:true,kcal:750,fat:31.1,sat:8.3,carbs:84.3,sugars:8.3,fibre:6.7,protein:29.1,salt:2.9 },
+    { id:"halloumi_melt_bagel",name:"Halloumi Melt Bagel",cat:"veggie",bunSwap:true,kcal:612,fat:26.6,sat:13.5,carbs:61.3,sugars:9.5,fibre:4.3,protein:29.6,salt:3.4 },
+    { id:"vegan_cream_cheese_stack_bagel",name:"Vegan Cream Cheese Stack Bagel",cat:"veggie",bunSwap:true,kcal:550,fat:26.9,sat:12.5,carbs:59.9,sugars:6.7,fibre:6,protein:14.3,salt:1.5 },
+    { id:"honey_heat_halloumi",name:"Honey Heat Halloumi",cat:"veggie",bunSwap:true,kcal:682,fat:28.7,sat:13.9,carbs:73.5,sugars:16.5,fibre:6.6,protein:31.6,salt:3.9 },
+    { id:"vlt_bagel",name:"VLT Bagel",cat:"veggie",bunSwap:true,kcal:476,fat:16.6,sat:1.3,carbs:60.4,sugars:8.5,fibre:6.2,protein:18.4,salt:1.9 },
+    { id:"the_classic",name:"The Classic",cat:"seafood",bunSwap:true,kcal:501,fat:17.9,sat:9,carbs:62,sugars:8.1,fibre:4.6,protein:22.5,salt:2.3 },
+    { id:"tuna_melt",name:"Tuna Melt",cat:"seafood",bunSwap:true,kcal:667,fat:31.4,sat:10.2,carbs:60.8,sugars:7.9,fibre:4.1,protein:33.2,salt:2.6 },
+    { id:"the_new_yorker",name:"The New Yorker",cat:"seafood",bunSwap:true,kcal:522,fat:18.1,sat:9.1,carbs:65.6,sugars:11,fibre:5.7,protein:23.1,salt:3.3 },
+    { id:"chicken_club",name:"Chicken Club",cat:"deli",bunSwap:true,kcal:637,fat:26.8,sat:8.4,carbs:60.2,sugars:8,fibre:4.2,protein:36.6,salt:2.2 },
+    { id:"salt_beef_melt",name:"Salt Beef Melt",cat:"deli",bunSwap:true,kcal:560,fat:18.6,sat:10.2,carbs:58.5,sugars:6.8,fibre:4.3,protein:36.9,salt:3.8 },
+    { id:"smoky_pulled_pork",name:"Smoky Pulled Pork",cat:"deli",bunSwap:true,kcal:715,fat:29.9,sat:14.5,carbs:65.7,sugars:10.6,fibre:5.3,protein:41.8,salt:3 },
+    { id:"spicy_chicken",name:"Spicy Chicken",cat:"deli",bunSwap:true,kcal:560,fat:16.9,sat:9.2,carbs:63.8,sugars:10.5,fibre:4,protein:36.1,salt:3.4 },
+    { id:"deli_turkey",name:"Deli Turkey",cat:"deli",bunSwap:true,kcal:603,fat:22.7,sat:11.4,carbs:63.5,sugars:8.9,fibre:4.1,protein:33.4,salt:3 },
+    { id:"chicken_avo",name:"Chicken & Avo",cat:"deli",bunSwap:true,kcal:565,fat:23.8,sat:3.4,carbs:58.6,sugars:6.2,fibre:4.9,protein:26.6,salt:1.3 },
+    { id:"ham_cheese",name:"Ham & Cheese",cat:"deli",bunSwap:true,kcal:541,fat:18.3,sat:9.7,carbs:57.8,sugars:5.9,fibre:3.9,protein:34.4,salt:2.7 },
     { id:"mini_vegan_cream_cheese_stack_bagels",name:"Mini Vegan Cream Cheese Stack Bagels",cat:"mini",kcal:219,fat:13.8,sat:6.7,carbs:18.7,sugars:2,fibre:1.4,protein:5.1,salt:0.5 },
     { id:"mini_cream_cheese_bagels",name:"Mini Cream Cheese Bagels",cat:"mini",kcal:163,fat:7.5,sat:4.1,carbs:19,sugars:2.5,fibre:0.8,protein:5.2,salt:0.3 },
     { id:"mini_bacon_bagel",name:"Mini Bacon Bagel",cat:"mini",kcal:180,fat:8.2,sat:2.9,carbs:18.7,sugars:2,fibre:0.8,protein:8.1,salt:0.6 },
@@ -2164,11 +2173,30 @@ function optimizeLeon(t, mode, p, activeCats, maxN) {
   return alaCarteCombos(t, mode, p, LEON.items.filter(x=>activeCats[x.cat]), maxN);
 }
 
-// Bagel Factory: à la carte (AC-Alias) — NUR Set-Menü (fertige Bagels + Sweets, per-portion, Werte = Plain Bun).
-// BYO/Customizing nicht abbildbar (EXTRAS/SAUCES der PDF nur per-100g ohne Portionsgrößen).
-// Schalter "No snacks & sweet treats" = Kategorie sweets raus.
-function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets) {
-  const pool=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets"));
+// Bagel Factory: à la carte (AC-Alias) — Set-Menü (fertige Bagels + Sweets, per-portion, Werte für den Plain Bun).
+// BUN-WAHL: vollwertige Bagels (bunSwap:true) werden je erlaubtem Bun als Variante gerechnet = Bagel − Plain Bun +
+// gewählter Bun (math. validiert am Cream Cheese Bagel). Mini (Mini-Bun, keine Alternativen) + Sweets: keine Bun-Wahl.
+// EXTRAS/SAUCES (Fillings) der PDF nur per-100g → Fillings/BYO nicht abbildbar. Schalter "No snacks & sweet treats".
+const BF_PLAIN_BUN = BAGELFACTORY.buns.find(b=>b.plain);
+function bfBunOk(b, bunsOk){ // wie Subway breadOk: null/leer = alle Buns; sonst nur gewählte (nichts gewählt → alle)
+  if(!bunsOk) return true;
+  const sel=BAGELFACTORY.buns.filter(x=>bunsOk[x.id]);
+  return sel.length ? !!bunsOk[b.id] : true;
+}
+function bfSwap(item, bun){ // Plain lässt das Item unverändert; sonst Bagel − Plain Bun + gewählter Bun
+  if(bun.plain||!BF_PLAIN_BUN) return item;
+  const o={id:item.id+"__"+bun.id, name:item.name+" ("+bun.name+")", cat:item.cat, bun:bun.name};
+  for(const k of KEYS) o[k]=Math.round((item[k]-BF_PLAIN_BUN[k]+bun[k])*10)/10;
+  return o;
+}
+function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsOk){
+  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets"));
+  const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,bunsOk));
+  const pool=[];
+  for(const it of base){
+    if(it.bunSwap&&buns.length) for(const b of buns) pool.push(bfSwap(it,b));
+    else pool.push(it);
+  }
   return alaCarteCombos(t,mode,p,pool,maxN);
 }
 
@@ -2211,7 +2239,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),N),"pizzaexpress")); // à la carte (volle PDF-Makros)
   if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),N,false,false,false,true),"wasabi")); // "good meals only" (Salads&Boxes/Bento/Kobachi/Sides) = neuer Default
   if(ok("leon")) all = all.concat(tag(optimizeLeon(t,mode,p,def(LEON.cats),N),"leon")); // à la carte (All-Day)
-  if(ok("bagelfactory")) all = all.concat(tag(optimizeBagelFactory(t,mode,p,def(BAGELFACTORY.cats),N,true),"bagelfactory")); // Set-Menü, No sweets
+  if(ok("bagelfactory")) all = all.concat(tag(optimizeBagelFactory(t,mode,p,def(BAGELFACTORY.cats),N,true,null),"bagelfactory")); // Set-Menü, No sweets, alle Buns
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -2663,6 +2691,7 @@ function App() {
   const [bfCats,setBFC]=useState(()=>{const o={};BAGELFACTORY.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxBF,setMaxBF]=useState(5);
   const [noSweetsBF,setNoSweetsBF]=useState(true); // "No snacks & sweet treats" — Exclude-Schalter, Default AN (Konvention)
+  const [bfBuns,setBFBuns]=useState(()=>{const o={};BAGELFACTORY.buns.forEach(b=>o[b.id]=!!b.plain);return o;}); // Bun-Wahl, Default nur Plain vorgewählt (wie Subway; weitere Buns anwählbar → Optimizer swappt)
   const [selBF,setSelBF]=useState(null);
 
   // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (in localStorage gespeichert)
@@ -2751,7 +2780,7 @@ function App() {
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
-  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF]);
+  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3086,11 +3115,20 @@ function App() {
             onClick:()=>setBFC(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. bagels per order"),
-        h("div",{style:{display:"flex",gap:5,marginBottom:8}},
+        h("div",{style:{display:"flex",gap:5,marginBottom:12}},
           ...[1,2,3,4,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxBF===n,onClick:()=>setMaxBF(n),small:true}))
         ),
+        // Bun-Wahl (nur für vollwertige Bagels; = Bagel − Plain Bun + gewählter Bun). Mehrfachauswahl; Optimizer wählt je Bagel den best-passenden.
+        h("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:8}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Bagel bun"),
+          h("button",{onClick:()=>setBFBuns(()=>{const o={};BAGELFACTORY.buns.forEach(b=>o[b.id]=true);return o;}),style:{background:"none",border:"none",color:"#666",fontSize:9,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},"all buns")
+        ),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}},
+          ...BAGELFACTORY.buns.map(b=>h(Chip,{key:b.id,label:b.name,small:true,active:!!bfBuns[b.id],
+            onClick:()=>setBFBuns(p=>{const n={...p,[b.id]:!p[b.id]};return Object.values(n).some(Boolean)?n:p;})})) // mind. 1 Bun aktiv lassen
+        ),
         h("div",{style:{fontSize:10,color:"#666",fontFamily:S.mono,lineHeight:1.4}},
-          "Set menu only — values are per portion with a plain bun. Build-your-own isn't supported: the official list gives fillings per 100g without portion sizes.")
+          "Set menu · full bagels default to a plain bun — pick more buns (or 'all buns') and the optimizer swaps to the best fit per bagel (Bagel − plain bun + chosen bun). Mini bagels & sweets keep their bun. Fillings can't be added — the official list gives them per 100g without portion sizes.")
       ),
 
       // Pepe's: Kategorien + Max-Items + Flavour (Pflicht, global auf alle Add-Flavour-Produkte angewandt)

@@ -2,7 +2,7 @@
  "_meta": {
   "source": "Bagel Factory 'Full Ingredient List' PDF, Issue 20, 13/04/2026 (per-portion Werte)",
   "extractor": "py -3 bagelfactory-extract.py",
-  "note": "Nur fertige Menue-Bagels + Sweets (per-portion). Fussnote der PDF: Werte gelten fuer den PLAIN Bun. EXTRAS/SAUCES sind nur per-100g ohne Portionsgroesse -> BYO + Customizing NICHT abbildbar. Drinks/Buns ausgelassen. Crisps/Popcorn stehen gar nicht in der PDF.",
+  "note": "Fertige Menue-Bagels + Sweets (per-portion, 'prepared with a plain bun'). BUN-WAHL: die vollwertigen Bagels (bunSwap:true) koennen mit einem anderen der 6 Deliveroo-Buns gerechnet werden = Bagel - Plain Bun + gewaehlter Bun (mathematisch validiert am Cream Cheese Bagel). EXTRAS/SAUCES (Fillings) bleiben per-100g -> Fillings/BYO NICHT abbildbar. Mini-Bagels (Mini-Bun, keine Alternativen) + Sweets: keine Bun-Wahl. Drinks/Pizza-Bagel/Gluten-Free/Crisps ausgelassen.",
   "kcal_flags": [],
   "anomalies": [
    "Mini The Classic Bagel: PDF-Zeilenverrutscher (carbs 19.1 / sugars 24.1 gedruckt) -> carbs=24.1 (Wert aus der Zucker-Zeile), sugars=3.1 (skaliert aus dem grossen The Classic)"
@@ -48,10 +48,99 @@
    "on": true
   }
  ],
+ "buns": [
+  {
+   "id": "plain",
+   "name": "Plain",
+   "plain": true,
+   "portionG": 115.0,
+   "kcal": 296.0,
+   "fat": 1.8,
+   "sat": 0.2,
+   "carbs": 57.5,
+   "sugars": 5.8,
+   "fibre": 3.6,
+   "protein": 10.5,
+   "salt": 0.73
+  },
+  {
+   "id": "poppy",
+   "name": "Poppy",
+   "plain": false,
+   "portionG": 100.0,
+   "kcal": 289.0,
+   "fat": 2.6,
+   "sat": 0.8,
+   "carbs": 56.6,
+   "sugars": 5.5,
+   "fibre": 3.2,
+   "protein": 8.3,
+   "salt": 1.14
+  },
+  {
+   "id": "sesame",
+   "name": "Sesame",
+   "plain": false,
+   "portionG": 100.0,
+   "kcal": 290.0,
+   "fat": 2.8,
+   "sat": 0.8,
+   "carbs": 56.4,
+   "sugars": 5.5,
+   "fibre": 3.1,
+   "protein": 8.3,
+   "salt": 1.07
+  },
+  {
+   "id": "multigrain",
+   "name": "Multigrain",
+   "plain": false,
+   "portionG": 100.0,
+   "kcal": 267.0,
+   "fat": 4.7,
+   "sat": 0.7,
+   "carbs": 46.0,
+   "sugars": 2.6,
+   "fibre": 3.9,
+   "protein": 8.1,
+   "salt": 1.03
+  },
+  {
+   "id": "everything",
+   "name": "Everything",
+   "plain": false,
+   "portionG": 100.0,
+   "kcal": 292.0,
+   "fat": 2.9,
+   "sat": 0.8,
+   "carbs": 56.2,
+   "sugars": 3.5,
+   "fibre": 3.4,
+   "protein": 8.4,
+   "salt": 1.1
+  },
+  {
+   "id": "cheese_jalapeno",
+   "name": "Cheese and Jalapeno",
+   "plain": false,
+   "portionG": 100.0,
+   "kcal": 296.0,
+   "fat": 3.8,
+   "sat": 1.7,
+   "carbs": 54.5,
+   "sugars": 2.7,
+   "fibre": 3.0,
+   "protein": 9.4,
+   "salt": 1.55
+  }
+ ],
  "items": [
   {
    "name": "Cream Cheese Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 165.0,
    "kcal": 435.0,
    "fat": 14.4,
@@ -60,13 +149,14 @@
    "sugars": 7.8,
    "fibre": 3.6,
    "protein": 14.5,
-   "salt": 1.02,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.02
   },
   {
    "name": "Garlic & Herbs Cream Cheese Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 165.0,
    "kcal": 435.0,
    "fat": 14.4,
@@ -75,13 +165,14 @@
    "sugars": 7.8,
    "fibre": 3.6,
    "protein": 14.5,
-   "salt": 1.02,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.02
   },
   {
    "name": "Chives Cream Cheese Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 165.0,
    "kcal": 435.0,
    "fat": 14.4,
@@ -90,13 +181,14 @@
    "sugars": 7.8,
    "fibre": 3.6,
    "protein": 14.5,
-   "salt": 1.02,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.02
   },
   {
    "name": "Jalapeno Cream Cheese Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 175.0,
    "kcal": 436.0,
    "fat": 14.4,
@@ -105,13 +197,14 @@
    "sugars": 7.8,
    "fibre": 3.6,
    "protein": 14.5,
-   "salt": 1.5,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.5
   },
   {
    "name": "Vegan Cream Cheese Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": true,
    "portionG": 165.0,
    "kcal": 422.0,
    "fat": 13.9,
@@ -120,13 +213,14 @@
    "sugars": 6.2,
    "fibre": 4.7,
    "protein": 13.4,
-   "salt": 1.3,
-   "veggie": true,
-   "vegan": true
+   "salt": 1.3
   },
   {
    "name": "Nutella Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 155.0,
    "kcal": 511.0,
    "fat": 14.2,
@@ -135,13 +229,14 @@
    "sugars": 28.3,
    "fibre": 6.1,
    "protein": 10.5,
-   "salt": 0.8,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.8
   },
   {
    "name": "Crunchy Peanut Butter Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": true,
    "portionG": 155.0,
    "kcal": 548.0,
    "fat": 22.2,
@@ -150,13 +245,14 @@
    "sugars": 8.1,
    "fibre": 6.3,
    "protein": 20.5,
-   "salt": 1.1,
-   "veggie": true,
-   "vegan": true
+   "salt": 1.1
   },
   {
    "name": "Smooth Peanut Butter Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": true,
    "portionG": 155.0,
    "kcal": 534.0,
    "fat": 20.2,
@@ -165,13 +261,14 @@
    "sugars": 8.6,
    "fibre": 6.8,
    "protein": 21.7,
-   "salt": 1.2,
-   "veggie": true,
-   "vegan": true
+   "salt": 1.2
   },
   {
    "name": "Strawberry Jam Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": true,
    "portionG": 175.0,
    "kcal": 388.0,
    "fat": 2.0,
@@ -180,13 +277,14 @@
    "sugars": 7.2,
    "fibre": 3.6,
    "protein": 10.7,
-   "salt": 0.8,
-   "veggie": true,
-   "vegan": true
+   "salt": 0.8
   },
   {
    "name": "Egg Mayo Bagel",
    "cat": "spread",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 175.0,
    "kcal": 425.0,
    "fat": 13.4,
@@ -195,13 +293,14 @@
    "sugars": 5.9,
    "fibre": 3.6,
    "protein": 16.4,
-   "salt": 1.3,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.3
   },
   {
    "name": "Bacon Bagel",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 165.0,
    "kcal": 470.0,
    "fat": 15.4,
@@ -210,13 +309,14 @@
    "sugars": 6.9,
    "fibre": 3.8,
    "protein": 21.4,
-   "salt": 1.8,
-   "veggie": false,
-   "vegan": false
+   "salt": 1.8
   },
   {
    "name": "Bacon & Egg Bagel",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 250.0,
    "kcal": 578.0,
    "fat": 23.3,
@@ -225,13 +325,14 @@
    "sugars": 8.6,
    "fibre": 4.0,
    "protein": 28.3,
-   "salt": 2.1,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.1
   },
   {
    "name": "Sausage Bagel",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 180.0,
    "kcal": 455.0,
    "fat": 13.6,
@@ -240,13 +341,14 @@
    "sugars": 7.3,
    "fibre": 4.7,
    "protein": 20.0,
-   "salt": 1.6,
-   "veggie": false,
-   "vegan": false
+   "salt": 1.6
   },
   {
    "name": "Sausage & Egg Bagel",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 280.0,
    "kcal": 625.0,
    "fat": 26.6,
@@ -255,13 +357,14 @@
    "sugars": 9.0,
    "fibre": 5.0,
    "protein": 31.0,
-   "salt": 2.2,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.2
   },
   {
    "name": "Veggie Breakfast Bagel",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 285.0,
    "kcal": 630.0,
    "fat": 28.8,
@@ -270,13 +373,14 @@
    "sugars": 9.9,
    "fibre": 5.1,
    "protein": 27.4,
-   "salt": 1.9,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.9
   },
   {
    "name": "Egg Mayo and Salmon Bagel",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 218.0,
    "kcal": 491.0,
    "fat": 16.9,
@@ -285,13 +389,14 @@
    "sugars": 6.2,
    "fibre": 4.7,
    "protein": 24.4,
-   "salt": 2.6,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.6
   },
   {
    "name": "Breakfast Deluxe",
    "cat": "breakfast",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 310.0,
    "kcal": 750.0,
    "fat": 31.1,
@@ -300,13 +405,14 @@
    "sugars": 8.3,
    "fibre": 6.7,
    "protein": 29.1,
-   "salt": 2.9,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.9
   },
   {
    "name": "Halloumi Melt Bagel",
    "cat": "veggie",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 273.0,
    "kcal": 612.0,
    "fat": 26.6,
@@ -315,13 +421,14 @@
    "sugars": 9.5,
    "fibre": 4.3,
    "protein": 29.6,
-   "salt": 3.4,
-   "veggie": true,
-   "vegan": false
+   "salt": 3.4
   },
   {
    "name": "Vegan Cream Cheese Stack Bagel",
    "cat": "veggie",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": true,
    "portionG": 235.0,
    "kcal": 550.0,
    "fat": 26.9,
@@ -330,13 +437,14 @@
    "sugars": 6.7,
    "fibre": 6.0,
    "protein": 14.3,
-   "salt": 1.5,
-   "veggie": true,
-   "vegan": true
+   "salt": 1.5
   },
   {
    "name": "Honey Heat Halloumi",
    "cat": "veggie",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 258.0,
    "kcal": 682.0,
    "fat": 28.7,
@@ -345,13 +453,14 @@
    "sugars": 16.5,
    "fibre": 6.6,
    "protein": 31.6,
-   "salt": 3.9,
-   "veggie": true,
-   "vegan": false
+   "salt": 3.9
   },
   {
    "name": "VLT Bagel",
    "cat": "veggie",
+   "bunSwap": true,
+   "veggie": true,
+   "vegan": false,
    "portionG": 230.0,
    "kcal": 476.0,
    "fat": 16.6,
@@ -360,13 +469,14 @@
    "sugars": 8.5,
    "fibre": 6.2,
    "protein": 18.4,
-   "salt": 1.9,
-   "veggie": true,
-   "vegan": false
+   "salt": 1.9
   },
   {
    "name": "The Classic",
    "cat": "seafood",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 208.0,
    "kcal": 501.0,
    "fat": 17.9,
@@ -375,13 +485,14 @@
    "sugars": 8.1,
    "fibre": 4.6,
    "protein": 22.5,
-   "salt": 2.3,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.3
   },
   {
    "name": "Tuna Melt",
    "cat": "seafood",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 245.0,
    "kcal": 667.0,
    "fat": 31.4,
@@ -390,13 +501,14 @@
    "sugars": 7.9,
    "fibre": 4.1,
    "protein": 33.2,
-   "salt": 2.6,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.6
   },
   {
    "name": "The New Yorker",
    "cat": "seafood",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 273.0,
    "kcal": 522.0,
    "fat": 18.1,
@@ -405,13 +517,14 @@
    "sugars": 11.0,
    "fibre": 5.7,
    "protein": 23.1,
-   "salt": 3.3,
-   "veggie": false,
-   "vegan": false
+   "salt": 3.3
   },
   {
    "name": "Chicken Club",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 280.0,
    "kcal": 637.0,
    "fat": 26.8,
@@ -420,13 +533,14 @@
    "sugars": 8.0,
    "fibre": 4.2,
    "protein": 36.6,
-   "salt": 2.2,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.2
   },
   {
    "name": "Salt Beef Melt",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 250.0,
    "kcal": 560.0,
    "fat": 18.6,
@@ -435,13 +549,14 @@
    "sugars": 6.8,
    "fibre": 4.3,
    "protein": 36.9,
-   "salt": 3.8,
-   "veggie": false,
-   "vegan": false
+   "salt": 3.8
   },
   {
    "name": "Smoky Pulled Pork",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 260.0,
    "kcal": 715.0,
    "fat": 29.9,
@@ -450,13 +565,14 @@
    "sugars": 10.6,
    "fibre": 5.3,
    "protein": 41.8,
-   "salt": 3.0,
-   "veggie": false,
-   "vegan": false
+   "salt": 3.0
   },
   {
    "name": "Spicy Chicken",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 255.0,
    "kcal": 560.0,
    "fat": 16.9,
@@ -465,13 +581,14 @@
    "sugars": 10.5,
    "fibre": 4.0,
    "protein": 36.1,
-   "salt": 3.4,
-   "veggie": false,
-   "vegan": false
+   "salt": 3.4
   },
   {
    "name": "Deli Turkey",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 270.0,
    "kcal": 603.0,
    "fat": 22.7,
@@ -480,13 +597,14 @@
    "sugars": 8.9,
    "fibre": 4.1,
    "protein": 33.4,
-   "salt": 3.0,
-   "veggie": false,
-   "vegan": false
+   "salt": 3.0
   },
   {
    "name": "Chicken & Avo",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 236.0,
    "kcal": 565.0,
    "fat": 23.8,
@@ -495,13 +613,14 @@
    "sugars": 6.2,
    "fibre": 4.9,
    "protein": 26.6,
-   "salt": 1.3,
-   "veggie": false,
-   "vegan": false
+   "salt": 1.3
   },
   {
    "name": "Ham & Cheese",
    "cat": "deli",
+   "bunSwap": true,
+   "veggie": false,
+   "vegan": false,
    "portionG": 225.0,
    "kcal": 541.0,
    "fat": 18.3,
@@ -510,13 +629,14 @@
    "sugars": 5.9,
    "fibre": 3.9,
    "protein": 34.4,
-   "salt": 2.7,
-   "veggie": false,
-   "vegan": false
+   "salt": 2.7
   },
   {
    "name": "Mini Vegan Cream Cheese Stack Bagels",
    "cat": "mini",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": true,
    "portionG": 90.0,
    "kcal": 219.0,
    "fat": 13.8,
@@ -525,13 +645,14 @@
    "sugars": 2.0,
    "fibre": 1.4,
    "protein": 5.1,
-   "salt": 0.5,
-   "veggie": true,
-   "vegan": true
+   "salt": 0.5
   },
   {
    "name": "Mini Cream Cheese Bagels",
    "cat": "mini",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 60.0,
    "kcal": 163.0,
    "fat": 7.5,
@@ -540,13 +661,14 @@
    "sugars": 2.5,
    "fibre": 0.8,
    "protein": 5.2,
-   "salt": 0.3,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.3
   },
   {
    "name": "Mini Bacon Bagel",
    "cat": "mini",
+   "bunSwap": false,
+   "veggie": false,
+   "vegan": false,
    "portionG": 60.0,
    "kcal": 180.0,
    "fat": 8.2,
@@ -555,13 +677,14 @@
    "sugars": 2.0,
    "fibre": 0.8,
    "protein": 8.1,
-   "salt": 0.6,
-   "veggie": false,
-   "vegan": false
+   "salt": 0.6
   },
   {
    "name": "Mini The Classic Bagel",
    "cat": "mini",
+   "bunSwap": false,
+   "veggie": false,
+   "vegan": false,
    "portionG": 80.0,
    "kcal": 195.0,
    "fat": 6.9,
@@ -570,13 +693,14 @@
    "sugars": 3.1,
    "fibre": 1.7,
    "protein": 8.7,
-   "salt": 0.9,
-   "veggie": false,
-   "vegan": false
+   "salt": 0.9
   },
   {
    "name": "Blueberry Muffin",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 105.0,
    "kcal": 390.0,
    "fat": 20.6,
@@ -585,13 +709,14 @@
    "sugars": 22.5,
    "fibre": 1.7,
    "protein": 5.0,
-   "salt": 0.32,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.32
   },
   {
    "name": "Triple Chocolate Muffin",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 105.0,
    "kcal": 473.0,
    "fat": 28.3,
@@ -600,13 +725,14 @@
    "sugars": 28.3,
    "fibre": 3.1,
    "protein": 6.7,
-   "salt": 0.29,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.29
   },
   {
    "name": "Vanilla Donut",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 70.0,
    "kcal": 291.0,
    "fat": 17.8,
@@ -615,13 +741,14 @@
    "sugars": 12.4,
    "fibre": 1.0,
    "protein": 3.1,
-   "salt": 0.38,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.38
   },
   {
    "name": "Cocoa Creme Donut",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 70.0,
    "kcal": 348.0,
    "fat": 21.4,
@@ -630,13 +757,14 @@
    "sugars": 17.2,
    "fibre": 2.3,
    "protein": 3.6,
-   "salt": 0.32,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.32
   },
   {
    "name": "Chocolate Brownie",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 60.0,
    "kcal": 273.0,
    "fat": 14.4,
@@ -645,13 +773,14 @@
    "sugars": 24.0,
    "fibre": 2.4,
    "protein": 3.4,
-   "salt": 0.069,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.069
   },
   {
    "name": "Caramel Shortbread",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 55.0,
    "kcal": 282.0,
    "fat": 15.4,
@@ -660,13 +789,14 @@
    "sugars": 18.2,
    "fibre": 0.7,
    "protein": 2.3,
-   "salt": 0.15,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.15
   },
   {
    "name": "Fruity Oat Cookie",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 60.0,
    "kcal": 282.0,
    "fat": 12.6,
@@ -675,13 +805,14 @@
    "sugars": 18.0,
    "fibre": 2.1,
    "protein": 3.5,
-   "salt": 0.4,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.4
   },
   {
    "name": "Triple Chocolate Cookie",
    "cat": "sweets",
+   "bunSwap": false,
+   "veggie": true,
+   "vegan": false,
    "portionG": 60.0,
    "kcal": 265.0,
    "fat": 12.0,
@@ -690,9 +821,7 @@
    "sugars": 16.2,
    "fibre": 1.5,
    "protein": 3.4,
-   "salt": 0.47,
-   "veggie": true,
-   "vegan": false
+   "salt": 0.47
   }
  ]
 }

@@ -15,7 +15,7 @@ OUT = "data/bagelfactory-raw.json"
 
 # Sektionen -> App-Kategorie (None = Sektion ueberspringen)
 SECTIONS = {
-    "BAGEL BUNS": None,
+    "BAGEL BUNS": ("__buns__", "Buns"),   # separat -> out["buns"] (nur die 6 Deliveroo-Buns, s. BUN_KEEP)
     "SPREAD BAGELS": ("spread", "Spread Bagels"),
     "BREAKFAST BAGELS": ("breakfast", "Breakfast Bagels"),
     "VEGGIE BAGELS": ("veggie", "Veggie Bagels"),
@@ -34,6 +34,18 @@ MACROS = [  # (Zeilen-Prefix, Feld)
     ("of which Saturates", "sat"), ("Carbohydrates", "carbs"),
     ("of which Sugars", "sugars"), ("Fibre", "fibre"), ("Protein", "protein"), ("Salt", "salt"),
 ]
+# Nur die 6 auf Deliveroo waehlbaren Bagel-Buns (Pizza Bagel + Gluten-Free ausgelassen). raw-Name -> (id, Anzeigename, isPlain).
+# WICHTIG: Die fertigen Menue-Bagels sind "prepared with a plain bun" -> anderer Bun = Bagel - Plain Bun + gewaehlter Bun.
+BUN_KEEP = {
+    "Plain Bagel Bun": ("plain", "Plain", True),
+    "Poppy Seed Bagel Bun": ("poppy", "Poppy", False),
+    "Sesame Seed Bagel Bun": ("sesame", "Sesame", False),
+    "Multigrain Bagel Bun": ("multigrain", "Multigrain", False),
+    "Everything Bagel Bun": ("everything", "Everything", False),
+    "Cheese and Jalapeno Bagel Bun": ("cheese_jalapeno", "Cheese and Jalapeno", False),
+}
+# Kategorien mit vollwertigem Bun -> Bun-Wahl moeglich (Mini nutzt Mini-Bun ohne Alternativen; Sweets haben keinen Bun).
+BUN_SWAP_CATS = {"spread", "breakfast", "veggie", "seafood", "deli"}
 
 def deacc(s):  # Mojibake/Umlaute -> ASCII-freundlich ("Jalape�o" kommt als U+FFFD)
     s = s.replace("�", "n").replace("Jalapeno", "Jalapeno")
@@ -55,7 +67,7 @@ with pdfplumber.open(PDF) as pdf:
             if s.startswith("* Received frozen"): break  # Footer beginnt hier -> Rest der Seite verwerfen
             lines.append(s)
 
-items, cur_cat, i = [], None, 0
+items, buns, cur_cat, i = [], [], None, 0
 expect_title = False   # nach Sektions-Header / abgeschlossenem Eintrag kommt als naechstes ein Titel
 pending_title = None
 while i < len(lines):
@@ -94,14 +106,20 @@ while i < len(lines):
         if m and m.group(2): raw, flags = m.group(1), m.group(2)
         name = re.sub(r"\*+$", "", raw).strip().rstrip(",").strip()
         if len(vals) == 8 and portion and all(v is not None for v in vals.values()):
-            items.append({
-                "name": name, "cat": cur_cat[0], "portionG": portion,
+            rec = {
+                "portionG": portion,
                 "kcal": vals["kcal"], "fat": vals["fat"], "sat": vals["sat"],
                 "carbs": vals["carbs"], "sugars": vals["sugars"], "fibre": vals["fibre"],
                 "protein": vals["protein"], "salt": vals["salt"],
-                "veggie": "V" in flags.replace("VG", ""), "vegan": "VG" in flags,
-            })
-        else:
+            }
+            if cur_cat[0] == "__buns__":
+                if name in BUN_KEEP:
+                    bid, bname, isPlain = BUN_KEEP[name]
+                    buns.append({"id": bid, "name": bname, "plain": isPlain, **rec})
+            else:
+                items.append({"name": name, "cat": cur_cat[0], "bunSwap": cur_cat[0] in BUN_SWAP_CATS,
+                    "veggie": "V" in flags.replace("VG", ""), "vegan": "VG" in flags, **rec})
+        elif cur_cat[0] != "__buns__" or name in BUN_KEEP:
             print(f"!! unvollstaendig: {name} (portion={portion}, macros={len(vals)})")
         pending_title = None
         expect_title = True
@@ -139,25 +157,32 @@ cats_seen = []
 for it in items:
     if it["cat"] not in cats_seen: cats_seen.append(it["cat"])
 cat_names = {v[0]: v[1] for v in SECTIONS.values() if v}
+# Buns in Deliveroo-Reihenfolge sortieren (Plain zuerst)
+BUN_ORDER = [v[0] for v in BUN_KEEP.values()]
+buns.sort(key=lambda b: BUN_ORDER.index(b["id"]) if b["id"] in BUN_ORDER else 99)
+if not any(b["plain"] for b in buns):
+    print("!! WARNUNG: kein Plain-Bun gefunden — Bun-Swap-Rechnung braucht ihn!")
 
 out = {
     "_meta": {
         "source": "Bagel Factory 'Full Ingredient List' PDF, Issue 20, 13/04/2026 (per-portion Werte)",
         "extractor": "py -3 bagelfactory-extract.py",
-        "note": "Nur fertige Menue-Bagels + Sweets (per-portion). Fussnote der PDF: Werte gelten fuer den PLAIN Bun. EXTRAS/SAUCES sind nur per-100g ohne Portionsgroesse -> BYO + Customizing NICHT abbildbar. Drinks/Buns ausgelassen. Crisps/Popcorn stehen gar nicht in der PDF.",
+        "note": "Fertige Menue-Bagels + Sweets (per-portion, 'prepared with a plain bun'). BUN-WAHL: die vollwertigen Bagels (bunSwap:true) koennen mit einem anderen der 6 Deliveroo-Buns gerechnet werden = Bagel - Plain Bun + gewaehlter Bun (mathematisch validiert am Cream Cheese Bagel). EXTRAS/SAUCES (Fillings) bleiben per-100g -> Fillings/BYO NICHT abbildbar. Mini-Bagels (Mini-Bun, keine Alternativen) + Sweets: keine Bun-Wahl. Drinks/Pizza-Bagel/Gluten-Free/Crisps ausgelassen.",
         "kcal_flags": flagged,
         "anomalies": anomalies,
         "verified_notes": verified_notes,
     },
     "cats": [{"id": c, "name": cat_names[c], "on": True} for c in cats_seen],
+    "buns": buns,
     "items": items,
 }
 import os
 os.makedirs("data", exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:
     json.dump(out, f, indent=1, ensure_ascii=False)
-print(f"{len(items)} Items, {len(cats_seen)} Kategorien -> {OUT}")
+print(f"{len(items)} Items, {len(cats_seen)} Kategorien, {len(buns)} Buns -> {OUT}")
 for c in cats_seen:
     print(f"  {cat_names[c]}: {sum(1 for x in items if x['cat']==c)}")
+print("  Buns: " + ", ".join(f'{b["name"]}({b["kcal"]})' for b in buns))
 if flagged:
     print("kcal-Plausibilitaets-Flags:\n  " + "\n  ".join(flagged))
