@@ -2705,8 +2705,8 @@ function App() {
     h("div",{style:{fontSize:9,color:"#666",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:5}},"Restaurant only · excl. corn cakes"),
     h("div",{style:{display:"flex",gap:14,fontSize:12,fontFamily:S.mono,flexWrap:"wrap"}},
       h("span",{style:{color:"#4ade80",fontWeight:700}},cc.base.kcal+" kcal"),
-      h("span",{style:{color:"#60a5fa"}},"P "+cc.base.protein+"g"),
       h("span",{style:{color:"#fbbf24"}},"C "+cc.base.carbs+"g"),
+      h("span",{style:{color:"#60a5fa"}},"P "+cc.base.protein+"g"),
       h("span",{style:{color:"#f87171"}},"F "+cc.base.fat+"g")
     )
   ) : null;
@@ -2796,8 +2796,8 @@ function App() {
       h("div",{style:{background:"#151515",borderRadius:12,padding:16,marginBottom:16,border:"1px solid #222"}},
         mode==="macros"?h("div",null,
           h("div",{style:{display:"flex",gap:10,marginBottom:10}},
-            h(NumIn,{label:"Protein",value:tP,onChange:setTP,placeholder:"30",unit:"g"}),
             h(NumIn,{label:"Carbs",value:tC,onChange:setTC,placeholder:"45",unit:"g"}),
+            h(NumIn,{label:"Protein",value:tP,onChange:setTP,placeholder:"30",unit:"g"}),
             h(NumIn,{label:"Fat",value:tF,onChange:setTF,placeholder:"12",unit:"g"})
           ),
           h("div",{style:{fontSize:11,color:"#666",fontFamily:S.mono}},"≈ "+autoK+" kcal · "+(resto==="subway"?"incl. standard salad":resto==="farmerj"?"Fieldtray: Main + Base + 2 Sides":resto==="ug"?(ugMode==="tray"?"BYO Tray":"BYO Salad")+" (no fibre/salt data)":resto==="atis"?"Build Your Own Power Plate":resto==="chopstix"?"Build a Box · 2–3 toppings":resto==="fiveguys"?"Build your own · burger/sandwich + fries":resto==="accurate"?"across accurate restaurants — best picks":resto==="all"?"across all restaurants — best picks":resto==="search"?"your target — compare your own order below":resto==="pizzaexpress"?"à la carte · 1–"+(maxPX===Infinity?"∞":maxPX)+" Items":"à la carte: 1–"+(AC&&AC.maxN===Infinity?"∞":AC?AC.maxN:3)+" Items"))
@@ -3137,8 +3137,8 @@ function App() {
               h("div",{style:{background:"#0d0d0d",borderRadius:10,padding:14,border:"1px solid #2a2a2a"}},
                 h("div",{style:{fontSize:10,color:"#888",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:10}},mode==="macros"?"Order total vs target":(tK?"Order total vs "+tK+" kcal":"Order total")),
                 h(MacroBar,{label:"Calories",value:moTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-                h(MacroBar,{label:"Protein",value:moTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
                 h(MacroBar,{label:"Carbs",value:moTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+                h(MacroBar,{label:"Protein",value:moTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
                 h(MacroBar,{label:"Fat",value:moTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
                 h(MacroBar,{label:"Fibre",value:moTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
                 h(MacroBar,{label:"Salt",value:moTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
@@ -3154,8 +3154,8 @@ function App() {
           h(Chip,{label:"Score",small:true,active:sortBy==="score",onClick:()=>setSortBy("score")}),
           h(Chip,{label:"Calories",small:true,active:sortBy==="kcal",onClick:()=>setSortBy("kcal")}),
           ...(mode==="macros"?[
-            h(Chip,{key:"sp",label:"Protein",small:true,active:sortBy==="protein",onClick:()=>setSortBy("protein")}),
             h(Chip,{key:"sc",label:"Carbs",small:true,active:sortBy==="carbs",onClick:()=>setSortBy("carbs")}),
+            h(Chip,{key:"sp",label:"Protein",small:true,active:sortBy==="protein",onClick:()=>setSortBy("protein")}),
             h(Chip,{key:"sf",label:"Fat",small:true,active:sortBy==="fat",onClick:()=>setSortBy("fat")}),
           ]:[])
         )
@@ -3179,8 +3179,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
                 h("span",{style:{color:"#777",marginLeft:"auto",fontSize:9}},"tap → details")
               )
@@ -3212,8 +3212,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g")
               )
             );
@@ -3236,8 +3236,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
                 h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
                 h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
@@ -3266,8 +3266,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
                 h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
                 h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
@@ -3299,8 +3299,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
                 h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
                 h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
@@ -3325,8 +3325,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
                 h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
                 h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
@@ -3356,8 +3356,8 @@ function App() {
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
               ),
               h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
                 h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
                 h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
                 h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
@@ -3386,8 +3386,8 @@ function App() {
                 r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
             ),
             h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-              h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
               h("span",{style:{color:"#fbbf24"}},"C "+r.nutrition.carbs+"g"),
+              h("span",{style:{color:"#60a5fa"}},"P "+r.nutrition.protein+"g"),
               h("span",{style:{color:"#f87171"}},"F "+r.nutrition.fat+"g"),
               h("span",{style:{color:"#a78bfa"}},"Fib "+r.nutrition.fibre+"g"),
               h("span",{style:{color:"#999"}},"Salt "+r.nutrition.salt+"g")
@@ -3415,8 +3415,8 @@ function App() {
                   h("div",{style:{fontSize:14,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},st.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
                 ),
                 h("div",{style:{display:"flex",gap:12,fontSize:10,fontFamily:S.mono}},
-                  h("span",{style:{color:"#60a5fa"}},"P "+st.protein+"g"),
                   h("span",{style:{color:"#fbbf24"}},"C "+st.carbs+"g"),
+                  h("span",{style:{color:"#60a5fa"}},"P "+st.protein+"g"),
                   h("span",{style:{color:"#f87171"}},"F "+st.fat+"g"),
                   h("span",{style:{color:"#a78bfa"}},"Fib "+st.fibre+"g"),
                   h("span",{style:{color:"#999"}},"Salt "+st.salt+"g")
@@ -3437,8 +3437,8 @@ function App() {
         // Macro bars (inkl. Corn Cakes, falls Schalter an)
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccSub.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccSub.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccSub.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccSub.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccSub.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
           h(MacroBar,{label:"Fibre",value:ccSub.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccSub.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
@@ -3545,8 +3545,8 @@ function App() {
         // Macro bars
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccFJ.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccFJ.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccFJ.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccFJ.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccFJ.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
           h(MacroBar,{label:"Fibre",value:ccFJ.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccFJ.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
@@ -3615,8 +3615,8 @@ function App() {
         // Macro bars
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccAC.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccAC.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccAC.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
           h(MacroBar,{label:"Fibre",value:ccAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
@@ -3663,8 +3663,8 @@ function App() {
         // Macro bars (UG hat keine Fibre/Salt-Daten)
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccUG.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccUG.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccUG.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccUG.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccUG.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
         cornBaseRow(ccUG),
@@ -3738,8 +3738,8 @@ function App() {
 
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccAt.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccAt.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccAt.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccAt.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccAt.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
         cornBaseRow(ccAt),
@@ -3797,8 +3797,8 @@ function App() {
 
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccCh.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccCh.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccCh.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccCh.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccCh.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
         cornBaseRow(ccCh),
@@ -3848,8 +3848,8 @@ function App() {
 
         h("div",{style:{marginBottom:16}},
           h(MacroBar,{label:"Calories",value:ccFG.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Protein",value:ccFG.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Carbs",value:ccFG.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:ccFG.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
           h(MacroBar,{label:"Fat",value:ccFG.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
           h(MacroBar,{label:"Fibre",value:ccFG.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccFG.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
