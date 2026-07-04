@@ -2,10 +2,10 @@
   "_meta": {
     "source": "wagamama.com Produkt-Popups (allergens + nutritional information), per-Serving-Werte",
     "workflow": "User liefert Daten als Copy-Paste-Batches -> Items hier ergänzen -> node wagamama-update.js",
-    "updated": "2026-06-28",
-    "batches": 3,
+    "updated": "2026-07-04",
     "note": "Kategorien (cat) selbst zugeordnet: donburi, ramen, teppanyaki (alle soba/udon-Gerichte), sides, curries. buldak bibimbap (seasonal rice bowl) -> donburi. per-Serving-Spalte; kcal-Tausenderkomma entfernt",
-    "deliveroo_prune": "2026-06-28 auf die Deliveroo-Karte (Canary Wharf) geprunt: 32 -> 27 Items. Entfernt: thai beef salad (keine Salads auf Deliveroo -> Kategorie salads weg), hot chicken katsu curry + hot yasai katsu curry (Deliveroo hat nur die nicht-scharfen Katsu-Currys), yasai yaki soba | udon (638, nicht auf Deliveroo) + yasai yaki soba | mushroom (768). Deliveroo fuehrt nur EINE yasai yaki soba (660 kcal, rice-noodle-Basis, Anzeigename 'mushroom'): der behaltene 660er-Eintrag (frueher '| rice noodles') wurde auf den Deliveroo-Namen 'yasai yaki soba | mushroom' umbenannt (Makros = 660, exakter Deliveroo-Match). kcal-Diffs Deliveroo<->wagamama.com bleiben (wagamama.com-Werte gelten, volle Makros). Danach +2 Deliveroo-Rice-Bowls aufgenommen (gochujang salmon rice bowl 786, chicken + prawn turmeric rice bowl 677; cat donburi, volle Makros aus den wagamama.com-Popups) -> 29 Items."
+    "deliveroo_prune": "2026-06-28 auf die Deliveroo-Karte (Canary Wharf) geprunt: 32 -> 27 Items. Entfernt: thai beef salad (keine Salads auf Deliveroo -> Kategorie salads weg), hot chicken katsu curry + hot yasai katsu curry (Deliveroo hat nur die nicht-scharfen Katsu-Currys), yasai yaki soba | udon (638, nicht auf Deliveroo) + yasai yaki soba | mushroom (768). Deliveroo fuehrt nur EINE yasai yaki soba (660 kcal, rice-noodle-Basis, Anzeigename 'mushroom'): der behaltene 660er-Eintrag (frueher '| rice noodles') wurde auf den Deliveroo-Namen 'yasai yaki soba | mushroom' umbenannt (Makros = 660, exakter Deliveroo-Match). kcal-Diffs Deliveroo<->wagamama.com bleiben (wagamama.com-Werte gelten, volle Makros). Danach +2 Deliveroo-Rice-Bowls aufgenommen (gochujang salmon rice bowl 786, chicken + prawn turmeric rice bowl 677; cat donburi, volle Makros aus den wagamama.com-Popups) -> 29 Items.",
+    "refresh": "2026-07-04: alle Naehrwerte per wagamama.com/menu?category=big-plates (Nuxt __NUXT_DATA__ devalue-Payload, PerServ-Spalte) frisch verifiziert. 8 Items aktualisiert (Wagamama hat v.a. Protein neu berechnet): chicken thigh teriyaki donburi, grilled duck donburi, pulled shiitake donburi, grilled chicken ramen, chilli chicken ramen, chicken + prawn yaki soba, chicken teriyaki soba, chicken + prawn yaki udon. 'yasai yaki soba | mushroom' bleibt die rice-noodle-Basis (660, Deliveroo-Anzeigename) — live 'mushroom' (768) ist eine andere Variante. Allergene NICHT neu geprueft."
   },
   "items": [
     {
@@ -15,143 +15,143 @@
     },
     {
       "name": "tea-stained egg", "cat": "sides",
-      "kcal": 69, "fat": 3.4, "sat": 1.1, "carbs": 2.0, "sugars": 0.0, "fibre": 0.0, "protein": 7.7, "salt": 0.2,
-      "veggie": true, "vegan": false, "allergens": ["eggs", "soya"]
+      "kcal": 69, "fat": 3.4, "sat": 1.1, "carbs": 2, "sugars": 0, "fibre": 0, "protein": 7.7, "salt": 0.2,
+      "veggie": true, "vegan": false, "allergens": ["eggs","soya"]
     },
     {
       "name": "beef brisket teriyaki donburi", "cat": "donburi",
-      "kcal": 818, "fat": 26.1, "sat": 4.3, "carbs": 110.3, "sugars": 18.8, "fibre": 8.0, "protein": 37.1, "salt": 4.8,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "sesame", "soya", "sulphites"]
+      "kcal": 818, "fat": 26.1, "sat": 4.3, "carbs": 110.3, "sugars": 18.8, "fibre": 8, "protein": 37.1, "salt": 4.8,
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","sesame","soya","sulphites"]
     },
     {
       "name": "chicken thigh teriyaki donburi", "cat": "donburi",
-      "kcal": 808, "fat": 24.6, "sat": 4.4, "carbs": 108.2, "sugars": 17.5, "fibre": 8.4, "protein": 40.0, "salt": 4.1,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "sesame", "soya", "sulphites"]
+      "kcal": 807, "fat": 24.6, "sat": 4.4, "carbs": 107.8, "sugars": 17.2, "fibre": 8.4, "protein": 39.9, "salt": 4,
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","sesame","soya","sulphites"]
     },
     {
       "name": "grilled duck donburi", "cat": "donburi",
-      "kcal": 1085, "fat": 43.8, "sat": 9.7, "carbs": 119.9, "sugars": 25.3, "fibre": 8.9, "protein": 53.9, "salt": 6.0,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "sesame", "soya", "sulphites"]
+      "kcal": 1129, "fat": 48.7, "sat": 10, "carbs": 119.9, "sugars": 25.3, "fibre": 8.9, "protein": 53.9, "salt": 6,
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","eggs","sesame","soya","sulphites"]
     },
     {
       "name": "pulled shiitake donburi", "cat": "donburi",
-      "kcal": 951, "fat": 32.4, "sat": 11.0, "carbs": 135.3, "sugars": 25.6, "fibre": 24.7, "protein": 29.6, "salt": 6.5,
-      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)", "sesame", "soya", "sulphites"]
+      "kcal": 956, "fat": 32.6, "sat": 11.1, "carbs": 136, "sugars": 25.8, "fibre": 24.8, "protein": 29.8, "salt": 6.5,
+      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)","sesame","soya","sulphites"]
     },
     {
       "name": "buldak bibimbap", "cat": "donburi",
-      "kcal": 1012, "fat": 46.1, "sat": 7.3, "carbs": 109.0, "sugars": 26.0, "fibre": 8.5, "protein": 38.8, "salt": 6.1,
-      "veggie": false, "vegan": false, "allergens": ["celery", "gluten (wheat)", "eggs", "sesame", "soya", "sulphites"]
+      "kcal": 1012, "fat": 46.1, "sat": 7.3, "carbs": 109, "sugars": 26, "fibre": 8.5, "protein": 38.8, "salt": 6.1,
+      "veggie": false, "vegan": false, "allergens": ["celery","gluten (wheat)","eggs","sesame","soya","sulphites"]
     },
     {
       "name": "gochujang salmon rice bowl", "cat": "donburi",
-      "kcal": 786, "fat": 39.4, "sat": 4.9, "carbs": 69.7, "sugars": 20.8, "fibre": 5.4, "protein": 36.3, "salt": 4.0,
-      "veggie": false, "vegan": false, "allergens": ["fish", "sesame", "soya"]
+      "kcal": 786, "fat": 39.4, "sat": 4.9, "carbs": 69.7, "sugars": 20.8, "fibre": 5.4, "protein": 36.3, "salt": 4,
+      "veggie": false, "vegan": false, "allergens": ["fish","sesame","soya"]
     },
     {
       "name": "chicken + prawn turmeric rice bowl", "cat": "donburi",
       "kcal": 677, "fat": 34.1, "sat": 4.9, "carbs": 57.4, "sugars": 11.1, "fibre": 5.5, "protein": 32.4, "salt": 2.5,
-      "veggie": false, "vegan": false, "allergens": ["crustaceans", "eggs", "sesame", "soya", "sulphites"]
+      "veggie": false, "vegan": false, "allergens": ["crustaceans","eggs","sesame","soya","sulphites"]
     },
     {
       "name": "tantanmen beef brisket ramen", "cat": "ramen",
       "kcal": 713, "fat": 29.5, "sat": 8.2, "carbs": 74.7, "sugars": 8.2, "fibre": 3.7, "protein": 36.5, "salt": 6.6,
-      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "fish", "soya"]
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)","eggs","fish","soya"]
     },
     {
       "name": "grilled chicken ramen", "cat": "ramen",
-      "kcal": 490, "fat": 5.9, "sat": 1.3, "carbs": 68.1, "sugars": 4.9, "fibre": 3.8, "protein": 40.9, "salt": 5.1,
-      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "fish", "soya"]
+      "kcal": 455, "fat": 4.7, "sat": 1, "carbs": 68.2, "sugars": 4.7, "fibre": 3.8, "protein": 34.8, "salt": 5,
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)","eggs","fish","soya"]
     },
     {
       "name": "chilli chicken ramen", "cat": "ramen",
-      "kcal": 575, "fat": 6.6, "sat": 1.4, "carbs": 86.0, "sugars": 19.4, "fibre": 6.4, "protein": 43.4, "salt": 5.7,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "soya", "sulphites"]
+      "kcal": 541, "fat": 5.4, "sat": 1.1, "carbs": 86.1, "sugars": 19.1, "fibre": 6.4, "protein": 37.3, "salt": 5.7,
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","eggs","soya","sulphites"]
     },
     {
       "name": "kare burosu ramen", "cat": "ramen",
-      "kcal": 706, "fat": 21.9, "sat": 3.9, "carbs": 94.8, "sugars": 11.0, "fibre": 12.8, "protein": 30.0, "salt": 5.1,
-      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)", "mustard", "sesame", "soya"]
+      "kcal": 706, "fat": 21.9, "sat": 3.9, "carbs": 94.8, "sugars": 11, "fibre": 12.8, "protein": 30, "salt": 5.1,
+      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)","mustard","sesame","soya"]
     },
     {
       "name": "saku saku duck soba", "cat": "teppanyaki",
       "kcal": 933, "fat": 43.4, "sat": 4.7, "carbs": 88.3, "sugars": 22.7, "fibre": 4.7, "protein": 46.5, "salt": 5.1,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "sesame", "soya"]
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","eggs","sesame","soya"]
     },
     {
       "name": "katsu udon", "cat": "teppanyaki",
-      "kcal": 848, "fat": 37.8, "sat": 5.1, "carbs": 101.2, "sugars": 21.0, "fibre": 13.0, "protein": 21.0, "salt": 3.2,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "mustard", "soya"]
+      "kcal": 848, "fat": 37.8, "sat": 5.1, "carbs": 101.2, "sugars": 21, "fibre": 13, "protein": 21, "salt": 3.2,
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","mustard","soya"]
     },
     {
       "name": "chicken + prawn yaki soba", "cat": "teppanyaki",
-      "kcal": 804, "fat": 37.2, "sat": 4.7, "carbs": 73.6, "sugars": 7.9, "fibre": 6.1, "protein": 37.5, "salt": 3.7,
-      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "crustaceans", "eggs", "sesame", "soya"]
+      "kcal": 789, "fat": 37.1, "sat": 4.8, "carbs": 73.3, "sugars": 7.8, "fibre": 5.9, "protein": 34, "salt": 3.7,
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)","crustaceans","eggs","sesame","soya"]
     },
     {
       "name": "yasai yaki soba | mushroom", "cat": "teppanyaki",
       "kcal": 660, "fat": 24.8, "sat": 2.2, "carbs": 87.3, "sugars": 11.8, "fibre": 5.9, "protein": 16.9, "salt": 2.6,
-      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)", "sesame", "soya"]
+      "veggie": true, "vegan": true, "allergens": ["gluten (barley, wheat)","sesame","soya"]
     },
     {
       "name": "steak teriyaki soba", "cat": "teppanyaki",
       "kcal": 864, "fat": 35.8, "sat": 3.3, "carbs": 84.9, "sugars": 18.4, "fibre": 5.8, "protein": 49.5, "salt": 3.8,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "sesame", "soya", "sulphites"]
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","eggs","sesame","soya","sulphites"]
     },
     {
       "name": "salmon teriyaki soba", "cat": "teppanyaki",
       "kcal": 994, "fat": 52.7, "sat": 6.1, "carbs": 83.3, "sugars": 17.4, "fibre": 5.5, "protein": 45.5, "salt": 4.6,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "fish", "sesame", "soya", "sulphites"]
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","eggs","fish","sesame","soya","sulphites"]
     },
     {
       "name": "chicken teriyaki soba", "cat": "teppanyaki",
-      "kcal": 803, "fat": 32.2, "sat": 3.3, "carbs": 83.3, "sugars": 17.8, "fibre": 5.7, "protein": 44.0, "salt": 3.4,
-      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)", "eggs", "sesame", "soya", "sulphites"]
+      "kcal": 769, "fat": 31, "sat": 2.9, "carbs": 83.4, "sugars": 17.5, "fibre": 5.7, "protein": 37.8, "salt": 3.4,
+      "veggie": false, "vegan": false, "allergens": ["gluten (barley, wheat)","eggs","sesame","soya","sulphites"]
     },
     {
       "name": "chicken + prawn yaki udon", "cat": "teppanyaki",
-      "kcal": 728, "fat": 25.6, "sat": 3.8, "carbs": 78.5, "sugars": 8.7, "fibre": 9.9, "protein": 40.3, "salt": 3.3,
-      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "crustaceans", "eggs", "fish", "sesame", "soya"]
+      "kcal": 714, "fat": 25.5, "sat": 3.9, "carbs": 78.2, "sugars": 8.6, "fibre": 9.7, "protein": 36.9, "salt": 3.3,
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)","crustaceans","eggs","fish","sesame","soya"]
     },
     {
       "name": "chicken katsu curry", "cat": "curries",
-      "kcal": 988, "fat": 41.8, "sat": 8.8, "carbs": 110.0, "sugars": 7.0, "fibre": 7.9, "protein": 43.9, "salt": 2.8,
-      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)", "eggs", "mustard", "soya"]
+      "kcal": 988, "fat": 41.8, "sat": 8.8, "carbs": 110, "sugars": 7, "fibre": 7.9, "protein": 43.9, "salt": 2.8,
+      "veggie": false, "vegan": false, "allergens": ["gluten (wheat)","eggs","mustard","soya"]
     },
     {
       "name": "yasai katsu curry", "cat": "curries",
       "kcal": 1223, "fat": 55.3, "sat": 9.3, "carbs": 159.3, "sugars": 13.8, "fibre": 10.6, "protein": 21.5, "salt": 2.7,
-      "veggie": true, "vegan": true, "allergens": ["gluten (wheat)", "mustard", "soya"]
+      "veggie": true, "vegan": true, "allergens": ["gluten (wheat)","mustard","soya"]
     },
     {
       "name": "prawn raisukaree", "cat": "curries",
-      "kcal": 1022, "fat": 42.1, "sat": 13.9, "carbs": 131.1, "sugars": 13.0, "fibre": 8.0, "protein": 27.6, "salt": 4.7,
-      "veggie": false, "vegan": false, "allergens": ["crustaceans", "sesame", "soya"]
+      "kcal": 1022, "fat": 42.1, "sat": 13.9, "carbs": 131.1, "sugars": 13, "fibre": 8, "protein": 27.6, "salt": 4.7,
+      "veggie": false, "vegan": false, "allergens": ["crustaceans","sesame","soya"]
     },
     {
       "name": "chicken raisukaree", "cat": "curries",
       "kcal": 1092, "fat": 45.2, "sat": 14.2, "carbs": 131.2, "sugars": 13.2, "fibre": 8.4, "protein": 38.4, "salt": 3.2,
-      "veggie": false, "vegan": false, "allergens": ["sesame", "soya"]
+      "veggie": false, "vegan": false, "allergens": ["sesame","soya"]
     },
     {
       "name": "tofu raisukaree", "cat": "curries",
       "kcal": 1135, "fat": 53.4, "sat": 14.8, "carbs": 133.1, "sugars": 13.8, "fibre": 8.5, "protein": 28.6, "salt": 3.1,
-      "veggie": true, "vegan": true, "allergens": ["sesame", "soya"]
+      "veggie": true, "vegan": true, "allergens": ["sesame","soya"]
     },
     {
       "name": "prawn firecracker", "cat": "curries",
-      "kcal": 1139, "fat": 38.7, "sat": 3.8, "carbs": 156.0, "sugars": 34.8, "fibre": 10.6, "protein": 28.2, "salt": 6.7,
-      "veggie": false, "vegan": false, "allergens": ["crustaceans", "sesame", "soya", "sulphites"]
+      "kcal": 1139, "fat": 38.7, "sat": 3.8, "carbs": 156, "sugars": 34.8, "fibre": 10.6, "protein": 28.2, "salt": 6.7,
+      "veggie": false, "vegan": false, "allergens": ["crustaceans","sesame","soya","sulphites"]
     },
     {
       "name": "chicken firecracker", "cat": "curries",
-      "kcal": 1239, "fat": 42.8, "sat": 4.3, "carbs": 156.0, "sugars": 35.1, "fibre": 11.1, "protein": 44.4, "salt": 5.2,
-      "veggie": false, "vegan": false, "allergens": ["sesame", "soya", "sulphites"]
+      "kcal": 1239, "fat": 42.8, "sat": 4.3, "carbs": 156, "sugars": 35.1, "fibre": 11.1, "protein": 44.4, "salt": 5.2,
+      "veggie": false, "vegan": false, "allergens": ["sesame","soya","sulphites"]
     },
     {
       "name": "tofu firecracker", "cat": "curries",
       "kcal": 1252, "fat": 50.1, "sat": 4.7, "carbs": 157.9, "sugars": 35.6, "fibre": 11.1, "protein": 29.1, "salt": 5.1,
-      "veggie": true, "vegan": true, "allergens": ["sesame", "soya", "sulphites"]
+      "veggie": true, "vegan": true, "allergens": ["sesame","soya","sulphites"]
     }
   ]
 }
