@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -750,6 +750,25 @@ check("Bagel Factory Bun-Filter: nur Multigrain-Varianten", rMulti.length > 0 &&
 // leere Bun-Auswahl (bunsOk mit nichts) -> alle Buns (wie Subway)
 const rAllBuns = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 2, true, {});
 check("Bagel Factory leere Bun-Auswahl = alle Buns (Varianten vorhanden)", rAllBuns.some(r => r.items.some(x => /\((Poppy|Sesame|Multigrain|Everything|Cheese)/.test(x.name))), true);
+// "No smoky pulled pork"-Schalter (Default AUS)
+check("Bagel Factory 'No smoky pulled pork' filtert es raus", T.optimizeBagelFactory(tBF, "macros", {}, { deli: true }, 3, true, { plain: true }, true).every(r => r.items.every(x => !/smoky pulled pork/i.test(x.name))), true);
+check("Bagel Factory ohne Schalter: Smoky Pulled Pork erlaubt (Gegenprobe)", T.optimizeBagelFactory({ protein: 42, carbs: 66, fat: 30, kcal: 702, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { deli: true }, 1, true, { plain: true }, false).some(r => r.items.some(x => /smoky pulled pork/i.test(x.name))), true);
+
+// ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
+const shellRE = /(prawn|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;
+check("isShellfish: prawn/shrimp/crab/calamari -> true", ["Prawn tom yum", "Shrimp", "Crayfish & Rocket", "Calamari", "California rolls", "best of itsu"].every(n => T.isShellfish({ name: n })), true);
+check("isShellfish: Fisch/Fleisch/Veggie -> false", ["Salmon donburi", "Tuna hosomaki", "Grilled Chicken", "Salmon Bowl", "Gochujang Salmon", "Chicken Club"].every(n => !T.isShellfish({ name: n })), true);
+check("Such-Index: KEIN Schalentier", T.SEARCH_INDEX.filter(x => shellRE.test(x.name)).length, 0);
+// Optimizer-Pools schalentierfrei (Stichproben)
+const allC = o => { const r = {}; (o.cats || []).forEach(c => r[c.id] = true); return r; };
+const tSh = { protein: 20, carbs: 40, fat: 15, kcal: 435, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const noShell = res => res.every(r => r.items.every(x => !shellRE.test(x.name)));
+check("Itsu-Optimizer schalentierfrei (inkl. versteckter Sets)", noShell(T.optimizeItsu(tSh, "macros", {}, allC(T.ITSU), 20, false, false, false)), true);
+check("Wasabi-Optimizer schalentierfrei (inkl. California)", noShell(T.optimizeWasabi(tSh, "macros", {}, allC(T.WASABI), 20, false, false, false, false)), true);
+check("Wagamama-Optimizer schalentierfrei (prawn raus)", noShell(T.optimizeWaga(tSh, "macros", {}, allC(T.WAGA), 20, false)), true);
+check("Pizza-Express-Optimizer schalentierfrei (Calamari/Prawn raus)", noShell(T.optimizePizzaExpress(tSh, "macros", {}, allC(T.PIZZAEXPRESS), 20)), true);
+check("UG-Optimizer schalentierfrei (Shrimp raus)", T.optimizeUG(tSh, "macros", {}, "salad", false, false, true).every(r => !shellRE.test((r.prot && r.prot.name) || "") && !shellRE.test((r.prot2 && r.prot2.name) || "")), true);
+check("Fisch bleibt erhalten (Wasabi Salmon/Tuna weiter im Datensatz)", T.WASABI.items.some(x => /salmon|tuna/i.test(x.name)), true);
 
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };

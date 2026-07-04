@@ -165,7 +165,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 - **Pizza Express**: `PIZZAEXPRESS.cats[]` + `PIZZAEXPRESS.items[]` (AC-Schema wie Itsu/Pret; 156 Items nach Deliveroo-Prune, volle 8 Makros per Portion; GF/Vegan-Varianten als eigene Items) — kein Build-Your-Own
 - **Wasabi**: `WASABI.cats[]` + `WASABI.items[]` (AC-Schema; 158 Items, volle Makros AUSSER `fibre:0`; per-100g→Portion skaliert). Switches via `optimizeWasabi(...,noSoup,onlySushi,noSashimi,goodMeals)` (`WASABI_SOUP_CAT`/`WASABI_SUSHI_CAT`/`WASABI_GOODMEAL_CATS=["salads","bento","sides"]`)
 - **Leon**: `LEON.cats[]` + `LEON.items[]` (AC-Schema; 26 Items, 8 Kategorien nach Deliveroo-Prune + 3 Kids-Meals, volle 8 Makros; Gesamtfett=max(Fat,sat+mono+poly)). `optimizeLeon(t,mode,p,activeCats,maxN)` — nur Kategorie-Chips + Max-Items (keine Schalter)
-- **Bagel Factory**: `BAGELFACTORY.cats[]` + `BAGELFACTORY.buns[]` (6 Buns, `plain:true`-Referenz) + `BAGELFACTORY.items[]` (AC-Schema; 43 Items, `bunSwap:true` auf vollwertigen Bagels, volle 8 Makros per Portion, Werte = Plain Bun). `optimizeBagelFactory(t,mode,p,activeCats,maxN,noSweets,bunsOk)` — Kategorie-Chips + Max-Bagels (1/2/3/4/5/∞) + „No snacks & sweet treats" (`noSweets`) + Bun-Wahl (`bunsOk`, expandiert vollwertige Bagels zu Bun-Varianten via `bfSwap` = Bagel − Plain Bun + Bun)
+- **Bagel Factory**: `BAGELFACTORY.cats[]` + `BAGELFACTORY.buns[]` (6 Buns, `plain:true`-Referenz) + `BAGELFACTORY.items[]` (AC-Schema; 43 Items, `bunSwap:true` auf vollwertigen Bagels, volle 8 Makros per Portion, Werte = Plain Bun). `optimizeBagelFactory(t,mode,p,activeCats,maxN,noSweets,bunsOk,noPork)` — Kategorie-Chips + Max-Bagels (1/2/3/4/5/∞) + „No snacks & sweet treats" (`noSweets`) + Bun-Wahl (`bunsOk`, expandiert vollwertige Bagels zu Bun-Varianten via `bfSwap` = Bagel − Plain Bun + Bun) + Schalter „No smoky pulled pork" (`noPork` filtert `id==="smoky_pulled_pork"`, **Default AUS**)
 - Jedes Item hat: `id, name, kcal, fat, sat, carbs, sugars, fibre, protein, salt` (Subway zusätzlich `servingG`)
 - Zusätzlich vollständige Subway-Produktdaten (`subs_6inch`, `toasties`, `saver_subs`, `wraps`, `salad_meals`, `spuds`, `sides`, `cookies`) in `data/subway-optimizer.jsx` — NICHT in der HTML-PWA, für zukünftige Features
 
@@ -315,6 +315,13 @@ BYO-**Tray**-Schritte: KEINE Green Base, KEIN Standard-Dressing —
 6. **Choose a Scoop or Premium Add On: PFLICHT, genau 1 aus 9** · 7. GENAU 2 Toppings · 8. Any Extra Dressing? · 9. Extra Scoops etc.
 - Optimizer probiert in den "Any ...?"-Stufen bis 2 Extras (nur bei Score-Verbesserung)
 
+## Permanenter Schalentier-Ausschluss — ALLE Restaurants (User-Allergie 04.07.2026)
+Krebstiere + Weichtiere (Garnelen/Shrimp/Krebs/Hummer/Languste/Flusskrebs/Muscheln/Austern/Tintenfisch/Calamari/Jakobsmuscheln/Oktopus) sind **permanent ausgeschlossen** (kein Schalter). **Fisch (Lachs/Thunfisch/Kabeljau …) bleibt** — kein Schalentier.
+- **Prädikat `isShellfish(x)`** (Modul-Level): `SHELLFISH_RE` (Name-Regex inkl. `california` — California-Rolls enthalten Krabbe/Surimi, oft ohne „crab" im Namen) ODER `SHELLFISH_NAMES` = `{"best of itsu","itsu classics"}` (Itsu-Sushi-Sets mit Krebstier-Allergen, deren Name das Schalentier NICHT verrät — via Roh-JSON-Allergene gefunden)
+- **Angewandt an EINEM zentralen Punkt je Pool**: `alaCarteCombos` filtert `pool` (deckt ALLE AC-Restaurants ab: Itsu/Pret/Nando's/Wagamama/GDK/TFC/Pepe's/Pizza Express/Wasabi/Leon/Bagel Factory), `optimizeUG` filtert `UG.prots` (Shrimp), und `buildSearchIndex`s `push` filtert den Such-Index. Subway/FJ/Atis/Chopstix/Five Guys haben kein Schalentier (nur Fisch/Fleisch/Veggie)
+- Betroffene Items (Stand 04.07.2026): Itsu (king prawn miso soup, Thai king prawn curry, 4 prawn crackers, + versteckt: best of itsu, California rolls, itsu classics), Pret (Crayfish & Rocket), Wagamama (chicken+prawn ×3, prawn raisukaree, prawn firecracker), Pizza Express (Calamari, Prawn Puttanesca), Wasabi (Prawn crunch dragon roll, Prawn tom yum, + versteckt via „california": California Dragon roll, California potto), Urban Greens (Shrimp-Protein). Die Items bleiben im Katalog/Roh-JSON, werden nur im Optimizer + Such-Index gefiltert
+- **Bei Datenaktualisierung/Re-Crawl prüfen**: neue versteckte Schalentier-Items (Allergen crustaceans/molluscs, aber Name unauffällig) müssen in `SHELLFISH_NAMES` ergänzt werden (Roh-JSONs tragen Allergene, die index.html-Blöcke NICHT)
+
 ## Permanente Ausschlüsse Subway (NIEMALS vorschlagen)
 - **Vegan CheeZe** — komplett aus Daten entfernt
 - **Bacon (Streaky)** — komplett aus Proteins entfernt
@@ -361,7 +368,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Pizza Express**: alle Kategorien aktiv **außer Desserts** (User-Wunsch: Desserts default AUS, in `pizzaexpress-update.js` `DEFAULT_OFF`), max. 5 Items; à la carte (keine Schalter); volle PDF-Makros. Dips & Drinks sind gar nicht im Modell
 - **Wasabi**: alle Kategorien aktiv, max. 5 Items, **„No sushi or soups & w/o sauces (good meals only)" AN (einziger aktiver Schalter)**, „No soups" + „only sushi" + „only sushi w/o sashimi" AUS; Getränke nicht in den Daten
 - **Leon**: alle 8 Kategorien aktiv (inkl. „Kids' All Day" — default AN, User-Wunsch), max. 5 Items; à la carte (keine Schalter); volle 8 Makros. Auf Deliveroo-Karte geprunt; Sauces/Drinks nicht im Modell
-- **Bagel Factory**: alle 7 Kategorien aktiv, max. 5 Bagels (Chips 1/2/3/4/5/∞ — einziges Restaurant mit 4er-Stufe, User-Wunsch), „No snacks & sweet treats" AN, **nur Plain-Bun vorgewählt** (weitere Buns anwählen → Optimizer swappt); Set-Menü (per-portion) + Bun-Wahl auf vollwertigen Bagels; Fillings/BYO nicht abbildbar
+- **Bagel Factory**: alle 7 Kategorien aktiv, max. 5 Bagels (Chips 1/2/3/4/5/∞ — einziges Restaurant mit 4er-Stufe, User-Wunsch), „No snacks & sweet treats" AN, **„No smoky pulled pork" AUS** (User-Wunsch), **nur Plain-Bun vorgewählt** (weitere Buns anwählen → Optimizer swappt); Set-Menü (per-portion) + Bun-Wahl auf vollwertigen Bagels; Fillings/BYO nicht abbildbar
 
 ## Standard-Salad in Berechnungen (Subway)
 Die Standard-Salad Items (Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Red Onions) sind:

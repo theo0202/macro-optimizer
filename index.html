@@ -1948,7 +1948,15 @@ const ITSU_LIGHT_CATS=new Set(["healthy_soups","hot_noodles","desserts_snacks"])
 // Gemeinsamer À-la-carte-Kern (Itsu, Pret, Nando's, Wagamama): Singles + Paare voll, Triples per Beam
 // (beste 80 Paare). maxN=Infinity (∞-Chip): Stufe 4+ erweitert die besten Kombos so lange um je 1 Item,
 // wie sich der Score verbessert — über dem Ziel verschlechtern Zusätze, die Suche stirbt natürlich aus.
+// Schalentier-Filter (Krebstiere + Weichtiere) — User ist allergisch, daher PERMANENT ausgeschlossen (kein Schalter).
+// Fisch (Lachs/Thunfisch/Kabeljau …) bleibt. "california" = California-Rolls (enthalten Krabbe/Surimi, oft ohne "crab"
+// im Namen). SHELLFISH_NAMES = Itsu-Sets mit Krebstier-Allergen, deren Name das Schalentier nicht verrät.
+const SHELLFISH_RE=/(prawn|shrimp|crab|lobster|langoustine|cray(fish)?|craw(fish)?|mussel|clam|oyster|squid|calamari|scallop|cockle|whelk|octopus|\bebi\b|california)/i;
+const SHELLFISH_NAMES=new Set(["best of itsu","itsu classics"]);
+function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
+
 function alaCarteCombos(t, mode, p, pool, maxN) {
+  pool=pool.filter(x=>!isShellfish(x)); // Schalentier permanent raus (Allergie)
   const R=[];
   const byScore=(a,b)=>a.score-b.score;
   for(const x of pool){const n=sumN([x],1);R.push({items:[x],nutrition:n,score:score(n,t,mode,p)});}
@@ -2189,8 +2197,8 @@ function bfSwap(item, bun){ // Plain lässt das Item unverändert; sonst Bagel �
   for(const k of KEYS) o[k]=Math.round((item[k]-BF_PLAIN_BUN[k]+bun[k])*10)/10;
   return o;
 }
-function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsOk){
-  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets"));
+function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsOk, noPork){
+  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets")&&!(noPork&&x.id==="smoky_pulled_pork"));
   const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,bunsOk));
   const pool=[];
   for(const it of base){
@@ -2256,7 +2264,7 @@ const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",n
 // Bewusst ausgelassen: Pepe's per-10ml-Flavours, Five-Guys-`mods` (Bun/Patty-Deltas, teils negativ), Atis Large-Dubletten (basesL/saucesL, ungenutzt).
 function buildSearchIndex(){
   const out=[];
-  const push=(resto,name,it)=>{ if(it && typeof it.kcal==="number" && name) out.push({resto,name,
+  const push=(resto,name,it)=>{ if(it && typeof it.kcal==="number" && name && !isShellfish({name})) out.push({resto,name, // Schalentier permanent raus (Allergie)
     kcal:it.kcal, fat:it.fat||0, sat:it.sat||0, carbs:it.carbs||0, sugars:it.sugars||0, fibre:it.fibre||0, protein:it.protein||0, salt:it.salt||0}); };
   const addArr=(resto,arr)=>{ (arr||[]).forEach(it=>push(resto,it.name,it)); };
   addArr("Itsu",ITSU.items); addArr("Pret",PRET.items); addArr("Nando's",NANDOS.items);
@@ -2313,6 +2321,7 @@ function optimizeUG(t, mode, p, ugMode, noNuts, noDress, capPickles) {
   // Performance: alles über vorberechnete kcal/P/F/C-Summen; _s = ungerundete Laufsumme,
   // nutrition = gerundete Anzeige-Kopie (sat/sugars/fibre/salt = 0, keine Daten im Guide).
   const R1=v=>Math.round(v*10)/10;
+  const prots=UG.prots.filter(x=>!isShellfish(x)); // Schalentier (Shrimp) permanent raus (Allergie)
   const mac=arr=>{const s={kcal:0,protein:0,fat:0,carbs:0};for(const x of arr)if(x){s.kcal+=x.kcal;s.protein+=x.protein;s.fat+=x.fat;s.carbs+=x.carbs;}return s;};
   const addM=(a,b)=>({kcal:a.kcal+b.kcal,protein:a.protein+b.protein,fat:a.fat+b.fat,carbs:a.carbs+b.carbs});
   const toN=s=>({kcal:R1(s.kcal),fat:R1(s.fat),sat:0,carbs:R1(s.carbs),sugars:0,fibre:0,protein:R1(s.protein),salt:0});
@@ -2332,7 +2341,7 @@ function optimizeUG(t, mode, p, ugMode, noNuts, noDress, capPickles) {
     next.sort(byScore);return next.slice(0,keep);
   };
   // Extra-Protein: Deliveroo-Liste ohne Avocado Whole (noExtra-Flag)
-  const xprots=UG.prots.filter(x=>!x.noExtra);
+  const xprots=prots.filter(x=>!x.noExtra);
   const xpSums=xprots.map(x=>mac([x]));
   const addProt2=cands=>{
     const next=[...cands];
@@ -2379,7 +2388,7 @@ function optimizeUG(t, mode, p, ugMode, noNuts, noDress, capPickles) {
   // kein Green-Base-Schritt, kein Standard-Dressing (Dressings nur über "Any Extra Dressing?" = Extras) ──
   if(ugMode==="tray"){
     let tray=[];
-    for(const c of [...UG.carbs,null]) for(const pr of [...UG.prots,null]){
+    for(const c of [...UG.carbs,null]) for(const pr of [...prots,null]){
       const bs=mac([c,pr]);
       for(let ti=0;ti<UG_VEG_TRIPLES.length;ti++)
         tray.push(fin({kind:"tray",green:null,carb:c,prot:pr,veg:UG_VEG_TRIPLES[ti],scoop:null,prot2:null,tops:[],dress:null,extras:[]},addM(bs,tripleSums[ti])));
@@ -2397,7 +2406,7 @@ function optimizeUG(t, mode, p, ugMode, noNuts, noDress, capPickles) {
   }
   // ── ugMode "salad" — BYO Salad: Green Base + Carb Base + Protein + 3 Veg → 2 Toppings → 0–1 Dressing ──
   let sal=[];
-  for(const g of [...UG.greens,null]) for(const c of [...UG.carbs,null]) for(const pr of [...UG.prots,null]){
+  for(const g of [...UG.greens,null]) for(const c of [...UG.carbs,null]) for(const pr of [...prots,null]){
     const bs=mac([g,c,pr]);
     for(let ti=0;ti<UG_VEG_TRIPLES.length;ti++)
       sal.push(fin({kind:"salad",green:g,carb:c,prot:pr,veg:UG_VEG_TRIPLES[ti],scoop:null,prot2:null,tops:[],dress:null,extras:[]},addM(bs,tripleSums[ti])));
@@ -2691,6 +2700,7 @@ function App() {
   const [bfCats,setBFC]=useState(()=>{const o={};BAGELFACTORY.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxBF,setMaxBF]=useState(5);
   const [noSweetsBF,setNoSweetsBF]=useState(true); // "No snacks & sweet treats" — Exclude-Schalter, Default AN (Konvention)
+  const [bfNoPork,setBFNoPork]=useState(false); // "No smoky pulled pork" — Default AUS (User-Wunsch)
   const [bfBuns,setBFBuns]=useState(()=>{const o={};BAGELFACTORY.buns.forEach(b=>o[b.id]=!!b.plain);return o;}); // Bun-Wahl, Default nur Plain vorgewählt (wie Subway; weitere Buns anwählbar → Optimizer swappt)
   const [selBF,setSelBF]=useState(null);
 
@@ -2780,7 +2790,7 @@ function App() {
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
-  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns]);
+  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns,bfNoPork):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns,bfNoPork]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3216,6 +3226,8 @@ function App() {
           h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
         resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noSweetsBF,onChange:e=>setNoSweetsBF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No snacks & sweet treats"),
+        resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:bfNoPork,onChange:e=>setBFNoPork(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No smoky pulled pork"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noCheese,onChange:e=>{setNC(e.target.checked);if(e.target.checked){setForceCheese(false);setDoubleCheese(false);}},style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
