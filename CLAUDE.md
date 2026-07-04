@@ -163,7 +163,7 @@ Live auf **GitHub Pages**: https://theo0202.github.io/macro-optimizer/ (Repo `th
 1. **Protein** (ein Protein wählen) — die Proteine entsprechen **Deliveroos Build-Your-Own-Subs**. **Pepperoni und Salami gibt es dort NICHT als Einzel-Protein**, nur in den Combo-Subs: **Spicy Italian** (= Salami + Pepperoni) und **Classic B.M.T.** (= Pepperoni + Salami + Turkey Ham). Diese Combos sind als eigene Proteine modelliert, Makros = **Summe der Komponenten** (User-Entscheidung 20.06.2026; 3+3 bzw. 3+3+3 Scheiben — kann ggü. Deliveroos Combo leicht unterzählen, aber verifizierte Komponentenwerte). Pepperoni/Salami bleiben als **Extra** wählbar
 2. **Größe** (6 Inch / Footlong)
 3. **Bread** (ein oder mehrere erlaubte Brote wählen — Optimizer nimmt je Ergebnis das best-passende; „All breads" = alle)
-4. **Cheese** (optional, max 1) — Schalter **„No cheese"** (kein Käse) und **„Cheese (always add one)"** (erzwingt immer einen der beiden Käse, kein „none"); die beiden schließen sich gegenseitig aus (einer an → der andere aus). Beide default AUS → Optimizer wählt Käse frei
+4. **Cheese** (optional, max 1) — drei **gegenseitig exklusive** Schalter (alle default AUS → Optimizer wählt Käse frei): **„No cheese"** (kein Käse), **„Cheese (always add one)"** (erzwingt einen der beiden Käse, kein „none"), **„Double cheese"** (erzwingt einen Käse in **doppelter Menge** — Käse zählt ×2). Einer an → die anderen beiden aus. Double cheese: Käse-Pool = die 2 Käse (wie forceCheese), Basis enthält den Käse ×2; bei Auswahl eines Ergebnisses wird der `__double_cheese`-Extra vorgewählt (Panel + Order-Guide zeigen „Double Cheese", Makros = Karte). Nur im Subway-Tab (in All/Accurate läuft Subway mit noCheese)
 5. **Extras** (beliebig viele): Double Meat, Double Cheese, Turkey Rashers, Pepperoni, Hash Browns, Chicken Strips, Turkey Ham, Poached Egg, Salami, Philly-Style Steak, Chicken Tikka
 6. **Salad** (beliebig viele, je max 1×): Lettuce, Tomatoes, Cucumber, Pickles, Peppers, Olives, Red Onions, Jalapeños, Sweetcorn
 7. **Sauce** (max 2): Sweet Chilli, Chipotle Southwest, Sweet Onion, Honey Mustard, Ketchup, X-Spy Chipotle, Garlic & Herb, Teriyaki, Lite Mayo, BBQ Sauce
@@ -330,7 +330,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Restaurant**: Subway
 - **Größe**: Footlong (User-Wunsch 12.06.2026; 6 Inch wählbar)
 - **Brot**: Wholegrain vorausgewählt — **Mehrfachauswahl** möglich (mehrere erlaubte Brote angeben, Optimizer wählt je Ergebnis das beste; „All breads" = alle erlaubt)
-- **Käse**: Käse erlaubt — Checkboxen „No cheese" + „Cheese (always add one)" beide **default AUS** (Optimizer wählt frei); die beiden schließen sich gegenseitig aus
+- **Käse**: Käse erlaubt — Checkboxen „No cheese" + „Cheese (always add one)" + „Double cheese" alle **default AUS** (Optimizer wählt frei); die drei schließen sich gegenseitig aus
 - **Sauce**: Keine Sauce (Checkbox aktiv)
 - **No Roast Chicken Breast**: AN (Exclude-Schalter, Default AN per Konvention — schließt das `roast_chicken`-Protein aus; gilt auch in All/Accurate)
 - **Sides**: „only Subs (no sides)" **AUS** (Sides werden berücksichtigt; „only X"-Modus, daher default aus)
@@ -409,7 +409,7 @@ Button **"Import from screenshot"** (unter den Modus-Tabs, in beiden Modi sichtb
 4. Probiert 0-1 Sauces (wenn Sauce erlaubt und Base-Score < 3)
 5. Scoring: gewichtete Abweichung von Ziel-Makros
 6. Sortiert nach Score; dann (außer `noSides`) die besten 40 Subs um 0–1 Side erweitert (Side ×1, nicht footlong-verdoppelt; nur wenn Score-verbessernd), neu sortiert. Top 20 zurück, zeigt Top 8 an
-7. `optimize(t,mode,p,noSauce,noCheese,breadsOk,sz,noSides,noRoastChicken,forceCheese)` — `noSides` = Schalter „only Subs"; `noRoastChicken` = Schalter „No Roast Chicken Breast" (filtert das `roast_chicken`-Protein); `forceCheese` = Schalter „Cheese" (Käse-Pool nur american/mozzarella_cheddar, kein „none"). Käse-Logik: noCheese → none; sonst forceCheese → die 2 Käse; sonst alle. „No cheese" + „Cheese" schließen sich im UI gegenseitig aus. **`breadsOk`** = Brot-Auswahl: `null`/leeres Objekt = alle Brote, `{id:true,…}` = nur diese erlaubten Brote (Optimizer wählt je Ergebnis das beste daraus), String = genau ein Brot (Legacy). In „All/Accurate" wird `null` (alle Brote) übergeben + `noRoastChicken=true`
+7. `optimize(t,mode,p,noSauce,noCheese,breadsOk,sz,noSides,noRoastChicken,forceCheese,doubleCheese)` — `noSides` = Schalter „only Subs"; `noRoastChicken` = Schalter „No Roast Chicken Breast" (filtert das `roast_chicken`-Protein); `forceCheese` = Schalter „Cheese" (Käse-Pool nur american/mozzarella_cheddar, kein „none"); `doubleCheese` = Schalter „Double cheese" (Käse-Pool wie forceCheese, aber Käse ×2 in der Basis: `cx=[c,c]`). Käse-Logik: noCheese → none; sonst forceCheese||doubleCheese → die 2 Käse; sonst alle. „No cheese" + „Cheese" + „Double cheese" schließen sich im UI gegenseitig aus. **`breadsOk`** = Brot-Auswahl: `null`/leeres Objekt = alle Brote, `{id:true,…}` = nur diese erlaubten Brote (Optimizer wählt je Ergebnis das beste daraus), String = genau ein Brot (Legacy). In „All/Accurate" wird `null` (alle Brote) übergeben + `noRoastChicken=true`
 
 ### Farmer J (`optimizeFJ`)
 1. Enumeriert Main × Base × (0–2 Sides aus allen 9)

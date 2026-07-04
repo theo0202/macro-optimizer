@@ -1784,9 +1784,10 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese) {
+function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese) {
   const m = sz==="footlong"?2:1;
-  const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : forceCheese ? D.cheeses.filter(c=>c.id!=="none") : D.cheeses; // forceCheese = Schalter "Cheese": immer einer der beiden Käse
+  // Käse-Pool: "No cheese" → none; "Cheese" bzw. "Double cheese" → einer der beiden Käse (kein none); sonst alle
+  const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : (forceCheese||doubleCheese) ? D.cheeses.filter(c=>c.id!=="none") : D.cheeses;
   const prots = noRoastChicken ? D.proteins.filter(x=>x.id!=="roast_chicken") : D.proteins; // Schalter "No Roast Chicken Breast"
   // breadsOk: null/undefined = alle Brote · String = genau ein Brot (Legacy) · Objekt {id:true,...} = erlaubte Auswahl
   // (leeres Objekt bzw. nichts ausgewählt → alle Brote). Der Optimizer wählt je Ergebnis das best-passende erlaubte Brot.
@@ -1795,7 +1796,8 @@ function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastC
   const br = D.breads.filter(breadOk);
   const R = [];
   for(const b of br) for(const pr of prots) for(const c of ch) {
-    const base=[b,pr,c,...STD_SALAD], bn=sumN(base,m), bs=score(bn,t,mode,p); // Std-Salad (Vegetables) gehört zum Sub → ×m (footlong verdoppelt)
+    const cx = (doubleCheese&&c.id!=="none") ? [c,c] : [c]; // "Double cheese"-Schalter: Käse zählt doppelt
+    const base=[b,pr,...cx,...STD_SALAD], bn=sumN(base,m), bs=score(bn,t,mode,p); // Std-Salad (Vegetables) gehört zum Sub → ×m (footlong verdoppelt)
     R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
     for(let i=0;i<D.extras.length;i++){
       const n1=sumN([...base,D.extras[i]],m), s1=score(n1,t,mode,p);
@@ -2487,6 +2489,7 @@ function App() {
   const [noSauce,setNS]=useState(true);
   const [noCheese,setNC]=useState(false); // "No cheese" — Default AUS (User 20.06.2026: Käse soll standardmäßig erlaubt sein)
   const [forceCheese,setForceCheese]=useState(false); // "Cheese" — erzwingt immer einen der beiden Käse (kein "none")
+  const [doubleCheese,setDoubleCheese]=useState(false); // "Double cheese" — erzwingt einen Käse in DOPPELTER Menge (Default AUS)
   const [onlySubs,setOnlySubs]=useState(false); // "only Subs (no sides)" — Default AUS, damit die Sides berücksichtigt werden
   const [noRoast,setNoRoast]=useState(true); // "No Roast Chicken Breast" — Exclude-Schalter, Default AN (Konvention)
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
@@ -2656,7 +2659,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -3081,9 +3084,11 @@ function App() {
         resto==="tfc"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-          h("input",{type:"checkbox",checked:noCheese,onChange:e=>{setNC(e.target.checked);if(e.target.checked)setForceCheese(false);},style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
+          h("input",{type:"checkbox",checked:noCheese,onChange:e=>{setNC(e.target.checked);if(e.target.checked){setForceCheese(false);setDoubleCheese(false);}},style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-          h("input",{type:"checkbox",checked:forceCheese,onChange:e=>{setForceCheese(e.target.checked);if(e.target.checked)setNC(false);},style:{accentColor:S.green,width:16,height:16}}),"Cheese (always add one)"),
+          h("input",{type:"checkbox",checked:forceCheese,onChange:e=>{setForceCheese(e.target.checked);if(e.target.checked){setNC(false);setDoubleCheese(false);}},style:{accentColor:S.green,width:16,height:16}}),"Cheese (always add one)"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:doubleCheese,onChange:e=>{setDoubleCheese(e.target.checked);if(e.target.checked){setNC(false);setForceCheese(false);}},style:{accentColor:S.green,width:16,height:16}}),"Double cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noSauce,onChange:e=>setNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
@@ -3365,7 +3370,7 @@ function App() {
             );
           }
           const isSel=sel===r;
-          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt({});setMSide(isSel?"":(r.side?r.side.id:""));},style:{
+          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt(isSel?{}:(doubleCheese?{"__double_cheese":true}:{}));setMSide(isSel?"":(r.side?r.side.id:""));},style:{
             background:isSel?"rgba(0,151,67,0.08)":"#151515",
             border:isSel?"1px solid "+S.green:"1px solid #222",
             borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
@@ -3375,7 +3380,7 @@ function App() {
                 h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},r.protein.name),
                 h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
                   r.bread.name,
-                  r.cheese.id!=="none"&&" · "+r.cheese.name,
+                  r.cheese.id!=="none"&&" · "+r.cheese.name+(doubleCheese?" ×2":""),
                   r.extras.length>0&&" · +"+r.extras.map(e=>e.name).join(", +"),
                   r.sauces.length>0&&" · "+r.sauces.map(s=>s.name).join(", "),
                   r.side&&" · + "+r.side.name,

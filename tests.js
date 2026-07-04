@@ -43,6 +43,21 @@ const top = res[0];
 const doubled = [top.bread, top.protein, top.cheese, ...top.extras, ...top.sauces].reduce((s, x) => s + x.kcal, 0);
 check("Subway Optimizer Footlong Top-1 (Sub + Gemüse je ×2)", top.nutrition.kcal, 2 * (doubled + saladKcal));
 
+// ── Subway "Double cheese"-Schalter (Käse zählt doppelt) ──
+const tDC = { protein: 25, carbs: 35, fat: 40, kcal: 600, fibMin: null, fibMax: null, sMin: null, sMax: null };
+// optimize(t,mode,p,noSauce,noCheese,breadsOk,sz,noSides,noRoastChicken,forceCheese,doubleCheese)
+const rDC = T.optimize(tDC, "macros", {}, true, false, { wholegrain: true }, "6inch", true, true, false, true);
+const topDC = rDC[0];
+check("Subway Double cheese: immer ein echter Käse gewählt (nicht none)", topDC.cheese.id !== "none", true);
+// nutrition muss dem Sub MIT Käse ×2 entsprechen (Rekonstruktion)
+const dcItems = [topDC.bread, topDC.protein, topDC.cheese, topDC.cheese, ...T.STD_SALAD, ...topDC.extras, ...topDC.sauces];
+check("Subway Double cheese: nutrition = Sub + Käse ×2", approx(topDC.nutrition.kcal, T.sumN(dcItems, 1).kcal), true);
+// Gegenprobe: mit forceCheese (einfach) ist der Käse nur 1×
+const rSC = T.optimize(tDC, "macros", {}, true, false, { wholegrain: true }, "6inch", true, true, true, false);
+const topSC = rSC[0];
+const scItems = [topSC.bread, topSC.protein, topSC.cheese, ...T.STD_SALAD, ...topSC.extras, ...topSC.sauces];
+check("Subway single cheese: nutrition = Sub + Käse ×1", approx(topSC.nutrition.kcal, T.sumN(scItems, 1).kcal), true);
+
 // ── Subway Sides (Baked Beans Snack Pot, Coleslaw Regular/Double) + "only Subs"-Schalter ──
 check("Subway D.sides (3)", T.D.sides.length, 3);
 check("Subway Baked Beans Snack Pot kcal (PDF)", T.D.sides.find(s => s.id === "baked_beans_snack_pot").kcal, 109);
