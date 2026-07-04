@@ -2692,14 +2692,24 @@ function App() {
   const activeRaw=resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:(AC?AC.res:[]);
   const activeResults=useMemo(()=>applyCornCakes(activeRaw,cornCakes,targets,mode,prefs,cornCap),[activeRaw,cornCakes,targets,mode,prefs,cornCap]);
   // Live-Berechnung der Cake-Anzahl fuers Detail-Panel (reagiert sofort auf Ziel-Aenderung / Schalter / Cap).
-  // base = corn-freie nutrition (sel._base falls augmentiert, sonst sel.nutrition). Liefert {n, total}.
+  // base = corn-freie nutrition (sel._base falls augmentiert, sonst sel.nutrition). Liefert {n, total, base}.
   const cornTot=(base)=>{
-    if(!base) return {n:0,total:base};
+    if(!base) return {n:0,total:base,base:base};
     const n=cornCakes?bestCornCakes(base,targets,mode,prefs,cornCap):0;
-    if(!n) return {n:0,total:base};
+    if(!n) return {n:0,total:base,base:base};
     const tot={}; for(const k of KEYS) tot[k]=Math.round((((base[k]||0)+n*CORN_CAKE[k]))*10)/10;
-    return {n,total:tot};
+    return {n,total:tot,base:base};
   };
+  // Kompakte "nur Restaurant" (corn-frei) Makro-Zeile fuers Detail-Panel — erscheint nur, wenn Cakes dabei sind.
+  const cornBaseRow=(cc)=> (cc&&cc.n>0&&cc.base)? h("div",{style:{margin:"-4px 0 14px",padding:"8px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
+    h("div",{style:{fontSize:9,color:"#666",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:5}},"Restaurant only · excl. corn cakes"),
+    h("div",{style:{display:"flex",gap:14,fontSize:12,fontFamily:S.mono,flexWrap:"wrap"}},
+      h("span",{style:{color:"#4ade80",fontWeight:700}},cc.base.kcal+" kcal"),
+      h("span",{style:{color:"#60a5fa"}},"P "+cc.base.protein+"g"),
+      h("span",{style:{color:"#fbbf24"}},"C "+cc.base.carbs+"g"),
+      h("span",{style:{color:"#f87171"}},"F "+cc.base.fat+"g")
+    )
+  ) : null;
 
   const selTotal=useMemo(()=>{
     if(!sel)return null;
@@ -3433,6 +3443,7 @@ function App() {
           h(MacroBar,{label:"Fibre",value:ccSub.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccSub.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
+        cornBaseRow(ccSub),
 
         // Extras
         h("div",{style:{marginBottom:12}},
@@ -3540,6 +3551,7 @@ function App() {
           h(MacroBar,{label:"Fibre",value:ccFJ.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccFJ.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
+        cornBaseRow(ccFJ),
 
         // Toppings (nur Custom Builds)
         !selF.set&&h("div",{style:{marginBottom:12}},
@@ -3609,6 +3621,7 @@ function App() {
           h(MacroBar,{label:"Fibre",value:ccAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
+        cornBaseRow(ccAC),
 
         // Einzelne Items mit kcal
         h("div",{style:{marginBottom:16}},
@@ -3654,6 +3667,7 @@ function App() {
           h(MacroBar,{label:"Carbs",value:ccUG.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:ccUG.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
+        cornBaseRow(ccUG),
 
         // Komponenten
         h("div",{style:{marginBottom:16}},
@@ -3728,6 +3742,7 @@ function App() {
           h(MacroBar,{label:"Carbs",value:ccAt.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:ccAt.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
+        cornBaseRow(ccAt),
 
         // Komponenten (doublePlate-Items mit ×2 + verdoppeltem kcal)
         (()=>{
@@ -3786,6 +3801,7 @@ function App() {
           h(MacroBar,{label:"Carbs",value:ccCh.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
           h(MacroBar,{label:"Fat",value:ccCh.total.fat,target:mode==="macros"?tF:0,color:"#f87171"})
         ),
+        cornBaseRow(ccCh),
 
         // Komponenten (Base in Box-Größe + Toppings)
         (()=>{
@@ -3838,6 +3854,7 @@ function App() {
           h(MacroBar,{label:"Fibre",value:ccFG.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
           h(MacroBar,{label:"Salt",value:ccFG.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
+        cornBaseRow(ccFG),
 
         // Komponenten (Main + Toppings + Fries)
         h("div",{style:{marginBottom:16}},
