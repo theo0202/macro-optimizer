@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -709,10 +709,35 @@ check("Leon Nutrition == Summe", rLeon.every(r => approx(r.nutrition.kcal, Math.
 check("Leon 1–3 Items", rLeon.every(r => r.items.length >= 1 && r.items.length <= 3), true);
 check("Leon Kategorie-Filter (nur Burgers)", T.optimizeLeon(tLeon, "macros", {}, { burgers: true }, 1).every(r => r.items.every(x => x.cat === "burgers")), true);
 
+// ── Bagel Factory (à la carte, AC-Familie; NUR Set-Menü — per-portion, Werte = Plain Bun) ──
+check("Bagel Factory Items (43)", T.BAGELFACTORY.items.length, 43);
+check("Bagel Factory Kategorien (7)", T.BAGELFACTORY.cats.length, 7);
+check("Bagel Factory volle 8 Makros (numerisch)", T.BAGELFACTORY.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
+check("Bagel Factory Cream Cheese Bagel kcal (435)", T.BAGELFACTORY.items.find(x => x.id === "cream_cheese_bagel").kcal, 435);
+check("Bagel Factory Chicken Club Protein (36.6)", T.BAGELFACTORY.items.find(x => x.id === "chicken_club").protein, 36.6);
+check("Bagel Factory Tuna Melt kcal (667)", T.BAGELFACTORY.items.find(x => x.id === "tuna_melt").kcal, 667);
+// PDF-Zeilenverrutscher-Fix: Mini The Classic druckt carbs 19.1 / sugars 24.1 -> carbs 24.1 (verrutschte Carb-Angabe), sugars 3.1 (skaliert)
+check("Bagel Factory Mini Classic carbs-Fix (24.1, nicht 19.1)", T.BAGELFACTORY.items.find(x => x.id === "mini_the_classic_bagel").carbs, 24.1);
+check("Bagel Factory Mini Classic sugars-Fix (3.1)", T.BAGELFACTORY.items.find(x => x.id === "mini_the_classic_bagel").sugars, 3.1);
+check("Bagel Factory sugars <= carbs ueberall", T.BAGELFACTORY.items.every(x => x.sugars <= x.carbs + 0.05), true);
+check("Bagel Factory sat <= fat ueberall", T.BAGELFACTORY.items.every(x => x.sat <= x.fat + 0.05), true);
+const bfBad = T.BAGELFACTORY.items.filter(x => { const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - e) > 60 && Math.abs(x.kcal - e) / Math.max(x.kcal, 1) > 0.25; });
+check("Bagel Factory kcal-plausibel (alle Items)", bfBad.length, 0);
+check("Bagel Factory 8 Sweets", T.BAGELFACTORY.items.filter(x => x.cat === "sweets").length, 8);
+const allBF = {}; T.BAGELFACTORY.cats.forEach(c => allBF[c.id] = true);
+const tBF = { protein: 35, carbs: 60, fat: 20, kcal: 560, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rBF = T.optimizeBagelFactory(tBF, "macros", {}, allBF, 3, true);
+check("Bagel Factory liefert Ergebnisse (1..20)", rBF.length > 0 && rBF.length <= 20, true);
+check("Bagel Factory Nutrition == Summe", rBF.every(r => approx(r.nutrition.kcal, Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10)), true);
+check("Bagel Factory 'No snacks & sweet treats' filtert sweets", rBF.every(r => r.items.every(x => x.cat !== "sweets")), true);
+const rBFsw = T.optimizeBagelFactory({ protein: 5, carbs: 45, fat: 20, kcal: 380, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allBF, 1, false);
+check("Bagel Factory ohne Schalter: Sweets erlaubt (Gegenprobe)", rBFsw.some(r => r.items.some(x => x.cat === "sweets")), true);
+check("Bagel Factory Kategorie-Filter (nur Deli)", T.optimizeBagelFactory(tBF, "macros", {}, { deli: true }, 1, true).every(r => r.items.every(x => x.cat === "deli")), true);
+
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -721,7 +746,7 @@ check("All: max 1 Treffer pro Restaurant (User-Wunsch)", Object.values(rAll.redu
 check("All: nur gültige _resto-Werte", rAll.every(r => RESTOS.includes(r._resto)), true);
 check("All: TFC-Treffer ohne Fisch (No fish an)", rAll.filter(r => r._resto === "tfc").every(r => r.items.every(x => !x.fish)), true);
 // acMaxN: Cross-Restaurant Max-Items-Chip steuert die à-la-carte-Restaurants
-const AC_RESTOS = ["itsu", "pret", "nandos", "wagamama", "gdk", "tfc", "pepes", "pizzaexpress", "wasabi", "leon"];
+const AC_RESTOS = ["itsu", "pret", "nandos", "wagamama", "gdk", "tfc", "pepes", "pizzaexpress", "wasabi", "leon", "bagelfactory"];
 const rAllMax1 = T.optimizeAll(tAllT, "macros", {}, "footlong", null, 1);
 check("All acMaxN=1: AC-Restaurants liefern genau 1 Item", rAllMax1.filter(r => AC_RESTOS.includes(r._resto)).every(r => r.items.length === 1), true);
 const rAllMax2 = T.optimizeAll(tAllT, "macros", {}, "footlong", null, 2);
@@ -1016,7 +1041,7 @@ check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes(
 check("Search-Index gefuellt (>900 Items)", T.SEARCH_INDEX.length > 900, true);
 check("Search-Index: alle Eintraege haben resto+name+8 Makros", T.SEARCH_INDEX.every(x => x.resto && x.name && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Search-Index: keine exakten Duplikate (resto|name|kcal)", (() => { const s = new Set(); return T.SEARCH_INDEX.every(x => { const k = x.resto + "|" + x.name + "|" + x.kcal; if (s.has(k)) return false; s.add(k); return true; }); })(), true);
-check("Search-Index deckt alle 16 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 16);
+check("Search-Index deckt alle 17 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 17);
 check("searchItems leere Query -> []", T.searchItems("").length, 0);
 const sKatsu = T.searchItems("katsu");
 check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);
