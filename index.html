@@ -1955,14 +1955,17 @@ const SHELLFISH_RE=/(prawn|shrimp|crab|lobster|langoustine|cray(fish)?|craw(fish
 const SHELLFISH_NAMES=new Set(["best of itsu","itsu classics"]);
 function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
 
-function alaCarteCombos(t, mode, p, pool, maxN) {
+function alaCarteCombos(t, mode, p, pool, maxN, distinctBy) {
   pool=pool.filter(x=>!isShellfish(x)); // Schalentier permanent raus (Allergie)
+  const dk=distinctBy||null; // optional: keine zwei Items mit gleichem dk(x) in EINER Bestellung (z.B. "no duplicate bagels")
+  const distinctOk=dk?(items,x)=>{const k=dk(x);return !items.some(y=>dk(y)===k);}:null;
   const R=[];
   const byScore=(a,b)=>a.score-b.score;
   for(const x of pool){const n=sumN([x],1);R.push({items:[x],nutrition:n,score:score(n,t,mode,p)});}
   if(maxN>=2){
     const pairs=[];
     for(let i=0;i<pool.length;i++)for(let j=i;j<pool.length;j++){
+      if(dk&&dk(pool[i])===dk(pool[j]))continue; // distinct: gleicher Key (inkl. i==j) raus
       const items=[pool[i],pool[j]],n=sumN(items,1);
       const r={items,nutrition:n,score:score(n,t,mode,p)};
       R.push(r);pairs.push(r);
@@ -1972,6 +1975,7 @@ function alaCarteCombos(t, mode, p, pool, maxN) {
       const seen=new Set();
       let frontier=[];
       for(const pr of pairs.slice(0,80))for(const x of pool){
+        if(distinctOk&&!distinctOk(pr.items,x))continue;
         const items=[...pr.items,x];
         const key=items.map(y=>y.id).sort().join("|");
         if(seen.has(key))continue;seen.add(key);
@@ -1984,6 +1988,7 @@ function alaCarteCombos(t, mode, p, pool, maxN) {
         frontier.sort(byScore);frontier=frontier.slice(0,80);
         const next=[];
         for(const pr of frontier)for(const x of pool){
+          if(distinctOk&&!distinctOk(pr.items,x))continue;
           const items=[...pr.items,x];
           const key=items.map(y=>y.id).sort().join("|");
           if(seen.has(key))continue;seen.add(key);
@@ -2187,6 +2192,11 @@ function optimizeLeon(t, mode, p, activeCats, maxN) {
 // EXTRAS/SAUCES (Fillings) der PDF nur per-100g → Fillings/BYO nicht abbildbar. Schalter "No snacks & sweet treats".
 const BF_PLAIN_BUN = BAGELFACTORY.buns.find(b=>b.plain);
 const BF_SLOT_DEFAULT = BF_PLAIN_BUN ? {[BF_PLAIN_BUN.id]:true} : {}; // Default je Bagel-Slot: nur Plain vorgewählt (wie Subways Brot-Default; "all buns" also default aus)
+const bfBaseKey = x => ((x&&x.id)||"").split("__")[0]; // Basis-Bagel-Id ohne "__bun"-Suffix (für "no duplicate bagels")
+// "No salmon"-Filter: Lachs-Bagels. Name mit "salmon" ODER die 3 Lachs-Bagels, deren Name das nicht verrät
+// (The Classic = Salmon/Cream Cheese, The New Yorker = Smoked Salmon, Mini The Classic — via bagelfactory.co.uk verifiziert). Tuna Melt ist KEIN Lachs.
+const BF_SALMON_IDS = new Set(["the_classic","the_new_yorker","mini_the_classic_bagel"]);
+function isBFSalmon(x){ return /salmon/i.test((x&&x.name)||"") || BF_SALMON_IDS.has(bfBaseKey(x)); }
 function bfBunOk(b, bunsOk){ // wie Subway breadOk: null/leer = alle Buns; sonst nur gewählte (nichts gewählt → alle)
   if(!bunsOk) return true;
   const sel=BAGELFACTORY.buns.filter(x=>bunsOk[x.id]);
@@ -2211,7 +2221,7 @@ function bfSlotPool(base, slot){
 }
 // Per-Slot-Optimizer: Slot 1..k (k=slots.length) je 0/1 Bagel aus dem slot-eigenen Pool (Beam-Suche, jeder Slot optional).
 // So legt der User die Bun je Bagel-Position fest (Slot i = "Bun für Bagel i"). Duplikate über Slots erlaubt.
-function bfSlotOptimize(base, t, mode, p, slots){
+function bfSlotOptimize(base, t, mode, p, slots, noDup){
   const pools=slots.map(s=>bfSlotPool(base,s));
   const byScore=(a,b)=>a.score-b.score;
   const results=[];
@@ -2225,7 +2235,13 @@ function bfSlotOptimize(base, t, mode, p, slots){
       const n=sumN(items,1);
       cand.set(key,{items,nutrition:n,score:items.length?score(n,t,mode,p):Infinity});
     };
-    for(const part of frontier){ add(part.items); for(const x of pools[i]) add([...part.items,x]); }
+    for(const part of frontier){
+      add(part.items);
+      for(const x of pools[i]){
+        if(noDup&&part.items.some(y=>bfBaseKey(y)===bfBaseKey(x)))continue; // kein zweiter Bagel gleicher Basis
+        add([...part.items,x]);
+      }
+    }
     const arr=[...cand.values()].sort(byScore);
     for(const r of arr) if(r.items.length) results.push(r);
     frontier=arr.slice(0,BW);
@@ -2236,13 +2252,15 @@ function bfSlotOptimize(base, t, mode, p, slots){
   return out;
 }
 // bunsSpec: null → alle Buns (frei) · Objekt {id:true} → GLOBALE Bun-Wahl (alle Bagels, ∞-Fall/All-Tab) · Array → per-Slot-Bun (Bagel 1..N)
-function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsSpec, noPork){
-  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets")&&!(noPork&&x.id==="smoky_pulled_pork"));
+// noDup: "No duplicate bagels" (kein Bagel gleicher Basis zweimal) · noSalmon: "No salmon" (Lachs-Bagels raus)
+function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsSpec, noPork, noDup, noSalmon){
+  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets")&&!(noPork&&x.id==="smoky_pulled_pork")&&!(noSalmon&&isBFSalmon(x)));
+  const distinctBy=noDup?bfBaseKey:undefined;
   const globalPath=slot=>{ // ein Bun-Filter für alle Bagels (wie zuvor)
     const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,slot));
     const pool=[];
     for(const it of base){ if(it.bunSwap&&buns.length) for(const b of buns) pool.push(bfSwap(it,b)); else pool.push(it); }
-    return alaCarteCombos(t,mode,p,pool,maxN);
+    return alaCarteCombos(t,mode,p,pool,maxN,distinctBy);
   };
   if(Array.isArray(bunsSpec)){
     const lim=maxN===Infinity?bunsSpec.length:Math.min(maxN,bunsSpec.length);
@@ -2250,7 +2268,7 @@ function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsSpec, 
     const key=s=>BAGELFACTORY.buns.filter(b=>s&&s[b.id]).map(b=>b.id).sort().join(",");
     const k0=key(slots[0]||{});
     if(slots.length<=1||slots.every(s=>key(s)===k0)) return globalPath(slots[0]||null); // uniform (inkl. Default all-Plain) → schneller Global-Pfad, identisches Ergebnis
-    return bfSlotOptimize(base,t,mode,p,slots);
+    return bfSlotOptimize(base,t,mode,p,slots,noDup);
   }
   return globalPath(bunsSpec||null);
 }
@@ -2748,6 +2766,8 @@ function App() {
   const [maxBF,setMaxBF]=useState(5);
   const [noSweetsBF,setNoSweetsBF]=useState(true); // "No snacks & sweet treats" — Exclude-Schalter, Default AN (Konvention)
   const [bfNoPork,setBFNoPork]=useState(false); // "No smoky pulled pork" — Default AUS (User-Wunsch)
+  const [bfNoDup,setBFNoDup]=useState(true); // "No duplicate bagels" — Default AN (User-Wunsch): kein Bagel gleicher Basis zweimal
+  const [bfNoSalmon,setBFNoSalmon]=useState(false); // "No salmon" — Default AUS (User-Wunsch; Lachs ist kein Allergen)
   const [bfBunSlots,setBFBunSlots]=useState(()=>Array.from({length:5},()=>({...BF_SLOT_DEFAULT}))); // Bun-Wahl je Bagel-Slot (1..5), Default nur Plain; ∞ nutzt Slot 0 als globalen Wähler
   const setBFSlot=(i,val)=>setBFBunSlots(prev=>{const n=prev.slice();while(n.length<=i)n.push({...BF_SLOT_DEFAULT});n[i]=val;return n;}); // Slot i setzen ("all buns" = {})
   const [selBF,setSelBF]=useState(null);
@@ -2838,7 +2858,7 @@ function App() {
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
-  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,maxBF===Infinity?bfBunSlots[0]:bfBunSlots.slice(0,maxBF),bfNoPork):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBunSlots,bfNoPork]);
+  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,maxBF===Infinity?bfBunSlots[0]:bfBunSlots.slice(0,maxBF),bfNoPork,bfNoDup,bfNoSalmon):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBunSlots,bfNoPork,bfNoDup,bfNoSalmon]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3287,6 +3307,10 @@ function App() {
           h("input",{type:"checkbox",checked:noSweetsBF,onChange:e=>setNoSweetsBF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No snacks & sweet treats"),
         resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:bfNoPork,onChange:e=>setBFNoPork(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No smoky pulled pork"),
+        resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:bfNoDup,onChange:e=>setBFNoDup(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No duplicate bagels"),
+        resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:bfNoSalmon,onChange:e=>setBFNoSalmon(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No salmon"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noCheese,onChange:e=>{setNC(e.target.checked);if(e.target.checked){setForceCheese(false);setDoubleCheese(false);}},style:{accentColor:S.green,width:16,height:16}}),"No cheese"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

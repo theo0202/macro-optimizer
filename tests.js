@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -767,6 +767,25 @@ check("Bagel Factory per-slot gemischt: nie Poppy/Multigrain/Everything/Cheese-B
 check("Bagel Factory per-slot gemischt: Sesame-Slot aktiv (Sesame-Variante moeglich)", rSlotMix.some(r => r.items.some(x => /\(Sesame\)$/.test(x.name))), true);
 const rSlotAllBuns = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 2, true, [{ sesame: true }, {}]);
 check("Bagel Factory per-slot (Sesame + all buns) liefert Ergebnisse", rSlotAllBuns.length > 0, true);
+// "No duplicate bagels" (kein Bagel gleicher Basis-Id zweimal). tDup ~ 2x Cream Cheese Bagel -> ohne Schalter waere 2x optimal.
+const bfBase = id => id.split("__")[0];
+const uniqBase = r => new Set(r.items.map(x => bfBase(x.id))).size === r.items.length;
+const tDup = { protein: 29, carbs: 120, fat: 28.8, kcal: 870, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rDupOff = T.optimizeBagelFactory(tDup, "macros", {}, { spread: true }, 3, true, [{ plain: true }, { plain: true }, { plain: true }], false, false, false);
+check("Bagel Factory ohne 'No duplicate': Duplikat-Bagel moeglich (Gegenprobe)", rDupOff.some(r => !uniqBase(r)), true);
+const rDupOn = T.optimizeBagelFactory(tDup, "macros", {}, { spread: true }, 3, true, [{ plain: true }, { plain: true }, { plain: true }], false, true, false);
+check("Bagel Factory 'No duplicate bagels' (Global-Pfad): keine zwei Bagels gleicher Basis", rDupOn.length > 0 && rDupOn.every(uniqBase), true);
+const rDupSlot = T.optimizeBagelFactory(tDup, "macros", {}, { spread: true }, 3, true, [{ sesame: true }, { plain: true }, {}], false, true, false);
+check("Bagel Factory 'No duplicate bagels' (per-Slot gemischt): keine gleiche Basis", rDupSlot.length > 0 && rDupSlot.every(uniqBase), true);
+// "No salmon" (Lachs-Bagels raus; Tuna Melt bleibt). isBFSalmon: Name "salmon" ODER die 3 Lachs-Ids.
+check("isBFSalmon: The Classic / New Yorker / Mini Classic / Egg Mayo Salmon -> true", [{ id: "the_classic", name: "The Classic" }, { id: "the_new_yorker", name: "The New Yorker" }, { id: "mini_the_classic_bagel", name: "Mini The Classic Bagel" }, { id: "egg_mayo_and_salmon_bagel", name: "Egg Mayo and Salmon Bagel" }].every(x => T.isBFSalmon(x)), true);
+check("isBFSalmon: Tuna Melt / Cream Cheese -> false", [{ id: "tuna_melt", name: "Tuna Melt" }, { id: "cream_cheese_bagel", name: "Cream Cheese Bagel" }].every(x => !T.isBFSalmon(x)), true);
+check("isBFSalmon: greift auch auf Bun-Variante (the_classic__sesame)", T.isBFSalmon({ id: "the_classic__sesame", name: "The Classic (Sesame)" }), true);
+check("Bagel Factory hat >=4 Lachs-Bagels im Katalog", T.BAGELFACTORY.items.filter(x => T.isBFSalmon(x)).length >= 4, true);
+const rNoSalmon = T.optimizeBagelFactory(tBF, "macros", {}, { seafood: true, breakfast: true }, 3, true, { plain: true }, false, false, true);
+check("Bagel Factory 'No salmon': kein Lachs-Bagel im Ergebnis", rNoSalmon.length > 0 && rNoSalmon.every(r => r.items.every(x => !T.isBFSalmon(x))), true);
+const rSalmonOn = T.optimizeBagelFactory({ protein: 22.5, carbs: 62, fat: 17.9, kcal: 501, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { seafood: true }, 1, true, { plain: true }, false, false, false);
+check("Bagel Factory ohne 'No salmon': Lachs-Bagel moeglich (Gegenprobe)", rSalmonOn.some(r => r.items.some(x => T.isBFSalmon(x))), true);
 
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
 const shellRE = /(prawn|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;
