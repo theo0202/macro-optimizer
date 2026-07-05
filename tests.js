@@ -786,6 +786,14 @@ const rNoSalmon = T.optimizeBagelFactory(tBF, "macros", {}, { seafood: true, bre
 check("Bagel Factory 'No salmon': kein Lachs-Bagel im Ergebnis", rNoSalmon.length > 0 && rNoSalmon.every(r => r.items.every(x => !T.isBFSalmon(x))), true);
 const rSalmonOn = T.optimizeBagelFactory({ protein: 22.5, carbs: 62, fat: 17.9, kcal: 501, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { seafood: true }, 1, true, { plain: true }, false, false, false);
 check("Bagel Factory ohne 'No salmon': Lachs-Bagel moeglich (Gegenprobe)", rSalmonOn.some(r => r.items.some(x => T.isBFSalmon(x))), true);
+// Bun-Permutationen zusammenfassen: gleiche Bagels + gleiches Bun-Multiset (nur andere Zuordnung) = identische Makros -> nur EIN Ergebnis
+const permKey = r => r.items.map(x => x.id.split("__")[0]).sort().join(",") + "||" + r.items.map(x => x.bun || "plain").sort().join(",");
+const uniqueKeys = arr => new Set(arr.map(permKey)).size === arr.length;
+const rPermGlobal = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true, deli: true }, 3, true, [{ plain: true, sesame: true }, { plain: true, sesame: true }, { plain: true, sesame: true }], false, false, false);
+check("Bagel Factory Bun-Permutation Global-Pfad nutzt Multi-Bun (Sesame vorhanden)", rPermGlobal.some(r => r.items.some(x => /\(Sesame\)$/.test(x.name))), true);
+check("Bagel Factory Bun-Permutationen zusammengefasst (Global-Pfad): eindeutige perm-keys", rPermGlobal.length > 0 && uniqueKeys(rPermGlobal), true);
+const rPermSlot = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true, deli: true }, 3, true, [{ plain: true, sesame: true }, { plain: true, multigrain: true }, {}], false, false, false);
+check("Bagel Factory Bun-Permutationen zusammengefasst (per-Slot): eindeutige perm-keys", rPermSlot.length > 0 && uniqueKeys(rPermSlot), true);
 
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
 const shellRE = /(prawn|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;

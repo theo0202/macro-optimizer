@@ -1955,7 +1955,7 @@ const SHELLFISH_RE=/(prawn|shrimp|crab|lobster|langoustine|cray(fish)?|craw(fish
 const SHELLFISH_NAMES=new Set(["best of itsu","itsu classics"]);
 function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
 
-function alaCarteCombos(t, mode, p, pool, maxN, distinctBy) {
+function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey) {
   pool=pool.filter(x=>!isShellfish(x)); // Schalentier permanent raus (Allergie)
   const dk=distinctBy||null; // optional: keine zwei Items mit gleichem dk(x) in EINER Bestellung (z.B. "no duplicate bagels")
   const distinctOk=dk?(items,x)=>{const k=dk(x);return !items.some(y=>dk(y)===k);}:null;
@@ -2001,6 +2001,11 @@ function alaCarteCombos(t, mode, p, pool, maxN, distinctBy) {
     }
   }
   R.sort(byScore);
+  if(dedupKey){ // optional: gleichwertige Ergebnisse (z.B. Bun-Permutationen) zusammenfassen, besten je Klasse behalten
+    const seenK=new Set(), out=[];
+    for(const r of R){ const k=dedupKey(r.items); if(seenK.has(k))continue; seenK.add(k); out.push(r); if(out.length>=20)break; }
+    return out;
+  }
   return R.slice(0,20);
 }
 // "only sushi" = Kategorie sushi & poké, aber OHNE die Poké-Bowls (User-Wunsch: nur Sushi/Sashimi).
@@ -2197,6 +2202,9 @@ const bfBaseKey = x => ((x&&x.id)||"").split("__")[0]; // Basis-Bagel-Id ohne "_
 // (The Classic = Salmon/Cream Cheese, The New Yorker = Smoked Salmon, Mini The Classic — via bagelfactory.co.uk verifiziert). Tuna Melt ist KEIN Lachs.
 const BF_SALMON_IDS = new Set(["the_classic","the_new_yorker","mini_the_classic_bagel"]);
 function isBFSalmon(x){ return /salmon/i.test((x&&x.name)||"") || BF_SALMON_IDS.has(bfBaseKey(x)); }
+// Permutations-Signatur einer Bestellung: gleiche Bagel-Basen + gleiches Bun-Multiset (Zuordnung egal) → identische Makros
+// (Bun-Beiträge sind additiv). Damit werden Ergebnisse wie {x(Plain),y(Sesame)} und {x(Sesame),y(Plain)} zusammengefasst.
+const bfPermKey = items => items.map(bfBaseKey).sort().join(",") + "||" + items.map(it => (it&&it.bun)||"plain").sort().join(",");
 function bfBunOk(b, bunsOk){ // wie Subway breadOk: null/leer = alle Buns; sonst nur gewählte (nichts gewählt → alle)
   if(!bunsOk) return true;
   const sel=BAGELFACTORY.buns.filter(x=>bunsOk[x.id]);
@@ -2248,7 +2256,7 @@ function bfSlotOptimize(base, t, mode, p, slots, noDup){
   }
   results.sort(byScore);
   const seen=new Set(), out=[];
-  for(const r of results){ const key=r.items.map(y=>y.id).sort().join("|"); if(seen.has(key))continue; seen.add(key); out.push(r); if(out.length>=20)break; }
+  for(const r of results){ const key=bfPermKey(r.items); if(seen.has(key))continue; seen.add(key); out.push(r); if(out.length>=20)break; } // bfPermKey: Bun-Permutationen zusammenfassen
   return out;
 }
 // bunsSpec: null → alle Buns (frei) · Objekt {id:true} → GLOBALE Bun-Wahl (alle Bagels, ∞-Fall/All-Tab) · Array → per-Slot-Bun (Bagel 1..N)
@@ -2260,7 +2268,7 @@ function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsSpec, 
     const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,slot));
     const pool=[];
     for(const it of base){ if(it.bunSwap&&buns.length) for(const b of buns) pool.push(bfSwap(it,b)); else pool.push(it); }
-    return alaCarteCombos(t,mode,p,pool,maxN,distinctBy);
+    return alaCarteCombos(t,mode,p,pool,maxN,distinctBy,bfPermKey); // bfPermKey: Bun-Permutationen zusammenfassen
   };
   if(Array.isArray(bunsSpec)){
     const lim=maxN===Infinity?bunsSpec.length:Math.min(maxN,bunsSpec.length);
