@@ -753,6 +753,20 @@ check("Bagel Factory leere Bun-Auswahl = alle Buns (Varianten vorhanden)", rAllB
 // "No smoky pulled pork"-Schalter (Default AUS)
 check("Bagel Factory 'No smoky pulled pork' filtert es raus", T.optimizeBagelFactory(tBF, "macros", {}, { deli: true }, 3, true, { plain: true }, true).every(r => r.items.every(x => !/smoky pulled pork/i.test(x.name))), true);
 check("Bagel Factory ohne Schalter: Smoky Pulled Pork erlaubt (Gegenprobe)", T.optimizeBagelFactory({ protein: 42, carbs: 66, fat: 30, kcal: 702, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { deli: true }, 1, true, { plain: true }, false).some(r => r.items.some(x => /smoky pulled pork/i.test(x.name))), true);
+// Per-Slot-Bun (Array = Bun je Bagel-Position). Uniform-Array = Global-Pfad (identisch); gemischte Slots = Per-Slot-Beam.
+const rSlotPlain = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 3, true, [{ plain: true }, { plain: true }, { plain: true }]);
+const rGlobPlain = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 3, true, { plain: true });
+check("Bagel Factory per-slot all-Plain == global Plain (Top-1 kcal)", rSlotPlain.length > 0 && rGlobPlain.length > 0 && approx(rSlotPlain[0].nutrition.kcal, rGlobPlain[0].nutrition.kcal), true);
+const rSlotUni = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 2, true, [{ multigrain: true }, { multigrain: true }]);
+const bfUniAllMulti = rSlotUni.length > 0 && rSlotUni.every(r => r.items.every(x => /\(Multigrain\)$/.test(x.name)));
+check("Bagel Factory per-slot uniform (nur Multigrain-Varianten)", bfUniAllMulti, true);
+const rSlotMix = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 2, true, [{ sesame: true }, { plain: true }]);
+const bfForbiddenBun = /\((Poppy|Multigrain|Everything|Cheese)/;
+const bfMixAllOk = rSlotMix.length > 0 && rSlotMix.every(r => r.items.every(x => !bfForbiddenBun.test(x.name)));
+check("Bagel Factory per-slot gemischt: nie Poppy/Multigrain/Everything/Cheese-Bun", bfMixAllOk, true);
+check("Bagel Factory per-slot gemischt: Sesame-Slot aktiv (Sesame-Variante moeglich)", rSlotMix.some(r => r.items.some(x => /\(Sesame\)$/.test(x.name))), true);
+const rSlotAllBuns = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true }, 2, true, [{ sesame: true }, {}]);
+check("Bagel Factory per-slot (Sesame + all buns) liefert Ergebnisse", rSlotAllBuns.length > 0, true);
 
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
 const shellRE = /(prawn|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;

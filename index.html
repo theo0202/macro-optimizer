@@ -2186,6 +2186,7 @@ function optimizeLeon(t, mode, p, activeCats, maxN) {
 // gewählter Bun (math. validiert am Cream Cheese Bagel). Mini (Mini-Bun, keine Alternativen) + Sweets: keine Bun-Wahl.
 // EXTRAS/SAUCES (Fillings) der PDF nur per-100g → Fillings/BYO nicht abbildbar. Schalter "No snacks & sweet treats".
 const BF_PLAIN_BUN = BAGELFACTORY.buns.find(b=>b.plain);
+const BF_SLOT_DEFAULT = BF_PLAIN_BUN ? {[BF_PLAIN_BUN.id]:true} : {}; // Default je Bagel-Slot: nur Plain vorgewählt (wie Subways Brot-Default; "all buns" also default aus)
 function bfBunOk(b, bunsOk){ // wie Subway breadOk: null/leer = alle Buns; sonst nur gewählte (nichts gewählt → alle)
   if(!bunsOk) return true;
   const sel=BAGELFACTORY.buns.filter(x=>bunsOk[x.id]);
@@ -2197,15 +2198,61 @@ function bfSwap(item, bun){ // Plain lässt das Item unverändert; sonst Bagel �
   for(const k of KEYS) o[k]=Math.round((item[k]-BF_PLAIN_BUN[k]+bun[k])*10)/10;
   return o;
 }
-function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsOk, noPork){
-  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets")&&!(noPork&&x.id==="smoky_pulled_pork"));
-  const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,bunsOk));
+// Pool für EINEN Bagel-Slot: vollwertige Bagels (bunSwap) über die erlaubten Buns dieses Slots expandiert.
+// Mini-Bagels/Sweets (kein Bun) sind IMMER verfügbar — die Bun-Wahl betrifft nur vollwertige Bagels.
+function bfSlotPool(base, slot){
+  const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,slot));
   const pool=[];
   for(const it of base){
-    if(it.bunSwap&&buns.length) for(const b of buns) pool.push(bfSwap(it,b));
+    if(it.bunSwap){ if(buns.length) for(const b of buns) pool.push(bfSwap(it,b)); }
     else pool.push(it);
   }
-  return alaCarteCombos(t,mode,p,pool,maxN);
+  return pool;
+}
+// Per-Slot-Optimizer: Slot 1..k (k=slots.length) je 0/1 Bagel aus dem slot-eigenen Pool (Beam-Suche, jeder Slot optional).
+// So legt der User die Bun je Bagel-Position fest (Slot i = "Bun für Bagel i"). Duplikate über Slots erlaubt.
+function bfSlotOptimize(base, t, mode, p, slots){
+  const pools=slots.map(s=>bfSlotPool(base,s));
+  const byScore=(a,b)=>a.score-b.score;
+  const results=[];
+  let frontier=[{items:[]}];
+  const BW=250;
+  for(let i=0;i<pools.length;i++){
+    const cand=new Map();
+    const add=items=>{
+      const key=items.map(y=>y.id).sort().join("|");
+      if(cand.has(key))return;
+      const n=sumN(items,1);
+      cand.set(key,{items,nutrition:n,score:items.length?score(n,t,mode,p):Infinity});
+    };
+    for(const part of frontier){ add(part.items); for(const x of pools[i]) add([...part.items,x]); }
+    const arr=[...cand.values()].sort(byScore);
+    for(const r of arr) if(r.items.length) results.push(r);
+    frontier=arr.slice(0,BW);
+  }
+  results.sort(byScore);
+  const seen=new Set(), out=[];
+  for(const r of results){ const key=r.items.map(y=>y.id).sort().join("|"); if(seen.has(key))continue; seen.add(key); out.push(r); if(out.length>=20)break; }
+  return out;
+}
+// bunsSpec: null → alle Buns (frei) · Objekt {id:true} → GLOBALE Bun-Wahl (alle Bagels, ∞-Fall/All-Tab) · Array → per-Slot-Bun (Bagel 1..N)
+function optimizeBagelFactory(t, mode, p, activeCats, maxN, noSweets, bunsSpec, noPork){
+  const base=BAGELFACTORY.items.filter(x=>activeCats[x.cat]&&!(noSweets&&x.cat==="sweets")&&!(noPork&&x.id==="smoky_pulled_pork"));
+  const globalPath=slot=>{ // ein Bun-Filter für alle Bagels (wie zuvor)
+    const buns=BAGELFACTORY.buns.filter(b=>bfBunOk(b,slot));
+    const pool=[];
+    for(const it of base){ if(it.bunSwap&&buns.length) for(const b of buns) pool.push(bfSwap(it,b)); else pool.push(it); }
+    return alaCarteCombos(t,mode,p,pool,maxN);
+  };
+  if(Array.isArray(bunsSpec)){
+    const lim=maxN===Infinity?bunsSpec.length:Math.min(maxN,bunsSpec.length);
+    const slots=bunsSpec.slice(0,Math.max(1,lim));
+    const key=s=>BAGELFACTORY.buns.filter(b=>s&&s[b.id]).map(b=>b.id).sort().join(",");
+    const k0=key(slots[0]||{});
+    if(slots.length<=1||slots.every(s=>key(s)===k0)) return globalPath(slots[0]||null); // uniform (inkl. Default all-Plain) → schneller Global-Pfad, identisches Ergebnis
+    return bfSlotOptimize(base,t,mode,p,slots);
+  }
+  return globalPath(bunsSpec||null);
 }
 
 // Wasabi: à la carte (AC-Alias, wie Itsu). Volle Makros AUSSER Ballaststoffe (fibre=0). Getränke nicht in den Daten.
@@ -2701,7 +2748,8 @@ function App() {
   const [maxBF,setMaxBF]=useState(5);
   const [noSweetsBF,setNoSweetsBF]=useState(true); // "No snacks & sweet treats" — Exclude-Schalter, Default AN (Konvention)
   const [bfNoPork,setBFNoPork]=useState(false); // "No smoky pulled pork" — Default AUS (User-Wunsch)
-  const [bfBuns,setBFBuns]=useState(()=>{const o={};BAGELFACTORY.buns.forEach(b=>o[b.id]=!!b.plain);return o;}); // Bun-Wahl, Default nur Plain vorgewählt (wie Subway; weitere Buns anwählbar → Optimizer swappt)
+  const [bfBunSlots,setBFBunSlots]=useState(()=>Array.from({length:5},()=>({...BF_SLOT_DEFAULT}))); // Bun-Wahl je Bagel-Slot (1..5), Default nur Plain; ∞ nutzt Slot 0 als globalen Wähler
+  const setBFSlot=(i,val)=>setBFBunSlots(prev=>{const n=prev.slice();while(n.length<=i)n.push({...BF_SLOT_DEFAULT});n[i]=val;return n;}); // Slot i setzen ("all buns" = {})
   const [selBF,setSelBF]=useState(null);
 
   // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (in localStorage gespeichert)
@@ -2790,7 +2838,7 @@ function App() {
   const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
-  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns,bfNoPork):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBuns,bfNoPork]);
+  const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,maxBF===Infinity?bfBunSlots[0]:bfBunSlots.slice(0,maxBF),bfNoPork):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBunSlots,bfNoPork]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3128,17 +3176,28 @@ function App() {
         h("div",{style:{display:"flex",gap:5,marginBottom:12}},
           ...[1,2,3,4,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxBF===n,onClick:()=>setMaxBF(n),small:true}))
         ),
-        // Bun-Wahl (nur für vollwertige Bagels; = Bagel − Plain Bun + gewählter Bun). Mehrfachauswahl; Optimizer wählt je Bagel den best-passenden.
-        h("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:8}},
-          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Bagel bun"),
-          h("button",{onClick:()=>setBFBuns(()=>{const o={};BAGELFACTORY.buns.forEach(b=>o[b.id]=true);return o;}),style:{background:"none",border:"none",color:"#666",fontSize:9,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},"all buns")
-        ),
-        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}},
-          ...BAGELFACTORY.buns.map(b=>h(Chip,{key:b.id,label:b.name,small:true,active:!!bfBuns[b.id],
-            onClick:()=>setBFBuns(p=>{const n={...p,[b.id]:!p[b.id]};return Object.values(n).some(Boolean)?n:p;})})) // mind. 1 Bun aktiv lassen
-        ),
-        h("div",{style:{fontSize:10,color:"#666",fontFamily:S.mono,lineHeight:1.4}},
-          "Set menu · full bagels default to a plain bun — pick more buns (or 'all buns') and the optimizer swaps to the best fit per bagel (Bagel − plain bun + chosen bun). Mini bagels & sweets keep their bun. Fillings can't be added — the official list gives them per 100g without portion sizes.")
+        // Bun-Wahl JE BAGEL (Slot 1..maxBF; = Bagel − Plain Bun + gewählter Bun). Subway-Style: "all buns" ist ein eigener
+        // Chip (aktiv wenn kein Bun gewählt), das Anwählen eines Buns deaktiviert "all buns" automatisch. ∞ → ein globaler Wähler.
+        (()=>{
+          const rows=maxBF===Infinity?[{i:0,label:"All bagels bun"}]:Array.from({length:maxBF},(_,i)=>({i,label:"Bagel "+(i+1)+" bun"}));
+          return h("div",{style:{marginBottom:8}},
+            ...rows.map(({i,label})=>{
+              const slot=bfBunSlots[i]||{},anyBun=BAGELFACTORY.buns.some(b=>slot[b.id]);
+              return h("div",{key:i,style:{marginBottom:8}},
+                h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},label),
+                h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+                  h(Chip,{label:"all buns",small:true,active:!anyBun,onClick:()=>setBFSlot(i,{})}),
+                  ...BAGELFACTORY.buns.map(b=>h(Chip,{key:b.id,label:b.name,small:true,active:!!slot[b.id],
+                    onClick:()=>setBFSlot(i,{...slot,[b.id]:!slot[b.id]})}))
+                )
+              );
+            })
+          );
+        })(),
+        h("div",{style:{fontSize:10,color:"#666",fontFamily:S.mono,lineHeight:1.4,marginTop:2}},
+          maxBF===Infinity
+            ?"Set menu · pick the bun for every bagel (or 'all buns' → optimizer swaps to the best fit per bagel). Full bagels only — mini bagels & sweets keep their own bun. Fillings can't be added (per-100g data only)."
+            :"Set menu · choose the bun per bagel — bagel 1, bagel 2, … (or 'all buns' → optimizer picks the best fit). A specific bun swaps that bagel (Bagel − plain bun + chosen bun); mini bagels & sweets keep their own bun. Fillings can't be added (per-100g data only).")
       ),
 
       // Pepe's: Kategorien + Max-Items + Flavour (Pflicht, global auf alle Add-Flavour-Produkte angewandt)
