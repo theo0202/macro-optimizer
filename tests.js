@@ -1105,6 +1105,21 @@ check("PizzaExpress Nutrition == Summe der Items", rPX.every(r => approx(r.nutri
 check("PizzaExpress 1–3 Items", rPX.every(r => r.items.length >= 1 && r.items.length <= 3), true);
 const onlyClassic = {}; T.PIZZAEXPRESS.cats.forEach(c => onlyClassic[c.id] = (c.id === "classic"));
 check("PizzaExpress Kategorie-Filter (nur Classic)", T.optimizePizzaExpress({ protein: 40, carbs: 90, fat: 35, kcal: 835, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, onlyClassic, 1).every(r => r.items.every(x => x.cat === "classic")), true);
+// "No vegan" / "No GF" — nur AUSDRÜCKLICH gekennzeichnete Produkte raus (Name-basiert; zufällig vegan/GF bleibt)
+check("PizzaExpress Katalog hat vegane Items", T.PIZZAEXPRESS.items.some(x => /vegan/i.test(x.name)), true);
+check("PizzaExpress Katalog hat GF Items", T.PIZZAEXPRESS.items.some(x => /\bGF\b/.test(x.name)), true);
+const pxGF = /\bGF\b|gluten[\s-]?free/i;
+check("PizzaExpress 'No vegan': kein vegan-Item im Ergebnis", T.optimizePizzaExpress({ protein: 30, carbs: 80, fat: 20, kcal: 620, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPX, 5, true, false).every(r => r.items.every(x => !/vegan/i.test(x.name))), true);
+check("PizzaExpress 'No GF': kein GF-Item im Ergebnis", T.optimizePizzaExpress({ protein: 30, carbs: 80, fat: 20, kcal: 620, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, allPX, 5, false, true).every(r => r.items.every(x => !pxGF.test(x.name))), true);
+// Gegenprobe: Ziel = exakte Makros eines veganen bzw. GF Items -> ohne Schalter erscheint es, mit Schalter weg
+const pxVg = T.PIZZAEXPRESS.items.find(x => /vegan/i.test(x.name) && !pxGF.test(x.name));
+const pxVgCat = {}; pxVgCat[pxVg.cat] = true; const pxVgT = { protein: pxVg.protein, carbs: pxVg.carbs, fat: pxVg.fat, kcal: pxVg.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("PizzaExpress ohne 'No vegan': veganes Item möglich (Gegenprobe)", T.optimizePizzaExpress(pxVgT, "macros", {}, pxVgCat, 1, false, false).some(r => r.items.some(x => /vegan/i.test(x.name))), true);
+check("PizzaExpress 'No vegan' entfernt genau dieses Item", T.optimizePizzaExpress(pxVgT, "macros", {}, pxVgCat, 1, true, false).every(r => r.items.every(x => !/vegan/i.test(x.name))), true);
+const pxGf = T.PIZZAEXPRESS.items.find(x => pxGF.test(x.name) && !/vegan/i.test(x.name));
+const pxGfCat = {}; pxGfCat[pxGf.cat] = true; const pxGfT = { protein: pxGf.protein, carbs: pxGf.carbs, fat: pxGf.fat, kcal: pxGf.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("PizzaExpress ohne 'No GF': GF-Item möglich (Gegenprobe)", T.optimizePizzaExpress(pxGfT, "macros", {}, pxGfCat, 1, false, false).some(r => r.items.some(x => pxGF.test(x.name))), true);
+check("PizzaExpress 'No GF' entfernt genau dieses Item", T.optimizePizzaExpress(pxGfT, "macros", {}, pxGfCat, 1, false, true).every(r => r.items.every(x => !pxGF.test(x.name))), true);
 // All + Accurate: pizzaexpress integriert
 const rAccPX = T.optimizeAll(tAllT, "macros", {}, "footlong", ACCURATE);
 check("Accurate: pizzaexpress in Whitelist + alle Treffer gueltig", ACCURATE.includes("pizzaexpress") && rAccPX.every(r => ACCURATE.includes(r._resto)), true);

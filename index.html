@@ -2294,8 +2294,14 @@ function optimizePepes(t, mode, p, activeCats, maxN, noSauce, flavourId) {
 
 // Pizza Express: à la carte (AC-Alias). Volle 8 Makros aus der offiziellen PDF; KEINE Build-Your-Own-Add-ons
 // (Crust-Wahl = die Standard- / Gluten-Free- / Vegan-Zeilen sind je eigene Items). Nur Kategorie-Filter + Max-Items.
-function optimizePizzaExpress(t, mode, p, activeCats, maxN) {
-  return alaCarteCombos(t, mode, p, PIZZAEXPRESS.items.filter(x=>activeCats[x.cat]), maxN);
+// "No vegan"/"No GF": nur AUSDRÜCKLICH gekennzeichnete Produkte raus (Name enthält "vegan" bzw. das "GF"-Token);
+// zufällig vegane/glutenfreie Gerichte (ohne Kennzeichnung im Namen) bleiben.
+const PX_VEGAN_RE=/vegan/i, PX_GF_RE=/\bGF\b|gluten[\s-]?free/i;
+function optimizePizzaExpress(t, mode, p, activeCats, maxN, noVegan, noGF) {
+  let pool=PIZZAEXPRESS.items.filter(x=>activeCats[x.cat]);
+  if(noVegan) pool=pool.filter(x=>!PX_VEGAN_RE.test(x.name));
+  if(noGF) pool=pool.filter(x=>!PX_GF_RE.test(x.name));
+  return alaCarteCombos(t, mode, p, pool, maxN);
 }
 // Pho: à la carte (AC-Alias). 7 Makros (salt=0). Kategorie-Chips + Max-Items, keine Schalter (Sauces-Kategorie default aus).
 function optimizePho(t, mode, p, activeCats, maxN) {
@@ -2433,7 +2439,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   if(ok("chopstix")) all = all.concat(tag(optimizeChopstix(t,mode,p),"chopstix"));                         // Build-a-Box (2 + 3 Toppings)
   if(ok("pepes")) all = all.concat(tag(optimizePepes(t,mode,p,def(PEPES.cats),N,true,"plain"),"pepes"));   // à la carte, No Sauce, No Flavour (Plain)
   if(ok("fiveguys")) all = all.concat(tag(optimizeFiveGuys(t,mode,p,true),"fiveguys"));                    // Build your own: Main + Fries + Toppings, No sauce
-  if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),N),"pizzaexpress")); // à la carte (volle PDF-Makros)
+  if(ok("pizzaexpress")) all = all.concat(tag(optimizePizzaExpress(t,mode,p,def(PIZZAEXPRESS.cats),N,true,true),"pizzaexpress")); // à la carte; No vegan + No GF AN (Exclude-Konvention)
   if(ok("wasabi")) all = all.concat(tag(optimizeWasabi(t,mode,p,def(WASABI.cats),N,false,false,false,true),"wasabi")); // "good meals only" (Salads&Boxes/Bento/Kobachi/Sides) = neuer Default
   if(ok("leon")) all = all.concat(tag(optimizeLeon(t,mode,p,def(LEON.cats),N),"leon")); // à la carte (All-Day)
   if(ok("bagelfactory")) all = all.concat(tag(optimizeBagelFactory(t,mode,p,def(BAGELFACTORY.cats),N,true,null),"bagelfactory")); // Set-Menü, No sweets, alle Buns
@@ -2869,6 +2875,8 @@ function App() {
   // Pizza Express (à la carte, AC-Alias)
   const [pxCats,setPXC]=useState(()=>{const o={};PIZZAEXPRESS.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxPX,setMaxPX]=useState(5);
+  const [pxNoVegan,setPXNoVegan]=useState(true); // "No vegan" — ausdrücklich vegane Produkte raus (Default AN, Exclude-Konvention)
+  const [pxNoGF,setPXNoGF]=useState(true); // "No GF" — ausdrücklich glutenfreie Produkte raus (Default AN)
   const [selPX,setSelPX]=useState(null);
   // Cross-Restaurant (All/Accurate): max items pro à-la-carte-Bestellung
   const [maxAll,setMaxAll]=useState(5);
@@ -2985,7 +2993,7 @@ function App() {
   const resultsChopstix=useMemo(()=>resto==="chopstix"?optimizeChopstix(targets,mode,prefs):[],[resto,targets,mode,prefs]);
   const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour?"plain":pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour,pepFlavour]);
   const resultsFiveGuys=useMemo(()=>resto==="fiveguys"?optimizeFiveGuys(targets,mode,prefs,fgNoSauce,fgWrap):[],[resto,targets,mode,prefs,fgNoSauce,fgWrap]);
-  const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX):[],[resto,targets,mode,prefs,pxCats,maxPX]);
+  const resultsPX=useMemo(()=>resto==="pizzaexpress"?optimizePizzaExpress(targets,mode,prefs,pxCats,maxPX,pxNoVegan,pxNoGF):[],[resto,targets,mode,prefs,pxCats,maxPX,pxNoVegan,pxNoGF]);
   const resultsWasabi=useMemo(()=>resto==="wasabi"?optimizeWasabi(targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals):[],[resto,targets,mode,prefs,wasCats,maxWas,wasNoSoup,wasOnlySushi,wasNoSashimi,wasGoodMeals]);
   const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
   const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,maxBF===Infinity?bfBunSlots[0]:bfBunSlots.slice(0,maxBF),bfNoPork,bfNoDup,bfNoSalmon):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBunSlots,bfNoPork,bfNoDup,bfNoSalmon]);
@@ -3449,6 +3457,10 @@ function App() {
           h("input",{type:"checkbox",checked:fgWrap,onChange:e=>setFGWrap(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Lettuce Wrap"),
         resto==="tfc"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noFish,onChange:e=>setNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
+        resto==="pizzaexpress"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:pxNoVegan,onChange:e=>setPXNoVegan(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No vegan (explicitly-vegan items)"),
+        resto==="pizzaexpress"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:pxNoGF,onChange:e=>setPXNoGF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No GF (explicitly gluten-free items)"),
         resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noSweetsBF,onChange:e=>setNoSweetsBF(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No snacks & sweet treats"),
         resto==="bagelfactory"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
