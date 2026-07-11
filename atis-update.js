@@ -26,6 +26,10 @@ const RENAME = {
   "Blanco Niño Chipotle Tortilla": "Blanco Niño Chipotle Tortillas",
 };
 
+// User-Ausschluesse ("hasse ich", 11.07.2026): raw-Name. atis-raw.json bleibt die vollstaendige Menue-Transkription;
+// diese Items werden nur aus dem generierten Block (Optimizer + Such-Index) gefiltert. Wie UG's Coriander/Mint/Parsley.
+const USER_EXCLUDE = new Set(["Spring Onion + Coriander"]);
+
 const num = v => { const f = parseFloat(v); return isNaN(f) ? 0 : Math.round(f * 100) / 100; };
 
 // Roh-Item -> normalisiertes Item (Deliveroo-Name, eindeutige id pro Ziel-Array)
@@ -51,6 +55,7 @@ const ns = {}; // pro Array eigene usedIds
 for (const key of Object.keys(groups)) ns[key] = new Set();
 
 for (const it of raw.items) {
+  if (USER_EXCLUDE.has(it.name)) continue; // User-Ausschluss (raw bleibt vollstaendig)
   let key;
   if (it.section === "bases") key = it.portion === "large" ? "basesL" : "bases";
   else if (it.section === "mixed_salads") key = "mixed";
