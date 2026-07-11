@@ -1756,6 +1756,107 @@ const WINGSTOP = {
 };
 // __WINGSTOP_DATA_END__
 
+// __SUSHICO_DATA_START__ (generiert via: node sushico-update.js aus data/sushico-raw.json — nicht von Hand editieren)
+// Quelle: The Sushi Co Naehrwerttabelle (2 Bilder, User-Copy-Paste) · 78 Items · PORTIONS-Werte, volle 8 Makros. Bild-transkribiert. À la carte (AC-Alias).
+const SUSHICO = {
+  cats: [
+    { id:"hosomaki",name:"Hosomaki",on:true },
+    { id:"crunch",name:"Crunch",on:true },
+    { id:"futomaki",name:"Futomaki",on:true },
+    { id:"uramaki",name:"Uramaki",on:true },
+    { id:"sashimi",name:"Sashimi",on:true },
+    { id:"tataki",name:"Tataki",on:true },
+    { id:"nigiri",name:"Nigiri",on:true },
+    { id:"aburi",name:"Aburi & Dragon Rolls",on:true },
+    { id:"hot_meals",name:"Hot Meals",on:true },
+    { id:"poke",name:"Poke Bowls",on:true },
+    { id:"bao",name:"Bao",on:true },
+    { id:"salads",name:"Salads",on:true },
+    { id:"desserts",name:"Desserts",on:true },
+  ],
+  items: [
+    { id:"kappa_maki",name:"Kappa maki",cat:"hosomaki",kcal:125.8,fat:0.5,sat:0.1,carbs:24.1,sugars:0.8,fibre:0.3,protein:4.6,salt:0.04 },
+    { id:"cheese_maki",name:"Cheese maki",cat:"hosomaki",kcal:170,fat:6.3,sat:3.5,carbs:20.9,sugars:0.8,fibre:0,protein:5.1,salt:0.18 },
+    { id:"avocado_maki",name:"Avocado maki",cat:"hosomaki",kcal:159.4,fat:5.5,sat:1.3,carbs:20.4,sugars:0.2,fibre:0.9,protein:4.5,salt:0.05 },
+    { id:"salmon_maki",name:"Salmon maki",cat:"hosomaki",kcal:184.7,fat:5.5,sat:1.1,carbs:19.9,sugars:0.1,fibre:0.1,protein:11.2,salt:0.08 },
+    { id:"spicy_tuna_maki",name:"Spicy tuna maki",cat:"hosomaki",kcal:146.2,fat:0.8,sat:0.2,carbs:19.9,sugars:0.2,fibre:0.7,protein:13.1,salt:0.31 },
+    { id:"veg_crunch_roll",name:"Veg crunch roll",cat:"crunch",kcal:297.8,fat:13.9,sat:2.3,carbs:34.1,sugars:8.3,fibre:1.7,protein:6.1,salt:1.2 },
+    { id:"salmon_crunch_roll",name:"Salmon crunch roll",cat:"crunch",kcal:364.7,fat:18.6,sat:3.2,carbs:33.8,sugars:8.8,fibre:1.6,protein:12.4,salt:1.2 },
+    { id:"california_crunch_roll",name:"California crunch roll",cat:"crunch",kcal:323.1,fat:14,sat:2.3,carbs:38,sugars:9.3,fibre:1.5,protein:8.7,salt:1.7 },
+    { id:"tuna_crunch_roll",name:"Tuna crunch roll",cat:"crunch",kcal:329,fat:14,sat:2.2,carbs:33.8,sugars:8,fibre:1.7,protein:14,salt:1.4 },
+    { id:"spicy_salmon_crunch_roll",name:"Spicy salmon crunch roll",cat:"crunch",kcal:425.8,fat:24.4,sat:4.2,carbs:35,sugars:8.9,fibre:1.9,protein:13.7,salt:1.4 },
+    { id:"crispy_salmon_crunch_roll",name:"Crispy salmon crunch roll",cat:"crunch",kcal:408.4,fat:20.8,sat:3.5,carbs:44.4,sugars:9.7,fibre:2.7,protein:9.9,salt:1.7 },
+    { id:"eel_fish_futomaki",name:"Eel fish futomaki",cat:"futomaki",kcal:418.8,fat:14.7,sat:3.7,carbs:49.3,sugars:11.4,fibre:1.4,protein:18.1,salt:2 },
+    { id:"salmon_avocado_futomaki",name:"Salmon avocado futomaki",cat:"futomaki",kcal:379.6,fat:13.3,sat:1,carbs:43,sugars:5.8,fibre:1.1,protein:17.6,salt:1.7 },
+    { id:"prawn_katsu_futomaki",name:"Prawn katsu futomaki",cat:"futomaki",kcal:379.2,fat:12.5,sat:2.5,carbs:51,sugars:7.4,fibre:2.1,protein:11.4,salt:1.7 },
+    { id:"green_roll",name:"Green roll",cat:"uramaki",kcal:298.6,fat:15.6,sat:2.6,carbs:34.6,sugars:2.6,fibre:1.1,protein:7.4,salt:0.49 },
+    { id:"crispy_ebi_roll",name:"Crispy ebi roll",cat:"uramaki",kcal:353.6,fat:15.4,sat:2.6,carbs:40.8,sugars:7.2,fibre:2.4,protein:10.2,salt:1.7 },
+    { id:"california_roll",name:"California roll",cat:"uramaki",kcal:341.5,fat:17.8,sat:3.2,carbs:32.5,sugars:5.5,fibre:0.9,protein:5.5,salt:1.7 },
+    { id:"salmon_avocado_roll",name:"Salmon avocado roll",cat:"uramaki",kcal:268.3,fat:10.6,sat:2.3,carbs:26.8,sugars:3.1,fibre:1,protein:13.4,salt:0.96 },
+    { id:"salmon_cream_cheese_roll",name:"Salmon cream cheese roll",cat:"uramaki",kcal:336.6,fat:18.4,sat:4.6,carbs:25.6,sugars:2.3,fibre:1,protein:12.8,salt:0.47 },
+    { id:"spicy_salmon_roll",name:"Spicy salmon roll",cat:"uramaki",kcal:402.4,fat:20.5,sat:3.4,carbs:43.7,sugars:9.6,fibre:2.6,protein:9.8,salt:1.9 },
+    { id:"salmon_sashimi",name:"Salmon sashimi",cat:"sashimi",kcal:229,fat:15.8,sat:2.9,carbs:0.2,sugars:0.2,fibre:0.2,protein:21.5,salt:0.12 },
+    { id:"hamachi_sashimi",name:"Hamachi sashimi",cat:"sashimi",kcal:154.5,fat:5.5,sat:1.3,carbs:0.2,sugars:0.2,fibre:0.2,protein:24.4,salt:0.11 },
+    { id:"tuna_sashimi",name:"Tuna sashimi",cat:"sashimi",kcal:113.5,fat:0.7,sat:0.2,carbs:0.2,sugars:0.2,fibre:0.2,protein:26.5,salt:0.18 },
+    { id:"sashimi_mix",name:"Sashimi mix",cat:"sashimi",kcal:400.7,fat:26.9,sat:4.3,carbs:25.9,sugars:2.2,fibre:2.8,protein:13.2,salt:1.5 },
+    { id:"salmon_tataki",name:"Salmon tataki",cat:"tataki",kcal:471.4,fat:32.6,sat:5.9,carbs:1.2,sugars:1.1,fibre:0,protein:43.1,salt:0.36 },
+    { id:"hamachi_tataki",name:"Hamachi tataki",cat:"tataki",kcal:322.3,fat:12.1,sat:2.8,carbs:1.2,sugars:1.1,fibre:0,protein:48.9,salt:0.34 },
+    { id:"tuna_tataki",name:"Tuna tataki",cat:"tataki",kcal:240.4,fat:2.5,sat:0.6,carbs:1.2,sugars:1.1,fibre:0,protein:34,salt:0.49 },
+    { id:"tataki_mix",name:"Tataki mix",cat:"tataki",kcal:410.5,fat:18.7,sat:3.7,carbs:7.2,sugars:1,fibre:0.1,protein:58,salt:0.45 },
+    { id:"tamago_nigiri",name:"Tamago nigiri",cat:"nigiri",kcal:176.6,fat:4.4,sat:0.4,carbs:22.5,sugars:4.9,fibre:0,protein:7.1,salt:0.56 },
+    { id:"inari_nigiri",name:"Inari nigiri",cat:"nigiri",kcal:430.3,fat:21.9,sat:4.6,carbs:46.1,sugars:12.5,fibre:6.3,protein:12.6,salt:2.5 },
+    { id:"avocado_nigiri",name:"Avocado nigiri",cat:"nigiri",kcal:195.7,fat:11.6,sat:2.4,carbs:21.2,sugars:2.8,fibre:3.6,protein:2.8,salt:0.06 },
+    { id:"shake_hamachi_nigiri",name:"Shake hamachi nigiri",cat:"nigiri",kcal:166.6,fat:3.2,sat:0.8,carbs:17.3,sugars:0.1,fibre:0,protein:11.4,salt:0.08 },
+    { id:"shake_salmon_nigiri",name:"Shake salmon nigiri",cat:"nigiri",kcal:222.3,fat:10.9,sat:2,carbs:14,sugars:1.9,fibre:0,protein:11.8,salt:0.08 },
+    { id:"shake_new_york_salmon_nigiri",name:"Shake New York salmon nigiri",cat:"nigiri",kcal:249.3,fat:12.8,sat:3.2,carbs:18.3,sugars:0.5,fibre:0,protein:13.7,salt:0.16 },
+    { id:"shake_salmon_cheese_nigiri",name:"Shake salmon cheese nigiri",cat:"nigiri",kcal:236.1,fat:8.9,sat:1.6,carbs:24.4,sugars:3,fibre:0,protein:13.9,salt:0.75 },
+    { id:"tuna_nigiri",name:"Tuna nigiri",cat:"nigiri",kcal:144,fat:0.5,sat:0.2,carbs:17.3,sugars:0,fibre:0,protein:16,salt:0.1 },
+    { id:"eel_fish_nigiri",name:"Eel fish nigiri",cat:"nigiri",kcal:250.3,fat:9.2,sat:2.4,carbs:27.4,sugars:8.7,fibre:0,protein:12.9,salt:1.1 },
+    { id:"ebi_nigiri",name:"Ebi nigiri",cat:"nigiri",kcal:134.7,fat:0.6,sat:0.2,carbs:17.7,sugars:0.5,fibre:0,protein:10.1,salt:0.53 },
+    { id:"shake_aburi_roll",name:"Shake aburi roll",cat:"aburi",kcal:525.3,fat:29.5,sat:5.4,carbs:32.2,sugars:6.8,fibre:1.5,protein:29.7,salt:1.3 },
+    { id:"salmon_cheese_dragon_roll",name:"Salmon cheese dragon roll",cat:"aburi",kcal:394.2,fat:20.8,sat:4.2,carbs:32.2,sugars:7,fibre:1.3,protein:16,salt:1.4 },
+    { id:"ebi_panko_roll",name:"Ebi panko roll",cat:"aburi",kcal:458.7,fat:21,sat:3.7,carbs:56.8,sugars:9.1,fibre:2.8,protein:15.4,salt:2.3 },
+    { id:"new_york_salmon_roll",name:"New York salmon roll",cat:"aburi",kcal:530,fat:30.1,sat:5.5,carbs:35.6,sugars:2.6,fibre:2.7,protein:26.9,salt:2.7 },
+    { id:"salmon_avocado_eel_roll",name:"Salmon avocado eel roll",cat:"aburi",kcal:529.4,fat:26.2,sat:6.3,carbs:40,sugars:14.1,fibre:1.2,protein:30.2,salt:2.6 },
+    { id:"rainbow_roll",name:"Rainbow roll",cat:"aburi",kcal:358.5,fat:16.6,sat:2.9,carbs:31,sugars:4.1,fibre:0.7,protein:17.9,salt:1.2 },
+    { id:"red_dragon_roll",name:"Red dragon roll",cat:"aburi",kcal:410.2,fat:13.4,sat:3.5,carbs:44,sugars:7.2,fibre:2.3,protein:33.6,salt:1.6 },
+    { id:"miso_soup",name:"Miso soup",cat:"hot_meals",kcal:73.5,fat:1.1,sat:0.1,carbs:4.1,sugars:1.5,fibre:1,protein:6,salt:1.6 },
+    { id:"vegan_pumpkin_katsu",name:"Vegan pumpkin katsu",cat:"hot_meals",kcal:209.5,fat:11,sat:1.4,carbs:27.7,sugars:9.1,fibre:1.4,protein:3.8,salt:0.37 },
+    { id:"crispy_gyoza_chicken",name:"Crispy gyoza chicken",cat:"hot_meals",kcal:310.4,fat:16.6,sat:3,carbs:27.7,sugars:3.7,fibre:1.7,protein:13.7,salt:1.9 },
+    { id:"crispy_gyoza_vegetable",name:"Crispy gyoza vegetable",cat:"hot_meals",kcal:306.8,fat:13.9,sat:2.2,carbs:36.4,sugars:4.1,fibre:5.6,protein:8.1,salt:1.8 },
+    { id:"veggie_spring_roll",name:"Veggie spring roll",cat:"hot_meals",kcal:422.5,fat:11.6,sat:2.9,carbs:68.6,sugars:23.5,fibre:6.2,protein:3.5,salt:3.5 },
+    { id:"prawn_katsu",name:"Prawn katsu",cat:"hot_meals",kcal:208.7,fat:14.6,sat:2.3,carbs:22,sugars:3.5,fibre:2.2,protein:6.4,salt:0.6 },
+    { id:"chicken_katsu",name:"Chicken katsu",cat:"hot_meals",kcal:264.6,fat:21,sat:6.5,carbs:11.6,sugars:0.5,fibre:0.5,protein:17.1,salt:0.49 },
+    { id:"pumpkin_katsu_curry_rice",name:"Pumpkin katsu curry rice",cat:"hot_meals",kcal:810,fat:26.5,sat:9.8,carbs:128.6,sugars:19.9,fibre:5.3,protein:13.7,salt:3.4 },
+    { id:"octopus_balls",name:"Octopus balls",cat:"hot_meals",kcal:240,fat:17.1,sat:2.5,carbs:24.1,sugars:9.7,fibre:0,protein:5.4,salt:0.82 },
+    { id:"vegetable_stir_fried_noodles",name:"Vegetable stir fried noodles",cat:"hot_meals",kcal:502.5,fat:27.1,sat:5.8,carbs:58.9,sugars:10.1,fibre:5.8,protein:11.2,salt:2.9 },
+    { id:"egg_stir_fried_noodles",name:"Egg stir fried noodles",cat:"hot_meals",kcal:564.4,fat:30.3,sat:5.4,carbs:74.3,sugars:10.3,fibre:4.9,protein:20.4,salt:1.4 },
+    { id:"sweet_chilli_chicken",name:"Sweet chilli chicken",cat:"hot_meals",kcal:841.9,fat:43.3,sat:5.4,carbs:86.5,sugars:54,fibre:1.4,protein:25.8,salt:3.9 },
+    { id:"black_pepper_chicken",name:"Black pepper chicken",cat:"hot_meals",kcal:737.1,fat:43.2,sat:5.3,carbs:60.5,sugars:17.2,fibre:1.1,protein:27,salt:4.7 },
+    { id:"chicken_stir_fried_noodles",name:"Chicken stir fried noodles",cat:"hot_meals",kcal:613.7,fat:30.9,sat:5.9,carbs:60.6,sugars:12,fibre:5.5,protein:28.6,salt:6.3 },
+    { id:"chicken_katsu_curry_rice",name:"Chicken katsu curry rice",cat:"hot_meals",kcal:823.7,fat:35.9,sat:5.3,carbs:103.3,sugars:26.1,fibre:2.7,protein:26.6,salt:3.3 },
+    { id:"prawn_katsu_curry_rice",name:"Prawn katsu curry rice",cat:"hot_meals",kcal:711.1,fat:25.5,sat:4.2,carbs:105,sugars:26.4,fibre:2.5,protein:15.4,salt:3.4 },
+    { id:"large_vegetable_poke_bowl",name:"Large vegetable poke bowl",cat:"poke",kcal:825.1,fat:32.5,sat:4.8,carbs:93.5,sugars:19.2,fibre:17.2,protein:34.7,salt:2 },
+    { id:"large_salmon_poke_bowl",name:"Large salmon poke bowl",cat:"poke",kcal:946.9,fat:43.6,sat:7.1,carbs:89.6,sugars:12.6,fibre:13.5,protein:50.8,salt:2.2 },
+    { id:"large_tuna_poke_bowl",name:"Large tuna poke bowl",cat:"poke",kcal:819.2,fat:30,sat:4.7,carbs:81.8,sugars:12.1,fibre:11.8,protein:51.2,salt:1.4 },
+    { id:"large_prawn_poke_bowl",name:"Large prawn poke bowl",cat:"poke",kcal:964.9,fat:43,sat:6.7,carbs:101.4,sugars:16.9,fibre:15,protein:41.9,salt:2.5 },
+    { id:"veg_tempura_bao",name:"Veg tempura bao",cat:"bao",kcal:242.9,fat:17.6,sat:3.7,carbs:39.1,sugars:10,fibre:1,protein:4.5,salt:0.37 },
+    { id:"chicken_katsu_bao",name:"Chicken Katsu bao",cat:"bao",kcal:343.3,fat:23.1,sat:4.2,carbs:44.5,sugars:12.6,fibre:0.2,protein:11.9,salt:1 },
+    { id:"spicy_chicken_bao",name:"Spicy chicken bao",cat:"bao",kcal:254.7,fat:19.4,sat:4.6,carbs:32.3,sugars:8.2,fibre:0.5,protein:10.1,salt:1 },
+    { id:"teriyaki_chicken_bao",name:"Teriyaki chicken bao",cat:"bao",kcal:309.4,fat:24.8,sat:5.1,carbs:34.7,sugars:8.5,fibre:0.2,protein:11,salt:0.83 },
+    { id:"crispy_prawn_bao",name:"Crispy prawn bao",cat:"bao",kcal:195.1,fat:13.3,sat:3.2,carbs:23.9,sugars:8.1,fibre:0.5,protein:5.6,salt:0.68 },
+    { id:"tofu_bao",name:"Tofu bao",cat:"bao",kcal:193.2,fat:13.9,sat:4.2,carbs:28.6,sugars:8.5,fibre:0.9,protein:5.3,salt:0.58 },
+    { id:"pumpkin_katsu_bao",name:"Pumpkin Katsu bao",cat:"bao",kcal:264,fat:13.5,sat:3.2,carbs:52.5,sugars:15.4,fibre:5.9,protein:5.9,salt:0.58 },
+    { id:"edamame_salad",name:"Edamame salad",cat:"salads",kcal:184.8,fat:10,sat:1.2,carbs:6.6,sugars:3.9,fibre:6.6,protein:15.2,salt:1.4 },
+    { id:"seaweed_salad",name:"Seaweed salad",cat:"salads",kcal:127.6,fat:5.7,sat:0.2,carbs:14.3,sugars:11.7,fibre:6.2,protein:1.2,salt:2.6 },
+    { id:"strawberry_cheesecake",name:"Strawberry cheesecake",cat:"desserts",kcal:226,fat:11,sat:6.4,carbs:28,sugars:24,fibre:0,protein:3,salt:0.26 },
+    { id:"mango_cheesecake_mochi",name:"Mango cheesecake mochi",cat:"desserts",kcal:208,fat:8,sat:4.3,carbs:35.2,sugars:28.2,fibre:0,protein:2.2,salt:0.24 },
+    { id:"raspberry_white_chocolate_cheesecake_mochi",name:"Raspberry & white chocolate cheesecake mochi",cat:"desserts",kcal:323,fat:13,sat:8,carbs:55,sugars:44,fibre:0,protein:3.4,salt:0.34 },
+    { id:"chocolate_ganache_mochi",name:"Chocolate ganache mochi",cat:"desserts",kcal:115,fat:4.8,sat:2.8,carbs:17,sugars:12,fibre:0,protein:1.3,salt:0.04 },
+  ],
+};
+// __SUSHICO_DATA_END__
+
 const KEYS = ["kcal","fat","sat","carbs","sugars","fibre","protein","salt"];
 
 // singleItems (Salads) werden NIE multipliziert: Footlong = ×2 für alles AUSSER Salads
@@ -2088,7 +2189,7 @@ const ITSU_LIGHT_CATS=new Set(["healthy_soups","hot_noodles","desserts_snacks"])
 // Fisch (Lachs/Thunfisch/Kabeljau …) bleibt. "california" = California-Rolls (enthalten Krabbe/Surimi, oft ohne "crab"
 // im Namen). SHELLFISH_NAMES = Itsu-Sets mit Krebstier-Allergen, deren Name das Schalentier nicht verrät.
 const SHELLFISH_RE=/(prawn(?!less)|shrimp|crab|lobster|langoustine|cray(fish)?|craw(fish)?|mussel|clam|oyster|squid|calamari|scallop|cockle|whelk|octopus|\bebi\b|california)/i;
-const SHELLFISH_NAMES=new Set(["best of itsu","itsu classics"]);
+const SHELLFISH_NAMES=new Set(["best of itsu","itsu classics","rainbow roll"]);
 function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
 
 function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey) {
@@ -2335,6 +2436,10 @@ function optimizePho(t, mode, p, activeCats, maxN) {
 function optimizeWingstop(t, mode, p, activeCats, maxN) {
   return alaCarteCombos(t, mode, p, WINGSTOP.items.filter(x=>activeCats[x.cat]), maxN);
 }
+// The Sushi Co: à la carte (AC-Alias). Volle 8 Makros (PORTIONS-Werte). Kategorie-Chips + Max-Items, keine Schalter.
+function optimizeSushiCo(t, mode, p, activeCats, maxN) {
+  return alaCarteCombos(t, mode, p, SUSHICO.items.filter(x=>activeCats[x.cat]), maxN);
+}
 
 // Leon: à la carte (AC-Alias, wie Itsu/Pizza Express). All-Day-Menü, volle 8 Makros. Sauces nicht in den Daten.
 function optimizeLeon(t, mode, p, activeCats, maxN) {
@@ -2473,6 +2578,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   if(ok("bagelfactory")) all = all.concat(tag(optimizeBagelFactory(t,mode,p,def(BAGELFACTORY.cats),N,true,null),"bagelfactory")); // Set-Menü, No sweets, alle Buns
   if(ok("pho")) all = all.concat(tag(optimizePho(t,mode,p,def(PHO.cats),N),"pho")); // à la carte (Sauces-Kategorie default aus)
   if(ok("wingstop")) all = all.concat(tag(optimizeWingstop(t,mode,p,def(WINGSTOP.cats),N),"wingstop")); // à la carte
+  if(ok("sushico")) all = all.concat(tag(optimizeSushiCo(t,mode,p,def(SUSHICO.cats),N),"sushico")); // à la carte
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -2482,7 +2588,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
 }
 // "Accurate restaurants": Teilmenge mit verlaesslicheren Daten (ohne GDK/Chopstix/Five Guys — Komposition/Anomalien)
 const ACCURATE_RESTOS = ["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes","pizzaexpress","wasabi"];
-const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi",leon:"Leon",bagelfactory:"Bagel Factory",pho:"Pho",wingstop:"Wingstop"};
+const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi",leon:"Leon",bagelfactory:"Bagel Factory",pho:"Pho",wingstop:"Wingstop",sushico:"The Sushi Co"};
 
 // ── "Add own order" — restaurantsuebergreifender Such-Index (zum nachtraeglichen Tracken eines gekauften Gerichts) ──
 // Sammelt jedes Food-Item/jede Komponente mit echten 8 Makros aus ALLEN Restaurants in eine flache, durchsuchbare Liste.
@@ -2494,7 +2600,7 @@ function buildSearchIndex(){
   const addArr=(resto,arr)=>{ (arr||[]).forEach(it=>push(resto,it.name,it)); };
   addArr("Itsu",ITSU.items); addArr("Pret",PRET.items); addArr("Nando's",NANDOS.items);
   addArr("Wagamama",WAGA.items); addArr("GDK",GDK.items); addArr("The Fitness Chef",TFC.items);
-  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items); addArr("Leon",LEON.items); addArr("Bagel Factory",BAGELFACTORY.items); addArr("Pho",PHO.items); addArr("Wingstop",WINGSTOP.items);
+  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items); addArr("Leon",LEON.items); addArr("Bagel Factory",BAGELFACTORY.items); addArr("Pho",PHO.items); addArr("Wingstop",WINGSTOP.items); addArr("The Sushi Co",SUSHICO.items);
   ["breads","proteins","cheeses","extras","salads","sauces","seasonings"].forEach(k=>addArr("Subway",D[k]));
   ["mains","bases","sides","toppings","sdt","sets"].forEach(k=>addArr("Farmer J",FJ[k]));
   ["greens","carbs","prots","veg","tops","dress","scoops"].forEach(k=>addArr("Urban Greens",UG[k]));
@@ -2953,6 +3059,10 @@ function App() {
   const [wingCats,setWingC]=useState(()=>{const o={};WINGSTOP.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxWing,setMaxWing]=useState(5);
   const [selWing,setSelWing]=useState(null);
+  // The Sushi Co (à la carte, AC-Alias)
+  const [scCats,setSCC]=useState(()=>{const o={};SUSHICO.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxSC,setMaxSC]=useState(5);
+  const [selSC,setSelSC]=useState(null);
 
   // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (in localStorage gespeichert)
   const [searchQ,setSearchQ]=useState("");
@@ -3015,6 +3125,7 @@ function App() {
     else if(rt==="bagelfactory")setSelBF(r);
     else if(rt==="pho")setSelPho(r);
     else if(rt==="wingstop")setSelWing(r);
+    else if(rt==="sushico")setSelSC(r);
   };
 
   const targets=useMemo(()=>{
@@ -3045,6 +3156,7 @@ function App() {
   const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,maxBF===Infinity?bfBunSlots[0]:bfBunSlots.slice(0,maxBF),bfNoPork,bfNoDup,bfNoSalmon):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBunSlots,bfNoPork,bfNoDup,bfNoSalmon]);
   const resultsPho=useMemo(()=>resto==="pho"?optimizePho(targets,mode,prefs,phoCats,maxPho):[],[resto,targets,mode,prefs,phoCats,maxPho]);
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
+  const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC):[],[resto,targets,mode,prefs,scCats,maxSC]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3061,7 +3173,8 @@ function App() {
          :resto==="leon"?{D:LEON,sel:selLeon,setSel:setSelLeon,res:resultsLeon,maxN:maxLeon}
          :resto==="bagelfactory"?{D:BAGELFACTORY,sel:selBF,setSel:setSelBF,res:resultsBF,maxN:maxBF}
          :resto==="pho"?{D:PHO,sel:selPho,setSel:setSelPho,res:resultsPho,maxN:maxPho}
-         :resto==="wingstop"?{D:WINGSTOP,sel:selWing,setSel:setSelWing,res:resultsWing,maxN:maxWing}:null;
+         :resto==="wingstop"?{D:WINGSTOP,sel:selWing,setSel:setSelWing,res:resultsWing,maxN:maxWing}
+         :resto==="sushico"?{D:SUSHICO,sel:selSC,setSel:setSelSC,res:resultsSC,maxN:maxSC}:null;
 
   // Corn Cakes (restaurantsuebergreifend): die aktive Ergebnisliste EINMAL augmentieren (Karten + Ranking).
   // Memoisiert → stabile Objekt-Identitaet, damit die Selektion-Markierung (sel===r) heil bleibt.
@@ -3140,9 +3253,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":resto==="bagelfactory"?"linear-gradient(135deg,#a16207,#713f12)":resto==="pho"?"linear-gradient(135deg,#e11d48,#7f1d1d)":resto==="wingstop"?"linear-gradient(135deg,#65a30d,#1c1917)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":resto==="bagelfactory"?"linear-gradient(135deg,#a16207,#713f12)":resto==="pho"?"linear-gradient(135deg,#e11d48,#7f1d1d)":resto==="wingstop"?"linear-gradient(135deg,#65a30d,#1c1917)":resto==="sushico"?"linear-gradient(135deg,#0891b2,#083344)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":resto==="bagelfactory"?"BAGEL FACTORY · APR 2026":resto==="pho"?"PHO · UK · JAN 2026":resto==="wingstop"?"WINGSTOP · UK":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":resto==="bagelfactory"?"BAGEL FACTORY · APR 2026":resto==="pho"?"PHO · UK · JAN 2026":resto==="wingstop"?"WINGSTOP · UK":resto==="sushico"?"THE SUSHI CO":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -3228,7 +3341,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto),btn("bagelfactory","Bagel Factory",resto,setResto),btn("pho","Pho",resto,setResto),btn("wingstop","Wingstop",resto,setResto)
+        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto),btn("bagelfactory","Bagel Factory",resto,setResto),btn("pho","Pho",resto,setResto),btn("wingstop","Wingstop",resto,setResto),btn("sushico","The Sushi Co",resto,setResto)
       ),
 
       // All / Accurate restaurants: max items pro à-la-carte-Bestellung (gilt fuer die AC-Restaurants im Cross-Restaurant-Mix)
@@ -3373,6 +3486,20 @@ function App() {
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxWing===n,onClick:()=>setMaxWing(n),small:true}))
         ),
         h("div",{style:{fontSize:10,color:"#666",lineHeight:1.4}},"Boneless & tenders come tossed in a flavour — the values are the base pieces (flavour extras not in the data). Corn has no salt data, sweet potato fries no protein data.")
+      ),
+
+      // The Sushi Co: Kategorien + Anzahl Items (à la carte; volle Makros, bild-transkribiert)
+      resto==="sushico"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...SUSHICO.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!scCats[c.id],
+            onClick:()=>setSCC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
+        h("div",{style:{display:"flex",gap:5,marginBottom:10}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxSC===n,onClick:()=>setMaxSC(n),small:true}))
+        ),
+        h("div",{style:{fontSize:10,color:"#666",lineHeight:1.4}},"Per-portion values, transcribed from the menu photos. Prawn/ebi/crab/octopus/California/Rainbow dishes are hidden (shellfish allergy).")
       ),
 
       // Wasabi: Kategorien + Anzahl Items (à la carte; Switches No soups / only sushi / only sushi w/o sashimi unten)
@@ -4360,7 +4487,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="search"?"Add own order: search any dish across all 19 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":resto==="bagelfactory"?"Data: Bagel Factory Full Ingredient List (Issue 20) · per portion · plain bun":resto==="pho"?"Data: Pho Nutritional Guidelines 2026 · no salt data":resto==="wingstop"?"Data: Wingstop UK nutrition · full macros":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="search"?"Add own order: search any dish across all 20 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":resto==="bagelfactory"?"Data: Bagel Factory Full Ingredient List (Issue 20) · per portion · plain bun":resto==="pho"?"Data: Pho Nutritional Guidelines 2026 · no salt data":resto==="wingstop"?"Data: Wingstop UK nutrition · full macros":resto==="sushico"?"Data: The Sushi Co nutrition table · per portion · image-transcribed":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }
