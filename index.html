@@ -2639,7 +2639,7 @@ const ATIS_OIL_COMBO=(()=>{
   if(oo&&oo.seasonal)o.seasonal=true;
   return o;
 })();
-function optimizeAtis(t, mode, p, atisMode, noCrunch, noSauce){
+function optimizeAtis(t, mode, p, atisMode, noCrunch, noSauce, mustAddon){
   const dbl=atisMode!=="bowl"; // Power Plate (Default): doublePlate-Items ×2; Bowl: ×1
   const R1=v=>Math.round(v*10)/10;
   const eff=it=>{const m=(dbl&&it.doublePlate)?2:1;const o={it};for(const k of KEYS)o[k]=(it[k]||0)*m;return o;};
@@ -2718,6 +2718,16 @@ function optimizeAtis(t, mode, p, atisMode, noCrunch, noSauce){
   }
   // Stufe 5: Add-ons + 3. Protein (nur bei Verbesserung)
   cur=addExtras(cur);
+  // Schalter "Must include add-on": jedes Ergebnis braucht >=1 Add-on; wo keins den Score verbesserte, wird das best-scorende erzwungen
+  if(mustAddon&&addonE.length){
+    cur=cur.map(r=>{
+      if(r.addons.length>=1)return r;
+      let best=null;
+      for(let i=0;i<addonE.length;i++){const v=fin({...r,addons:[addonE[i].it]},add(r._s,addonE[i]));if(!best||v.score<best.score)best=v;}
+      return best||r;
+    });
+    cur.sort(byScore);
+  }
   return cur.slice(0,20);
 }
 
@@ -2850,6 +2860,7 @@ function App() {
   const [atisMode,setAtisMode]=useState("plate");
   const [aNoCrunch,setANoCrunch]=useState(true);
   const [aNoSauce,setANoSauce]=useState(true);
+  const [aMustAddon,setAMustAddon]=useState(false); // "Must include add-on" — Positiv-/Restriktiv-Modus, Default AUS
   const [selA,setSelA]=useState(null);
   // The Fitness Chef (à la carte, AC-Alias)
   const [tfcCats,setTFCC]=useState(()=>{const o={};TFC.cats.forEach(c=>o[c.id]=c.on);return o;});
@@ -2986,7 +2997,7 @@ function App() {
   const resultsUG=useMemo(()=>resto==="ug"?optimizeUG(targets,mode,prefs,ugMode,noNuts,noDressUG,ugCap):[],[resto,targets,mode,prefs,ugMode,noNuts,noDressUG,ugCap]);
   const resultsWaga=useMemo(()=>optimizeWaga(targets,mode,prefs,wagCats,maxW,noRamen),[targets,mode,prefs,wagCats,maxW,noRamen]);
   const resultsGDK=useMemo(()=>optimizeGDK(targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl),[targets,mode,prefs,gdkCats,maxG,gdkNoSauce,noRiceBowl]);
-  const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce]);
+  const resultsAtis=useMemo(()=>resto==="atis"?optimizeAtis(targets,mode,prefs,atisMode,aNoCrunch,aNoSauce,aMustAddon):[],[resto,targets,mode,prefs,atisMode,aNoCrunch,aNoSauce,aMustAddon]);
   const resultsTFC=useMemo(()=>resto==="tfc"?optimizeTFC(targets,mode,prefs,tfcCats,maxTFC,noFish):[],[resto,targets,mode,prefs,tfcCats,maxTFC,noFish]);
   const resultsChopstix=useMemo(()=>resto==="chopstix"?optimizeChopstix(targets,mode,prefs):[],[resto,targets,mode,prefs]);
   const resultsPepes=useMemo(()=>resto==="pepes"?optimizePepes(targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour?"plain":pepFlavour):[],[resto,targets,mode,prefs,pepCats,maxPep,pepNoSauce,pepNoFlavour,pepFlavour]);
@@ -3445,6 +3456,8 @@ function App() {
           h("input",{type:"checkbox",checked:aNoSauce,onChange:e=>setANoSauce(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="atis"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:aNoCrunch,onChange:e=>setANoCrunch(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No crunch"),
+        resto==="atis"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:aMustAddon,onChange:e=>setAMustAddon(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include add-on"),
         resto==="pepes"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:pepNoSauce,onChange:e=>setPepNS(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No sauce"),
         resto==="pepes"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},

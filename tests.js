@@ -630,6 +630,13 @@ check("Atis: Focaccia nie als Add-on", raAll.every(r => r.addons.every(a => a.id
 check("Atis: Pesto/Lemon Oregano/einzelnes Olive Oil nie als Sauce",
   raAll.every(r => !r.sauce || !["pesto_vinaigrette", "lemon_oregano_dressing", "the_olive_oil_guy_olive_oil", "balsamic_vinegar"].includes(r.sauce.id)), true);
 
+// Schalter "Must include add-on" (7. Param, Default AUS) — jedes Ergebnis muss >=1 Add-on haben
+const raMust = T.optimizeAtis(tA, "macros", {}, "plate", true, true, true);
+check("Atis 'Must include add-on': liefert Ergebnisse", raMust.length > 0, true);
+check("Atis 'Must include add-on': jedes Ergebnis hat >=1 Add-on", raMust.every(r => r.addons.length >= 1), true);
+// Gegenprobe: ohne Schalter gibt es Ergebnisse ohne Add-on
+check("Atis ohne 'Must include add-on': Ergebnis ohne Add-on möglich (Gegenprobe)", T.optimizeAtis(tA, "macros", {}, "plate", true, true, false).some(r => r.addons.length === 0), true);
+
 // Bowl-Modus noch nicht implementiert (Daten vorhanden, Flow ausstehend)
 check("Atis Bowl-Modus liefert (noch) keine Ergebnisse", T.optimizeAtis(tA, "macros", {}, "bowl", false, false).length, 0);
 

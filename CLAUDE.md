@@ -257,6 +257,7 @@ Zwei Modi: **"Build Your Own Bowl"** und **"Build Your Own Power Plate"**. AKTUE
 - **Doppelportion**: unterstrichene Items (4 Carb-Bases + 4 Mixed Salads, `doublePlate:true`) zählen in der Plate ×2 (bestätigt — Atis serviert sie doppelt). Bestellanleitung zeigt Klarnamen (1× tappen, Atis serviert doppelt); Komponenten-Aufschlüsselung + Karte zeigen **„(double portion)"** + verdoppeltes kcal. **WICHTIG (User 19.06.2026)**: NICHT als „×2" anzeigen — das las sich wie „2× auswählen" (User-Verwirrung: „Wholegrain Rice ×2" wirkte wie eine 3. Base neben einer anderen). Logik/Makros unverändert, nur Wording → „(double portion)"
 - **Schalter "No sauce"** (intern `aNoSauce`): erzwingt Schritt 5 = "I Don't Want A Dressing"
 - **Schalter "No crunch"** (intern `aNoCrunch`): erzwingt Schritt 6 = "I Don't Want A Crunch"
+- **Schalter "Must include add-on"** (intern `aMustAddon`, **Default AUS**): erzwingt Schritt 4 = ≥1 Add-on in jedem Ergebnis (sonst sind Add-ons 0–3, nur bei Score-Verbesserung). Wo kein Add-on den Score verbessert, wird das best-scorende erzwungen
 - Pool-Ausschlüsse (= aktueller Deliveroo-Flow) als `ATIS_BASE_EXCLUDE`/`ATIS_SAUCE_EXCLUDE`/`ATIS_ADDON_EXCLUDE` in index.html gepflegt; bei Flow-Änderung dort anpassen. Items bleiben im ATIS-Katalog, werden nur aus dem Pool gefiltert
 
 ## Bestellablauf The Fitness Chef (à la carte)
@@ -365,7 +366,7 @@ Alle Filter-/Exclude-Checkboxen sind beim App-Start **aktiviert**, damit der Use
 **Ausnahme bei Subway**: **"No Poached Egg"** startet **AUS** (opt-in, User 11.07.2026 — filtert das `poached_egg`-Extra; `noPoachedEgg` = 12. Param von `optimize`).
 Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — Pret defaultet damit auf nur Salads & protein pots, was "only relevant items" überstimmt). Beim Hinzufügen neuer Schalter: per Default AN.
 **Ausnahme**: Der **restaurantsübergreifende** Schalter „**Top up carbs with corn cakes**" (`cornCakes`, unter Fibre/Salt) startet **AUS** (User 30.06.2026 — opt-in). Sein verschachtelter Cap „Max % of carbs from corn cakes" (`cornCap`) startet auf **No limit** (0). Siehe Abschnitt „Corn Cakes".
-**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren), Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap), Subway "only Subs (no sides)" (würde sonst die gerade erst hinzugefügten Sides verstecken) und Nando's "Main + two sides" (würde sonst alles auf 1 Main + 2 Sides reduzieren). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
+**Ausnahme — enge "only X"-Spezialmodi starten AUS**: Itsu "only sushi" + "only sushi w/o sashimi", Wasabi "only sushi" + "only sushi w/o sashimi" (würden sonst auf nur Sushi reduzieren), Five Guys "Lettuce Wrap" (erzwingt sonst bei allen Burgern den Lettuce-Wrap), Subway "only Subs (no sides)" (würde sonst die gerade erst hinzugefügten Sides verstecken), Nando's "Main + two sides" (würde sonst alles auf 1 Main + 2 Sides reduzieren) und Atis "Must include add-on" (erzwingt sonst ≥1 bezahltes Add-on). Solche Positiv-/Restriktiv-Modi (nicht Exclude-Filter) default AUS.
 **Max-Items-Default ist 5** (alle à-la-carte-Restaurants), nicht 3.
 
 ## Standard-Defaults (beim App-Start)
@@ -386,7 +387,7 @@ Auch Pret "Salads and protein pots only" startet AN (User-Wunsch 12.06.2026 — 
 - **Wagamama**: alle Kategorien aktiv, max. 5 Items, "No Ramen" AN
 - **GDK**: alle Kategorien aktiv außer Juniors (Kids), max. 5 Items, "No Sauce" + "No rice bowl" AN
 - **Urban Greens**: Modus "BYO Salad", 'No "2 Toppings" / Nuts etc.' + "No Dressing" + "Max 1× Tajin/Pickled Onions/Pickled Cabbage" AN
-- **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN
+- **Atis**: Modus Power Plate (einziger implementierter Modus), "No sauce" + "No crunch" AN, **"Must include add-on" AUS** (Positiv-Modus, opt-in)
 - **The Fitness Chef**: alle Kategorien aktiv, max. 5 Items, "No fish" AN; die Größe (Weight Loss/Maintain-Lean/Weight Gain) wählt der Optimizer automatisch
 - **Pepe's**: alle Kategorien aktiv, max. 5 Items, "No sauce" + "No flavour" AN (No flavour = Plain, 0 Makros; die Flavour-Chips erscheinen + wirken erst, wenn "No flavour" aus ist — Default-Chip dann Lemon & Herb)
 - **Five Guys**: Build Your Own, „No sauce" AN, „Lettuce Wrap" AUS — der Optimizer wählt 1 Main (Burger/Sandwich) + Bun-Wahl + Extra Patties (Burger) + optional 1 Fries + freie Toppings (+ paid extras bei Sandwiches) automatisch
@@ -488,9 +489,10 @@ UI-Rendering: Itsu, Pret, Nando's, Wagamama, GDK, The Fitness Chef & Pepe's teil
 - UG nutzt NICHT den AC-Alias (eigene Result-Form mit kind/green/carb/prot/veg/scoop/tops/dress/extras) — eigene Karte + eigenes Panel
 
 ### Atis (`optimizeAtis`)
-- Eigener BYO-Optimizer (wie UG, NICHT AC-Alias). Signatur: `optimizeAtis(t, mode, p, atisMode, noCrunch, noSauce)`
+- Eigener BYO-Optimizer (wie UG, NICHT AC-Alias). Signatur: `optimizeAtis(t, mode, p, atisMode, noCrunch, noSauce, mustAddon)`
 - Aktuell nur `atisMode "plate"` (Power Plate); `"bowl"` → `[]` (Flow ausstehend)
 - Beam-Suche: Backbone (Bases 1–2 × Mixed 1 × Ingredients 1–2; beste 2000) → Proteins 0–2 voll-enumeriert (beste 800) → Sauce 0/1 (beste 600, außer `noSauce`) → Crunch 0/1 (beste 500, außer `noCrunch`) → Extras-Stufe (Add-ons + 3. Protein, nur bei Score-Verbesserung)
+- **Schalter „Must include add-on"** (`mustAddon`, **Default AUS** — Positiv-/Restriktiv-Modus): nach der Extras-Stufe muss JEDES Ergebnis ≥1 Add-on haben. Ergebnisse ohne Add-on (wo keins den Score verbesserte) bekommen das **best-scorende Add-on erzwungen** (auch wenn es den Score leicht verschlechtert), dann Neu-Sortierung. In All/Accurate nicht erzwungen
 - Voll auf vorberechneten 8-Makro-Summen (`eff`: doublePlate-Items ×2 in der Plate); `resultsAtis`-Memo rechnet nur bei aktivem Atis-Tab
 - Eigene Result-Form (`kind/bases/mixed/ing/prots/sauce/crunch/addons`) → eigene Karte + eigenes Panel
 
