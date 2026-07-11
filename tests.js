@@ -863,12 +863,16 @@ check("Wingstop Nutrition == Summe", rWs.every(r => approx(r.nutrition.kcal, Mat
 check("Wingstop Kategorie-Filter (nur tenders)", T.optimizeWingstop(tWs, "macros", {}, { tenders: true }, 2).every(r => r.items.every(x => x.cat === "tenders")), true);
 
 // ── The Sushi Co (à la carte, AC-Familie; PORTIONS-Werte, bild-transkribiert) ──
-check("Sushi Co Items (82)", T.SUSHICO.items.length, 82);
-check("Sushi Co Kategorien (13)", T.SUSHICO.cats.length, 13);
+check("Sushi Co Items (71)", T.SUSHICO.items.length, 71);
+check("Sushi Co Kategorien (12, Bao raus)", T.SUSHICO.cats.length, 12);
+check("Sushi Co keine Bao-Kategorie mehr", T.SUSHICO.cats.every(c => c.id !== "bao") && T.SUSHICO.items.every(x => x.cat !== "bao"), true);
 check("Sushi Co Nigiri (11, inkl. Shake yaki salmon cheese)", T.SUSHICO.items.filter(x => x.cat === "nigiri").length, 11);
-check("Sushi Co Hot Meals (18, inkl. Chicken katsu curry rice + Teriyaki salmon rice)", T.SUSHICO.items.filter(x => x.cat === "hot_meals").length, 18);
+check("Sushi Co Hot Meals (16, ohne Chicken katsu + Miso soup)", T.SUSHICO.items.filter(x => x.cat === "hot_meals").length, 16);
 check("Sushi Co Tuna tataki Protein-Fix (53.2, nicht 34)", (T.SUSHICO.items.find(x => x.id === "tuna_tataki") || {}).protein, 53.2);
-check("Sushi Co Chicken katsu kcal aus kJ abgeleitet (296)", (T.SUSHICO.items.find(x => x.id === "chicken_katsu") || {}).kcal, 296);
+check("Sushi Co: Chicken katsu / Miso soup / Edamame salad entfernt", ["chicken_katsu", "miso_soup", "edamame_salad"].every(id => !T.SUSHICO.items.find(x => x.id === id)), true);
+check("Sushi Co: 'Chicken katsu curry rice' bleibt", !!T.SUSHICO.items.find(x => x.id === "chicken_katsu_curry_rice"), true);
+// kcal geht bei ALLEN verbliebenen Gerichten auf (EU: 4C+4P+9F+2Fib, <=10%)
+check("Sushi Co: alle kcal-plausibel (EU-Formel, <=10%)", T.SUSHICO.items.every(x => { const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat + 2 * x.fibre; return Math.abs(x.kcal - e) / Math.max(x.kcal, 1) <= 0.10; }), true);
 check("Sushi Co volle 8 Makros (numerisch)", T.SUSHICO.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Sushi Co Salmon sashimi kcal (229)", (T.SUSHICO.items.find(x => x.id === "salmon_sashimi") || {}).kcal, 229);
 check("Sushi Co sat <= fat ueberall", T.SUSHICO.items.every(x => x.sat <= x.fat + 0.05), true);

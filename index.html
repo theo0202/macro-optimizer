@@ -1757,7 +1757,7 @@ const WINGSTOP = {
 // __WINGSTOP_DATA_END__
 
 // __SUSHICO_DATA_START__ (generiert via: node sushico-update.js aus data/sushico-raw.json — nicht von Hand editieren)
-// Quelle: The Sushi Co Naehrwerttabelle (2 Bilder, User-Copy-Paste) · 82 Items · PORTIONS-Werte, volle 8 Makros. Bild-transkribiert. À la carte (AC-Alias).
+// Quelle: The Sushi Co Naehrwerttabelle (2 Bilder, User-Copy-Paste) · 71 Items · PORTIONS-Werte, volle 8 Makros. Bild-transkribiert. À la carte (AC-Alias).
 const SUSHICO = {
   cats: [
     { id:"hosomaki",name:"Hosomaki",on:true },
@@ -1770,7 +1770,6 @@ const SUSHICO = {
     { id:"aburi",name:"Aburi & Dragon Rolls",on:true },
     { id:"hot_meals",name:"Hot Meals",on:true },
     { id:"poke",name:"Poke Bowls",on:true },
-    { id:"bao",name:"Bao",on:true },
     { id:"salads",name:"Salads",on:true },
     { id:"desserts",name:"Desserts",on:true },
   ],
@@ -1821,13 +1820,11 @@ const SUSHICO = {
     { id:"salmon_avocado_eel_roll",name:"Salmon avocado eel roll",cat:"aburi",kcal:529.4,fat:26.2,sat:6.3,carbs:40.4,sugars:14.1,fibre:1.2,protein:30.2,salt:2.6 },
     { id:"rainbow_roll",name:"Rainbow roll",cat:"aburi",kcal:358.5,fat:16.6,sat:2.9,carbs:31,sugars:4.1,fibre:0.7,protein:19.3,salt:1.2 },
     { id:"red_dragon_roll",name:"Red dragon roll",cat:"aburi",kcal:410.2,fat:13.4,sat:3.5,carbs:40.9,sugars:7.2,fibre:2.3,protein:33.6,salt:1.8 },
-    { id:"miso_soup",name:"Miso soup",cat:"hot_meals",kcal:73.5,fat:1.1,sat:0.1,carbs:4.1,sugars:1.5,fibre:1,protein:2.6,salt:1.6 },
     { id:"vegan_pumpkin_katsu",name:"Vegan pumpkin katsu",cat:"hot_meals",kcal:209.5,fat:10.6,sat:1.4,carbs:27.7,sugars:9.1,fibre:1.8,protein:3.2,salt:0.37 },
     { id:"crispy_gyoza_chicken",name:"Crispy gyoza chicken",cat:"hot_meals",kcal:310.4,fat:11,sat:1.5,carbs:39.4,sugars:5.6,fibre:0,protein:13.7,salt:1.9 },
     { id:"crispy_gyoza_vegetable",name:"Crispy gyoza vegetable",cat:"hot_meals",kcal:306.8,fat:13.9,sat:2.2,carbs:36.4,sugars:4.1,fibre:5.6,protein:8.1,salt:1.8 },
     { id:"veggie_spring_roll",name:"Veggie spring roll",cat:"hot_meals",kcal:422.5,fat:11.6,sat:2.9,carbs:68.6,sugars:23.5,fibre:6.2,protein:9,salt:3.5 },
     { id:"prawn_katsu",name:"Prawn katsu",cat:"hot_meals",kcal:208.7,fat:14.6,sat:2.3,carbs:15.9,sugars:3.2,fibre:2.1,protein:6.4,salt:1.2 },
-    { id:"chicken_katsu",name:"Chicken katsu",cat:"hot_meals",kcal:296,fat:21,sat:6.2,carbs:11.6,sugars:0.5,fibre:0.5,protein:17.1,salt:0.49 },
     { id:"pumpkin_katsu_curry_rice",name:"Pumpkin katsu curry rice",cat:"hot_meals",kcal:810,fat:26.5,sat:9.8,carbs:129.9,sugars:19.9,fibre:5.3,protein:13.7,salt:3.4 },
     { id:"octopus_balls",name:"Octopus balls",cat:"hot_meals",kcal:240,fat:15,sat:2.5,carbs:24.1,sugars:9.7,fibre:0,protein:5.4,salt:0.82 },
     { id:"vegetable_stir_fried_noodles",name:"Vegetable stir fried noodles",cat:"hot_meals",kcal:502.5,fat:27.1,sat:3.8,carbs:58.9,sugars:10.1,fibre:5.8,protein:11.2,salt:5.7 },
@@ -1843,15 +1840,6 @@ const SUSHICO = {
     { id:"large_salmon_poke_bowl",name:"Large salmon poke bowl",cat:"poke",kcal:946.9,fat:43.6,sat:7.1,carbs:89.6,sugars:12.6,fibre:13.5,protein:50.8,salt:1.3 },
     { id:"large_tuna_poke_bowl",name:"Large tuna poke bowl",cat:"poke",kcal:819.2,fat:30,sat:4.7,carbs:81.8,sugars:12.1,fibre:11.8,protein:51.2,salt:1.4 },
     { id:"large_prawn_poke_bowl",name:"Large prawn poke bowl",cat:"poke",kcal:964.9,fat:43,sat:6.7,carbs:101.4,sugars:16.9,fibre:15,protein:41.9,salt:2.5 },
-    { id:"veg_tempura_bao",name:"Veg tempura bao",cat:"bao",kcal:242.9,fat:17.6,sat:3.7,carbs:39.1,sugars:10,fibre:1,protein:4.5,salt:0.37 },
-    { id:"chicken_katsu_bao",name:"Chicken Katsu bao",cat:"bao",kcal:343.3,fat:23.1,sat:4.2,carbs:44.5,sugars:12.6,fibre:0.2,protein:11.9,salt:1.1 },
-    { id:"spicy_chicken_bao",name:"Spicy chicken bao",cat:"bao",kcal:254.7,fat:19.4,sat:4.6,carbs:32.8,sugars:8.2,fibre:0.5,protein:10.1,salt:1.1 },
-    { id:"spicy_salmon_bao",name:"Spicy salmon bao",cat:"bao",kcal:309.4,fat:24.8,sat:5.1,carbs:30.5,sugars:8.5,fibre:0.2,protein:13.9,salt:0.83 },
-    { id:"teriyaki_chicken_bao",name:"Teriyaki chicken bao",cat:"bao",kcal:214.3,fat:13.9,sat:4.2,carbs:33.5,sugars:11.4,fibre:0.5,protein:11.4,salt:1 },
-    { id:"crispy_prawn_bao",name:"Crispy prawn bao",cat:"bao",kcal:195.1,fat:13.3,sat:3.2,carbs:35.9,sugars:9.6,fibre:0.8,protein:5.6,salt:0.68 },
-    { id:"tofu_bao",name:"Tofu bao",cat:"bao",kcal:193.2,fat:9.2,sat:2.7,carbs:33.7,sugars:11.4,fibre:0.2,protein:5.2,salt:0.3 },
-    { id:"pumpkin_katsu_bao",name:"Pumpkin Katsu bao",cat:"bao",kcal:264,fat:13.5,sat:3.2,carbs:52.5,sugars:15.4,fibre:1.3,protein:5.9,salt:0.58 },
-    { id:"edamame_salad",name:"Edamame salad",cat:"salads",kcal:184.8,fat:10,sat:1.7,carbs:11.4,sugars:0,fibre:6.6,protein:15.2,salt:1.4 },
     { id:"seaweed_salad",name:"Seaweed salad",cat:"salads",kcal:127.6,fat:5.7,sat:0.2,carbs:14.3,sugars:11.7,fibre:6.2,protein:2,salt:2.6 },
     { id:"strawberry_cheesecake",name:"Strawberry cheesecake",cat:"desserts",kcal:226,fat:11,sat:6.4,carbs:28,sugars:24,fibre:0,protein:2,salt:0.26 },
     { id:"mango_cheesecake_mochi",name:"Mango cheesecake mochi",cat:"desserts",kcal:208,fat:8.4,sat:5.2,carbs:35.2,sugars:28.2,fibre:0,protein:2.2,salt:0.24 },
