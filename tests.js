@@ -552,8 +552,8 @@ check("GDK beide Schalter: keine Sauce UND keine Rice Bowls", rgBoth.every(r => 
 check("Atis bases (8: 4 greens + 4 carbs)", T.ATIS.bases.length, 8);
 check("Atis basesL (4 large greens, reserviert)", T.ATIS.basesL.length, 4);
 check("Atis mixed salads (4)", T.ATIS.mixed.length, 4);
-check("Atis ingredients (15, Spring Onion + Coriander raus)", T.ATIS.ingredients.length, 15);
-check("Atis: kein Spring Onion + Coriander (User-Ausschluss)", T.ATIS.ingredients.every(x => !/spring onion|coriander/i.test(x.name)), true);
+check("Atis ingredients (14, Spring Onion+Coriander + Mint Leaves raus)", T.ATIS.ingredients.length, 14);
+check("Atis: kein Spring Onion/Coriander/Mint (User-Ausschluss)", T.ATIS.ingredients.every(x => !/spring onion|coriander|mint/i.test(x.name)), true);
 check("Atis proteins (8)", T.ATIS.proteins.length, 8);
 check("Atis sauces (18: 3 Saucen + 15 Dressings)", T.ATIS.sauces.length, 18);
 check("Atis saucesL (12 large Dressings, reserviert)", T.ATIS.saucesL.length, 12);

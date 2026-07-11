@@ -28,7 +28,7 @@ const RENAME = {
 
 // User-Ausschluesse ("hasse ich", 11.07.2026): raw-Name. atis-raw.json bleibt die vollstaendige Menue-Transkription;
 // diese Items werden nur aus dem generierten Block (Optimizer + Such-Index) gefiltert. Wie UG's Coriander/Mint/Parsley.
-const USER_EXCLUDE = new Set(["Spring Onion + Coriander"]);
+const USER_EXCLUDE = new Set(["Spring Onion + Coriander", "Mint Leaves"]);
 
 const num = v => { const f = parseFloat(v); return isNaN(f) ? 0 : Math.round(f * 100) / 100; };
 
