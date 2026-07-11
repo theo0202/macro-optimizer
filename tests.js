@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -841,6 +841,27 @@ check("Pho Fisch bleibt (Curry - Fish im Katalog, kein Schalentier)", T.PHO.item
 check("Pho: Bun bo Hue (chilli shrimp paste) als Schalentier gefiltert", T.PHO.items.every(x => !(/beef brisket/i.test(x.name) && /hot & spicy/i.test(x.name) && !T.isShellfish(x))), true);
 check("Pho: kein 'hot & spicy - beef brisket' im Optimizer-Ergebnis (Shrimp-Paste)", T.optimizePho({ protein: 36, carbs: 55, fat: 9, kcal: 445, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, phoAll, 1).every(r => r.items.every(x => !/hot & spicy - beef brisket/i.test(x.name))), true);
 
+// ── Wingstop (à la carte, AC-Familie; volle 8 Makros, '--' -> 0) ──
+check("Wingstop Items (12)", T.WINGSTOP.items.length, 12);
+check("Wingstop Kategorien (5)", T.WINGSTOP.cats.length, 5);
+check("Wingstop volle 8 Makros (numerisch)", T.WINGSTOP.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
+check("Wingstop 10 Pieces Boneless (Tippfehler-Fix '0'->10, kcal 526)", (T.WINGSTOP.items.find(x => x.id === "10_pieces_boneless") || {}).kcal, 526);
+check("Wingstop kein '0 Pieces Boneless' mehr", T.WINGSTOP.items.every(x => !/^0 pieces/i.test(x.name)), true);
+check("Wingstop 8 Pieces Boneless protein (34)", (T.WINGSTOP.items.find(x => x.id === "8_pieces_boneless") || {}).protein, 34);
+check("Wingstop Big Flavour Burger sugars (38)", (T.WINGSTOP.items.find(x => x.id === "big_flavour_burger") || {}).sugars, 38);
+check("Wingstop Corn ohne Salt (salt=0)", T.WINGSTOP.items.filter(x => x.cat === "corn").every(x => x.salt === 0), true);
+check("Wingstop Sweet Potato Fries ohne Protein (protein=0)", T.WINGSTOP.items.filter(x => /sweet potato/i.test(x.name)).every(x => x.protein === 0), true);
+check("Wingstop sat <= fat ueberall", T.WINGSTOP.items.every(x => x.sat <= x.fat + 0.05), true);
+check("Wingstop sugars <= carbs ueberall", T.WINGSTOP.items.every(x => x.sugars <= x.carbs + 0.05), true);
+const wsBad = T.WINGSTOP.items.filter(x => { const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - e) > 60 && Math.abs(x.kcal - e) / Math.max(x.kcal, 1) > 0.15; });
+check("Wingstop kcal-plausibel (alle Items)", wsBad.length, 0);
+const wsAll = {}; T.WINGSTOP.cats.forEach(c => wsAll[c.id] = true);
+const tWs = { protein: 40, carbs: 45, fat: 18, kcal: 502, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rWs = T.optimizeWingstop(tWs, "macros", {}, wsAll, 3);
+check("Wingstop liefert Ergebnisse (1..20)", rWs.length > 0 && rWs.length <= 20, true);
+check("Wingstop Nutrition == Summe", rWs.every(r => approx(r.nutrition.kcal, Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10)), true);
+check("Wingstop Kategorie-Filter (nur tenders)", T.optimizeWingstop(tWs, "macros", {}, { tenders: true }, 2).every(r => r.items.every(x => x.cat === "tenders")), true);
+
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
 const shellRE = /(prawn(?!less)|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;
 check("isShellfish: prawn/shrimp/crab/calamari -> true", ["Prawn tom yum", "Shrimp", "Crayfish & Rocket", "Calamari", "California rolls", "best of itsu"].every(n => T.isShellfish({ name: n })), true);
@@ -860,7 +881,7 @@ check("Fisch bleibt erhalten (Wasabi Salmon/Tuna weiter im Datensatz)", T.WASABI
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory", "pho"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory", "pho", "wingstop"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -1179,7 +1200,7 @@ check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes(
 check("Search-Index gefuellt (>900 Items)", T.SEARCH_INDEX.length > 900, true);
 check("Search-Index: alle Eintraege haben resto+name+8 Makros", T.SEARCH_INDEX.every(x => x.resto && x.name && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Search-Index: keine exakten Duplikate (resto|name|kcal)", (() => { const s = new Set(); return T.SEARCH_INDEX.every(x => { const k = x.resto + "|" + x.name + "|" + x.kcal; if (s.has(k)) return false; s.add(k); return true; }); })(), true);
-check("Search-Index deckt alle 18 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 18);
+check("Search-Index deckt alle 19 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 19);
 check("searchItems leere Query -> []", T.searchItems("").length, 0);
 const sKatsu = T.searchItems("katsu");
 check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);

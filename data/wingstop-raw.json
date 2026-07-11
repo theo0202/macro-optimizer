@@ -1,0 +1,34 @@
+{
+ "_meta": {
+  "source": "Wingstop UK nutrition (User-Copy-Paste 11.07.2026)",
+  "note": "Hand-transkribiert (kein Crawler, wie GDK/TFC/Pho). Volle 8 Makros. '--' -> 0 (fehlende Werte).",
+  "corrections": [
+   "'0 Pieces Boneless' war ein Tippfehler (OCR) -> 10 Pieces Boneless: 526 kcal passt exakt zwischen 8pc/420 und 12pc/631 (8pc + 2x53; 526/10 = 52.6 kcal/Stueck wie die anderen)"
+  ],
+  "gaps": [
+   "Corn (4/8 Pieces): Salt '--' -> salt=0 (nicht angegeben)",
+   "Sweet Potato Fries (regular/large): Protein '--' -> protein=0 (nicht angegeben)"
+  ]
+ },
+ "cats": [
+  { "id": "boneless", "name": "Boneless", "on": true },
+  { "id": "tenders", "name": "Tenders", "on": true },
+  { "id": "burgers", "name": "Burgers", "on": true },
+  { "id": "corn", "name": "Corn", "on": true },
+  { "id": "fries", "name": "Fries", "on": true }
+ ],
+ "items": [
+  { "name": "8 Pieces Boneless", "cat": "boneless", "kcal": 420, "fat": 13, "sat": 5.4, "carbs": 40, "sugars": 2.7, "fibre": 2.9, "protein": 34, "salt": 2.70 },
+  { "name": "10 Pieces Boneless", "cat": "boneless", "kcal": 526, "fat": 17, "sat": 6.8, "carbs": 50, "sugars": 3.4, "fibre": 3.6, "protein": 42, "salt": 3.30 },
+  { "name": "12 Pieces Boneless", "cat": "boneless", "kcal": 631, "fat": 20, "sat": 8.2, "carbs": 60, "sugars": 4.0, "fibre": 4.4, "protein": 50, "salt": 4.00 },
+  { "name": "3 Tenders", "cat": "tenders", "kcal": 337, "fat": 12, "sat": 4.8, "carbs": 30, "sugars": 2.2, "fibre": 1.8, "protein": 26, "salt": 2.30 },
+  { "name": "5 Tenders", "cat": "tenders", "kcal": 562, "fat": 20, "sat": 8.0, "carbs": 50, "sugars": 3.6, "fibre": 3.0, "protein": 43, "salt": 3.80 },
+  { "name": "Big Flavour Burger", "cat": "burgers", "kcal": 629, "fat": 33, "sat": 6.1, "carbs": 58, "sugars": 38, "fibre": 3.7, "protein": 23, "salt": 3.00 },
+  { "name": "4 Pieces of Corn", "cat": "corn", "kcal": 217, "fat": 11.4, "sat": 1.1, "carbs": 20.9, "sugars": 5.7, "fibre": 11.6, "protein": 8.2, "salt": 0 },
+  { "name": "8 Pieces of Corn", "cat": "corn", "kcal": 433, "fat": 22.8, "sat": 2.3, "carbs": 41.8, "sugars": 11.4, "fibre": 23.2, "protein": 16.3, "salt": 0 },
+  { "name": "Fries (regular)", "cat": "fries", "kcal": 505, "fat": 25, "sat": 3.2, "carbs": 63, "sugars": 2.5, "fibre": 5.0, "protein": 5, "salt": 1.20 },
+  { "name": "Fries (large)", "cat": "fries", "kcal": 631, "fat": 31.3, "sat": 4.0, "carbs": 78.8, "sugars": 3.1, "fibre": 6.3, "protein": 6.3, "salt": 1.50 },
+  { "name": "Sweet Potato Fries (regular)", "cat": "fries", "kcal": 348, "fat": 15, "sat": 2.1, "carbs": 49, "sugars": 14, "fibre": 6.8, "protein": 0, "salt": 0.54 },
+  { "name": "Sweet Potato Fries (large)", "cat": "fries", "kcal": 470, "fat": 20.3, "sat": 2.8, "carbs": 66.2, "sugars": 18.9, "fibre": 9.2, "protein": 0, "salt": 0.73 }
+ ]
+}

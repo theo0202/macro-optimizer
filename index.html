@@ -1729,6 +1729,33 @@ const PHO = {
 };
 // __PHO_DATA_END__
 
+// __WINGSTOP_DATA_START__ (generiert via: node wingstop-update.js aus data/wingstop-raw.json — nicht von Hand editieren)
+// Quelle: Wingstop UK Nutrition (User-Copy-Paste) · 12 Items · volle 8 Makros ('--'->0). '0 Pieces Boneless' war Tippfehler -> 10 Pieces. À la carte (AC-Alias).
+const WINGSTOP = {
+  cats: [
+    { id:"boneless",name:"Boneless",on:true },
+    { id:"tenders",name:"Tenders",on:true },
+    { id:"burgers",name:"Burgers",on:true },
+    { id:"corn",name:"Corn",on:true },
+    { id:"fries",name:"Fries",on:true },
+  ],
+  items: [
+    { id:"8_pieces_boneless",name:"8 Pieces Boneless",cat:"boneless",kcal:420,fat:13,sat:5.4,carbs:40,sugars:2.7,fibre:2.9,protein:34,salt:2.7 },
+    { id:"10_pieces_boneless",name:"10 Pieces Boneless",cat:"boneless",kcal:526,fat:17,sat:6.8,carbs:50,sugars:3.4,fibre:3.6,protein:42,salt:3.3 },
+    { id:"12_pieces_boneless",name:"12 Pieces Boneless",cat:"boneless",kcal:631,fat:20,sat:8.2,carbs:60,sugars:4,fibre:4.4,protein:50,salt:4 },
+    { id:"3_tenders",name:"3 Tenders",cat:"tenders",kcal:337,fat:12,sat:4.8,carbs:30,sugars:2.2,fibre:1.8,protein:26,salt:2.3 },
+    { id:"5_tenders",name:"5 Tenders",cat:"tenders",kcal:562,fat:20,sat:8,carbs:50,sugars:3.6,fibre:3,protein:43,salt:3.8 },
+    { id:"big_flavour_burger",name:"Big Flavour Burger",cat:"burgers",kcal:629,fat:33,sat:6.1,carbs:58,sugars:38,fibre:3.7,protein:23,salt:3 },
+    { id:"4_pieces_of_corn",name:"4 Pieces of Corn",cat:"corn",kcal:217,fat:11.4,sat:1.1,carbs:20.9,sugars:5.7,fibre:11.6,protein:8.2,salt:0 },
+    { id:"8_pieces_of_corn",name:"8 Pieces of Corn",cat:"corn",kcal:433,fat:22.8,sat:2.3,carbs:41.8,sugars:11.4,fibre:23.2,protein:16.3,salt:0 },
+    { id:"fries_regular",name:"Fries (regular)",cat:"fries",kcal:505,fat:25,sat:3.2,carbs:63,sugars:2.5,fibre:5,protein:5,salt:1.2 },
+    { id:"fries_large",name:"Fries (large)",cat:"fries",kcal:631,fat:31.3,sat:4,carbs:78.8,sugars:3.1,fibre:6.3,protein:6.3,salt:1.5 },
+    { id:"sweet_potato_fries_regular",name:"Sweet Potato Fries (regular)",cat:"fries",kcal:348,fat:15,sat:2.1,carbs:49,sugars:14,fibre:6.8,protein:0,salt:0.54 },
+    { id:"sweet_potato_fries_large",name:"Sweet Potato Fries (large)",cat:"fries",kcal:470,fat:20.3,sat:2.8,carbs:66.2,sugars:18.9,fibre:9.2,protein:0,salt:0.73 },
+  ],
+};
+// __WINGSTOP_DATA_END__
+
 const KEYS = ["kcal","fat","sat","carbs","sugars","fibre","protein","salt"];
 
 // singleItems (Salads) werden NIE multipliziert: Footlong = ×2 für alles AUSSER Salads
@@ -2304,6 +2331,10 @@ function optimizePizzaExpress(t, mode, p, activeCats, maxN, noVegan, noGF) {
 function optimizePho(t, mode, p, activeCats, maxN) {
   return alaCarteCombos(t, mode, p, PHO.items.filter(x=>activeCats[x.cat]), maxN);
 }
+// Wingstop: à la carte (AC-Alias). Volle 8 Makros. Kategorie-Chips + Max-Items, keine Schalter. Kein Schalentier.
+function optimizeWingstop(t, mode, p, activeCats, maxN) {
+  return alaCarteCombos(t, mode, p, WINGSTOP.items.filter(x=>activeCats[x.cat]), maxN);
+}
 
 // Leon: à la carte (AC-Alias, wie Itsu/Pizza Express). All-Day-Menü, volle 8 Makros. Sauces nicht in den Daten.
 function optimizeLeon(t, mode, p, activeCats, maxN) {
@@ -2441,6 +2472,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   if(ok("leon")) all = all.concat(tag(optimizeLeon(t,mode,p,def(LEON.cats),N),"leon")); // à la carte (All-Day)
   if(ok("bagelfactory")) all = all.concat(tag(optimizeBagelFactory(t,mode,p,def(BAGELFACTORY.cats),N,true,null),"bagelfactory")); // Set-Menü, No sweets, alle Buns
   if(ok("pho")) all = all.concat(tag(optimizePho(t,mode,p,def(PHO.cats),N),"pho")); // à la carte (Sauces-Kategorie default aus)
+  if(ok("wingstop")) all = all.concat(tag(optimizeWingstop(t,mode,p,def(WINGSTOP.cats),N),"wingstop")); // à la carte
   all.sort((a,b)=>a.score-b.score);
   // Vielfalt: max. 1 Treffer pro Restaurant (User-Wunsch 15.06.2026 — nur die jeweils beste Bestellung je Restaurant).
   // Klick auf ein Ergebnis öffnet ohnehin das volle Restaurant. Greedy in Score-Reihenfolge -> bleibt aufsteigend sortiert.
@@ -2450,7 +2482,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
 }
 // "Accurate restaurants": Teilmenge mit verlaesslicheren Daten (ohne GDK/Chopstix/Five Guys — Komposition/Anomalien)
 const ACCURATE_RESTOS = ["subway","farmerj","itsu","pret","nandos","ug","wagamama","atis","tfc","pepes","pizzaexpress","wasabi"];
-const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi",leon:"Leon",bagelfactory:"Bagel Factory",pho:"Pho"};
+const RESTO_NAME = {subway:"Subway",farmerj:"Farmer J",itsu:"Itsu",pret:"Pret",nandos:"Nando's",ug:"Urban Greens",wagamama:"Wagamama",gdk:"GDK",atis:"Atis",tfc:"The Fitness Chef",chopstix:"Chopstix",pepes:"Pepe's",fiveguys:"Five Guys",pizzaexpress:"Pizza Express",wasabi:"Wasabi",leon:"Leon",bagelfactory:"Bagel Factory",pho:"Pho",wingstop:"Wingstop"};
 
 // ── "Add own order" — restaurantsuebergreifender Such-Index (zum nachtraeglichen Tracken eines gekauften Gerichts) ──
 // Sammelt jedes Food-Item/jede Komponente mit echten 8 Makros aus ALLEN Restaurants in eine flache, durchsuchbare Liste.
@@ -2462,7 +2494,7 @@ function buildSearchIndex(){
   const addArr=(resto,arr)=>{ (arr||[]).forEach(it=>push(resto,it.name,it)); };
   addArr("Itsu",ITSU.items); addArr("Pret",PRET.items); addArr("Nando's",NANDOS.items);
   addArr("Wagamama",WAGA.items); addArr("GDK",GDK.items); addArr("The Fitness Chef",TFC.items);
-  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items); addArr("Leon",LEON.items); addArr("Bagel Factory",BAGELFACTORY.items); addArr("Pho",PHO.items);
+  addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items); addArr("Leon",LEON.items); addArr("Bagel Factory",BAGELFACTORY.items); addArr("Pho",PHO.items); addArr("Wingstop",WINGSTOP.items);
   ["breads","proteins","cheeses","extras","salads","sauces","seasonings"].forEach(k=>addArr("Subway",D[k]));
   ["mains","bases","sides","toppings","sdt","sets"].forEach(k=>addArr("Farmer J",FJ[k]));
   ["greens","carbs","prots","veg","tops","dress","scoops"].forEach(k=>addArr("Urban Greens",UG[k]));
@@ -2917,6 +2949,10 @@ function App() {
   const [phoCats,setPhoC]=useState(()=>{const o={};PHO.cats.forEach(c=>o[c.id]=c.on);return o;});
   const [maxPho,setMaxPho]=useState(5);
   const [selPho,setSelPho]=useState(null);
+  // Wingstop (à la carte, AC-Alias)
+  const [wingCats,setWingC]=useState(()=>{const o={};WINGSTOP.cats.forEach(c=>o[c.id]=c.on);return o;});
+  const [maxWing,setMaxWing]=useState(5);
+  const [selWing,setSelWing]=useState(null);
 
   // "Add own order" — restaurantsuebergreifende Suche + eigener Warenkorb (in localStorage gespeichert)
   const [searchQ,setSearchQ]=useState("");
@@ -2978,6 +3014,7 @@ function App() {
     else if(rt==="leon")setSelLeon(r);
     else if(rt==="bagelfactory")setSelBF(r);
     else if(rt==="pho")setSelPho(r);
+    else if(rt==="wingstop")setSelWing(r);
   };
 
   const targets=useMemo(()=>{
@@ -3007,6 +3044,7 @@ function App() {
   const resultsLeon=useMemo(()=>resto==="leon"?optimizeLeon(targets,mode,prefs,leonCats,maxLeon):[],[resto,targets,mode,prefs,leonCats,maxLeon]);
   const resultsBF=useMemo(()=>resto==="bagelfactory"?optimizeBagelFactory(targets,mode,prefs,bfCats,maxBF,noSweetsBF,maxBF===Infinity?bfBunSlots[0]:bfBunSlots.slice(0,maxBF),bfNoPork,bfNoDup,bfNoSalmon):[],[resto,targets,mode,prefs,bfCats,maxBF,noSweetsBF,bfBunSlots,bfNoPork,bfNoDup,bfNoSalmon]);
   const resultsPho=useMemo(()=>resto==="pho"?optimizePho(targets,mode,prefs,phoCats,maxPho):[],[resto,targets,mode,prefs,phoCats,maxPho]);
+  const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3022,7 +3060,8 @@ function App() {
          :resto==="wasabi"?{D:WASABI,sel:selWas,setSel:setSelWas,res:resultsWasabi,maxN:maxWas}
          :resto==="leon"?{D:LEON,sel:selLeon,setSel:setSelLeon,res:resultsLeon,maxN:maxLeon}
          :resto==="bagelfactory"?{D:BAGELFACTORY,sel:selBF,setSel:setSelBF,res:resultsBF,maxN:maxBF}
-         :resto==="pho"?{D:PHO,sel:selPho,setSel:setSelPho,res:resultsPho,maxN:maxPho}:null;
+         :resto==="pho"?{D:PHO,sel:selPho,setSel:setSelPho,res:resultsPho,maxN:maxPho}
+         :resto==="wingstop"?{D:WINGSTOP,sel:selWing,setSel:setSelWing,res:resultsWing,maxN:maxWing}:null;
 
   // Corn Cakes (restaurantsuebergreifend): die aktive Ergebnisliste EINMAL augmentieren (Karten + Ranking).
   // Memoisiert → stabile Objekt-Identitaet, damit die Selektion-Markierung (sel===r) heil bleibt.
@@ -3101,9 +3140,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":resto==="bagelfactory"?"linear-gradient(135deg,#a16207,#713f12)":resto==="pho"?"linear-gradient(135deg,#e11d48,#7f1d1d)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":resto==="bagelfactory"?"linear-gradient(135deg,#a16207,#713f12)":resto==="pho"?"linear-gradient(135deg,#e11d48,#7f1d1d)":resto==="wingstop"?"linear-gradient(135deg,#65a30d,#1c1917)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":resto==="bagelfactory"?"BAGEL FACTORY · APR 2026":resto==="pho"?"PHO · UK · JAN 2026":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":resto==="bagelfactory"?"BAGEL FACTORY · APR 2026":resto==="pho"?"PHO · UK · JAN 2026":resto==="wingstop"?"WINGSTOP · UK":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -3189,7 +3228,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto),btn("bagelfactory","Bagel Factory",resto,setResto),btn("pho","Pho",resto,setResto)
+        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto),btn("bagelfactory","Bagel Factory",resto,setResto),btn("pho","Pho",resto,setResto),btn("wingstop","Wingstop",resto,setResto)
       ),
 
       // All / Accurate restaurants: max items pro à-la-carte-Bestellung (gilt fuer die AC-Restaurants im Cross-Restaurant-Mix)
@@ -3320,6 +3359,20 @@ function App() {
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxPho===n,onClick:()=>setMaxPho(n),small:true}))
         ),
         h("div",{style:{fontSize:10,color:"#666",lineHeight:1.4}},"Curry & rice bowls exclude rice — add a 'Rice' item to complete the meal. No salt data in the guide. Prawn/crab/squid dishes are hidden (shellfish).")
+      ),
+
+      // Wingstop: Kategorien + Anzahl Items (à la carte; volle Makros)
+      resto==="wingstop"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Categories"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:12}},
+          ...WINGSTOP.cats.map(c=>h(Chip,{key:c.id,label:c.name,active:!!wingCats[c.id],
+            onClick:()=>setWingC(p=>({...p,[c.id]:!p[c.id]}))}))
+        ),
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. items per order"),
+        h("div",{style:{display:"flex",gap:5,marginBottom:10}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxWing===n,onClick:()=>setMaxWing(n),small:true}))
+        ),
+        h("div",{style:{fontSize:10,color:"#666",lineHeight:1.4}},"Boneless & tenders come tossed in a flavour — the values are the base pieces (flavour extras not in the data). Corn has no salt data, sweet potato fries no protein data.")
       ),
 
       // Wasabi: Kategorien + Anzahl Items (à la carte; Switches No soups / only sushi / only sushi w/o sashimi unten)
@@ -4307,7 +4360,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="search"?"Add own order: search any dish across all 18 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":resto==="bagelfactory"?"Data: Bagel Factory Full Ingredient List (Issue 20) · per portion · plain bun":resto==="pho"?"Data: Pho Nutritional Guidelines 2026 · no salt data":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="search"?"Add own order: search any dish across all 19 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":resto==="bagelfactory"?"Data: Bagel Factory Full Ingredient List (Issue 20) · per portion · plain bun":resto==="pho"?"Data: Pho Nutritional Guidelines 2026 · no salt data":resto==="wingstop"?"Data: Wingstop UK nutrition · full macros":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }
