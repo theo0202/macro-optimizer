@@ -796,8 +796,10 @@ const rPermSlot = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true, deli
 check("Bagel Factory Bun-Permutationen zusammengefasst (per-Slot): eindeutige perm-keys", rPermSlot.length > 0 && uniqueKeys(rPermSlot), true);
 
 // ── Pho (à la carte, AC-Familie; 7 Makros, KEIN Salt -> salt=0) ──
-check("Pho Items (100)", T.PHO.items.length, 100);
-check("Pho Kategorien (9)", T.PHO.cats.length, 9);
+check("Pho Items (94)", T.PHO.items.length, 94);
+check("Pho Kategorien (8)", T.PHO.cats.length, 8);
+check("Pho: keine Sauces-Kategorie (Deliveroo)", T.PHO.cats.every(c => c.id !== "sauces") && T.PHO.items.every(x => x.cat !== "sauces"), true);
+check("Pho: kein Cauliflower rice (Deliveroo)", T.PHO.items.every(x => !/cauliflower/i.test(x.name)), true);
 check("Pho volle Makros numerisch + salt=0", T.PHO.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number") && x.salt === 0), true);
 check("Pho - Beef brisket kcal (397)", T.PHO.items.find(x => x.id === "pho_beef_brisket").kcal, 397);
 check("Pho Chicken wings protein (67.1)", T.PHO.items.find(x => x.id === "chicken_wings").protein, 67.1);
