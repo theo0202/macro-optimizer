@@ -82,6 +82,11 @@ check("Subway Brot Legacy-String (1 Brot) weiterhin ok", T.optimize(t1, "macros"
 const tChick = { protein: 50, carbs: 60, fat: 8, kcal: 512, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway 'No Roast Chicken': kein roast_chicken-Protein", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, true).every(r => r.protein.id !== "roast_chicken"), true);
 check("Subway ohne Schalter: Roast Chicken möglich (Gegenprobe)", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, false).some(r => r.protein.id === "roast_chicken"), true);
+// Schalter "No Poached Egg" (12. Param, Default AUS)
+check("Subway D.extras hat Poached Egg", T.D.extras.some(e => e.id === "poached_egg"), true);
+const tEgg = { protein: 55, carbs: 50, fat: 10, kcal: 510, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Subway ohne 'No Poached Egg': Poached Egg möglich (Gegenprobe)", T.optimize(tEgg, "macros", {}, true, false, {}, "footlong", true, false, false, false, false).some(r => (r.extras || []).some(e => e.id === "poached_egg")), true);
+check("Subway 'No Poached Egg': nie im Ergebnis", T.optimize(tEgg, "macros", {}, true, false, {}, "footlong", true, false, false, false, true).every(r => (r.extras || []).every(e => e.id !== "poached_egg")), true);
 // Schalter "Cheese" (forceCheese, 10. Param): immer einer der beiden Käse (kein "none")
 const tCh2 = { protein: 30, carbs: 50, fat: 18, kcal: 482, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway 'Cheese': jedes Ergebnis hat Käse (kein none)", T.optimize(tCh2, "macros", {}, true, false, {}, "footlong", true, false, true).every(r => r.cheese.id !== "none"), true);

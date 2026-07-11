@@ -1962,11 +1962,12 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese) {
+function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg) {
   const m = sz==="footlong"?2:1;
   // Käse-Pool: "No cheese" → none; "Cheese" bzw. "Double cheese" → einer der beiden Käse (kein none); sonst alle
   const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : (forceCheese||doubleCheese) ? D.cheeses.filter(c=>c.id!=="none") : D.cheeses;
   const prots = noRoastChicken ? D.proteins.filter(x=>x.id!=="roast_chicken") : D.proteins; // Schalter "No Roast Chicken Breast"
+  const extras = noPoachedEgg ? D.extras.filter(x=>x.id!=="poached_egg") : D.extras; // Schalter "No Poached Egg"
   // breadsOk: null/undefined = alle Brote · String = genau ein Brot (Legacy) · Objekt {id:true,...} = erlaubte Auswahl
   // (leeres Objekt bzw. nichts ausgewählt → alle Brote). Der Optimizer wählt je Ergebnis das best-passende erlaubte Brot.
   const breadOk = b => { if(!breadsOk) return true; if(typeof breadsOk==="string") return b.id===breadsOk;
@@ -1977,12 +1978,12 @@ function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastC
     const cx = (doubleCheese&&c.id!=="none") ? [c,c] : [c]; // "Double cheese"-Schalter: Käse zählt doppelt
     const base=[b,pr,...cx,...STD_SALAD], bn=sumN(base,m), bs=score(bn,t,mode,p); // Std-Salad (Vegetables) gehört zum Sub → ×m (footlong verdoppelt)
     R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
-    for(let i=0;i<D.extras.length;i++){
-      const n1=sumN([...base,D.extras[i]],m), s1=score(n1,t,mode,p);
-      if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[D.extras[i]],sauces:[],nutrition:n1,score:s1});
-      for(let j=i+1;j<D.extras.length;j++){
-        const n2=sumN([...base,D.extras[i],D.extras[j]],m), s2=score(n2,t,mode,p);
-        if(s2<bs+0.3) R.push({bread:b,protein:pr,cheese:c,extras:[D.extras[i],D.extras[j]],sauces:[],nutrition:n2,score:s2});
+    for(let i=0;i<extras.length;i++){
+      const n1=sumN([...base,extras[i]],m), s1=score(n1,t,mode,p);
+      if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[extras[i]],sauces:[],nutrition:n1,score:s1});
+      for(let j=i+1;j<extras.length;j++){
+        const n2=sumN([...base,extras[i],extras[j]],m), s2=score(n2,t,mode,p);
+        if(s2<bs+0.3) R.push({bread:b,protein:pr,cheese:c,extras:[extras[i],extras[j]],sauces:[],nutrition:n2,score:s2});
       }
     }
     if(!noSauce&&bs<3) for(const sc of D.sauces){
@@ -2791,6 +2792,7 @@ function App() {
   const [doubleCheese,setDoubleCheese]=useState(false); // "Double cheese" — erzwingt einen Käse in DOPPELTER Menge (Default AUS)
   const [onlySubs,setOnlySubs]=useState(false); // "only Subs (no sides)" — Default AUS, damit die Sides berücksichtigt werden
   const [noRoast,setNoRoast]=useState(true); // "No Roast Chicken Breast" — Exclude-Schalter, Default AN (Konvention)
+  const [noPoachedEgg,setNoPoachedEgg]=useState(false); // "No Poached Egg" — Default AUS (User-Wunsch, opt-in)
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
   const [sel,setSel]=useState(null);
   const [mSal,setMSal]=useState({});
@@ -2976,7 +2978,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -3477,6 +3479,8 @@ function App() {
           h("input",{type:"checkbox",checked:onlySubs,onChange:e=>setOnlySubs(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"only Subs (no sides)"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noRoast,onChange:e=>setNoRoast(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Roast Chicken Breast"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noPoachedEgg,onChange:e=>setNoPoachedEgg(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Poached Egg"),
         resto==="farmerj"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Free items only")
       ),
@@ -3836,7 +3840,7 @@ function App() {
         h("div",{style:{marginBottom:12}},
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Add extras"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
-            ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)).map(e=>
+            ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)&&!(noPoachedEgg&&e.id==="poached_egg")).map(e=>
               h(Chip,{key:e.id,label:e.name+" (+"+(e.kcal*(subSize==="footlong"?2:1))+")",small:true,active:!!mExt[e.id],
                 onClick:()=>setMExt(p=>({...p,[e.id]:!p[e.id]}))})
             ),
