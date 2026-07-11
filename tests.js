@@ -863,8 +863,12 @@ check("Wingstop Nutrition == Summe", rWs.every(r => approx(r.nutrition.kcal, Mat
 check("Wingstop Kategorie-Filter (nur tenders)", T.optimizeWingstop(tWs, "macros", {}, { tenders: true }, 2).every(r => r.items.every(x => x.cat === "tenders")), true);
 
 // ── The Sushi Co (à la carte, AC-Familie; PORTIONS-Werte, bild-transkribiert) ──
-check("Sushi Co Items (78)", T.SUSHICO.items.length, 78);
+check("Sushi Co Items (82)", T.SUSHICO.items.length, 82);
 check("Sushi Co Kategorien (13)", T.SUSHICO.cats.length, 13);
+check("Sushi Co Nigiri (11, inkl. Shake yaki salmon cheese)", T.SUSHICO.items.filter(x => x.cat === "nigiri").length, 11);
+check("Sushi Co Hot Meals (18, inkl. Chicken katsu curry rice + Teriyaki salmon rice)", T.SUSHICO.items.filter(x => x.cat === "hot_meals").length, 18);
+check("Sushi Co Tuna tataki Protein-Fix (53.2, nicht 34)", (T.SUSHICO.items.find(x => x.id === "tuna_tataki") || {}).protein, 53.2);
+check("Sushi Co Chicken katsu kcal aus kJ abgeleitet (296)", (T.SUSHICO.items.find(x => x.id === "chicken_katsu") || {}).kcal, 296);
 check("Sushi Co volle 8 Makros (numerisch)", T.SUSHICO.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Sushi Co Salmon sashimi kcal (229)", (T.SUSHICO.items.find(x => x.id === "salmon_sashimi") || {}).kcal, 229);
 check("Sushi Co sat <= fat ueberall", T.SUSHICO.items.every(x => x.sat <= x.fat + 0.05), true);
@@ -1228,7 +1232,7 @@ check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);
 check("searchItems 'katsu': jeder Treffer matcht den Begriff", sKatsu.every(x => /katsu/i.test(x.name + " " + x.resto)), true);
 check("searchItems Mehrwort-AND ('wasabi katsu')", T.searchItems("wasabi katsu").every(x => /katsu/i.test(x.name) && /wasabi/i.test(x.resto)), true);
 check("searchItems respektiert limit", T.searchItems("a", 5).length <= 5, true);
-check("searchItems matcht auch Restaurantname ('subway')", T.searchItems("subway").every(x => x.resto === "Subway") && T.searchItems("subway").length > 0, true);
+check("searchItems matcht auch Restaurantname ('wagamama')", T.searchItems("wagamama").every(x => x.resto === "Wagamama") && T.searchItems("wagamama").length > 0, true);
 // orderTotal: Summe x qty, 1 Dezimale
 const oi1 = { resto: "X", name: "A", kcal: 100, fat: 5, sat: 1, carbs: 10, sugars: 2, fibre: 1, protein: 8, salt: 0.5 };
 const oi2 = { resto: "X", name: "B", kcal: 200, fat: 10, sat: 2, carbs: 20, sugars: 4, fibre: 2, protein: 16, salt: 1 };
