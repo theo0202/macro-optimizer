@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -795,8 +795,38 @@ check("Bagel Factory Bun-Permutationen zusammengefasst (Global-Pfad): eindeutige
 const rPermSlot = T.optimizeBagelFactory(tBF, "macros", {}, { spread: true, deli: true }, 3, true, [{ plain: true, sesame: true }, { plain: true, multigrain: true }, {}], false, false, false);
 check("Bagel Factory Bun-Permutationen zusammengefasst (per-Slot): eindeutige perm-keys", rPermSlot.length > 0 && uniqueKeys(rPermSlot), true);
 
+// ── Pho (à la carte, AC-Familie; 7 Makros, KEIN Salt -> salt=0) ──
+check("Pho Items (100)", T.PHO.items.length, 100);
+check("Pho Kategorien (9)", T.PHO.cats.length, 9);
+check("Pho volle Makros numerisch + salt=0", T.PHO.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number") && x.salt === 0), true);
+check("Pho - Beef brisket kcal (397)", T.PHO.items.find(x => x.id === "pho_beef_brisket").kcal, 397);
+check("Pho Chicken wings protein (67.1)", T.PHO.items.find(x => x.id === "chicken_wings").protein, 67.1);
+check("Pho sat <= fat ueberall", T.PHO.items.every(x => x.sat <= x.fat + 0.05), true);
+check("Pho sugars <= carbs (+0.5 PDF-Rundung)", T.PHO.items.every(x => x.sugars <= x.carbs + 0.5), true);
+// kcal-Plausibilitaet (2 dokumentierte PDF-Anomalien ausgenommen)
+const phoAnom = new Set(["spicy_curry_tofu", "rice_bowl_this_isn_t_chicken_veg"]);
+const phoBad = T.PHO.items.filter(x => { if (phoAnom.has(x.id)) return false; const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - e) > 60 && Math.abs(x.kcal - e) / Math.max(x.kcal, 1) > 0.25; });
+check("Pho kcal-plausibel (ex 2 Anomalien)", phoBad.length, 0);
+const phoAll = {}; T.PHO.cats.forEach(c => phoAll[c.id] = true);
+const tPho = { protein: 40, carbs: 60, fat: 10, kcal: 490, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rPho = T.optimizePho(tPho, "macros", {}, phoAll, 3);
+check("Pho liefert Ergebnisse (1..20)", rPho.length > 0 && rPho.length <= 20, true);
+check("Pho Nutrition == Summe", rPho.every(r => approx(r.nutrition.kcal, Math.round(r.items.reduce((s, x) => s + x.kcal, 0) * 10) / 10)), true);
+check("Pho Kategorie-Filter (nur curry)", T.optimizePho(tPho, "macros", {}, { curry: true }, 2).every(r => r.items.every(x => x.cat === "curry")), true);
+// Schalentier permanent raus (Allergie) — auch bei Pho
+const phoShellRE = /(prawn(?!less)|shrimp|crab|squid|calamari|lobster|mussel|clam|oyster|scallop)/i;
+check("Pho Optimizer schalentierfrei (kein prawn/crab/squid)", T.optimizePho(tPho, "macros", {}, phoAll, 3).every(r => r.items.every(x => !phoShellRE.test(x.name))), true);
+check("Pho Katalog hat Prawn-Gerichte (die gefiltert werden)", T.PHO.items.some(x => /prawn|crab|squid/i.test(x.name)), true);
+// Prawnless crackers ist KEIN Schalentier (vegan) -> bleibt (Lookahead prawn(?!less))
+check("Pho: Prawnless crackers NICHT als Schalentier gefiltert", !T.isShellfish({ name: "Prawnless crackers" }) && T.PHO.items.some(x => x.id === "prawnless_crackers"), true);
+check("Pho: Prawn crackers IST Schalentier", T.isShellfish({ name: "Prawn crackers" }), true);
+check("Pho Fisch bleibt (Curry - Fish im Katalog, kein Schalentier)", T.PHO.items.some(x => x.id === "curry_fish") && !T.isShellfish({ name: "Curry - Fish" }), true);
+// Versteckte Schalentier-Gerichte (Name traegt Keyword) -> gefiltert (Bun bo Hue = Chili-Shrimp-Paste; Review-Fund)
+check("Pho: Bun bo Hue (chilli shrimp paste) als Schalentier gefiltert", T.PHO.items.every(x => !(/beef brisket/i.test(x.name) && /hot & spicy/i.test(x.name) && !T.isShellfish(x))), true);
+check("Pho: kein 'hot & spicy - beef brisket' im Optimizer-Ergebnis (Shrimp-Paste)", T.optimizePho({ protein: 36, carbs: 55, fat: 9, kcal: 445, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, phoAll, 1).every(r => r.items.every(x => !/hot & spicy - beef brisket/i.test(x.name))), true);
+
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
-const shellRE = /(prawn|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;
+const shellRE = /(prawn(?!less)|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;
 check("isShellfish: prawn/shrimp/crab/calamari -> true", ["Prawn tom yum", "Shrimp", "Crayfish & Rocket", "Calamari", "California rolls", "best of itsu"].every(n => T.isShellfish({ name: n })), true);
 check("isShellfish: Fisch/Fleisch/Veggie -> false", ["Salmon donburi", "Tuna hosomaki", "Grilled Chicken", "Salmon Bowl", "Gochujang Salmon", "Chicken Club"].every(n => !T.isShellfish({ name: n })), true);
 check("Such-Index: KEIN Schalentier", T.SEARCH_INDEX.filter(x => shellRE.test(x.name)).length, 0);
@@ -814,7 +844,7 @@ check("Fisch bleibt erhalten (Wasabi Salmon/Tuna weiter im Datensatz)", T.WASABI
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory", "pho"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -1118,7 +1148,7 @@ check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes(
 check("Search-Index gefuellt (>900 Items)", T.SEARCH_INDEX.length > 900, true);
 check("Search-Index: alle Eintraege haben resto+name+8 Makros", T.SEARCH_INDEX.every(x => x.resto && x.name && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Search-Index: keine exakten Duplikate (resto|name|kcal)", (() => { const s = new Set(); return T.SEARCH_INDEX.every(x => { const k = x.resto + "|" + x.name + "|" + x.kcal; if (s.has(k)) return false; s.add(k); return true; }); })(), true);
-check("Search-Index deckt alle 17 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 17);
+check("Search-Index deckt alle 18 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 18);
 check("searchItems leere Query -> []", T.searchItems("").length, 0);
 const sKatsu = T.searchItems("katsu");
 check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);
