@@ -890,6 +890,21 @@ check("Sushi Co Optimizer schalentierfrei (kein prawn/ebi/crab/octopus/californi
 check("Sushi Co: Rainbow roll als Schalentier gefiltert (California-Basis)", T.isShellfish({ name: "Rainbow roll" }), true);
 check("Sushi Co: kein Rainbow roll im Optimizer-Ergebnis", T.optimizeSushiCo({ protein: 18, carbs: 31, fat: 17, kcal: 358, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { aburi: true }, 1).every(r => r.items.every(x => !/rainbow/i.test(x.name))), true);
 check("Sushi Co Fisch bleibt (Salmon/Tuna nigiri im Optimizer moeglich)", T.SUSHICO.items.some(x => /salmon|tuna/i.test(x.name) && !T.isShellfish(x)), true);
+// 4 Schalter: signature optimizeSushiCo(t,mode,p,activeCats,maxN, noSashimi, noSushi, onlySushiNoSashimi, noFish)
+const scSushiCats = ["hosomaki", "crunch", "futomaki", "uramaki", "sashimi", "tataki", "nigiri", "aburi"];
+// No sashimi
+check("Sushi Co 'No sashimi': kein Sashimi im Ergebnis", T.optimizeSushiCo(tSc, "macros", {}, scAll, 3, true, false, false, false).every(r => r.items.every(x => x.cat !== "sashimi")), true);
+check("Sushi Co ohne 'No sashimi': Sashimi moeglich (Gegenprobe)", T.optimizeSushiCo({ protein: 25, carbs: 0.2, fat: 16, kcal: 240, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { sashimi: true }, 1, false, false, false, false).some(r => r.items.some(x => x.cat === "sashimi")), true);
+// No sushi -> nur Nicht-Sushi-Kategorien
+check("Sushi Co 'No sushi': nur Hot Meals/Poke/Salads/Desserts", T.optimizeSushiCo(tSc, "macros", {}, scAll, 3, false, true, false, false).every(r => r.items.every(x => !scSushiCats.includes(x.cat))), true);
+// Only sushi w/o sashimi -> nur Sushi-Kategorien ausser Sashimi (ueberstimmt Chips)
+check("Sushi Co 'Only sushi w/o sashimi': nur Sushi ohne Sashimi", T.optimizeSushiCo(tSc, "macros", {}, {}, 3, false, false, true, false).every(r => r.items.every(x => scSushiCats.includes(x.cat) && x.cat !== "sashimi")), true);
+check("Sushi Co 'Only sushi w/o sashimi': liefert Ergebnisse trotz leerer Chips", T.optimizeSushiCo(tSc, "macros", {}, {}, 3, false, false, true, false).length > 0, true);
+// No fish
+check("Sushi Co 'No fish': kein fish-Item im Ergebnis", T.optimizeSushiCo(tSc, "macros", {}, scAll, 3, false, false, false, true).every(r => r.items.every(x => !x.fish)), true);
+check("Sushi Co ohne 'No fish': fish-Item moeglich (Gegenprobe)", T.optimizeSushiCo(tSc, "macros", {}, scAll, 3, false, false, false, false).some(r => r.items.some(x => x.fish)), true);
+check("Sushi Co: 35 fish-getaggte Items", T.SUSHICO.items.filter(x => x.fish).length, 35);
+check("Sushi Co: Tamago/Inari/Avocado/Green roll NICHT fish", ["tamago_nigiri", "inari_nigiri", "avocado_nigiri", "green_roll"].every(id => { const x = T.SUSHICO.items.find(y => y.id === id); return x && !x.fish; }), true);
 
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
 const shellRE = /(prawn(?!less)|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;

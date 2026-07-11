@@ -11,7 +11,7 @@ const macStr = x => `kcal:${x.kcal},fat:${x.fat},sat:${x.sat},carbs:${x.carbs},s
 const q = JSON.stringify;
 
 const items = raw.items.map(it => ({
-  id: mkId(it.name), name: it.name.trim(), cat: it.cat,
+  id: mkId(it.name), name: it.name.trim(), cat: it.cat, fish: !!it.fish,
   kcal: num(it.kcal), fat: num(it.fat), sat: num(it.sat), carbs: num(it.carbs),
   sugars: num(it.sugars), fibre: num(it.fibre), protein: num(it.protein), salt: num(it.salt),
 }));
@@ -24,7 +24,7 @@ lines.push("  cats: [");
 for (const c of raw.cats) lines.push(`    { id:${q(c.id)},name:${q(c.name)},on:${c.on !== false} },`);
 lines.push("  ],");
 lines.push("  items: [");
-for (const x of items) lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)},${macStr(x)} },`);
+for (const x of items) lines.push(`    { id:${q(x.id)},name:${q(x.name)},cat:${q(x.cat)}${x.fish ? ",fish:true" : ""},${macStr(x)} },`);
 lines.push("  ],");
 lines.push("};");
 lines.push("// __SUSHICO_DATA_END__");
