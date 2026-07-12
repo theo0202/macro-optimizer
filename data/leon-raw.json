@@ -1,10 +1,15 @@
 {
  "_meta": {
   "source": "leon.co (__NEXT_DATA__ menuItems) · Stand 2026-06-27",
-  "note": "Nur auf der Deliveroo-Bestellseite vorhandene Produkte (DELIVEROO_KEEP, Renames auf Deliveroo-Namen, Größen per kcal verifiziert) + 3 Kids-Meals (leon.co/menu/kids, Kategorie Kids' All Day default AN). Gesamtfett=max(Fat,sat+mono+poly). In sich kaputte Items (kcal≠Makros) ausgeschlossen. Sauces/Drinks/Coffee/Cookies/Cakes nicht modelliert.",
+  "note": "Nur auf der Deliveroo-Bestellseite vorhandene Produkte (DELIVEROO_KEEP). Kids-Meals ENTFERNT (User 12.07.2026 — auf Deliveroo nur das 0-kcal Little-LEON-Bundle, nicht die einzelnen Boxen). Gesamtfett=max(Fat,sat+mono+poly). In sich kaputte Items (kcal!=Makros) ausgeschlossen. Sauces/Drinks/Coffee/Cookies/Cakes nicht modelliert.",
   "crawler": "node leon-crawl.js",
   "dropped": [],
-  "missing": []
+  "missing": [],
+  "user_removed": [
+   "GFC - Crispy Chicken Nuggets & Baked Fries",
+   "Chargrilled Chicken Rice Box",
+   "Brazilian Black Beans with Rice (Kids) -> auf Deliveroo nur als 0-kcal-Bundle, nicht standalone"
+  ]
  },
  "cats": [
   {
@@ -40,11 +45,6 @@
   {
    "id": "fries",
    "name": "Fries",
-   "on": true
-  },
-  {
-   "id": "kids-all-day",
-   "name": "Kids' All Day",
    "on": true
   }
  ],
@@ -347,45 +347,6 @@
    "fibre": 4.8,
    "protein": 44,
    "salt": 3.3
-  },
-  {
-   "slug": "chargrilled-chicken-rice-box",
-   "name": "Chargrilled Chicken Rice Box",
-   "cat": "kids-all-day",
-   "kcal": 382,
-   "fat": 8,
-   "sat": 1.7,
-   "carbs": 56,
-   "sugars": 9.2,
-   "fibre": 3.6,
-   "protein": 21,
-   "salt": 1.41
-  },
-  {
-   "slug": "brazilian-black-bean-with-rice",
-   "name": "Brazilian Black Beans with Rice",
-   "cat": "kids-all-day",
-   "kcal": 415,
-   "fat": 11,
-   "sat": 1.2,
-   "carbs": 58,
-   "sugars": 6,
-   "fibre": 11,
-   "protein": 15,
-   "salt": 1.6
-  },
-  {
-   "slug": "gfc-crispy-chicken-nuggets-baked-fries",
-   "name": "GFC – Crispy Chicken Nuggets & Baked Fries",
-   "cat": "kids-all-day",
-   "kcal": 523,
-   "fat": 19,
-   "sat": 2.9,
-   "carbs": 65,
-   "sugars": 9.2,
-   "fibre": 6.9,
-   "protein": 19,
-   "salt": 2.2
   }
  ]
 }

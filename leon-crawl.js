@@ -58,12 +58,10 @@ const DELIVEROO_KEEP = {
   "Honey Sriracha GFC Chicken Nuggets": "Honey Sriracha GFC Chicken Nuggets (5 pieces)",
   "Baked Fries": "LEON Baked Fries",
 };
-// 3 Kids-Meals (menuType "kids", per Slug) → Anzeigename. Kategorie "Kids' All Day", default AN (User-Wunsch).
-const KIDS_ADD = {
-  "gfc-crispy-chicken-nuggets-baked-fries": "GFC – Crispy Chicken Nuggets & Baked Fries",
-  "chargrilled-chicken-rice-box": "Chargrilled Chicken Rice Box",
-  "brazilian-black-bean-with-rice": "Brazilian Black Beans with Rice",
-};
+// Kids-Meals ENTFERNT (User 12.07.2026): auf Deliveroo gibt es die 3 einzelnen Boxen nicht als eigenständige
+// Produkte — nur das "Little LEON Kids Meal Deal"-Bundle (0 kcal). Sie stammten aus leon.co/menu/kids, nicht
+// von der Deliveroo-Karte → raus. Leer lassen (kein Kids-Crawl mehr); bei Bedarf wieder Slug→Deliveroo-Name eintragen.
+const KIDS_ADD = {};
 const KIDS_CAT = { id: "kids-all-day", name: "Kids' All Day" };
 
 (async () => {
@@ -106,7 +104,7 @@ const KIDS_CAT = { id: "kids-all-day", name: "Kids' All Day" };
   const out = {
     _meta: {
       source: "leon.co (__NEXT_DATA__ menuItems) · Stand " + new Date().toISOString().slice(0, 10),
-      note: "Nur auf der Deliveroo-Bestellseite vorhandene Produkte (DELIVEROO_KEEP, Renames auf Deliveroo-Namen, Größen per kcal verifiziert) + 3 Kids-Meals (leon.co/menu/kids, Kategorie Kids' All Day default AN). Gesamtfett=max(Fat,sat+mono+poly). In sich kaputte Items (kcal≠Makros) ausgeschlossen. Sauces/Drinks/Coffee/Cookies/Cakes nicht modelliert.",
+      note: "Nur auf der Deliveroo-Bestellseite vorhandene Produkte (DELIVEROO_KEEP, Renames auf Deliveroo-Namen, Größen per kcal verifiziert). Kids-Meals ENTFERNT (User 12.07.2026 — nur das 0-kcal-Bundle ist auf Deliveroo, nicht die einzelnen Boxen). Gesamtfett=max(Fat,sat+mono+poly). In sich kaputte Items (kcal≠Makros) ausgeschlossen. Sauces/Drinks/Coffee/Cookies/Cakes nicht modelliert.",
       crawler: "node leon-crawl.js",
       dropped, missing,
     },

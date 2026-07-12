@@ -717,9 +717,10 @@ const rFishOn = T.optimizeTFC(tFish, "macros", {}, tfcAll, 2, true);
 check("TFC 'No fish' filtert alle fish-Items (inkl. Salmon/Tuna-Pasta)", rFishOn.every(r => r.items.every(x => !x.fish)), true);
 check("TFC 'No fish': trotzdem Ergebnisse", rFishOn.length > 0, true);
 
-// ── Leon (à la carte, AC-Familie; auf Deliveroo-Karte geprunt + 3 Kids-Meals) ──
-check("Leon Items (26, Deliveroo-geprunt + 3 Kids)", T.LEON.items.length, 26);
-check("Leon Kategorien (8)", T.LEON.cats.length, 8);
+// ── Leon (à la carte, AC-Familie; auf Deliveroo-Karte geprunt) ──
+// User 12.07.2026: 3 Kids-Meals raus (auf Deliveroo nur das 0-kcal-Bundle, nicht die einzelnen Boxen) -> 26-3=23, 8-1=7 Kategorien
+check("Leon Items (23, Deliveroo-geprunt, Kids raus)", T.LEON.items.length, 23);
+check("Leon Kategorien (7, Kids' All Day raus)", T.LEON.cats.length, 7);
 check("Leon volle 8 Makros (numerisch)", T.LEON.items.every(x => ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Leon keine Sauces-Kategorie (User-Vorgabe)", !T.LEON.cats.some(c => /sauce/i.test(c.id + c.name)), true);
 // Deliveroo-Prune: nicht-bestellbare Items raus, Renames auf Deliveroo-Namen
@@ -727,10 +728,10 @@ check("Leon kein 'Spicy Chicken Zhoug Wrap' (nicht auf Deliveroo)", !T.LEON.item
 check("Leon kein 'Keralan Chicken Curry' (nicht auf Deliveroo)", !T.LEON.items.some(x => /keralan/i.test(x.name)), true);
 check("Leon Rename: 'Aioli Chicken Wrap' vorhanden", T.LEON.items.some(x => x.name === "Aioli Chicken Wrap"), true);
 check("Leon Rename: 'Mushroom Magic Romesco Big Rice Box' vorhanden", T.LEON.items.some(x => x.name === "Mushroom Magic Romesco Big Rice Box"), true);
-// 3 Kids-Meals (Kategorie Kids' All Day, default AN)
-check("Leon 3 Kids-Meals", T.LEON.items.filter(x => x.cat === "kids-all-day").length, 3);
-check("Leon Kids' All Day default AN", T.LEON.cats.find(c => c.id === "kids-all-day").on, true);
-check("Leon Kids: Chargrilled Chicken Rice Box (382)", T.LEON.items.find(x => x.name === "Chargrilled Chicken Rice Box").kcal, 382);
+// Kids-Meals ENTFERNT (User 12.07.2026 — auf Deliveroo nur das 0-kcal-Bundle, nicht die einzelnen Boxen)
+check("Leon keine Kids' All Day-Kategorie mehr", T.LEON.cats.some(c => c.id === "kids-all-day"), false);
+check("Leon keine Kids-Items mehr (Chargrilled Chicken Rice Box / Brazilian Black Beans with Rice / Nuggets & Baked Fries)",
+  ["Chargrilled Chicken Rice Box", "Brazilian Black Beans with Rice", "GFC – Crispy Chicken Nuggets & Baked Fries"].every(n => !T.LEON.items.some(x => x.name === n)), true);
 check("Leon sat <= fat (Fett-Fix max(Fat,sat+mono+poly))", T.LEON.items.every(x => x.sat <= x.fat + 0.05), true);
 const leonBad = T.LEON.items.filter(x => { const e = 4 * x.carbs + 4 * x.protein + 9 * x.fat; return Math.abs(x.kcal - e) > 60 && Math.abs(x.kcal - e) / Math.max(x.kcal, 1) > 0.25; });
 check("Leon kcal-plausibel (kaputte Leon-Daten ausgeschlossen)", leonBad.length, 0);
