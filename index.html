@@ -2630,6 +2630,38 @@ function orderTotal(entries){
   (entries||[]).forEach(e=>{ const it=e.item||{}, q=e.qty||0; KS.forEach(k=>t[k]+=(it[k]||0)*q); });
   KS.forEach(k=>t[k]=Math.round(t[k]*10)/10); return t;
 }
+
+// ── Waitrose Supermarkt-Tracker ──
+// Produkte: voll standardisiert (festes Gewicht) ODER gewicht-variierend (per-100g fix, Gramm pro Kauf editierbar,
+// Default = typisches Gewicht). p100 = Naehrwerte pro 100g; Makros eines Kaufs = p100 × Gramm/100.
+const WAITROSE = { items: [
+  { id:"deluxe_duo_poke", name:"Deluxe Duo Poke", brand:"Sushi Daily", variable:true, g:360,
+    p100:{ kcal:153, fat:5.5, sat:0, carbs:19, sugars:4.3, fibre:1.1, protein:6.2, salt:0.16 } },
+  { id:"edamame_sushi_daily", name:"Edamame", brand:"Sushi Daily", variable:true, g:93,
+    p100:{ kcal:135, fat:3.3, sat:0, carbs:12, sugars:0, fibre:0, protein:12, salt:0 } },
+  { id:"yakisoba_chicken", name:"Yakisoba Chicken", brand:"Sushi Daily", variable:true, g:326,
+    p100:{ kcal:153, fat:4.8, sat:0, carbs:20, sugars:0, fibre:0, protein:6.5, salt:0 } },
+  { id:"sweet_chilli_chicken_mini_fillets", name:"Cooked Sweet Chilli Chicken Mini Fillets", brand:"Waitrose", variable:false, g:165,
+    p100:{ kcal:145, fat:1, sat:0.3, carbs:10.8, sugars:5, fibre:0.5, protein:23, salt:0.55 } },
+] };
+// Makros eines Produkts bei gegebener Gramm-Zahl (p100 × g/100), 1 Dezimale. Ungueltige Gramm → typisches Gewicht
+function wtScale(item, grams){
+  const gn=parseFloat(grams), g=(gn>0?gn:(item.g||0)), o={};
+  KEYS.forEach(k=>o[k]=Math.round(((item.p100&&item.p100[k])||0)*g/100*10)/10);
+  return o;
+}
+// Substring-Suche ueber die Waitrose-Produkte (Name+Marke); leere Query = alle (Katalog)
+function waitroseSearch(query, limit){
+  const q=(query||"").trim().toLowerCase(), terms=q?q.split(/\s+/):[];
+  return WAITROSE.items.filter(x=>{const hay=(x.name+" "+x.brand).toLowerCase();return terms.every(t=>hay.includes(t));})
+    .slice(0, limit||60);
+}
+// Summe eines Warenkorbs [{item, qty, g}] — Makros = p100 × g/100 × qty, 1 Dezimale
+function waitroseTotal(entries){
+  const t={}; KEYS.forEach(k=>t[k]=0);
+  (entries||[]).forEach(e=>{ const s=wtScale(e.item, e.g), q=e.qty||1; KEYS.forEach(k=>t[k]+=(s[k]||0)*q); });
+  KEYS.forEach(k=>t[k]=Math.round(t[k]*10)/10); return t;
+}
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
   const rt=r._resto;
@@ -3083,6 +3115,18 @@ function App() {
   const clearOrder=()=>setMyOrder([]);
   const moTotal=useMemo(()=>orderTotal(myOrder),[myOrder]);
   const moResults=useMemo(()=>resto==="search"?searchItems(searchQ,60):[],[resto,searchQ]);
+
+  // Waitrose Supermarkt-Tracker — eigener Warenkorb mit Gramm-Eingabe je Produkt (in localStorage)
+  const [wQ,setWQ]=useState("");
+  const [wOrder,setWOrder]=useState(()=>{try{const v=JSON.parse(localStorage.getItem("wt_waitrose_order")||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}});
+  useEffect(()=>{try{localStorage.setItem("wt_waitrose_order",JSON.stringify(wOrder));}catch(e){}},[wOrder]);
+  const addW=it=>setWOrder(o=>{const idx=o.findIndex(e=>e.item.id===it.id);if(idx>=0){const n=o.slice();n[idx]={...n[idx],qty:n[idx].qty+1};return n;}return [...o,{item:it,qty:1,g:it.g}];});
+  const setGramW=(i,g)=>setWOrder(o=>o.map((e,idx)=>idx===i?{...e,g:g}:e));
+  const changeQtyW=(i,d)=>setWOrder(o=>o.map((e,idx)=>idx===i?{...e,qty:Math.max(1,(e.qty||1)+d)}:e));
+  const removeW=i=>setWOrder(o=>o.filter((_,idx)=>idx!==i));
+  const clearW=()=>setWOrder([]);
+  const wResults=useMemo(()=>resto==="waitrose"?waitroseSearch(wQ,60):[],[resto,wQ]);
+  const wTotal=useMemo(()=>waitroseTotal(wOrder),[wOrder]);
   const r1=x=>Math.round(x*10)/10;
 
   // Helper: default salad state
@@ -3260,9 +3304,9 @@ function App() {
   return h("div",{style:{minHeight:"100vh",background:S.bg,color:"#e0e0e0",fontFamily:S.font,paddingBottom:40}},
 
     // Header
-    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":resto==="bagelfactory"?"linear-gradient(135deg,#a16207,#713f12)":resto==="pho"?"linear-gradient(135deg,#e11d48,#7f1d1d)":resto==="wingstop"?"linear-gradient(135deg,#65a30d,#1c1917)":resto==="sushico"?"linear-gradient(135deg,#0891b2,#083344)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
+    h("div",{style:{background:resto==="search"?"linear-gradient(135deg,#475569,#1e293b)":resto==="waitrose"?"linear-gradient(135deg,#3f7d3a,#14401c)":resto==="accurate"?"linear-gradient(135deg,#0284c7,#0c4a6e)":resto==="all"?"linear-gradient(135deg,#7c3aed,#4c1d95)":resto==="subway"?"linear-gradient(135deg,#009743,#006b30)":resto==="farmerj"?"linear-gradient(135deg,#8a9a2b,#5c671d)":resto==="itsu"?"linear-gradient(135deg,#d6006e,#8f0049)":resto==="pret"?"linear-gradient(135deg,#8c2138,#54101f)":resto==="nandos"?"linear-gradient(135deg,#1a1a1a,#c8102e)":resto==="wagamama"?"linear-gradient(135deg,#3d3d3d,#141414)":resto==="gdk"?"linear-gradient(135deg,#c8102e,#7a0a1c)":resto==="atis"?"linear-gradient(135deg,#1fae8c,#0c6b54)":resto==="tfc"?"linear-gradient(135deg,#4f46e5,#312e81)":resto==="chopstix"?"linear-gradient(135deg,#f97316,#9a3412)":resto==="pepes"?"linear-gradient(135deg,#f2b705,#c1121f)":resto==="fiveguys"?"linear-gradient(135deg,#d52b1e,#a01913)":resto==="pizzaexpress"?"linear-gradient(135deg,#14564d,#082d28)":resto==="wasabi"?"linear-gradient(135deg,#8bc34a,#33691e)":resto==="leon"?"linear-gradient(135deg,#f6a01a,#c2410c)":resto==="bagelfactory"?"linear-gradient(135deg,#a16207,#713f12)":resto==="pho"?"linear-gradient(135deg,#e11d48,#7f1d1d)":resto==="wingstop"?"linear-gradient(135deg,#65a30d,#1c1917)":resto==="sushico"?"linear-gradient(135deg,#0891b2,#083344)":"linear-gradient(135deg,#3f7d3a,#1d4a1c)",padding:"20px 20px 16px",position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-20,right:-20,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.06)"}}),
-      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":resto==="bagelfactory"?"BAGEL FACTORY · APR 2026":resto==="pho"?"PHO · UK · JAN 2026":resto==="wingstop"?"WINGSTOP · UK":resto==="sushico"?"THE SUSHI CO":"URBAN GREENS · LONDON"),
+      h("div",{style:{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontFamily:S.mono,marginBottom:4}},resto==="search"?"ADD OWN ORDER · TRACK":resto==="waitrose"?"WAITROSE · SUPERMARKET":resto==="accurate"?"ACCURATE RESTAURANTS":resto==="all"?"ALL RESTAURANTS":resto==="subway"?"SUBWAY UK · JAN 2026":resto==="farmerj"?"FARMER J · LONDON":resto==="itsu"?"ITSU · JUN 2026":resto==="pret"?"PRET A MANGER · JUN 2026":resto==="nandos"?"NANDO'S · JUN 2026":resto==="wagamama"?"WAGAMAMA · JUN 2026":resto==="gdk"?"GERMAN DONER KEBAB · JUN 2026":resto==="atis"?"ATIS · LONDON":resto==="tfc"?"THE FITNESS CHEF":resto==="chopstix"?"CHOPSTIX NOODLE BAR":resto==="pepes"?"PEPE'S PIRI PIRI":resto==="fiveguys"?"FIVE GUYS · UK":resto==="pizzaexpress"?"PIZZA EXPRESS · UK":resto==="wasabi"?"WASABI · UK":resto==="leon"?"LEON · UK":resto==="bagelfactory"?"BAGEL FACTORY · APR 2026":resto==="pho"?"PHO · UK · JAN 2026":resto==="wingstop"?"WINGSTOP · UK":resto==="sushico"?"THE SUSHI CO":"URBAN GREENS · LONDON"),
       h("div",{style:{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:-0.5}},"Macro Optimizer"),
       h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:2}},"Find the optimal order for your goals")
     ),
@@ -3324,8 +3368,8 @@ function App() {
         )
       ),
 
-      // Corn cakes (cross-restaurant carb filler) — gilt fuer ALLE Restaurants (nicht im "Add own order"-Tracker)
-      resto!=="search"&&h("div",{style:{background:"#151515",borderRadius:12,padding:"12px 14px",marginBottom:16,border:"1px solid #222"}},
+      // Corn cakes (cross-restaurant carb filler) — gilt fuer ALLE Restaurants (nicht in den Trackern Add own order / Waitrose)
+      (resto!=="search"&&resto!=="waitrose")&&h("div",{style:{background:"#151515",borderRadius:12,padding:"12px 14px",marginBottom:16,border:"1px solid #222"}},
         h("label",{style:{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:"#ddd",fontWeight:600}},
           h("input",{type:"checkbox",checked:cornCakes,onChange:e=>setCornCakes(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),
           "Top up carbs with corn cakes"),
@@ -3348,7 +3392,7 @@ function App() {
 
       // Restaurant
       h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:16}},
-        btn("search","➕ Add own order",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto),btn("bagelfactory","Bagel Factory",resto,setResto),btn("pho","Pho",resto,setResto),btn("wingstop","Wingstop",resto,setResto),btn("sushico","The Sushi Co",resto,setResto)
+        btn("search","➕ Add own order",resto,setResto),btn("waitrose","🛒 Waitrose",resto,setResto),btn("accurate","Accurate restaurants",resto,setResto),btn("all","All restaurants",resto,setResto),btn("subway","Subway",resto,setResto),btn("farmerj","Farmer J",resto,setResto),btn("itsu","Itsu",resto,setResto),btn("pret","Pret",resto,setResto),btn("nandos","Nando's",resto,setResto),btn("ug","Urban Greens",resto,setResto),btn("wagamama","Wagamama",resto,setResto),btn("gdk","GDK",resto,setResto),btn("atis","Atis",resto,setResto),btn("tfc","Fitness Chef",resto,setResto),btn("chopstix","Chopstix",resto,setResto),btn("pepes","Pepe's",resto,setResto),btn("fiveguys","Five Guys",resto,setResto),btn("pizzaexpress","Pizza Express",resto,setResto),btn("wasabi","Wasabi",resto,setResto),btn("leon","Leon",resto,setResto),btn("bagelfactory","Bagel Factory",resto,setResto),btn("pho","Pho",resto,setResto),btn("wingstop","Wingstop",resto,setResto),btn("sushico","The Sushi Co",resto,setResto)
       ),
 
       // All / Accurate restaurants: max items pro à-la-carte-Bestellung (gilt fuer die AC-Restaurants im Cross-Restaurant-Mix)
@@ -3745,8 +3789,66 @@ function App() {
             )
       ),
 
+      // Waitrose Supermarkt-Tracker (Suche + Warenkorb mit Gramm-Eingabe je Produkt; gewicht-variierende Produkte editierbar)
+      resto==="waitrose" && h("div",{style:{marginBottom:20}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:6}},"Waitrose · track"),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:10,lineHeight:1.5}},"Search Waitrose products and add what you bought. For weight-varying items (e.g. Sushi Daily counter bowls) edit the grams — a typical weight is pre-filled; the macros scale from per-100g."),
+        h("input",{type:"text",value:wQ,onChange:e=>setWQ(e.target.value),placeholder:"Search Waitrose / Sushi Daily…",
+          style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"11px 14px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:12}}),
+        h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:18}},
+          wResults.length===0
+            ? h("div",{style:{fontSize:12,color:"#666",fontFamily:S.mono}},"No matches.")
+            : wResults.map(it=>h("div",{key:it.id,style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,background:"#141414",border:"1px solid #222",borderRadius:9,padding:"9px 11px"}},
+                h("div",{style:{minWidth:0,flex:1}},
+                  h("div",{style:{display:"flex",alignItems:"center",gap:7,marginBottom:2}},
+                    h("span",{style:{fontSize:8,fontWeight:700,color:"#86efac",background:"rgba(34,139,58,0.16)",border:"1px solid rgba(34,139,58,0.4)",borderRadius:5,padding:"2px 5px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},it.brand),
+                    h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},it.name)),
+                  h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888"}},it.p100.kcal+" kcal/100g · P "+it.p100.protein+" · C "+it.p100.carbs+" · F "+it.p100.fat+"  ·  "+(it.variable?"typ. "+it.g+"g":it.g+"g fixed"))),
+                h("button",{onClick:()=>addW(it),style:{flexShrink:0,background:S.green,border:"none",color:"#fff",borderRadius:8,padding:"7px 12px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:S.font}},"+ Add")
+              ))
+        ),
+        h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"My basket"+(wOrder.length?" · "+wOrder.reduce((s,e)=>s+(e.qty||1),0)+" items":"")),
+          wOrder.length>0&&h("button",{onClick:clearW,style:{background:"none",border:"none",color:"#777",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},"Clear")
+        ),
+        wOrder.length===0
+          ? h("div",{style:{fontSize:12,color:"#666",marginBottom:16}},"Nothing added yet. Search above and tap “+ Add”.")
+          : h("div",null,
+              h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:14}},
+                ...wOrder.map((e,i)=>{ const s=wtScale(e.item,e.g); return h("div",{key:i,style:{background:"#151515",border:"1px solid #222",borderRadius:9,padding:"8px 10px"}},
+                  h("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:3}},
+                    h("span",{style:{fontSize:8,fontWeight:700,color:"#86efac",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},e.item.brand),
+                    h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1,minWidth:0}},e.item.name)),
+                  h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888",marginBottom:7}},Math.round(s.kcal*e.qty)+" kcal · P "+r1(s.protein*e.qty)+" · C "+r1(s.carbs*e.qty)+" · F "+r1(s.fat*e.qty)),
+                  h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}},
+                    h("div",{style:{display:"flex",alignItems:"center",gap:5}},
+                      h("span",{style:{fontSize:9,color:"#666",fontFamily:S.mono}},e.item.variable?"Weight":"Fixed"),
+                      h("input",{type:"number",inputMode:"numeric",value:e.g,onChange:ev=>setGramW(i,ev.target.value),
+                        style:{width:56,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:7,padding:"5px 7px",color:"#fff",fontSize:13,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
+                      h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g")),
+                    h("div",{style:{display:"flex",alignItems:"center",gap:6,flexShrink:0}},
+                      h("button",{onClick:()=>changeQtyW(i,-1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"−"),
+                      h("span",{style:{fontSize:13,fontFamily:S.mono,color:"#fff",minWidth:18,textAlign:"center"}},e.qty),
+                      h("button",{onClick:()=>changeQtyW(i,1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"+"),
+                      h("button",{onClick:()=>removeW(i),style:{width:26,height:26,borderRadius:7,border:"1px solid #3a2a2a",background:"#1c1414",color:"#f87171",fontSize:13,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"✕")
+                    )
+                  )
+                );})
+              ),
+              h("div",{style:{background:"#0d0d0d",borderRadius:10,padding:14,border:"1px solid #2a2a2a"}},
+                h("div",{style:{fontSize:10,color:"#888",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:10}},mode==="macros"?"Basket total vs target":(tK?"Basket total vs "+tK+" kcal":"Basket total")),
+                h(MacroBar,{label:"Calories",value:wTotal.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+                h(MacroBar,{label:"Carbs",value:wTotal.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+                h(MacroBar,{label:"Protein",value:wTotal.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+                h(MacroBar,{label:"Fat",value:wTotal.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+                h(MacroBar,{label:"Fibre",value:wTotal.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+                h(MacroBar,{label:"Salt",value:wTotal.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+              )
+            )
+      ),
+
       // Results header + Sort by (Accuracy-Sortierung)
-      resto!=="search" && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
+      (resto!=="search"&&resto!=="waitrose") && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top results"),
         h("div",{style:{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}},
           h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Sort by"),
@@ -3761,7 +3863,7 @@ function App() {
       ),
 
       // Results list
-      resto!=="search" && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
+      (resto!=="search"&&resto!=="waitrose") && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
         ...sortResults(activeResults,effSort,sortTgts).slice(0,8).map((r,i)=>{
           if(resto==="all"||resto==="accurate"){
             return h("button",{key:i,onClick:()=>selectAcross(r),style:{
@@ -4502,7 +4604,7 @@ function App() {
 
       // Footer
       h("div",{style:{marginTop:20,fontSize:9,color:"#444",fontFamily:S.mono,lineHeight:1.5,textAlign:"center"}},
-        resto==="search"?"Add own order: search any dish across all 20 restaurants · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":resto==="bagelfactory"?"Data: Bagel Factory Full Ingredient List (Issue 20) · per portion · plain bun":resto==="pho"?"Data: Pho Nutritional Guidelines 2026 · no salt data":resto==="wingstop"?"Data: Wingstop UK nutrition · full macros":resto==="sushico"?"Data: The Sushi Co nutrition table · per portion · image-transcribed":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
+        resto==="search"?"Add own order: search any dish across all 20 restaurants · saved on this device":resto==="waitrose"?"Waitrose: packaged + Sushi Daily counter products · edit grams for weight-varying items · saved on this device":resto==="accurate"?"Accurate restaurants: Subway · Farmer J · Itsu · Pret · Nando's · Urban Greens · Wagamama · Atis · Fitness Chef · Pepe's · Pizza Express · Wasabi":resto==="all"?"Best picks across all restaurants — all exclude-filters on":resto==="subway"?"Data: Subway UK & ROI Jan 2026":resto==="farmerj"?"Data: farmerj.com · June 2026":resto==="itsu"?"Data: itsu.com · June 2026":resto==="pret"?"Data: pret.co.uk · June 2026":resto==="nandos"?"Data: nandos.co.uk · June 2026":resto==="wagamama"?"Data: wagamama.com · June 2026":resto==="gdk"?"Data: GDK official nutrition table · June 2026":resto==="atis"?"Data: atisfood.com nutrition table · June 2026":resto==="tfc"?"Data: The Fitness Chef nutrition info · June 2026":resto==="chopstix"?"Data: Chopstix Nutritional Table V19 · April 2026":resto==="pepes"?"Data: Pepe's Piri Piri nutritional info · June 2026 (no fibre data)":resto==="fiveguys"?"Data: Five Guys UK nutrition (per-component, composed) · 2026":resto==="pizzaexpress"?"Data: PizzaExpress Nutritional Menu (England/Wales/Scotland) · June 2026":resto==="wasabi"?"Data: Wasabi Nutritional Guide · per-100g scaled · no fibre data":resto==="leon"?"Data: leon.co · all-day menu":resto==="bagelfactory"?"Data: Bagel Factory Full Ingredient List (Issue 20) · per portion · plain bun":resto==="pho"?"Data: Pho Nutritional Guidelines 2026 · no salt data":resto==="wingstop"?"Data: Wingstop UK nutrition · full macros":resto==="sushico"?"Data: The Sushi Co nutrition table · per portion · image-transcribed":"Data: Urban Greens Allergen Guide 2026 · kcal/P/F/C only")
     )
   );
 }

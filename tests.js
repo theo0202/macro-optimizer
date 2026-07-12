@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1260,6 +1260,33 @@ check("orderTotal kcal (2x100 + 1x200 = 400)", ot.kcal, 400);
 check("orderTotal protein (2x8 + 1x16 = 32)", ot.protein, 32);
 check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
+
+// ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
+check("Waitrose Produkte (4)", T.WAITROSE.items.length, 4);
+check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
+const wPoke = T.WAITROSE.items.find(x => x.id === "deluxe_duo_poke");
+check("Waitrose Deluxe Duo Poke variabel, typ. 360g", wPoke.variable === true && wPoke.g === 360, true);
+// wtScale: per-100g × g/100. Poke bei 360g: kcal 153×3.6 = 550.8, protein 6.2×3.6 = 22.3
+check("Waitrose wtScale Poke@360g kcal (550.8)", T.wtScale(wPoke, 360).kcal, 550.8);
+check("Waitrose wtScale Poke@360g protein (22.3)", T.wtScale(wPoke, 360).protein, 22.3);
+// abweichendes Gewicht (realer Kauf): 400g
+check("Waitrose wtScale Poke@400g kcal (612)", T.wtScale(wPoke, 400).kcal, 612);
+// ungueltige Gramm -> typisches Gewicht (360)
+check("Waitrose wtScale ungueltige Gramm -> typisch", T.wtScale(wPoke, 0).kcal === T.wtScale(wPoke, 360).kcal && T.wtScale(wPoke, "").kcal === T.wtScale(wPoke, 360).kcal, true);
+// fixes Produkt: Chicken Mini Fillets 165g -> kcal 145×1.65 = 239.3, protein 23×1.65 = 38(.0)... genau 37.95->38
+const wChick = T.WAITROSE.items.find(x => x.id === "sweet_chilli_chicken_mini_fillets");
+check("Waitrose Chicken Fillets fix 165g", wChick.variable === false && wChick.g === 165, true);
+check("Waitrose wtScale Chicken@165g kcal (239.3)", T.wtScale(wChick, 165).kcal, 239.3);
+check("Waitrose wtScale Chicken@165g protein (38)", T.wtScale(wChick, 165).protein, 38);
+// Suche
+check("waitroseSearch 'sushi daily' findet die 3 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 3);
+check("waitroseSearch 'poke' findet Deluxe Duo Poke", T.waitroseSearch("poke", 60).some(x => x.id === "deluxe_duo_poke"), true);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 4);
+// waitroseTotal: [{item, qty, g}]
+check("waitroseTotal Poke@360 + Chicken@165 kcal", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wChick, qty: 1, g: 165 }]).kcal, Math.round((550.8 + 239.3) * 10) / 10);
+// wtScale rundet die skalierte Portion zuerst (12×0.93 -> 11.2), dann ×qty: 22.4
+check("waitroseTotal 2× Edamame@93 protein", T.waitroseTotal([{ item: T.WAITROSE.items.find(x => x.id === "edamame_sushi_daily"), qty: 2, g: 93 }]).protein, 22.4);
+check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
