@@ -87,6 +87,27 @@ check("Subway D.extras hat Poached Egg", T.D.extras.some(e => e.id === "poached_
 const tEgg = { protein: 55, carbs: 50, fat: 10, kcal: 510, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway ohne 'No Poached Egg': Poached Egg möglich (Gegenprobe)", T.optimize(tEgg, "macros", {}, true, false, {}, "footlong", true, false, false, false, false).some(r => (r.extras || []).some(e => e.id === "poached_egg")), true);
 check("Subway 'No Poached Egg': nie im Ergebnis", T.optimize(tEgg, "macros", {}, true, false, {}, "footlong", true, false, false, false, true).every(r => (r.extras || []).every(e => e.id !== "poached_egg")), true);
+// Schalter "No Philly Steak" (13. Param) + "Max 1x Philly Steak" (14. Param, Default AN)
+const phP = T.D.proteins.find(x => x.id === "philly_steak");
+const phE = T.D.extras.find(x => x.id === "philly_steak_extra");
+check("Subway hat Philly-Protein + Philly-Extra", !!phP && !!phE, true);
+// Ziel = exakte Makros eines Doppel-Philly (Wholegrain, kein Käse, Std-Salad, 6-inch) → Doppel-Philly ist die optimale Kombi
+const brW = T.D.breads.find(b => b.id === "wholegrain");
+const chNone = T.D.cheeses.find(c => c.id === "none");
+const dp = T.sumN([brW, phP, chNone, phE, ...T.STD_SALAD], 1);
+const tPhilly = { protein: dp.protein, carbs: dp.carbs, fat: dp.fat, kcal: dp.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const isDoublePhilly = r => r.protein.id === "philly_steak" && (r.extras || []).some(e => e.id === "philly_steak_extra");
+// maxOnePhilly=false: Doppel-Philly DARF als Top-Ergebnis erscheinen (Gegenprobe, dass das Ziel es triggert)
+const rPhillyOff = T.optimize(tPhilly, "macros", {}, true, false, { wholegrain: true }, "6inch", true, false, false, false, false, false, false);
+check("Subway ohne 'Max 1x Philly': Doppel-Philly möglich (Gegenprobe)", rPhillyOff.some(isDoublePhilly), true);
+// maxOnePhilly=true: kein Sub mit Philly-Protein UND zusätzlichem Philly-Extra
+const rPhillyMax1 = T.optimize(tPhilly, "macros", {}, true, false, { wholegrain: true }, "6inch", true, false, false, false, false, false, true);
+check("Subway 'Max 1x Philly': kein Doppel-Philly", rPhillyMax1.every(r => !isDoublePhilly(r)), true);
+check("Subway 'Max 1x Philly': Philly-Protein-Sub selbst bleibt erlaubt", rPhillyMax1.some(r => r.protein.id === "philly_steak"), true);
+// noPhilly=true: weder Philly-Protein noch Philly-Extra irgendwo
+const rNoPhilly = T.optimize(tPhilly, "macros", {}, true, false, {}, "6inch", true, false, false, false, false, true, false);
+check("Subway 'No Philly Steak': kein Philly-Protein", rNoPhilly.every(r => r.protein.id !== "philly_steak"), true);
+check("Subway 'No Philly Steak': kein Philly-Extra", rNoPhilly.every(r => (r.extras || []).every(e => e.id !== "philly_steak_extra")), true);
 // Schalter "Cheese" (forceCheese, 10. Param): immer einer der beiden Käse (kein "none")
 const tCh2 = { protein: 30, carbs: 50, fat: 18, kcal: 482, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway 'Cheese': jedes Ergebnis hat Käse (kein none)", T.optimize(tCh2, "macros", {}, true, false, {}, "footlong", true, false, true).every(r => r.cheese.id !== "none"), true);

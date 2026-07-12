@@ -2082,12 +2082,14 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg) {
+function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg, noPhilly, maxOnePhilly) {
   const m = sz==="footlong"?2:1;
   // Käse-Pool: "No cheese" → none; "Cheese" bzw. "Double cheese" → einer der beiden Käse (kein none); sonst alle
   const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : (forceCheese||doubleCheese) ? D.cheeses.filter(c=>c.id!=="none") : D.cheeses;
-  const prots = noRoastChicken ? D.proteins.filter(x=>x.id!=="roast_chicken") : D.proteins; // Schalter "No Roast Chicken Breast"
-  const extras = noPoachedEgg ? D.extras.filter(x=>x.id!=="poached_egg") : D.extras; // Schalter "No Poached Egg"
+  let prots = noRoastChicken ? D.proteins.filter(x=>x.id!=="roast_chicken") : D.proteins; // Schalter "No Roast Chicken Breast"
+  if(noPhilly) prots = prots.filter(x=>x.id!=="philly_steak");                            // Schalter "No Philly Steak" (Protein raus)
+  let extras = noPoachedEgg ? D.extras.filter(x=>x.id!=="poached_egg") : D.extras;         // Schalter "No Poached Egg"
+  if(noPhilly) extras = extras.filter(x=>x.id!=="philly_steak_extra");                     // "No Philly Steak" (Extra raus)
   // breadsOk: null/undefined = alle Brote · String = genau ein Brot (Legacy) · Objekt {id:true,...} = erlaubte Auswahl
   // (leeres Objekt bzw. nichts ausgewählt → alle Brote). Der Optimizer wählt je Ergebnis das best-passende erlaubte Brot.
   const breadOk = b => { if(!breadsOk) return true; if(typeof breadsOk==="string") return b.id===breadsOk;
@@ -2096,14 +2098,16 @@ function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastC
   const R = [];
   for(const b of br) for(const pr of prots) for(const c of ch) {
     const cx = (doubleCheese&&c.id!=="none") ? [c,c] : [c]; // "Double cheese"-Schalter: Käse zählt doppelt
+    // "Max 1× Philly Steak": ist das Protein bereits Philly Steak, das Philly-Extra für diesen Sub sperren (kein Doppel-Philly)
+    const ex = (maxOnePhilly&&pr.id==="philly_steak") ? extras.filter(x=>x.id!=="philly_steak_extra") : extras;
     const base=[b,pr,...cx,...STD_SALAD], bn=sumN(base,m), bs=score(bn,t,mode,p); // Std-Salad (Vegetables) gehört zum Sub → ×m (footlong verdoppelt)
     R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
-    for(let i=0;i<extras.length;i++){
-      const n1=sumN([...base,extras[i]],m), s1=score(n1,t,mode,p);
-      if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[extras[i]],sauces:[],nutrition:n1,score:s1});
-      for(let j=i+1;j<extras.length;j++){
-        const n2=sumN([...base,extras[i],extras[j]],m), s2=score(n2,t,mode,p);
-        if(s2<bs+0.3) R.push({bread:b,protein:pr,cheese:c,extras:[extras[i],extras[j]],sauces:[],nutrition:n2,score:s2});
+    for(let i=0;i<ex.length;i++){
+      const n1=sumN([...base,ex[i]],m), s1=score(n1,t,mode,p);
+      if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[ex[i]],sauces:[],nutrition:n1,score:s1});
+      for(let j=i+1;j<ex.length;j++){
+        const n2=sumN([...base,ex[i],ex[j]],m), s2=score(n2,t,mode,p);
+        if(s2<bs+0.3) R.push({bread:b,protein:pr,cheese:c,extras:[ex[i],ex[j]],sauces:[],nutrition:n2,score:s2});
       }
     }
     if(!noSauce&&bs<3) for(const sc of D.sauces){
@@ -2561,7 +2565,7 @@ function optimizeAll(t, mode, p, subSize, only, acMaxN) {
   const ok = rt => !only || only.includes(rt);   // only = optionale Whitelist (z.B. "Accurate restaurants")
   const N = acMaxN || 5;                          // max items pro à-la-carte-Bestellung (Cross-Restaurant-Chip; Default 5)
   let all = [];
-  if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize,true,true),"subway"));   // No cheese + No sauce, Brot frei, subs-only, No roast chicken
+  if(ok("subway")) all = all.concat(tag(optimize(t,mode,p,true,true,null,subSize,true,true,false,false,false,false,true),"subway"));   // No cheese + No sauce, Brot frei, subs-only, No roast chicken, Max 1× Philly
   if(ok("farmerj")) all = all.concat(tag(optimizeFJ(t,mode,p,true),"farmerj"));                  // Free items only
   if(ok("itsu")) all = all.concat(tag(optimizeItsu(t,mode,p,def(ITSU.cats),N,true,false,false),"itsu"));   // No soups…; only-sushi AUS
   if(ok("pret")) all = all.concat(tag(optimizePret(t,mode,p,def(PRET.cats),N,true,true),"pret"));          // only relevant + Salads only
@@ -2987,6 +2991,8 @@ function App() {
   const [onlySubs,setOnlySubs]=useState(false); // "only Subs (no sides)" — Default AUS, damit die Sides berücksichtigt werden
   const [noRoast,setNoRoast]=useState(true); // "No Roast Chicken Breast" — Exclude-Schalter, Default AN (Konvention)
   const [noPoachedEgg,setNoPoachedEgg]=useState(false); // "No Poached Egg" — Default AUS (User-Wunsch, opt-in)
+  const [noPhilly,setNoPhilly]=useState(false); // "No Philly Steak" — Default AUS (opt-in; Philly-Protein + -Extra ganz raus)
+  const [maxOnePhilly,setMaxOnePhilly]=useState(true); // "Max 1× Philly Steak" — Default AN: kein Philly-Sub + zusätzlich Philly-Extra
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
   const [sel,setSel]=useState(null);
   const [mSal,setMSal]=useState({});
@@ -3203,7 +3209,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -3763,6 +3769,10 @@ function App() {
           h("input",{type:"checkbox",checked:noRoast,onChange:e=>setNoRoast(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Roast Chicken Breast"),
         resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:noPoachedEgg,onChange:e=>setNoPoachedEgg(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Poached Egg"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:noPhilly,onChange:e=>{setNoPhilly(e.target.checked);if(e.target.checked)setMaxOnePhilly(false);},style:{accentColor:S.green,width:16,height:16}}),"No Philly Steak"),
+        resto==="subway"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:maxOnePhilly,onChange:e=>{setMaxOnePhilly(e.target.checked);if(e.target.checked)setNoPhilly(false);},style:{accentColor:S.green,width:16,height:16}}),"Max 1× Philly Steak"),
         resto==="farmerj"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
           h("input",{type:"checkbox",checked:freeOnly,onChange:e=>setFO(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Free items only")
       ),
@@ -4180,7 +4190,7 @@ function App() {
         h("div",{style:{marginBottom:12}},
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Add extras"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
-            ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)&&!(noPoachedEgg&&e.id==="poached_egg")).map(e=>
+            ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)&&!(noPoachedEgg&&e.id==="poached_egg")&&!(e.id==="philly_steak_extra"&&(noPhilly||(maxOnePhilly&&sel.protein.id==="philly_steak")))).map(e=>
               h(Chip,{key:e.id,label:e.name+" (+"+(e.kcal*(subSize==="footlong"?2:1))+")",small:true,active:!!mExt[e.id],
                 onClick:()=>setMExt(p=>({...p,[e.id]:!p[e.id]}))})
             ),
