@@ -927,23 +927,26 @@ check("Sushi Co ohne 'No fish': fish-Item moeglich (Gegenprobe)", T.optimizeSush
 check("Sushi Co: 35 fish-getaggte Items", T.SUSHICO.items.filter(x => x.fish).length, 35);
 check("Sushi Co: Tamago/Inari/Avocado/Green roll NICHT fish", ["tamago_nigiri", "inari_nigiri", "avocado_nigiri", "green_roll"].every(id => { const x = T.SUSHICO.items.find(y => y.id === id); return x && !x.fish; }), true);
 
-// ── Pure (à la carte, offizielle CSV; Deliveroo-Karte, LIVE=Y, Soups=Large, Salads dressed/no dressing) ──
-check("Pure Items (48)", T.PURE.items.length, 48);
+// ── Pure (à la carte, offizielle CSV; Deliveroo-Karte, LIVE=Y, Salads dressed/no dressing) ──
+// User-Ausschluss 12.07.2026: 5 Items raus (zu grosse CSV<->Deliveroo-Diffs / interne Inkonsistenz) -> 48-5=43
+check("Pure Items (43 nach User-Ausschluss)", T.PURE.items.length, 43);
 check("Pure Kategorien (11)", T.PURE.cats.length, 11);
 check("Pure: Snacks + Pastries default AUS, Rest AN", T.PURE.cats.every(c => (c.id === "snacks" || c.id === "pastries") ? c.on === false : c.on === true), true);
+// Die 5 User-Ausschluesse sind NICHT mehr im Katalog
+const puGone = ["sweet_potato_coconut_curry_pure_bowl", "british_chicken_soup_large", "salmon_lovin", "apple_bran_cinnamon_muffin"];
+check("Pure: Sweet Potato Curry / British Chicken Soup / Salmon Lovin / Apple-Bran-Muffin raus", puGone.every(id => !T.PURE.items.some(x => x.id === id)), true);
+check("Pure: Protein Chicken Salad (Sandwich) raus", T.PURE.items.every(x => !/^protein chicken salad/i.test(x.name)), true);
+check("Pure: nur noch 1 Soup (Thai Green Lentil bleibt, +4.5% vernachlaessigbar)", T.PURE.items.filter(x => x.cat === "soups").length, 1);
+check("Pure: Thai Green Lentil bleibt", T.PURE.items.some(x => /thai green lentil/i.test(x.name)), true);
 // Spot-Checks gegen die CSV (Deliveroo-kcal-Match: Shawarma 651 exakt)
 const puShawarma = T.PURE.items.find(x => x.id === "chicken_shawarma_pure_bowl");
 check("Pure Chicken Shawarma Bowl kcal (651)", puShawarma.kcal, 651);
 check("Pure Chicken Shawarma Bowl protein (39.8)", puShawarma.protein, 39.8);
-// LIVE=Y-Regel: Sweet Potato Curry = 556 (aktuelle Rezeptur), NICHT die eingestellte 624er-Zeile
-check("Pure Sweet Potato Curry = LIVE-Zeile (556)", T.PURE.items.find(x => x.id === "sweet_potato_coconut_curry_pure_bowl").kcal, 556);
-// Soups = SECONDARY-Block (Large): British Chicken 226 (Regular waere 145)
-check("Pure British Chicken Soup = Large (226)", T.PURE.items.find(x => x.id === "british_chicken_soup_large").kcal, 226);
 // kJ-Glitch-Zeile (2584) vermieden: Chickpea-Sandwich = 617
 check("Pure Chickpea Sandwich = 617 (nicht kJ-Glitch 2584)", T.PURE.items.find(x => x.id === "chickpea_sriracha_smashed_avo").kcal, 617);
-// Dressed/Undressed-Varianten der Salads
+// Dressed/Undressed-Varianten der Salads (bleiben — Deliveroo mittelt)
 check("Pure Celebrity Skin dressed (653) + no dressing (357)", T.PURE.items.find(x => x.id === "celebrity_skin_dressed").kcal === 653 && T.PURE.items.find(x => x.id === "celebrity_skin_no_dressing").kcal === 357, true);
-check("Pure: 3 Salads mit je 2 Varianten -> 8 Salad-Items", T.PURE.items.filter(x => x.cat === "salads").length, 8);
+check("Pure: 3 Salads mit je 2 Varianten + Prime Protein -> 7 Salad-Items", T.PURE.items.filter(x => x.cat === "salads").length, 7);
 // Kein Getraenk (Flat White bewusst raus), kein Schalentier
 check("Pure: kein Flat White", T.PURE.items.every(x => !/flat white/i.test(x.name)), true);
 check("Pure: kein Schalentier-Item", T.PURE.items.every(x => !T.isShellfish(x)), true);

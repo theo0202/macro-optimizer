@@ -88,6 +88,17 @@ MENU = [
     ("Plain Croissant",                        348, "pastries", "Croissant", "P"),
 ]
 
+# User-Ausschluss (12.07.2026): raus, weil CSV↔Deliveroo-kcal zu stark abweicht bzw. CSV in sich inkonsistent.
+# Behalten wurden bewusst: Salads mit Dressing-Wahl (Deliveroo mittelt) + Wraps (handmade, Gewicht schwankt) +
+# vernachlässigbare (<5%, inkl. Thai Green Lentil +4.5% + Super Fruit Salad kcal-exakt). Schlüssel = MENU-Anzeigename.
+USER_EXCLUDE = {
+    "Protein Chicken Salad",                 # CSV 532 vs Deliveroo 220 (+142%) — Deliveroo-Wert unmöglich fürs Sandwich
+    "Salmon Lovin'",                         # Salat OHNE Dressed/Undressed-Split, CSV 364 vs Deliveroo 421 (-13.5%)
+    "Sweet Potato & Coconut Curry Pure Bowl",# CSV 556 (LIVE) vs Deliveroo 637 (≈ alte 624er-Rezeptur) — echte Unsicherheit
+    "British Chicken Soup Large",            # CSV Large 226 vs Deliveroo 185 (passt zu keiner CSV-Größe)
+    "Apple, Bran & Cinnamon Muffin",         # kcal 308 ok, aber Makros ergeben nur ~226 (CSV intern inkonsistent)
+}
+
 CATS = [
     {"id": "pure_bowls",   "name": "Pure Bowls",          "on": True},
     {"id": "toasties",     "name": "Toasties",            "on": True},
@@ -121,8 +132,10 @@ def macros(r, block):
         "protein": g("PROTEIN (G) - PORTION"), "salt": g("SALT (G) - PORTION"),
     }
 
-items, notes, errors = [], [], []
+items, notes, errors, excluded = [], [], [], []
 for name, dkcal, cat, csvname, block in MENU:
+    if name in USER_EXCLUDE:
+        excluded.append(name); continue
     n = norm(csvname or name)
     cands = [r for r in rows if norm(r.get("NAME", "")) == n]
     if not cands:
@@ -162,12 +175,18 @@ for name, dkcal, cat, csvname, block in MENU:
 if errors:
     for e in errors: print("ERROR:", e)
     raise SystemExit(1)
+# Tripwire: jeder USER_EXCLUDE-Name MUSS im MENU vorgekommen sein (sonst Tippfehler -> Item bleibt versehentlich drin)
+menu_names = {row[0] for row in MENU}
+missing_excl = [nm for nm in USER_EXCLUDE if nm not in menu_names]
+if missing_excl:
+    print("ERROR: USER_EXCLUDE-Name(n) nicht im MENU (Tippfehler?):", missing_excl); raise SystemExit(1)
 
 raw = {
     "_meta": {
         "source": "Pure 'All Menu Items' CSV (offiziell, User 12.07.2026) — data/Pure-AllMenuItems.csv",
         "note": "Nur Deliveroo-Karte. LIVE=Y bevorzugt. Soups=SECONDARY (Large). Salads mit Dressed/Undressed als 2 Items. Volle 8 Makros per Portion. Alle Allergen-Spalten 'Y' (=frei) -> kein Schalentier.",
         "excluded": ["Flat White (Getraenk — Drinks-Konvention: immer raus; CSV 107 kcal vs Deliveroo 144)"],
+        "user_excluded": sorted(excluded) + ["Grund: CSV<->Deliveroo-kcal zu stark abweichend bzw. CSV intern inkonsistent (User 12.07.2026). Behalten: Salads mit Dressing-Wahl, Wraps, vernachlaessigbare (<5%)."],
         "deliveroo_kcal_diffs": [n for n in notes if "Deliveroo" in n],
         "other_notes": [n for n in notes if "Deliveroo" not in n],
     },
@@ -179,6 +198,8 @@ with open(OUT, "w", encoding="utf-8") as f:
 print(f"{len(items)} Items -> data/pure-raw.json")
 for c in CATS:
     print(f"  {c['name']}: {sum(1 for x in items if x['cat']==c['id'])}" + ("" if c["on"] else "  (default AUS)"))
+if excluded:
+    print(f"\nUser-Ausschluss ({len(excluded)}): " + ", ".join(sorted(excluded)))
 if notes:
     print("\nNotes:")
     for n in notes: print("  -", n)

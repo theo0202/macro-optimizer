@@ -5,22 +5,25 @@
   "excluded": [
    "Flat White (Getraenk — Drinks-Konvention: immer raus; CSV 107 kcal vs Deliveroo 144)"
   ],
+  "user_excluded": [
+   "Apple, Bran & Cinnamon Muffin",
+   "British Chicken Soup Large",
+   "Protein Chicken Salad",
+   "Salmon Lovin'",
+   "Sweet Potato & Coconut Curry Pure Bowl",
+   "Grund: CSV<->Deliveroo-kcal zu stark abweichend bzw. CSV intern inkonsistent (User 12.07.2026). Behalten: Salads mit Dressing-Wahl, Wraps, vernachlaessigbare (<5%)."
+  ],
   "deliveroo_kcal_diffs": [
-   "Sweet Potato & Coconut Curry Pure Bowl: CSV 556 kcal vs Deliveroo 637 (diff -81) — CSV (offiziell, LIVE) gilt",
-   "British Chicken Soup Large: CSV 226 kcal vs Deliveroo 185 (diff +41) — CSV (offiziell, LIVE) gilt",
    "Hail Caesar: CSV 521 kcal vs Deliveroo 576 (diff -55) — CSV (offiziell, LIVE) gilt",
    "Lock, Stock & Hot Smoked Salmon: CSV 469 kcal vs Deliveroo 427 (diff +42) — CSV (offiziell, LIVE) gilt",
    "Falafalo Soldier: CSV 677 kcal vs Deliveroo 702 (diff -25) — CSV (offiziell, LIVE) gilt",
    "Celebrity Skin: CSV 653 kcal vs Deliveroo 543 (diff +110) — CSV (offiziell, LIVE) gilt",
-   "Salmon Lovin': CSV 364 kcal vs Deliveroo 421 (diff -57) — CSV (offiziell, LIVE) gilt",
    "Rainbow Veg: CSV 429 kcal vs Deliveroo 372 (diff +57) — CSV (offiziell, LIVE) gilt",
    "Chicken Caesar: CSV 445 kcal vs Deliveroo 346 (diff +99) — CSV (offiziell, LIVE) gilt",
-   "Protein Chicken Salad: CSV 532 kcal vs Deliveroo 220 (diff +312) — CSV (offiziell, LIVE) gilt",
    "Go Nuts Bircher: CSV 435 kcal vs Deliveroo 459 (diff -24) — CSV (offiziell, LIVE) gilt"
   ],
   "other_notes": [
-   "Super Fruit Salad: salt leer in CSV -> 0",
-   "Apple, Bran & Cinnamon Muffin: kcal 308.0 vs Atwater 226 (>15%)"
+   "Super Fruit Salad: salt leer in CSV -> 0"
   ]
  },
  "cats": [
@@ -124,20 +127,6 @@
    "salt": 4.1
   },
   {
-   "name": "Sweet Potato & Coconut Curry Pure Bowl",
-   "cat": "pure_bowls",
-   "deliveroo_kcal": 637,
-   "csv_name": "Sweet Potato & Coconut Curry",
-   "kcal": 556.0,
-   "fat": 19.9,
-   "sat": 2.9,
-   "carbs": 85.5,
-   "sugars": 19.1,
-   "fibre": 2.1,
-   "protein": 14.3,
-   "salt": 2.5
-  },
-  {
    "name": "Chicken Picante Wrap Toastie",
    "cat": "toasties",
    "deliveroo_kcal": 576,
@@ -164,20 +153,6 @@
    "fibre": 5.0,
    "protein": 26.0,
    "salt": 2.0
-  },
-  {
-   "name": "British Chicken Soup Large",
-   "cat": "soups",
-   "deliveroo_kcal": 185,
-   "csv_name": "British Chicken",
-   "kcal": 226.0,
-   "fat": 5.6,
-   "sat": 0.7,
-   "carbs": 15.8,
-   "sugars": 5.8,
-   "fibre": 1.8,
-   "protein": 27.3,
-   "salt": 4.62
   },
   {
    "name": "Thai Green Lentil Soup Large",
@@ -292,20 +267,6 @@
    "salt": 1.96
   },
   {
-   "name": "Salmon Lovin'",
-   "cat": "salads",
-   "deliveroo_kcal": 421,
-   "csv_name": "Salmon Lovin’",
-   "kcal": 364.0,
-   "fat": 14.9,
-   "sat": 2.5,
-   "carbs": 38.4,
-   "sugars": 3.4,
-   "fibre": 5.5,
-   "protein": 20.7,
-   "salt": 1.9
-  },
-  {
    "name": "Rainbow Veg (dressed)",
    "cat": "salads",
    "deliveroo_kcal": 372,
@@ -360,20 +321,6 @@
    "fibre": 1.9,
    "protein": 37.2,
    "salt": 1.27
-  },
-  {
-   "name": "Protein Chicken Salad",
-   "cat": "sandwiches",
-   "deliveroo_kcal": 220,
-   "csv_name": "Protein Chicken Salad",
-   "kcal": 532.0,
-   "fat": 12.1,
-   "sat": 1.2,
-   "carbs": 77.2,
-   "sugars": 3.4,
-   "fibre": 3.5,
-   "protein": 25.1,
-   "salt": 1.07
   },
   {
    "name": "Skipjack Tuna & Smoky Corn",
@@ -696,20 +643,6 @@
    "fibre": 0.0,
    "protein": 5.0,
    "salt": 0.01
-  },
-  {
-   "name": "Apple, Bran & Cinnamon Muffin",
-   "cat": "pastries",
-   "deliveroo_kcal": 308,
-   "csv_name": "Apple, Bran & Cinnamon Muffin",
-   "kcal": 308.0,
-   "fat": 7.7,
-   "sat": 1.5,
-   "carbs": 31.0,
-   "sugars": 21.8,
-   "fibre": 3.9,
-   "protein": 6.1,
-   "salt": 0.2
   },
   {
    "name": "Chocolate Croissant",
