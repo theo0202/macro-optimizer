@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, optimizeWaitrose, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1287,6 +1287,25 @@ check("waitroseTotal Poke@360 + Chicken@165 kcal", T.waitroseTotal([{ item: wPok
 // wtScale rundet die skalierte Portion zuerst (12×0.93 -> 11.2), dann ×qty: 22.4
 check("waitroseTotal 2× Edamame@93 protein", T.waitroseTotal([{ item: T.WAITROSE.items.find(x => x.id === "edamame_sushi_daily"), qty: 2, g: 93 }]).protein, 22.4);
 check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
+
+// ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
+// waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
+const wItems = T.waitroseOrderItems();
+check("waitroseOrderItems: 4 Items", wItems.length, 4);
+const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
+// Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
+check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
+check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
+check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
+check("WAITROSE_MENU hat 1 Kategorie + 4 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 4, true);
+// optimizeWaitrose: liefert Ergebnisse in AC-Form {items, nutrition, score}
+const wOpt = T.optimizeWaitrose({ carbs: 60, protein: 40, fat: 20, kcal: 580 }, "macros", { hiP: true, loF: true }, 5);
+check("optimizeWaitrose liefert Ergebnisse", wOpt.length > 0, true);
+check("optimizeWaitrose Ergebnis-Form (items/nutrition/score)", !!(wOpt[0].items && wOpt[0].nutrition && typeof wOpt[0].score === "number"), true);
+// Bei hohem Protein-Ziel sollte die Top-Kombi Protein liefern (Chicken-Fillets/Edamame sind proteinreich)
+check("optimizeWaitrose Top-Ergebnis hat Protein > 0", wOpt[0].nutrition.protein > 0, true);
+// jedes Item im Ergebnis stammt aus dem Waitrose-Menü (typische Gewichte)
+check("optimizeWaitrose nutzt nur Waitrose-Produkte", wOpt[0].items.every(x => T.WAITROSE_MENU.items.some(y => y.id === x.id)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

@@ -2662,6 +2662,17 @@ function waitroseTotal(entries){
   (entries||[]).forEach(e=>{ const s=wtScale(e.item, e.g), q=e.qty||1; KEYS.forEach(k=>t[k]+=(s[k]||0)*q); });
   KEYS.forEach(k=>t[k]=Math.round(t[k]*10)/10); return t;
 }
+// Order-Builder: jedes Produkt als AC-Item mit den Makros beim TYPISCHEN (variabel) bzw. FIXEN Gewicht.
+// Der Optimizer kombiniert Produkte (Duplikate erlaubt) wie die anderen AC-Restaurants — immer typische Gewichte.
+// Grammzahl ins Name gezogen (z.B. "Yakisoba Chicken (326g typ.)") → sichtbar in Karte/Panel/Einkaufsliste.
+function waitroseOrderItems(){
+  return WAITROSE.items.map(it=>{ const m=wtScale(it, it.g); return {
+    id:it.id, cat:"waitrose", brand:it.brand, g:it.g, variable:!!it.variable,
+    name:it.name+" ("+it.g+"g"+(it.variable?" typ.":"")+")", ...m }; });
+}
+const WAITROSE_MENU = { cats:[{ id:"waitrose", name:"Waitrose", on:true }], items: waitroseOrderItems() };
+// à la carte (AC-Kern) über die typisch/fix gewichteten Produkte — Kategorie-Chips gibt es nicht (nur 1 Kategorie), nur Max-Items
+function optimizeWaitrose(t, mode, p, maxN){ return alaCarteCombos(t, mode, p, WAITROSE_MENU.items, maxN); }
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
   const rt=r._resto;
@@ -3128,6 +3139,10 @@ function App() {
   const wResults=useMemo(()=>resto==="waitrose"?waitroseSearch(wQ,60):[],[resto,wQ]);
   const wTotal=useMemo(()=>waitroseTotal(wOrder),[wOrder]);
   const r1=x=>Math.round(x*10)/10;
+  // Waitrose "Build order" (Optimizer über typische Gewichte) vs. "Track basket" (manueller Warenkorb oben)
+  const [wMode,setWMode]=useState("build");
+  const [selWt,setSelWt]=useState(null);
+  const [maxWt,setMaxWt]=useState(5);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -3208,6 +3223,7 @@ function App() {
   const resultsPho=useMemo(()=>resto==="pho"?optimizePho(targets,mode,prefs,phoCats,maxPho):[],[resto,targets,mode,prefs,phoCats,maxPho]);
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish):[],[resto,targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish]);
+  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,maxWt):[],[resto,wMode,targets,mode,prefs,maxWt]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
   const resultsAccurate=useMemo(()=>resto==="accurate"?optimizeAll(targets,mode,prefs,subSize,ACCURATE_RESTOS,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3225,7 +3241,8 @@ function App() {
          :resto==="bagelfactory"?{D:BAGELFACTORY,sel:selBF,setSel:setSelBF,res:resultsBF,maxN:maxBF}
          :resto==="pho"?{D:PHO,sel:selPho,setSel:setSelPho,res:resultsPho,maxN:maxPho}
          :resto==="wingstop"?{D:WINGSTOP,sel:selWing,setSel:setSelWing,res:resultsWing,maxN:maxWing}
-         :resto==="sushico"?{D:SUSHICO,sel:selSC,setSel:setSelSC,res:resultsSC,maxN:maxSC}:null;
+         :resto==="sushico"?{D:SUSHICO,sel:selSC,setSel:setSelSC,res:resultsSC,maxN:maxSC}
+         :resto==="waitrose"&&wMode==="build"?{D:WAITROSE_MENU,sel:selWt,setSel:setSelWt,res:resultsWt,maxN:maxWt}:null;
 
   // Corn Cakes (restaurantsuebergreifend): die aktive Ergebnisliste EINMAL augmentieren (Karten + Ranking).
   // Memoisiert → stabile Objekt-Identitaet, damit die Selektion-Markierung (sel===r) heil bleibt.
@@ -3369,7 +3386,7 @@ function App() {
       ),
 
       // Corn cakes (cross-restaurant carb filler) — gilt fuer ALLE Restaurants (nicht in den Trackern Add own order / Waitrose)
-      (resto!=="search"&&resto!=="waitrose")&&h("div",{style:{background:"#151515",borderRadius:12,padding:"12px 14px",marginBottom:16,border:"1px solid #222"}},
+      (resto!=="search"&&(resto!=="waitrose"||wMode==="build"))&&h("div",{style:{background:"#151515",borderRadius:12,padding:"12px 14px",marginBottom:16,border:"1px solid #222"}},
         h("label",{style:{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:"#ddd",fontWeight:600}},
           h("input",{type:"checkbox",checked:cornCakes,onChange:e=>setCornCakes(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),
           "Top up carbs with corn cakes"),
@@ -3637,6 +3654,19 @@ function App() {
         btn("tray","BYO Tray",ugMode,setUgMode)
       ),
 
+      // Waitrose: Modus — Build order (Optimizer über typische Gewichte) vs. Track basket (manueller Warenkorb)
+      resto==="waitrose"&&h("div",{style:{marginBottom:wMode==="build"?12:16}},
+        h("div",{style:{display:"flex",gap:8,marginBottom:wMode==="build"?12:0}},
+          btn("build","🎯 Build order",wMode,setWMode),
+          btn("track","🛒 Track basket",wMode,setWMode)
+        ),
+        wMode==="build"&&h("div",{style:{fontSize:11,color:"#777",lineHeight:1.5,marginBottom:12}},"Best combinations of Waitrose products for your macro goals. Uses each product's typical weight (variable-weight items like Sushi Daily bowls); switch to Track basket to log the exact grams you bought."),
+        wMode==="build"&&h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. products per order"),
+        wMode==="build"&&h("div",{style:{display:"flex",gap:5}},
+          ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxWt===n,onClick:()=>setMaxWt(n),small:true}))
+        )
+      ),
+
       // Checkboxes
       h("div",{style:{display:"flex",gap:16,marginBottom:16,alignItems:"center",flexWrap:"wrap"}},
         resto==="itsu"&&h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
@@ -3790,8 +3820,8 @@ function App() {
       ),
 
       // Waitrose Supermarkt-Tracker (Suche + Warenkorb mit Gramm-Eingabe je Produkt; gewicht-variierende Produkte editierbar)
-      resto==="waitrose" && h("div",{style:{marginBottom:20}},
-        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:6}},"Waitrose · track"),
+      resto==="waitrose" && wMode==="track" && h("div",{style:{marginBottom:20}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:6}},"Waitrose · track basket"),
         h("div",{style:{fontSize:11,color:"#777",marginBottom:10,lineHeight:1.5}},"Search Waitrose products and add what you bought. For weight-varying items (e.g. Sushi Daily counter bowls) edit the grams — a typical weight is pre-filled; the macros scale from per-100g."),
         h("input",{type:"text",value:wQ,onChange:e=>setWQ(e.target.value),placeholder:"Search Waitrose / Sushi Daily…",
           style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"11px 14px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:12}}),
@@ -3848,7 +3878,7 @@ function App() {
       ),
 
       // Results header + Sort by (Accuracy-Sortierung)
-      (resto!=="search"&&resto!=="waitrose") && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
+      (resto!=="search"&&(resto!=="waitrose"||wMode==="build")) && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top results"),
         h("div",{style:{display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}},
           h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1}},"Sort by"),
@@ -3863,7 +3893,7 @@ function App() {
       ),
 
       // Results list
-      (resto!=="search"&&resto!=="waitrose") && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
+      (resto!=="search"&&(resto!=="waitrose"||wMode==="build")) && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
         ...sortResults(activeResults,effSort,sortTgts).slice(0,8).map((r,i)=>{
           if(resto==="all"||resto==="accurate"){
             return h("button",{key:i,onClick:()=>selectAcross(r),style:{
@@ -4311,7 +4341,7 @@ function App() {
       // Detail panel (à la carte: Itsu & Pret)
       AC&&AC.sel&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
         h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},itsuLabel(AC.sel.items)),
-        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},"à la carte · "+AC.sel.items.length+(AC.sel.items.length===1?" Item":" Items")),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},(resto==="waitrose"?"Waitrose · ":"à la carte · ")+AC.sel.items.length+(resto==="waitrose"?(AC.sel.items.length===1?" product · typical weights":" products · typical weights"):(AC.sel.items.length===1?" Item":" Items"))),
 
         // Macro bars
         h("div",{style:{marginBottom:16}},
@@ -4336,7 +4366,7 @@ function App() {
             h("span",{style:{color:"#999",fontFamily:S.mono}},Math.round(ccAC.n*CORN_CAKE.kcal*10)/10+" kcal · C "+Math.round(ccAC.n*CORN_CAKE.carbs*10)/10+"g"))
         ),
 
-        // Order guide (à la carte)
+        // Order guide (à la carte) — Waitrose: Einkaufsliste statt Deliveroo-Bestellung
         (()=>{
           const counts={};AC.sel.items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
           const uniq=[];const seenIds=new Set();
@@ -4344,7 +4374,7 @@ function App() {
           const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name})),...cornStep(ccAC)];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
-              h("span",{style:{fontSize:13}},"📋")," Order guide (Deliveroo)"),
+              h("span",{style:{fontSize:13}},resto==="waitrose"?"🛒":"📋"),resto==="waitrose"?" Shopping list (Waitrose)":" Order guide (Deliveroo)"),
             ...steps.map((st,i)=>h("div",{key:i,style:{display:"flex",gap:8,alignItems:"baseline",padding:"5px 0",borderBottom:i<steps.length-1?"1px solid #1a1a1a":"none"}},
               h("span",{style:{fontSize:9,color:"#555",fontFamily:S.mono,minWidth:16,textAlign:"right"}},i+1+"."),
               h("span",{style:{fontSize:10,color:"#777",fontFamily:S.mono,minWidth:72}},st.l),
