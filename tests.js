@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, optimizeWaitrose, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, optimizeWaitrose, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -927,6 +927,34 @@ check("Sushi Co ohne 'No fish': fish-Item moeglich (Gegenprobe)", T.optimizeSush
 check("Sushi Co: 35 fish-getaggte Items", T.SUSHICO.items.filter(x => x.fish).length, 35);
 check("Sushi Co: Tamago/Inari/Avocado/Green roll NICHT fish", ["tamago_nigiri", "inari_nigiri", "avocado_nigiri", "green_roll"].every(id => { const x = T.SUSHICO.items.find(y => y.id === id); return x && !x.fish; }), true);
 
+// ── Pure (à la carte, offizielle CSV; Deliveroo-Karte, LIVE=Y, Soups=Large, Salads dressed/no dressing) ──
+check("Pure Items (48)", T.PURE.items.length, 48);
+check("Pure Kategorien (11)", T.PURE.cats.length, 11);
+check("Pure: Snacks + Pastries default AUS, Rest AN", T.PURE.cats.every(c => (c.id === "snacks" || c.id === "pastries") ? c.on === false : c.on === true), true);
+// Spot-Checks gegen die CSV (Deliveroo-kcal-Match: Shawarma 651 exakt)
+const puShawarma = T.PURE.items.find(x => x.id === "chicken_shawarma_pure_bowl");
+check("Pure Chicken Shawarma Bowl kcal (651)", puShawarma.kcal, 651);
+check("Pure Chicken Shawarma Bowl protein (39.8)", puShawarma.protein, 39.8);
+// LIVE=Y-Regel: Sweet Potato Curry = 556 (aktuelle Rezeptur), NICHT die eingestellte 624er-Zeile
+check("Pure Sweet Potato Curry = LIVE-Zeile (556)", T.PURE.items.find(x => x.id === "sweet_potato_coconut_curry_pure_bowl").kcal, 556);
+// Soups = SECONDARY-Block (Large): British Chicken 226 (Regular waere 145)
+check("Pure British Chicken Soup = Large (226)", T.PURE.items.find(x => x.id === "british_chicken_soup_large").kcal, 226);
+// kJ-Glitch-Zeile (2584) vermieden: Chickpea-Sandwich = 617
+check("Pure Chickpea Sandwich = 617 (nicht kJ-Glitch 2584)", T.PURE.items.find(x => x.id === "chickpea_sriracha_smashed_avo").kcal, 617);
+// Dressed/Undressed-Varianten der Salads
+check("Pure Celebrity Skin dressed (653) + no dressing (357)", T.PURE.items.find(x => x.id === "celebrity_skin_dressed").kcal === 653 && T.PURE.items.find(x => x.id === "celebrity_skin_no_dressing").kcal === 357, true);
+check("Pure: 3 Salads mit je 2 Varianten -> 8 Salad-Items", T.PURE.items.filter(x => x.cat === "salads").length, 8);
+// Kein Getraenk (Flat White bewusst raus), kein Schalentier
+check("Pure: kein Flat White", T.PURE.items.every(x => !/flat white/i.test(x.name)), true);
+check("Pure: kein Schalentier-Item", T.PURE.items.every(x => !T.isShellfish(x)), true);
+// Optimizer: AC-Form + Kategorie-Filter
+const puAll = {}; T.PURE.cats.forEach(c => puAll[c.id] = true);
+const tPu = { protein: 40, carbs: 67, fat: 27, kcal: 671, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rPu = T.optimizePure(tPu, "macros", {}, puAll, 3);
+check("Pure Optimizer liefert Ergebnisse (AC-Form)", rPu.length > 0 && !!(rPu[0].items && rPu[0].nutrition && typeof rPu[0].score === "number"), true);
+check("Pure Optimizer Top-1 = Chicken Shawarma Bowl (exakte Ziel-Makros)", rPu[0].items.length === 1 && rPu[0].items[0].id === "chicken_shawarma_pure_bowl", true);
+check("Pure Kategorie-Filter (nur soups)", T.optimizePure(tPu, "macros", {}, { soups: true }, 2).every(r => r.items.every(x => x.cat === "soups")), true);
+
 // ── Schalentier-Filter (Krebstiere + Weichtiere) — permanent ausgeschlossen (Allergie); Fisch bleibt ──
 const shellRE = /(prawn(?!less)|shrimp|crab|lobster|langoustine|cray|mussel|clam|oyster|squid|calamari|scallop|octopus|\bebi\b|california|best of itsu|itsu classics)/i;
 check("isShellfish: prawn/shrimp/crab/calamari -> true", ["Prawn tom yum", "Shrimp", "Crayfish & Rocket", "Calamari", "California rolls", "best of itsu"].every(n => T.isShellfish({ name: n })), true);
@@ -946,7 +974,7 @@ check("Fisch bleibt erhalten (Wasabi Salmon/Tuna weiter im Datensatz)", T.WASABI
 // ── "All restaurants" (restaurantsübergreifend; alle Exclude-Schalter an, Itsu only-sushi aus) ──
 const tAllT = { protein: 40, carbs: 50, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rAll = T.optimizeAll(tAllT, "macros", {}, "footlong");
-const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory", "pho", "wingstop", "sushico"];
+const RESTOS = ["subway", "farmerj", "itsu", "pret", "nandos", "ug", "wagamama", "gdk", "atis", "tfc", "chopstix", "pepes", "fiveguys", "pizzaexpress", "wasabi", "leon", "bagelfactory", "pho", "wingstop", "sushico", "pure"];
 check("All: liefert Ergebnisse (1..20)", rAll.length > 0 && rAll.length <= 20, true);
 check("All: jedes Ergebnis hat _resto + nutrition + score", rAll.every(r => r._resto && r.nutrition && typeof r.score === "number"), true);
 check("All: nach Score aufsteigend sortiert", rAll.every((r, i) => i === 0 || rAll[i - 1].score <= r.score), true);
@@ -1265,7 +1293,7 @@ check("Accurate: wasabi in Whitelist + alle Treffer gueltig", ACCURATE.includes(
 check("Search-Index gefuellt (>900 Items)", T.SEARCH_INDEX.length > 900, true);
 check("Search-Index: alle Eintraege haben resto+name+8 Makros", T.SEARCH_INDEX.every(x => x.resto && x.name && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => typeof x[k] === "number")), true);
 check("Search-Index: keine exakten Duplikate (resto|name|kcal)", (() => { const s = new Set(); return T.SEARCH_INDEX.every(x => { const k = x.resto + "|" + x.name + "|" + x.kcal; if (s.has(k)) return false; s.add(k); return true; }); })(), true);
-check("Search-Index deckt alle 20 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 20);
+check("Search-Index deckt alle 21 Restaurants ab", new Set(T.SEARCH_INDEX.map(x => x.resto)).size, 21);
 check("searchItems leere Query -> []", T.searchItems("").length, 0);
 const sKatsu = T.searchItems("katsu");
 check("searchItems 'katsu' liefert Treffer", sKatsu.length > 0, true);
