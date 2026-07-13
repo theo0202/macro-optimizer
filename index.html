@@ -3219,7 +3219,14 @@ function App() {
   const [wQ,setWQ]=useState("");
   const [wOrder,setWOrder]=useState(()=>{try{const v=JSON.parse(localStorage.getItem("wt_waitrose_order")||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}});
   useEffect(()=>{try{localStorage.setItem("wt_waitrose_order",JSON.stringify(wOrder));}catch(e){}},[wOrder]);
-  const addW=it=>setWOrder(o=>{const idx=o.findIndex(e=>e.item.id===it.id);if(idx>=0){const n=o.slice();n[idx]={...n[idx],qty:n[idx].qty+1};return n;}return [...o,{item:it,qty:1,g:it.g}];});
+  // Variable-Gewicht-Produkte: JEDE Zugabe = eigene Zeile (Gewicht variiert je Artikel, individuell eingebbar).
+  // Fixe Produkte (immer gleiches Gewicht): mengen via qty zusammenfassen.
+  const addW=it=>setWOrder(o=>{
+    if(it.variable) return [...o,{item:it,qty:1,g:it.g}];
+    const idx=o.findIndex(e=>e.item.id===it.id&&!e.item.variable);
+    if(idx>=0){const n=o.slice();n[idx]={...n[idx],qty:n[idx].qty+1};return n;}
+    return [...o,{item:it,qty:1,g:it.g}];
+  });
   const setGramW=(i,g)=>setWOrder(o=>o.map((e,idx)=>idx===i?{...e,g:g}:e));
   const changeQtyW=(i,d)=>setWOrder(o=>o.map((e,idx)=>idx===i?{...e,qty:Math.max(1,(e.qty||1)+d)}:e));
   const removeW=i=>setWOrder(o=>o.filter((_,idx)=>idx!==i));
@@ -3966,9 +3973,14 @@ function App() {
                         style:{width:56,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:7,padding:"5px 7px",color:"#fff",fontSize:13,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
                       h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g")),
                     h("div",{style:{display:"flex",alignItems:"center",gap:6,flexShrink:0}},
-                      h("button",{onClick:()=>changeQtyW(i,-1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"−"),
-                      h("span",{style:{fontSize:13,fontFamily:S.mono,color:"#fff",minWidth:18,textAlign:"center"}},e.qty),
-                      h("button",{onClick:()=>changeQtyW(i,1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"+"),
+                      // Variabel: eigene Zeile je Artikel → "add another" (neue Zeile, eigenes Gewicht) statt Mengen-Stepper
+                      e.item.variable
+                        ? h("button",{onClick:()=>addW(e.item),title:"Add another (separate weight)",style:{height:26,borderRadius:7,border:"1px solid #2f4a35",background:"#14251a",color:"#86efac",fontSize:11,fontWeight:700,lineHeight:1,cursor:"pointer",fontFamily:S.font,padding:"0 9px"}},"＋ add another")
+                        : [
+                            h("button",{key:"m",onClick:()=>changeQtyW(i,-1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"−"),
+                            h("span",{key:"q",style:{fontSize:13,fontFamily:S.mono,color:"#fff",minWidth:18,textAlign:"center"}},e.qty),
+                            h("button",{key:"p",onClick:()=>changeQtyW(i,1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"+"),
+                          ],
                       h("button",{onClick:()=>removeW(i),style:{width:26,height:26,borderRadius:7,border:"1px solid #3a2a2a",background:"#1c1414",color:"#f87171",fontSize:13,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"✕")
                     )
                   )

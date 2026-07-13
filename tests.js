@@ -1342,6 +1342,8 @@ check("Waitrose wtScale Korean FC Bowl@326g kcal (599.8)", T.wtScale(wKfc, 326).
 check("Waitrose wtScale Chicken Gyoza@130g protein (10.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "chicken_gyoza_sushi_daily"), 130).protein, 10.5);
 // waitroseTotal: [{item, qty, g}]
 check("waitroseTotal Poke@360 + Chicken@165 kcal", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wChick, qty: 1, g: 165 }]).kcal, Math.round((550.8 + 239.3) * 10) / 10);
+// Variabel doppelt = 2 getrennte Zeilen mit je eigenem Gewicht (nicht 2x gleiches Gewicht): 360g + 300g
+check("waitroseTotal 2x Poke, unterschiedliche Gewichte (360 + 300)", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wPoke, qty: 1, g: 300 }]).kcal, Math.round((550.8 + 153 * 3) * 10) / 10);
 // wtScale rundet die skalierte Portion zuerst (12×0.93 -> 11.2), dann ×qty: 22.4
 check("waitroseTotal 2× Edamame@93 protein", T.waitroseTotal([{ item: T.WAITROSE.items.find(x => x.id === "edamame_sushi_daily"), qty: 2, g: 93 }]).protein, 22.4);
 check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
