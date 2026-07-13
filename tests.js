@@ -1315,7 +1315,7 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (4)", T.WAITROSE.items.length, 4);
+check("Waitrose Produkte (7)", T.WAITROSE.items.length, 7);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
 const wPoke = T.WAITROSE.items.find(x => x.id === "deluxe_duo_poke");
 check("Waitrose Deluxe Duo Poke variabel, typ. 360g", wPoke.variable === true && wPoke.g === 360, true);
@@ -1332,9 +1332,14 @@ check("Waitrose Chicken Fillets fix 165g", wChick.variable === false && wChick.g
 check("Waitrose wtScale Chicken@165g kcal (239.3)", T.wtScale(wChick, 165).kcal, 239.3);
 check("Waitrose wtScale Chicken@165g protein (38)", T.wtScale(wChick, 165).protein, 38);
 // Suche
-check("waitroseSearch 'sushi daily' findet die 3 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 3);
-check("waitroseSearch 'poke' findet Deluxe Duo Poke", T.waitroseSearch("poke", 60).some(x => x.id === "deluxe_duo_poke"), true);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 4);
+check("waitroseSearch 'sushi daily' findet die 6 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 6);
+check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 7);
+// Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
+const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
+check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);
+check("Waitrose wtScale Korean FC Bowl@326g kcal (599.8)", T.wtScale(wKfc, 326).kcal, 599.8);
+check("Waitrose wtScale Chicken Gyoza@130g protein (10.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "chicken_gyoza_sushi_daily"), 130).protein, 10.5);
 // waitroseTotal: [{item, qty, g}]
 check("waitroseTotal Poke@360 + Chicken@165 kcal", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wChick, qty: 1, g: 165 }]).kcal, Math.round((550.8 + 239.3) * 10) / 10);
 // wtScale rundet die skalierte Portion zuerst (12×0.93 -> 11.2), dann ×qty: 22.4
@@ -1344,13 +1349,13 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 4 Items", wItems.length, 4);
+check("waitroseOrderItems: 7 Items", wItems.length, 7);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 1 Kategorie + 4 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 4, true);
+check("WAITROSE_MENU hat 1 Kategorie + 7 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 7, true);
 // optimizeWaitrose: liefert Ergebnisse in AC-Form {items, nutrition, score}
 const wOpt = T.optimizeWaitrose({ carbs: 60, protein: 40, fat: 20, kcal: 580 }, "macros", { hiP: true, loF: true }, 5);
 check("optimizeWaitrose liefert Ergebnisse", wOpt.length > 0, true);
