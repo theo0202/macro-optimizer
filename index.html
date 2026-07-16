@@ -2246,7 +2246,13 @@ const ITSU_LIGHT_CATS=new Set(["healthy_soups","hot_noodles","desserts_snacks"])
 // im Namen). SHELLFISH_NAMES = Itsu-Sets mit Krebstier-Allergen, deren Name das Schalentier nicht verrät.
 const SHELLFISH_RE=/(prawn(?!less)|shrimp|crab|lobster|langoustine|cray(fish)?|craw(fish)?|mussel|clam|oyster|squid|calamari|scallop|cockle|whelk|octopus|\bebi\b|california)/i;
 const SHELLFISH_NAMES=new Set(["best of itsu","itsu classics","rainbow roll"]);
-function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
+// Ausnahmen (exakter, kleingeschriebener Name): matchen den Namensfilter, sind aber vom User bestätigt SCHALENTIERFREI.
+// "california maki" = Sushi-Daily-Waitrose-Variante ohne Krabbe/Surimi (User 13.07.2026) — NUR dieser exakte Name,
+// andere "California …"-Gerichte (rolls/dragon/potto, mit Krabbe) bleiben gefiltert.
+const SHELLFISH_SAFE=new Set(["california maki"]);
+// base = Name ohne angehängtes " (...)" (z.B. Waitrose-Order-Items "California Maki (140g typ.)" → "california maki"),
+// damit die Ausnahme auch bei den gramm-suffixierten Optimizer-Namen greift. Regex läuft weiterhin auf dem vollen Namen.
+function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); const base=n.replace(/\s*\([^)]*\)\s*$/,"").trim(); if(SHELLFISH_SAFE.has(n)||SHELLFISH_SAFE.has(base)) return false; return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
 
 function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey) {
   pool=pool.filter(x=>!isShellfish(x)); // Schalentier permanent raus (Allergie)
@@ -2738,8 +2744,8 @@ const WAITROSE = { items: [
     p100:{ kcal:142, fat:3.6, sat:0, carbs:21, sugars:6.1, fibre:1.2, protein:5.8, salt:0.48 } },
   { id:"discovery_salmon_nigiri", name:"Discovery Salmon Nigiri", brand:"Sushi Daily", variable:true, g:84,
     p100:{ kcal:169, fat:5.4, sat:0, carbs:21, sugars:2.6, fibre:0, protein:9.1, salt:0.07 } },
-  // "California Maki" enthält i.d.R. Krabbe/Surimi → matcht isShellfish ("california") → im Build-Optimizer automatisch
-  // ausgeschlossen (User-Allergie); nur im manuellen Track-Warenkorb wählbar. Falls krabbenfrei: Name-Match bleibt trotzdem.
+  // "California Maki" (Sushi Daily) ist laut User SCHALENTIERFREI → via SHELLFISH_SAFE vom "california"-Namensfilter
+  // ausgenommen (nur dieser exakte Name), erscheint daher normal im Build-Optimizer.
   { id:"california_maki", name:"California Maki", brand:"Sushi Daily", variable:true, g:140,
     p100:{ kcal:185, fat:8.9, sat:0, carbs:18, sugars:2.2, fibre:1.1, protein:7.7, salt:0.06 } },
 ] };

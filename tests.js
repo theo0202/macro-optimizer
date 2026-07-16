@@ -1358,11 +1358,13 @@ check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
 check("WAITROSE_MENU hat 1 Kategorie + 17 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 17, true);
-// Schalentier-Sicherheit: California Maki (Krabbe/Surimi) matcht isShellfish -> im Build-Optimizer NIE, aber im Katalog (Track manuell)
-check("Waitrose California Maki ist schalentier-geflaggt", T.isShellfish(T.WAITROSE.items.find(x => x.id === "california_maki")), true);
-check("Waitrose California Maki im Katalog (Track manuell waehlbar)", T.WAITROSE.items.some(x => x.id === "california_maki"), true);
-check("Waitrose Build-Optimizer schliesst California Maki aus", T.optimizeWaitrose({ protein: 8, carbs: 25, fat: 12, kcal: 260, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, Infinity).every(r => r.items.every(x => x.id !== "california_maki")), true);
+// California Maki (Sushi Daily) ist laut User schalentierFREI -> via SHELLFISH_SAFE vom "california"-Filter ausgenommen
+check("Waitrose California Maki NICHT schalentier-geflaggt (User: crab-free)", T.isShellfish(T.WAITROSE.items.find(x => x.id === "california_maki")), false);
+check("Waitrose California Maki erscheint im Build-Optimizer (Ziel = seine Makros)", T.optimizeWaitrose({ protein: 10.8, carbs: 25.2, fat: 12.5, kcal: 259, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, 2).some(r => r.items.some(x => x.id === "california_maki")), true);
 check("Waitrose Discovery Salmon Nigiri kein Schalentier (Fisch)", T.isShellfish(T.WAITROSE.items.find(x => x.id === "discovery_salmon_nigiri")), false);
+// SHELLFISH_SAFE ist eng: andere "California …"-Gerichte (mit Krabbe) bleiben gefiltert
+check("SHELLFISH_SAFE eng: 'California rolls' bleibt Schalentier", T.isShellfish({ name: "California rolls" }), true);
+check("SHELLFISH_SAFE eng: 'California Dragon roll' bleibt Schalentier", T.isShellfish({ name: "California Dragon roll" }), true);
 // Salmon Maki bleibt (Fisch, kein Schalentier); keins der 4 neuen Items wird vom Schalentier-Namensfilter erfasst
 check("Waitrose: neue Items nicht schalentier-gefiltert", ["menu_san_sushi_set", "salmon_maki", "veggie_gyoza", "avocado_maki"].every(id => !T.isShellfish(T.WAITROSE.items.find(x => x.id === id))), true);
 // Salmon Maki @108g -> kcal 171×1.08 = 184.7
