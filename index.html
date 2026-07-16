@@ -2736,6 +2736,12 @@ const WAITROSE = { items: [
     p100:{ kcal:97, fat:1.0, sat:0, carbs:15, sugars:6.3, fibre:0, protein:6.9, salt:0.73 } },
   { id:"teriyaki_chicken_poke", name:"Teriyaki Chicken Poke", brand:"Sushi Daily", variable:true, g:366,
     p100:{ kcal:142, fat:3.6, sat:0, carbs:21, sugars:6.1, fibre:1.2, protein:5.8, salt:0.48 } },
+  { id:"discovery_salmon_nigiri", name:"Discovery Salmon Nigiri", brand:"Sushi Daily", variable:true, g:84,
+    p100:{ kcal:169, fat:5.4, sat:0, carbs:21, sugars:2.6, fibre:0, protein:9.1, salt:0.07 } },
+  // "California Maki" enthält i.d.R. Krabbe/Surimi → matcht isShellfish ("california") → im Build-Optimizer automatisch
+  // ausgeschlossen (User-Allergie); nur im manuellen Track-Warenkorb wählbar. Falls krabbenfrei: Name-Match bleibt trotzdem.
+  { id:"california_maki", name:"California Maki", brand:"Sushi Daily", variable:true, g:140,
+    p100:{ kcal:185, fat:8.9, sat:0, carbs:18, sugars:2.2, fibre:1.1, protein:7.7, salt:0.06 } },
 ] };
 // Makros eines Produkts bei gegebener Gramm-Zahl (p100 × g/100), 1 Dezimale. Ungueltige Gramm → typisches Gewicht
 function wtScale(item, grams){

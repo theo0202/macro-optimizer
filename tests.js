@@ -1315,7 +1315,7 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (15)", T.WAITROSE.items.length, 15);
+check("Waitrose Produkte (17)", T.WAITROSE.items.length, 17);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
 const wPoke = T.WAITROSE.items.find(x => x.id === "deluxe_duo_poke");
 check("Waitrose Deluxe Duo Poke variabel, typ. 360g", wPoke.variable === true && wPoke.g === 360, true);
@@ -1332,9 +1332,9 @@ check("Waitrose Chicken Fillets fix 165g", wChick.variable === false && wChick.g
 check("Waitrose wtScale Chicken@165g kcal (239.3)", T.wtScale(wChick, 165).kcal, 239.3);
 check("Waitrose wtScale Chicken@165g protein (38)", T.wtScale(wChick, 165).protein, 38);
 // Suche
-check("waitroseSearch 'sushi daily' findet die 13 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 13);
+check("waitroseSearch 'sushi daily' findet die 15 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 15);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 15);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 17);
 // Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
 const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
 check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);
@@ -1351,13 +1351,18 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 15 Items", wItems.length, 15);
+check("waitroseOrderItems: 17 Items", wItems.length, 17);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 1 Kategorie + 15 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 15, true);
+check("WAITROSE_MENU hat 1 Kategorie + 17 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 17, true);
+// Schalentier-Sicherheit: California Maki (Krabbe/Surimi) matcht isShellfish -> im Build-Optimizer NIE, aber im Katalog (Track manuell)
+check("Waitrose California Maki ist schalentier-geflaggt", T.isShellfish(T.WAITROSE.items.find(x => x.id === "california_maki")), true);
+check("Waitrose California Maki im Katalog (Track manuell waehlbar)", T.WAITROSE.items.some(x => x.id === "california_maki"), true);
+check("Waitrose Build-Optimizer schliesst California Maki aus", T.optimizeWaitrose({ protein: 8, carbs: 25, fat: 12, kcal: 260, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, Infinity).every(r => r.items.every(x => x.id !== "california_maki")), true);
+check("Waitrose Discovery Salmon Nigiri kein Schalentier (Fisch)", T.isShellfish(T.WAITROSE.items.find(x => x.id === "discovery_salmon_nigiri")), false);
 // Salmon Maki bleibt (Fisch, kein Schalentier); keins der 4 neuen Items wird vom Schalentier-Namensfilter erfasst
 check("Waitrose: neue Items nicht schalentier-gefiltert", ["menu_san_sushi_set", "salmon_maki", "veggie_gyoza", "avocado_maki"].every(id => !T.isShellfish(T.WAITROSE.items.find(x => x.id === id))), true);
 // Salmon Maki @108g -> kcal 171×1.08 = 184.7
