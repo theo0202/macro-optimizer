@@ -3259,6 +3259,7 @@ function App() {
 
   // Waitrose Supermarkt-Tracker — eigener Warenkorb mit Gramm-Eingabe je Produkt (in localStorage)
   const [wQ,setWQ]=useState("");
+  const [wTrackCat,setWTrackCat]=useState("all"); // Track-Modus: schneller Kategorie-Filter (Einzelauswahl, "all" = alle)
   const [wOrder,setWOrder]=useState(()=>{try{const v=JSON.parse(localStorage.getItem("wt_waitrose_order")||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}});
   useEffect(()=>{try{localStorage.setItem("wt_waitrose_order",JSON.stringify(wOrder));}catch(e){}},[wOrder]);
   // Variable-Gewicht-Produkte: JEDE Zugabe = eigene Zeile (Gewicht variiert je Artikel, individuell eingebbar).
@@ -3273,7 +3274,7 @@ function App() {
   const changeQtyW=(i,d)=>setWOrder(o=>o.map((e,idx)=>idx===i?{...e,qty:Math.max(1,(e.qty||1)+d)}:e));
   const removeW=i=>setWOrder(o=>o.filter((_,idx)=>idx!==i));
   const clearW=()=>setWOrder([]);
-  const wResults=useMemo(()=>resto==="waitrose"?waitroseSearch(wQ,60):[],[resto,wQ]);
+  const wResults=useMemo(()=>resto==="waitrose"?waitroseSearch(wQ,60).filter(x=>wTrackCat==="all"||x.cat===wTrackCat):[],[resto,wQ,wTrackCat]);
   const wTotal=useMemo(()=>waitroseTotal(wOrder),[wOrder]);
   const r1=x=>Math.round(x*10)/10;
   // Waitrose "Build order" (Optimizer über typische Gewichte) vs. "Track basket" (manueller Warenkorb oben)
@@ -3988,7 +3989,12 @@ function App() {
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:6}},"Waitrose · track basket"),
         h("div",{style:{fontSize:11,color:"#777",marginBottom:10,lineHeight:1.5}},"Search Waitrose products and add what you bought. For weight-varying items (e.g. Sushi Daily counter bowls) edit the grams — a typical weight is pre-filled; the macros scale from per-100g."),
         h("input",{type:"text",value:wQ,onChange:e=>setWQ(e.target.value),placeholder:"Search Waitrose / Sushi Daily…",
-          style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"11px 14px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:12}}),
+          style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"11px 14px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:10}}),
+        // Kategorie-Filter (Einzelauswahl) — schnell nach Produkttyp browsen
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:14}},
+          h(Chip,{label:"All",small:true,active:wTrackCat==="all",onClick:()=>setWTrackCat("all")}),
+          ...WAITROSE.cats.map(c=>h(Chip,{key:c.id,label:c.name,small:true,active:wTrackCat===c.id,onClick:()=>setWTrackCat(wTrackCat===c.id?"all":c.id)}))
+        ),
         h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:18}},
           wResults.length===0
             ? h("div",{style:{fontSize:12,color:"#666",fontFamily:S.mono}},"No matches.")
