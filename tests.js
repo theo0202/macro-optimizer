@@ -1315,8 +1315,23 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (17)", T.WAITROSE.items.length, 17);
+check("Waitrose Produkte (20)", T.WAITROSE.items.length, 20);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
+// Kategorien (User 13.07.2026): Chicken pieces / Sushi / Poke / Bowl / Gyoza / Vegetables
+check("Waitrose 6 Kategorien", T.WAITROSE.cats.length, 6);
+check("Waitrose jedes Item hat gueltige Kategorie", T.WAITROSE.items.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
+check("Waitrose Chicken pieces = 5 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 5);
+check("Waitrose Vegetables = nur Edamame", T.WAITROSE.items.filter(x => x.cat === "vegetables").map(x => x.id).join() === "edamame_sushi_daily", true);
+check("Waitrose Bowl = Yakisoba + Korean FC", T.WAITROSE.items.filter(x => x.cat === "bowl").length, 2);
+// Sweet Chilli Mini Fillets geloescht (anderes Produkt als die Pieces)
+check("Waitrose: Sweet Chilli Mini Fillets geloescht", T.WAITROSE.items.some(x => x.id === "sweet_chilli_chicken_mini_fillets"), false);
+// Yakisoba Chicken -> "Yakisoba Chicken Bowl" (ist eine Bowl)
+check("Waitrose Yakisoba heisst jetzt 'Yakisoba Chicken Bowl'", T.WAITROSE.items.find(x => x.id === "yakisoba_chicken").name === "Yakisoba Chicken Bowl", true);
+// Neue Chicken Pieces (fix 160g): Smoky Chipotle @160g -> kcal 147×1.6 = 235.2, protein 24.5×1.6 = 39.2
+const wSmoky = T.WAITROSE.items.find(x => x.id === "smoky_chipotle_lime_chicken_pieces");
+check("Waitrose Smoky Chipotle Pieces cat chicken_pieces, fix 160g", wSmoky.cat === "chicken_pieces" && wSmoky.variable === false && wSmoky.g === 160, true);
+check("Waitrose wtScale Smoky Chipotle@160g kcal (235.2)", T.wtScale(wSmoky, 160).kcal, 235.2);
+check("Waitrose Lemon&Herb Pieces vorhanden (fibre <0.5 -> 0.5)", T.WAITROSE.items.find(x => x.id === "lemon_herb_chicken_pieces").p100.fibre, 0.5);
 const wPoke = T.WAITROSE.items.find(x => x.id === "deluxe_duo_poke");
 check("Waitrose Deluxe Duo Poke variabel, typ. 360g", wPoke.variable === true && wPoke.g === 360, true);
 // wtScale: per-100g × g/100. Poke bei 360g: kcal 153×3.6 = 550.8, protein 6.2×3.6 = 22.3
@@ -1326,22 +1341,22 @@ check("Waitrose wtScale Poke@360g protein (22.3)", T.wtScale(wPoke, 360).protein
 check("Waitrose wtScale Poke@400g kcal (612)", T.wtScale(wPoke, 400).kcal, 612);
 // ungueltige Gramm -> typisches Gewicht (360)
 check("Waitrose wtScale ungueltige Gramm -> typisch", T.wtScale(wPoke, 0).kcal === T.wtScale(wPoke, 360).kcal && T.wtScale(wPoke, "").kcal === T.wtScale(wPoke, 360).kcal, true);
-// fixes Produkt: Chicken Mini Fillets 165g -> kcal 145×1.65 = 239.3, protein 23×1.65 = 38(.0)... genau 37.95->38
-const wChick = T.WAITROSE.items.find(x => x.id === "sweet_chilli_chicken_mini_fillets");
-check("Waitrose Chicken Fillets fix 165g", wChick.variable === false && wChick.g === 165, true);
-check("Waitrose wtScale Chicken@165g kcal (239.3)", T.wtScale(wChick, 165).kcal, 239.3);
-check("Waitrose wtScale Chicken@165g protein (38)", T.wtScale(wChick, 165).protein, 38);
+// fixes Produkt: Sweet Chilli Chicken Pieces 160g -> kcal 127×1.6 = 203.2, protein 25×1.6 = 40
+const wChick = T.WAITROSE.items.find(x => x.id === "sweet_chilli_chicken_pieces");
+check("Waitrose Sweet Chilli Pieces fix 160g", wChick.variable === false && wChick.g === 160, true);
+check("Waitrose wtScale Chicken@160g kcal (203.2)", T.wtScale(wChick, 160).kcal, 203.2);
+check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).protein, 40);
 // Suche
 check("waitroseSearch 'sushi daily' findet die 15 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 15);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 17);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 20);
 // Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
 const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
 check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);
 check("Waitrose wtScale Korean FC Bowl@326g kcal (599.8)", T.wtScale(wKfc, 326).kcal, 599.8);
 check("Waitrose wtScale Chicken Gyoza@130g protein (10.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "chicken_gyoza_sushi_daily"), 130).protein, 10.5);
 // waitroseTotal: [{item, qty, g}]
-check("waitroseTotal Poke@360 + Chicken@165 kcal", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wChick, qty: 1, g: 165 }]).kcal, Math.round((550.8 + 239.3) * 10) / 10);
+check("waitroseTotal Poke@360 + Chicken@160 kcal", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wChick, qty: 1, g: 160 }]).kcal, Math.round((550.8 + 203.2) * 10) / 10);
 // Variabel doppelt = 2 getrennte Zeilen mit je eigenem Gewicht (nicht 2x gleiches Gewicht): 360g + 300g
 check("waitroseTotal 2x Poke, unterschiedliche Gewichte (360 + 300)", T.waitroseTotal([{ item: wPoke, qty: 1, g: 360 }, { item: wPoke, qty: 1, g: 300 }]).kcal, Math.round((550.8 + 153 * 3) * 10) / 10);
 // wtScale rundet die skalierte Portion zuerst (12×0.93 -> 11.2), dann ×qty: 22.4
@@ -1351,16 +1366,21 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 17 Items", wItems.length, 17);
+check("waitroseOrderItems: 20 Items", wItems.length, 20);
+check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 1 Kategorie + 17 Items", T.WAITROSE_MENU.cats.length === 1 && T.WAITROSE_MENU.items.length === 17, true);
+check("WAITROSE_MENU hat 6 Kategorien + 20 Items", T.WAITROSE_MENU.cats.length === 6 && T.WAITROSE_MENU.items.length === 20, true);
+// activeCats fuer optimizeWaitrose (neue Signatur t,mode,p,activeCats,maxN)
+const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true);
+// Kategorie-Filter: nur chicken_pieces -> alle Ergebnis-Items sind chicken_pieces
+check("Waitrose Build Kategorie-Filter (nur chicken_pieces)", T.optimizeWaitrose({ protein: 40, carbs: 3, fat: 2, kcal: 200, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { chicken_pieces: true }, 2).every(r => r.items.every(x => x.cat === "chicken_pieces")), true);
 // California Maki (Sushi Daily) ist laut User schalentierFREI -> via SHELLFISH_SAFE vom "california"-Filter ausgenommen
 check("Waitrose California Maki NICHT schalentier-geflaggt (User: crab-free)", T.isShellfish(T.WAITROSE.items.find(x => x.id === "california_maki")), false);
-check("Waitrose California Maki erscheint im Build-Optimizer (Ziel = seine Makros)", T.optimizeWaitrose({ protein: 10.8, carbs: 25.2, fat: 12.5, kcal: 259, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, 2).some(r => r.items.some(x => x.id === "california_maki")), true);
+check("Waitrose California Maki erscheint im Build-Optimizer (Ziel = seine Makros)", T.optimizeWaitrose({ protein: 10.8, carbs: 25.2, fat: 12.5, kcal: 259, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 2).some(r => r.items.some(x => x.id === "california_maki")), true);
 check("Waitrose Discovery Salmon Nigiri kein Schalentier (Fisch)", T.isShellfish(T.WAITROSE.items.find(x => x.id === "discovery_salmon_nigiri")), false);
 // SHELLFISH_SAFE ist eng: andere "California …"-Gerichte (mit Krabbe) bleiben gefiltert
 check("SHELLFISH_SAFE eng: 'California rolls' bleibt Schalentier", T.isShellfish({ name: "California rolls" }), true);
@@ -1377,7 +1397,7 @@ check("Waitrose Green Thai Chicken fix 160g", wThai.variable === false && wThai.
 check("Waitrose wtScale Green Thai Chicken@160g kcal (211.2)", T.wtScale(wThai, 160).kcal, 211.2);
 check("Waitrose wtScale Green Thai Chicken@160g protein (40.3)", T.wtScale(wThai, 160).protein, 40.3);
 // optimizeWaitrose: liefert Ergebnisse in AC-Form {items, nutrition, score}
-const wOpt = T.optimizeWaitrose({ carbs: 60, protein: 40, fat: 20, kcal: 580 }, "macros", { hiP: true, loF: true }, 5);
+const wOpt = T.optimizeWaitrose({ carbs: 60, protein: 40, fat: 20, kcal: 580 }, "macros", { hiP: true, loF: true }, waAll, 5);
 check("optimizeWaitrose liefert Ergebnisse", wOpt.length > 0, true);
 check("optimizeWaitrose Ergebnis-Form (items/nutrition/score)", !!(wOpt[0].items && wOpt[0].nutrition && typeof wOpt[0].score === "number"), true);
 // Bei hohem Protein-Ziel sollte die Top-Kombi Protein liefern (Chicken-Fillets/Edamame sind proteinreich)
