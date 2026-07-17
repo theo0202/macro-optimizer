@@ -1315,12 +1315,12 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (20)", T.WAITROSE.items.length, 20);
+check("Waitrose Produkte (21)", T.WAITROSE.items.length, 21);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
 // Kategorien (User 13.07.2026): Chicken pieces / Sushi / Poke / Bowl / Gyoza / Vegetables
 check("Waitrose 6 Kategorien", T.WAITROSE.cats.length, 6);
 check("Waitrose jedes Item hat gueltige Kategorie", T.WAITROSE.items.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
-check("Waitrose Chicken pieces = 5 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 5);
+check("Waitrose Chicken pieces = 6 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 6);
 check("Waitrose Vegetables = nur Edamame", T.WAITROSE.items.filter(x => x.cat === "vegetables").map(x => x.id).join() === "edamame_sushi_daily", true);
 check("Waitrose Bowl = Yakisoba + Korean FC", T.WAITROSE.items.filter(x => x.cat === "bowl").length, 2);
 // Sweet Chilli Mini Fillets geloescht (anderes Produkt als die Pieces)
@@ -1349,7 +1349,7 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 // Suche
 check("waitroseSearch 'sushi daily' findet die 15 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 15);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 20);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 21);
 // Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
 const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
 check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);
@@ -1366,14 +1366,19 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 20 Items", wItems.length, 20);
+check("waitroseOrderItems: 21 Items", wItems.length, 21);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 6 Kategorien + 20 Items", T.WAITROSE_MENU.cats.length === 6 && T.WAITROSE_MENU.items.length === 20, true);
+check("WAITROSE_MENU hat 6 Kategorien + 21 Items", T.WAITROSE_MENU.cats.length === 6 && T.WAITROSE_MENU.items.length === 21, true);
+// Flamegrilled Chicken Pieces (fix 160g) -> kcal 138×1.6 = 220.8, protein 27.7×1.6 = 44.3
+const wFlame = T.WAITROSE.items.find(x => x.id === "flamegrilled_chicken_pieces");
+check("Waitrose Flamegrilled Pieces cat chicken_pieces, fix 160g", wFlame.cat === "chicken_pieces" && wFlame.variable === false && wFlame.g === 160, true);
+check("Waitrose wtScale Flamegrilled@160g kcal (220.8)", T.wtScale(wFlame, 160).kcal, 220.8);
+check("Waitrose wtScale Flamegrilled@160g protein (44.3)", T.wtScale(wFlame, 160).protein, 44.3);
 // activeCats fuer optimizeWaitrose (neue Signatur t,mode,p,activeCats,maxN)
 const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true);
 // Kategorie-Filter: nur chicken_pieces -> alle Ergebnis-Items sind chicken_pieces
