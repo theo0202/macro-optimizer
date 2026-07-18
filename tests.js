@@ -1361,7 +1361,12 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 // Suche
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 52);
+// waitroseSearch schliesst die 3 Nuss-Portionen ein (Track-Basket): 52 Produkte + 3 Nuesse = 55
+check("waitroseSearch leere Query -> Katalog + 3 Nuesse (55)", T.waitroseSearch("", 60).length, 55);
+check("waitroseSearch 'peanut' findet Roasted Peanuts (Nuss im Track)", T.waitroseSearch("peanut", 60).some(x => x.id === "peanuts"), true);
+check("waitroseSearch 'pine' findet Pine Kernels", T.waitroseSearch("pine", 60).some(x => x.id === "pine" && x.variable === true && x.cat === "nuts"), true);
+// Nuesse bleiben AUSSERHALB des Build-Pools (WAITROSE.items / WAITROSE_MENU unveraendert bei 52)
+check("Nuesse nicht in WAITROSE.items (nur Track)", T.WAITROSE.items.some(x => x.id === "peanuts"), false);
 // Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
 const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
 check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);

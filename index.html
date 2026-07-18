@@ -2840,10 +2840,11 @@ function wtScale(item, grams){
   KEYS.forEach(k=>o[k]=Math.round(((item.p100&&item.p100[k])||0)*g/100*10)/10);
   return o;
 }
-// Substring-Suche ueber die Waitrose-Produkte (Name+Marke); leere Query = alle (Katalog)
+// Substring-Suche ueber die Waitrose-Produkte + die 3 Nuss-Portionen (Name+Marke); leere Query = alle (Katalog).
+// Nuesse (WAITROSE_NUTS) sind im Track-Basket such-/hinzufuegbar (per-100g, 20 g typisch + editierbar) — NUR hier, nicht im Build-Pool.
 function waitroseSearch(query, limit){
   const q=(query||"").trim().toLowerCase(), terms=q?q.split(/\s+/):[];
-  return WAITROSE.items.filter(x=>{const hay=(x.name+" "+x.brand).toLowerCase();return terms.every(t=>hay.includes(t));})
+  return WAITROSE.items.concat(WAITROSE_NUTS).filter(x=>{const hay=(x.name+" "+x.brand).toLowerCase();return terms.every(t=>hay.includes(t));})
     .slice(0, limit||60);
 }
 // Summe eines Warenkorbs [{item, qty, g}] — Makros = p100 × g/100 × qty, 1 Dezimale
@@ -2875,10 +2876,12 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
 // Waitrose-Nuss-Toppings ("top with …", NUR Waitrose-Build) — je Nuss max EINE Portion (20 g default, im Panel editierbar),
 // nicht mehrere. Werte per 100 g; die Portion skaliert per wtScale (p100 × g/100). **ERZWUNGEN** (User 13.07.2026): JEDE
 // aktivierte Nuss wird immer getopped, nicht nur wenn sie den Score verbessert (anders als Corn Cakes / früher).
+// cat/variable werden NUR fuers Track-Basket genutzt (dort such-/hinzufuegbar, 20 g typisch + editierbar); der Build-Optimizer
+// nutzt WAITROSE_NUTS als "top with"-Toppings und ignoriert cat/variable. Nuesse sind NICHT in WAITROSE.items/WAITROSE_MENU.
 const WAITROSE_NUTS=[
-  { id:"peanuts", name:"Roasted Peanuts", brand:"Waitrose", g:20, p100:{ kcal:625, fat:51.9, sat:8.7, carbs:10, sugars:4.8, fibre:6.4, protein:26.3, salt:0.02 } },
-  { id:"cashews", name:"Roasted Cashew Nuts", brand:"Waitrose", g:20, p100:{ kcal:610, fat:48.2, sat:8.2, carbs:19.3, sugars:4.5, fibre:5.1, protein:22.1, salt:0.04 } },
-  { id:"pine", name:"Pine Kernels", brand:"Waitrose (Duchy Organic)", g:20, p100:{ kcal:694, fat:68.6, sat:4.6, carbs:4, sugars:3.9, fibre:2.5, protein:14, salt:0 } },
+  { id:"peanuts", name:"Roasted Peanuts", brand:"Waitrose", cat:"nuts", variable:true, g:20, p100:{ kcal:625, fat:51.9, sat:8.7, carbs:10, sugars:4.8, fibre:6.4, protein:26.3, salt:0.02 } },
+  { id:"cashews", name:"Roasted Cashew Nuts", brand:"Waitrose", cat:"nuts", variable:true, g:20, p100:{ kcal:610, fat:48.2, sat:8.2, carbs:19.3, sugars:4.5, fibre:5.1, protein:22.1, salt:0.04 } },
+  { id:"pine", name:"Pine Kernels", brand:"Waitrose (Duchy Organic)", cat:"nuts", variable:true, g:20, p100:{ kcal:694, fat:68.6, sat:4.6, carbs:4, sugars:3.9, fibre:2.5, protein:14, salt:0 } },
 ];
 // Erzwungenes Nuss-Topping: ALLE aktiven Nuesse (je 20 g) werden addiert (keine Score-Auswahl mehr). Liefert {nuts,nutrition,score}.
 function bestWaitroseNuts(base, enabledIds, t, mode, p){
