@@ -76,9 +76,8 @@ const pPlant = T.D.proteins.find(p => p.id === "pulled_plant");
 check("Subway BBQ Pulled Plant Protein vorhanden", !!pPlant, true);
 check("Subway BBQ Pulled Plant Name (mit BBQ)", pPlant && pPlant.name === "BBQ Pulled Plant", true);
 check("Subway BBQ Pulled Plant Werte (114/10/4.6/7.2)", pPlant && pPlant.kcal === 114 && pPlant.protein === 10 && pPlant.fat === 4.6 && pPlant.carbs === 7.2 && pPlant.servingG === 60, true);
-// auch als Extra waehlbar (wie Philly Steak = Protein + Extra)
-const pPlantEx = T.D.extras.find(e => e.id === "pulled_plant_extra");
-check("Subway BBQ Pulled Plant als Extra vorhanden", !!pPlantEx && pPlantEx.name === "BBQ Pulled Plant" && pPlantEx.kcal === 114, true);
+// Ausnahme (User 13.07.2026): NUR Protein/Sub, NICHT als Extra (anders als Philly Steak/Chicken Tikka)
+check("Subway BBQ Pulled Plant NICHT als Extra", T.D.extras.some(e => e.id === "pulled_plant_extra" || /pulled plant/i.test(e.name)), false);
 // vom Optimizer als Protein waehlbar: Ziel = 6-inch Wholegrain + Pulled Plant + Std-Salad (kein Kaese) -> erscheint als Protein
 const brW6 = T.D.breads.find(b => b.id === "wholegrain"), chNone6 = T.D.cheeses.find(c => c.id === "none");
 const ppSub = T.sumN([brW6, pPlant, chNone6, ...T.STD_SALAD], 1);
