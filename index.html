@@ -4716,8 +4716,10 @@ function App() {
           const counts={};AC.sel.items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
           const uniq=[];const seenIds=new Set();
           AC.sel.items.forEach(x=>{if(!seenIds.has(x.id)){seenIds.add(x.id);uniq.push(x);}});
-          const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name})),...cornStep(ccAC),
-            ...nutAC.nuts.map(nr=>({l:nr.grams+"g",v:nr.nut.name+" ("+nr.nut.brand+")"}))];
+          // Waitrose-Einkaufsliste: Marke voranstellen ("Marke · Produkt"), damit man das Produkt im Laden schneller findet
+          const wLbl=x=>(resto==="waitrose"&&x.brand)?x.brand+" · "+x.name:x.name;
+          const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:wLbl(x)})),...cornStep(ccAC),
+            ...nutAC.nuts.map(nr=>({l:nr.grams+"g",v:nr.nut.brand+" · "+nr.nut.name}))];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
               h("span",{style:{fontSize:13}},resto==="waitrose"?"🛒":"📋"),resto==="waitrose"?" Shopping list (Waitrose)":" Order guide (Deliveroo)"),
