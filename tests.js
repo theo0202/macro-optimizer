@@ -1391,7 +1391,7 @@ check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitr
 // ── Build-Schalter (opts): No fish / No Sushi Daily / Must include vegetable / Must include carbs (alle Default AUS) ──
 const tgtAny = { protein: 20, carbs: 40, fat: 10, kcal: 330, fibMin: null, fibMax: null, sMin: null, sMax: null };
 // fish:true auf den Fisch-Items (Salmon/Poke/Sushi-Set); Chicken/Grains/Veg/Gyoza kein fish
-check("Waitrose fish-Flag auf Salmon/Poke/Sushi-Set", ["salmon_maki", "discovery_salmon_nigiri", "vibrant_salmon_poke_bowl", "salmon_tartare_bowl", "deluxe_duo_poke", "menu_san_sushi_set"].every(id => T.WAITROSE.items.find(x => x.id === id).fish === true), true);
+check("Waitrose fish-Flag auf Salmon/Poke/Sushi-Set/California", ["salmon_maki", "discovery_salmon_nigiri", "vibrant_salmon_poke_bowl", "salmon_tartare_bowl", "deluxe_duo_poke", "menu_san_sushi_set", "california_maki"].every(id => T.WAITROSE.items.find(x => x.id === id).fish === true), true);
 check("Waitrose Chicken/Grains kein fish-Flag", !T.WAITROSE.items.find(x => x.id === "teriyaki_chicken_poke").fish && !T.WAITROSE.items.find(x => x.id === "5_bean_medley").fish, true);
 // No fish: kein fish-Item im Ergebnis; Gegenprobe: Ziel = Deluxe Duo Poke -> ohne Schalter erscheint es, mit Schalter nicht
 const tgtPoke = { protein: 22.3, carbs: 68.4, fat: 19.8, kcal: 551, fibMin: null, fibMax: null, sMin: null, sMax: null };
