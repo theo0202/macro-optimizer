@@ -2872,30 +2872,24 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
   const rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
   return alaCarteCombos(t, mode, p, pool, maxN, undefined, undefined, rf);
 }
-// Waitrose-Nuss-Toppings ("top with …", NUR Waitrose-Build) — wie Corn Cakes, ABER je Nuss max EINE Portion (20 g default,
-// im Panel editierbar), nicht mehrere. Werte per 100 g; die Portion skaliert per wtScale (p100 × g/100). Selbstbegrenzend:
-// eine Nuss wird nur addiert, wenn sie den Score verbessert (sonst 0), wie Corn Cakes.
+// Waitrose-Nuss-Toppings ("top with …", NUR Waitrose-Build) — je Nuss max EINE Portion (20 g default, im Panel editierbar),
+// nicht mehrere. Werte per 100 g; die Portion skaliert per wtScale (p100 × g/100). **ERZWUNGEN** (User 13.07.2026): JEDE
+// aktivierte Nuss wird immer getopped, nicht nur wenn sie den Score verbessert (anders als Corn Cakes / früher).
 const WAITROSE_NUTS=[
   { id:"peanuts", name:"Roasted Peanuts", brand:"Waitrose", g:20, p100:{ kcal:625, fat:51.9, sat:8.7, carbs:10, sugars:4.8, fibre:6.4, protein:26.3, salt:0.02 } },
   { id:"cashews", name:"Roasted Cashew Nuts", brand:"Waitrose", g:20, p100:{ kcal:610, fat:48.2, sat:8.2, carbs:19.3, sugars:4.5, fibre:5.1, protein:22.1, salt:0.04 } },
   { id:"pine", name:"Pine Kernels", brand:"Waitrose (Duchy Organic)", g:20, p100:{ kcal:694, fat:68.6, sat:4.6, carbs:4, sugars:3.9, fibre:2.5, protein:14, salt:0 } },
 ];
-// Beste Nuss-Teilmenge (jede Nuss 0/1 × 20 g) fuer eine Basis-Nutrition — minimiert den Score; leere Menge = nichts hilft.
+// Erzwungenes Nuss-Topping: ALLE aktiven Nuesse (je 20 g) werden addiert (keine Score-Auswahl mehr). Liefert {nuts,nutrition,score}.
 function bestWaitroseNuts(base, enabledIds, t, mode, p){
-  const nuts=WAITROSE_NUTS.filter(x=>enabledIds.indexOf(x.id)>=0);
-  let best={nuts:[], nutrition:base, score:score(base,t,mode,p)};
-  const N=nuts.length;
-  for(let mask=1; mask<(1<<N); mask++){
-    const chosen=[], nn={}; for(const k of KEYS) nn[k]=base[k]||0;
-    for(let i=0;i<N;i++) if(mask&(1<<i)){ const m=wtScale(nuts[i], nuts[i].g); chosen.push(nuts[i]); for(const k of KEYS) nn[k]+=m[k]||0; }
-    for(const k of KEYS) nn[k]=Math.round(nn[k]*10)/10;
-    const s=score(nn,t,mode,p);
-    if(s<best.score-1e-9) best={nuts:chosen, nutrition:nn, score:s};
-  }
-  return best;
+  const chosen=WAITROSE_NUTS.filter(x=>enabledIds.indexOf(x.id)>=0);
+  const nn={}; for(const k of KEYS) nn[k]=base[k]||0;
+  chosen.forEach(nut=>{ const m=wtScale(nut, nut.g); for(const k of KEYS) nn[k]+=m[k]||0; });
+  for(const k of KEYS) nn[k]=Math.round(nn[k]*10)/10;
+  return {nuts:chosen, nutrition:nn, score:score(nn,t,mode,p)};
 }
-// Augmentiert + re-sortiert die Ergebnisliste um die beste Nuss-Teilmenge (je 20 g). Leere enabledIds → unveraendert.
-// r.nuts = gewaehlte Nuesse (je 20 g default), r._nutBase = nutrition VOR Nuessen (fuer Live-Recompute im Panel).
+// Augmentiert + re-sortiert die Ergebnisliste: JEDE aktive Nuss wird erzwungen addiert (je 20 g). Leere enabledIds → unveraendert.
+// r.nuts = alle aktiven Nuesse (je 20 g default), r._nutBase = nutrition VOR Nuessen (fuer Live-Recompute im Panel).
 function applyWaitroseNuts(arr, enabledIds, t, mode, p){
   if(!enabledIds||!enabledIds.length) return arr;
   return arr.map(r=>{ const b=bestWaitroseNuts(r.nutrition, enabledIds, t, mode, p);

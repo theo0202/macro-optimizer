@@ -1421,9 +1421,10 @@ const zero = { kcal: 0, fat: 0, sat: 0, carbs: 0, sugars: 0, fibre: 0, protein: 
 const peanut20 = T.wtScale(T.WAITROSE_NUTS.find(n => n.id === "peanuts"), 20);
 // Ziel = Peanuts@20g -> aus leerer Basis wird Peanuts gewaehlt (Score ~0)
 const tgtPeanut = { protein: peanut20.protein, carbs: peanut20.carbs, fat: peanut20.fat, kcal: peanut20.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
-check("bestWaitroseNuts waehlt Peanuts (Ziel = Peanuts@20g)", T.bestWaitroseNuts(zero, ["peanuts"], tgtPeanut, "macros", {}).nuts.map(n => n.id).join() === "peanuts", true);
-// selbstbegrenzend: Basis bereits AM Ziel -> keine Nuss (Ueberschuss verschlechtert)
-check("bestWaitroseNuts selbstbegrenzend (Basis am Ziel -> leer)", T.bestWaitroseNuts(peanut20, ["peanuts"], tgtPeanut, "macros", {}).nuts.length, 0);
+check("bestWaitroseNuts erzwingt aktivierte Peanuts", T.bestWaitroseNuts(zero, ["peanuts"], tgtPeanut, "macros", {}).nuts.map(n => n.id).join() === "peanuts", true);
+// ERZWUNGEN (User 13.07.2026): auch wenn die Basis schon am Ziel ist, wird die aktivierte Nuss addiert (nicht selbstbegrenzend)
+check("bestWaitroseNuts erzwingt Nuss auch wenn Score sich verschlechtert", T.bestWaitroseNuts(peanut20, ["peanuts"], tgtPeanut, "macros", {}).nuts.length, 1);
+check("bestWaitroseNuts keine aktive Nuss -> leer", T.bestWaitroseNuts(zero, [], tgtPeanut, "macros", {}).nuts.length, 0);
 // je Nuss max 1 Portion: chosen-Array hat jede Nuss hoechstens einmal
 const rNut = T.bestWaitroseNuts(zero, ["peanuts", "cashews", "pine"], { protein: 30, carbs: 15, fat: 40, kcal: 520, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
 check("bestWaitroseNuts: jede Nuss max 1x", new Set(rNut.nuts.map(n => n.id)).size === rNut.nuts.length, true);
