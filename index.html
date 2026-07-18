@@ -4151,7 +4151,7 @@ function App() {
                   h("div",{style:{display:"flex",alignItems:"center",gap:7,marginBottom:2}},
                     h("span",{style:{fontSize:8,fontWeight:700,color:"#86efac",background:"rgba(34,139,58,0.16)",border:"1px solid rgba(34,139,58,0.4)",borderRadius:5,padding:"2px 5px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},it.brand),
                     h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},it.name)),
-                  h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888"}},it.p100.kcal+" kcal/100g · P "+it.p100.protein+" · C "+it.p100.carbs+" · F "+it.p100.fat+"  ·  "+(it.variable?"typ. "+it.g+"g":it.g+"g fixed"))),
+                  h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888"}},(()=>{const m=wtScale(it,it.g);return m.kcal+" kcal · P "+m.protein+" · C "+m.carbs+" · F "+m.fat+"  ·  "+(it.variable?"typ. "+it.g+"g":it.g+"g fixed");})())),
                 h("button",{onClick:()=>addW(it),style:{flexShrink:0,background:S.green,border:"none",color:"#fff",borderRadius:8,padding:"7px 12px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:S.font}},"+ Add")
               ))
         ),
