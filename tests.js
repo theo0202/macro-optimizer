@@ -1315,14 +1315,25 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (23)", T.WAITROSE.items.length, 23);
+check("Waitrose Produkte (51)", T.WAITROSE.items.length, 51);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
-// Kategorien (User 13.07.2026): Chicken pieces / Sushi / Poke / Bowl / Gyoza / Vegetables
-check("Waitrose 6 Kategorien", T.WAITROSE.cats.length, 6);
+// Kategorien: Chicken pieces / Sushi / Poke / Bowl / Gyoza / Carbs, Rice, Grains / Vegetables (Excel-Import 13.07.2026)
+check("Waitrose 7 Kategorien", T.WAITROSE.cats.length, 7);
 check("Waitrose jedes Item hat gueltige Kategorie", T.WAITROSE.items.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 check("Waitrose Chicken pieces = 6 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 6);
-check("Waitrose Vegetables = nur Edamame", T.WAITROSE.items.filter(x => x.cat === "vegetables").map(x => x.id).join() === "edamame_sushi_daily", true);
+check("Waitrose Carbs/Rice/Grains = 23 Items (Excel)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 23);
+check("Waitrose Vegetables = 6 (Sushi-Daily-Edamame + 5 Excel)", T.WAITROSE.items.filter(x => x.cat === "vegetables").length, 6);
+check("Waitrose Vegetables enthaelt Sushi-Daily-Edamame weiterhin", T.WAITROSE.items.some(x => x.id === "edamame_sushi_daily"), true);
 check("Waitrose Bowl = Yakisoba + Korean FC + Salmon Tartare", T.WAITROSE.items.filter(x => x.cat === "bowl").length, 3);
+// Excel-Import: div. Marken (nicht nur Waitrose); alle fixes Gewicht; Doppelnamen ueber Marken mit distinkten IDs
+check("Waitrose Excel: mehrere Marken (Merchant Gourmet/Tilda/...)", ["Merchant Gourmet", "Tilda", "Ben's Original", "Veetee", "Irwin's"].every(b => T.WAITROSE.items.some(x => x.brand === b)), true);
+check("Waitrose Excel: 2x 'Golden Vegetable Rice' (Waitrose + Tilda), distinkte IDs", T.WAITROSE.items.filter(x => x.name === "Golden Vegetable Rice").length === 2 && new Set(T.WAITROSE.items.filter(x => x.name === "Golden Vegetable Rice").map(x => x.id)).size === 2, true);
+check("Waitrose Excel: alle Carbs/Rice/Grains fixes Gewicht", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").every(x => x.variable === false), true);
+// Spot-Checks gegen die Excel: 5 Bean Medley (240g) kcal 133×2.4 = 319.2; Sticky Rice (Tilda 250g vs Veetee 260g) distinkt
+const wBean = T.WAITROSE.items.find(x => x.id === "5_bean_medley");
+check("Waitrose 5 Bean Medley fix 240g, kcal 133/100g", wBean.g === 240 && wBean.p100.kcal === 133, true);
+check("Waitrose wtScale 5 Bean Medley@240g kcal (319.2)", T.wtScale(wBean, 240).kcal, 319.2);
+check("Waitrose Edamame Beans (Waitrose, fix 160g) != Sushi-Daily-Edamame", (() => { const a = T.WAITROSE.items.find(x => x.id === "edamame_beans"); const b = T.WAITROSE.items.find(x => x.id === "edamame_sushi_daily"); return a.variable === false && a.g === 160 && b.variable === true; })(), true);
 // Sweet Chilli Mini Fillets geloescht (anderes Produkt als die Pieces)
 check("Waitrose: Sweet Chilli Mini Fillets geloescht", T.WAITROSE.items.some(x => x.id === "sweet_chilli_chicken_mini_fillets"), false);
 // Yakisoba Chicken -> "Yakisoba Chicken Bowl" (ist eine Bowl)
@@ -1349,7 +1360,7 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 // Suche
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 23);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 51);
 // Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
 const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
 check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);
@@ -1366,14 +1377,16 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 23 Items", wItems.length, 23);
+check("waitroseOrderItems: 51 Items", wItems.length, 51);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 6 Kategorien + 23 Items", T.WAITROSE_MENU.cats.length === 6 && T.WAITROSE_MENU.items.length === 23, true);
+check("WAITROSE_MENU hat 7 Kategorien + 51 Items", T.WAITROSE_MENU.cats.length === 7 && T.WAITROSE_MENU.items.length === 51, true);
+// Build-Kategorie-Filter fuer die neue Excel-Kategorie
+check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitrose({ protein: 6, carbs: 45, fat: 4, kcal: 250, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { carbs_rice_grains: true }, 2).every(r => r.items.every(x => x.cat === "carbs_rice_grains")), true);
 // Neue Sushi-Daily (variabel): Salmon Tartare Bowl @354g -> kcal 175×3.54 = 619.5; Veggie Roll (sushi) @175g -> kcal 135×1.75 = 236.3
 check("Waitrose Salmon Tartare Bowl cat bowl, variabel typ. 354g", (() => { const x = T.WAITROSE.items.find(y => y.id === "salmon_tartare_bowl"); return x.cat === "bowl" && x.variable === true && x.g === 354; })(), true);
 check("Waitrose wtScale Salmon Tartare Bowl@354g kcal (619.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "salmon_tartare_bowl"), 354).kcal, 619.5);
