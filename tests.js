@@ -1315,12 +1315,13 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (51)", T.WAITROSE.items.length, 51);
+check("Waitrose Produkte (52)", T.WAITROSE.items.length, 52);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
 // Kategorien: Chicken pieces / Sushi / Poke / Bowl / Gyoza / Carbs, Rice, Grains / Vegetables (Excel-Import 13.07.2026)
 check("Waitrose 7 Kategorien", T.WAITROSE.cats.length, 7);
 check("Waitrose jedes Item hat gueltige Kategorie", T.WAITROSE.items.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
-check("Waitrose Chicken pieces = 6 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 6);
+check("Waitrose Chicken pieces = 7 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 7);
+check("Waitrose British Katsu Chicken Pieces (fix 160g, kcal 135)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_katsu_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 135; })(), true);
 check("Waitrose Carbs/Rice/Grains = 23 Items (Excel)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 23);
 check("Waitrose Vegetables = 6 (Sushi-Daily-Edamame + 5 Excel)", T.WAITROSE.items.filter(x => x.cat === "vegetables").length, 6);
 check("Waitrose Vegetables enthaelt Sushi-Daily-Edamame weiterhin", T.WAITROSE.items.some(x => x.id === "edamame_sushi_daily"), true);
@@ -1360,7 +1361,7 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 // Suche
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
-check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 51);
+check("waitroseSearch leere Query -> ganzer Katalog", T.waitroseSearch("", 60).length, 52);
 // Neue Produkte (12.07.2026): Korean Fried Chicken Bowl @326g -> kcal 184×3.26 = 599.8; Chicken Gyoza @130g -> protein 8.1×1.3 = 10.5
 const wKfc = T.WAITROSE.items.find(x => x.id === "korean_fried_chicken_bowl");
 check("Waitrose Korean Fried Chicken Bowl variabel, typ. 326g", wKfc.variable === true && wKfc.g === 326, true);
@@ -1377,14 +1378,14 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 51 Items", wItems.length, 51);
+check("waitroseOrderItems: 52 Items", wItems.length, 52);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 7 Kategorien + 51 Items", T.WAITROSE_MENU.cats.length === 7 && T.WAITROSE_MENU.items.length === 51, true);
+check("WAITROSE_MENU hat 7 Kategorien + 52 Items", T.WAITROSE_MENU.cats.length === 7 && T.WAITROSE_MENU.items.length === 52, true);
 const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true); // activeCats = alle Kategorien an
 // Build-Kategorie-Filter fuer die neue Excel-Kategorie
 check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitrose({ protein: 6, carbs: 45, fat: 4, kcal: 250, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { carbs_rice_grains: true }, 2).every(r => r.items.every(x => x.cat === "carbs_rice_grains")), true);

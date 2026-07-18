@@ -2735,6 +2735,8 @@ const WAITROSE = {
     p100:{ kcal:132, fat:2.1, sat:0.7, carbs:2.5, sugars:2.5, fibre:1.1, protein:25.2, salt:0.62 } },
   { id:"flamegrilled_chicken_pieces", name:"Cooked Flamegrilled Chicken Pieces", brand:"Waitrose", cat:"chicken_pieces", variable:false, g:160,
     p100:{ kcal:138, fat:2.7, sat:0.8, carbs:0.6, sugars:0.6, fibre:0.5, protein:27.7, salt:0.50 } },
+  { id:"british_katsu_chicken_pieces", name:"British Katsu Chicken Pieces", brand:"Waitrose", cat:"chicken_pieces", variable:false, g:160,
+    p100:{ kcal:135, fat:2.1, sat:0.6, carbs:4.0, sugars:3.3, fibre:0.8, protein:24.7, salt:0.85 } },
   // Sushi (Sushi Daily, gewicht-variierend; sat oft nicht angegeben → 0). California Maki = User-bestätigt schalentierfrei (SHELLFISH_SAFE)
   { id:"menu_san_sushi_set", name:"Menu San Sushi Set", brand:"Sushi Daily", cat:"sushi", fish:true, variable:true, g:324,
     p100:{ kcal:175, fat:7, sat:0, carbs:20, sugars:2.5, fibre:0.6, protein:7.7, salt:0.06 } },
@@ -3195,9 +3197,9 @@ function App() {
   const [mode,setMode]=useState("macros");
   const [sortBy,setSortBy]=useState("score");
   const [subSize,setSz]=useState("footlong");
-  const [tP,setTP]=useState(30);
-  const [tC,setTC]=useState(45);
-  const [tF,setTF]=useState(12);
+  const [tP,setTP]=useState(65);
+  const [tC,setTC]=useState(85);
+  const [tF,setTF]=useState(20);
   const [tK,setTK]=useState(450);
   const [prefs,setPr]=useState({hp:true,lp:false,hc:false,lc:false,hf:false,lf:true});
   const [showAdv,setAdv]=useState(false);
@@ -3384,11 +3386,11 @@ function App() {
   // Waitrose "Build order" (Optimizer über typische Gewichte) vs. "Track basket" (manueller Warenkorb oben)
   const [wMode,setWMode]=useState("build");
   const [selWt,setSelWt]=useState(null);
-  const [maxWt,setMaxWt]=useState(5);
+  const [maxWt,setMaxWt]=useState(3);
   const [waitroseCats,setWaitroseCats]=useState(()=>{const o={};WAITROSE.cats.forEach(c=>o[c.id]=c.on);return o;});
   // Waitrose Build-Schalter (alle Default AUS — opt-in): Fisch raus / Sushi-Daily raus / Gemüse-Pflicht / Carbs-Pflicht
   const [wNoFish,setWNoFish]=useState(false);
-  const [wNoSushiDaily,setWNoSushiDaily]=useState(false);
+  const [wNoSushiDaily,setWNoSushiDaily]=useState(true);
   const [wMustVeg,setWMustVeg]=useState(false);
   const [wMustCarbs,setWMustCarbs]=useState(false);
   // "Top with …"-Nuss-Toppings (nur Waitrose-Build): Schalter je Nuss + editierbares Gramm (Default 20 g) fürs Panel
