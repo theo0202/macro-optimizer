@@ -1345,10 +1345,13 @@ check("Waitrose Bowl = Yakisoba + Korean FC + Salmon Tartare", T.WAITROSE.items.
 check("Waitrose Excel: mehrere Marken (Merchant Gourmet/Tilda/...)", ["Merchant Gourmet", "Tilda", "Ben's Original", "Veetee", "Irwin's"].every(b => T.WAITROSE.items.some(x => x.brand === b)), true);
 check("Waitrose Excel: 2x 'Golden Vegetable Rice' (Waitrose + Tilda), distinkte IDs", T.WAITROSE.items.filter(x => x.name === "Golden Vegetable Rice").length === 2 && new Set(T.WAITROSE.items.filter(x => x.name === "Golden Vegetable Rice").map(x => x.id)).size === 2, true);
 check("Waitrose Excel: alle Carbs/Rice/Grains fixes Gewicht", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").every(x => x.variable === false), true);
-// Spot-Checks gegen die Excel: 5 Bean Medley (240g) kcal 133×2.4 = 319.2; Sticky Rice (Tilda 250g vs Veetee 260g) distinkt
+// Spot-Checks gegen die Excel: 5 Bean Medley (240g) kcal 133×2.4 = 319.2; Sticky Rice (Tilda 250g vs Veetee 130g/1 Box) distinkt
 const wBean = T.WAITROSE.items.find(x => x.id === "5_bean_medley");
 check("Waitrose 5 Bean Medley fix 240g, kcal 133/100g", wBean.g === 240 && wBean.p100.kcal === 133, true);
 check("Waitrose wtScale 5 Bean Medley@240g kcal (319.2)", T.wtScale(wBean, 240).kcal, 319.2);
+// Veetee Sticky Rice = 1 Box (130g), nicht der ganze 260g-Pack (User 13.07.2026); kcal 152×1.3 = 197.6
+check("Waitrose Veetee Sticky Rice = 130g (1 Box)", T.WAITROSE.items.find(x => x.id === "sticky_rice_veetee").g, 130);
+check("Waitrose wtScale Veetee Sticky Rice@130g kcal (197.6)", T.wtScale(T.WAITROSE.items.find(x => x.id === "sticky_rice_veetee"), 130).kcal, 197.6);
 check("Waitrose Edamame Beans (Waitrose, fix 160g) != Sushi-Daily-Edamame", (() => { const a = T.WAITROSE.items.find(x => x.id === "edamame_beans"); const b = T.WAITROSE.items.find(x => x.id === "edamame_sushi_daily"); return a.variable === false && a.g === 160 && b.variable === true; })(), true);
 // Sweet Chilli Mini Fillets geloescht (anderes Produkt als die Pieces)
 check("Waitrose: Sweet Chilli Mini Fillets geloescht", T.WAITROSE.items.some(x => x.id === "sweet_chilli_chicken_mini_fillets"), false);
