@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, alaCarteCombos, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1505,6 +1505,73 @@ check("optimizeWaitrose Ergebnis-Form (items/nutrition/score)", !!(wOpt[0].items
 check("optimizeWaitrose Top-Ergebnis hat Protein > 0", wOpt[0].nutrition.protein > 0, true);
 // jedes Item im Ergebnis stammt aus dem Waitrose-Menü (typische Gewichte)
 check("optimizeWaitrose nutzt nur Waitrose-Produkte", wOpt[0].items.every(x => T.WAITROSE_MENU.items.some(y => y.id === x.id)), true);
+
+// ===== "Build around my picks": feste Basis-Produkte, Optimizer fuellt den Rest =====
+// waitrosePickItems: [{item,qty,g}] -> feste AC-Items (per qty vervielfacht), _locked, skaliert aufs Gewicht, Gramm im Namen
+const eggRaw = T.WAITROSE.items.find(x => x.id === "egg_noodles"); // fix 275g, 120 kcal/100g
+const chickRaw = T.WAITROSE.items.find(x => x.id === "sweet_chilli_chicken_pieces"); // fix 160g Chicken
+const pickExp = T.waitrosePickItems([{ item: eggRaw, qty: 2, g: 275 }, { item: chickRaw, qty: 1, g: 160 }]);
+check("waitrosePickItems: qty vervielfacht (2+1 = 3 Items)", pickExp.length, 3);
+check("waitrosePickItems: alle _locked", pickExp.every(x => x._locked === true), true);
+check("waitrosePickItems: Egg Noodles @275g = 330 kcal", pickExp.find(x => x.id === "egg_noodles").kcal, 330);
+check("waitrosePickItems: Gramm im Namen", pickExp.find(x => x.id === "egg_noodles").name.includes("275g"), true);
+check("waitrosePickItems: leere Picks -> []", T.waitrosePickItems([]).length, 0);
+// Variables Produkt mit individuellem Gramm skaliert korrekt
+const pokeRaw = T.WAITROSE.items.find(x => x.id === "deluxe_duo_poke"); // variabel, typ. 360g
+check("waitrosePickItems: variabel @300g skaliert (nicht typisch)", T.waitrosePickItems([{ item: pokeRaw, qty: 1, g: 300 }])[0].kcal, T.wtScale(pokeRaw, 300).kcal);
+
+// optimizeWaitrose mit baseItems: jede Bestellung enthaelt ALLE Picks; Vorschlaege fuellen den Rest
+const baseEgg = T.waitrosePickItems([{ item: eggRaw, qty: 1, g: 275 }]); // 330 kcal, C 61.3, P 11.3, F 3.9
+const tgtSeed = { protein: 45, carbs: 90, fat: 12, kcal: 648, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const seedRes = T.optimizeWaitrose(tgtSeed, "macros", {}, waAll, 3, { baseItems: baseEgg });
+check("optimizeWaitrose(seed): liefert Ergebnisse", seedRes.length > 0, true);
+check("optimizeWaitrose(seed): jede Bestellung enthaelt den Pick (egg_noodles)", seedRes.every(r => r.items.some(x => x.id === "egg_noodles" && x._locked)), true);
+check("optimizeWaitrose(seed): nutrition = Summe aller items (inkl. Pick)", seedRes.every(r => Math.abs(r.nutrition.kcal - r.items.reduce((s, x) => s + x.kcal, 0)) < 1), true);
+// Total-Items-Cap: maxN zaehlt Pick + Vorschlaege zusammen (1 Pick + <=2 Vorschlaege bei maxN=3)
+check("optimizeWaitrose(seed): items <= maxN (Pick zaehlt mit)", seedRes.every(r => r.items.length <= 3), true);
+check("optimizeWaitrose(seed): mind. ein Ergebnis hat Vorschlaege (>1 Item)", seedRes.some(r => r.items.length > 1), true);
+// "Nur Picks"-Kandidat gewinnt, wenn die Picks das Ziel schon uebertreffen (jeder Zusatz verschlechtert) — hier Ziel < Pick
+const tgtOver = { protein: 8, carbs: 40, fat: 2, kcal: 210, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const seedOverRes = T.optimizeWaitrose(tgtOver, "macros", {}, waAll, 3, { baseItems: baseEgg });
+check("optimizeWaitrose(seed): Picks uebertreffen Ziel -> Top = nur die Picks (1 Item)", seedOverRes[0].items.length === 1 && seedOverRes[0].items[0].id === "egg_noodles", true);
+// Picks fuellen das Limit schon (2 Picks, maxN=2) -> nur die Picks, keine Vorschlaege
+const twoPicks = T.waitrosePickItems([{ item: eggRaw, qty: 1, g: 275 }, { item: chickRaw, qty: 1, g: 160 }]);
+const capRes = T.optimizeWaitrose(tgtSeed, "macros", {}, waAll, 2, { baseItems: twoPicks });
+check("optimizeWaitrose(seed): Picks == maxN -> genau die Picks, 0 Vorschlaege", capRes.length === 1 && capRes[0].items.length === 2 && capRes[0].items.every(x => x._locked), true);
+// Regression: ohne baseItems identisch zu vorher (kein Pick -> keine _locked-Items)
+check("optimizeWaitrose ohne baseItems: keine _locked-Items", T.optimizeWaitrose(tgtSeed, "macros", {}, waAll, 3, {}).every(r => r.items.every(x => !x._locked)), true);
+// Review-Fix: Karten-Label + Einkaufsliste dedupen per id+Name+Lock (nicht nur id) — sonst verschmelzen Gewichts-/Lock-
+// Varianten desselben Produkts zu EINER falsch beschrifteten Zeile. itsuLabel testet dieselbe Dedup-Logik wie die Einkaufsliste.
+// (a) Zwei Picks desselben VARIABLEN Produkts bei unterschiedlichem Gewicht -> zwei getrennte Label-Eintraege (nicht "2×")
+const pokeA = T.waitrosePickItems([{ item: pokeRaw, qty: 1, g: 300 }])[0];
+const pokeB = T.waitrosePickItems([{ item: pokeRaw, qty: 1, g: 360 }])[0];
+check("itsuLabel: gleiche id, versch. Gewicht -> 2 getrennte Eintraege (nicht verschmolzen)", T.itsuLabel([pokeA, pokeB]).split(" + ").length, 2);
+check("itsuLabel: beide Gewichte sichtbar (300g & 360g)", T.itsuLabel([pokeA, pokeB]).includes("300g") && T.itsuLabel([pokeA, pokeB]).includes("360g"), true);
+// (b) Gesperrter Pick + gleich-id Vorschlag (nicht gesperrt) -> getrennt, nur der Pick traegt 🔒
+const eggPick = T.waitrosePickItems([{ item: eggRaw, qty: 1, g: 275 }])[0]; // _locked, "Egg Noodles (275g)"
+const eggSug = T.WAITROSE_MENU.items.find(x => x.id === "egg_noodles"); // Vorschlag, nicht _locked
+const lblMix = T.itsuLabel([eggPick, eggSug]);
+check("itsuLabel: Pick + gleich-id Vorschlag -> 2 Eintraege", lblMix.split(" + ").length, 2);
+check("itsuLabel: genau EIN 🔒 (nur der Pick)", (lblMix.match(/🔒/g) || []).length, 1);
+// (c) Regression: identische Items (gleiche id+Name+Lock) verschmelzen weiterhin zu "2×"
+check("itsuLabel: identische Items -> '2×' (Regression)", T.itsuLabel([pokeA, pokeA]).includes("2× "), true);
+// (d) Regression: normale AC-Items (id 1:1 zu Name, kein Lock) unveraendert
+const gy = T.ITSU.items[0];
+check("itsuLabel: normale AC-Duplikate -> '2×' (Regression)", T.itsuLabel([gy, gy]) === "2× " + gy.name, true);
+
+// Review-Fix: mustVeg/mustCarbs greift auch auf dem addBudget<1-Early-Return (Picks fuellen das Limit schon)
+const twoNonVeg = T.waitrosePickItems([{ item: eggRaw, qty: 1, g: 275 }, { item: chickRaw, qty: 1, g: 160 }]); // beide kein Gemuese
+check("optimizeWaitrose(seed): mustVeg + Picks==maxN + kein Gemuese-Pick -> [] (Filter nicht umgangen)", T.optimizeWaitrose(tgtSeed, "macros", {}, waAll, 2, { baseItems: twoNonVeg, mustVeg: true }).length, 0);
+// Gegenprobe: ist ein Gemuese-Pick dabei, erfuellt die Basis mustVeg -> Ergebnis (nur die Picks)
+const edaRaw = T.WAITROSE.items.find(x => x.cat === "vegetables");
+const vegPlusOne = T.waitrosePickItems([{ item: edaRaw, qty: 1, g: edaRaw.g }, { item: chickRaw, qty: 1, g: 160 }]);
+check("optimizeWaitrose(seed): mustVeg + Gemuese-Pick dabei -> Ergebnis (Basis erfuellt Pflicht)", T.optimizeWaitrose(tgtSeed, "macros", {}, waAll, 2, { baseItems: vegPlusOne, mustVeg: true }).length > 0, true);
+
+// alaCarteCombos-Kern: baseItems absent == altes Verhalten (Regression an einem AC-Restaurant)
+const poolItsu = T.ITSU.items.filter(x => x.cat === "rice_bowls");
+const combA = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "macros", {}, poolItsu, 2);
+const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "macros", {}, poolItsu, 2, undefined, undefined, undefined, undefined);
+check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);

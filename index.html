@@ -2231,10 +2231,13 @@ function optimizeFJ(t, mode, p, freeOnly) {
 // Itsu: à la carte — kombiniert 1 bis maxN Items aus aktiven Kategorien, Duplikate erlaubt (z.B. 2× Gyoza).
 // Triples per Beam-Suche (Erweiterung der besten 80 Paare), damit es auch mit allen Kategorien schnell bleibt.
 function itsuLabel(items){
-  const counts={};items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
+  // Dedup-Key = id + Name + Lock-Status: bei den 14 AC-Restaurants ist Name 1:1 zur id und _locked stets falsy → identisch
+  // zum alten id-Dedup. Bei Waitrose-Picks trennt es Gewichts-/Lock-Varianten desselben Produkts (sonst falsch verschmolzen).
+  const key=x=>x.id+"|"+x.name+"|"+(x._locked?"1":"0");
+  const counts={};items.forEach(x=>counts[key(x)]=(counts[key(x)]||0)+1);
   const seen=new Set();
-  return items.filter(x=>{if(seen.has(x.id))return false;seen.add(x.id);return true;})
-    .map(x=>(counts[x.id]>1?counts[x.id]+"× ":"")+x.name).join(" + ");
+  return items.filter(x=>{const k=key(x);if(seen.has(k))return false;seen.add(k);return true;})
+    .map(x=>(x._locked?"🔒 ":"")+(counts[key(x)]>1?counts[key(x)]+"× ":"")+x.name).join(" + "); // 🔒 = fest gewählter Pick (Waitrose)
 }
 // Getränke sind IMMER ausgeschlossen (drink:true-Kategorien). Der Schalter "No soups, desserts, snacks etc."
 // nimmt zusätzlich healthy soups, hot noodles und desserts & snacks komplett raus.
@@ -2256,18 +2259,22 @@ const SHELLFISH_SAFE=new Set(["california maki"]);
 // damit die Ausnahme auch bei den gramm-suffixierten Optimizer-Namen greift. Regex läuft weiterhin auf dem vollen Namen.
 function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); const base=n.replace(/\s*\([^)]*\)\s*$/,"").trim(); if(SHELLFISH_SAFE.has(n)||SHELLFISH_SAFE.has(base)) return false; return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
 
-function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey, resultFilter) {
+function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey, resultFilter, baseItems) {
   pool=pool.filter(x=>!isShellfish(x)); // Schalentier permanent raus (Allergie)
   const dk=distinctBy||null; // optional: keine zwei Items mit gleichem dk(x) in EINER Bestellung (z.B. "no duplicate bagels")
   const distinctOk=dk?(items,x)=>{const k=dk(x);return !items.some(y=>dk(y)===k);}:null;
+  // Optional feste Basis-Items (Waitrose "build around my picks"): stecken in JEDER Kombo, Score = base+combo gegen das volle Ziel.
+  // maxN zählt hier NUR die zusätzlichen (Vorschlags-)Items; die Basis ist nicht Teil des Pools. Ohne baseItems: byte-identisch zu vorher.
+  const B=(baseItems&&baseItems.length)?baseItems:null;
   const R=[];
   const byScore=(a,b)=>a.score-b.score;
-  for(const x of pool){const n=sumN([x],1);R.push({items:[x],nutrition:n,score:score(n,t,mode,p)});}
+  if(B){const n0=sumN(B,1);R.push({items:B.slice(),nutrition:n0,score:score(n0,t,mode,p)});} // "nur die Picks" (0 Vorschläge) — falls sie schon passen/übertreffen
+  for(const x of pool){const items=B?[...B,x]:[x];const n=sumN(items,1);R.push({items,nutrition:n,score:score(n,t,mode,p)});}
   if(maxN>=2){
     const pairs=[];
     for(let i=0;i<pool.length;i++)for(let j=i;j<pool.length;j++){
       if(dk&&dk(pool[i])===dk(pool[j]))continue; // distinct: gleicher Key (inkl. i==j) raus
-      const items=[pool[i],pool[j]],n=sumN(items,1);
+      const items=B?[...B,pool[i],pool[j]]:[pool[i],pool[j]],n=sumN(items,1);
       const r={items,nutrition:n,score:score(n,t,mode,p)};
       R.push(r);pairs.push(r);
     }
@@ -2881,8 +2888,23 @@ function waitroseOrderItems(){
     name:it.name+" ("+it.g+"g"+(it.variable?" typ.":"")+")", ...m }; });
 }
 const WAITROSE_MENU = { cats: WAITROSE.cats, items: waitroseOrderItems() };
+// "Build around my picks": der User sperrt Produkte fest, der Optimizer füllt den Rest.
+// Wandelt den Pick-Warenkorb [{item(roh WAITROSE-Produkt/Nuss), qty, g}] in feste AC-Items beim gewählten Gewicht (per qty vervielfacht),
+// jedes mit _locked:true markiert (Karte/Panel/Einkaufsliste zeigen "🔒 your pick"). Grammzahl im Namen (wie waitroseOrderItems).
+function waitrosePickItems(picks){
+  const out=[];
+  (picks||[]).forEach(e=>{
+    const it=e.item; if(!it) return;
+    const gUsed=(parseFloat(e.g)>0?parseFloat(e.g):(it.g||0)), m=wtScale(it, gUsed), q=Math.max(1, e.qty||1);
+    const base={ id:it.id, cat:it.cat, brand:it.brand, fish:!!it.fish, note:it.note||"", _locked:true,
+      name:it.name+" ("+gUsed+"g)", ...m };
+    for(let i=0;i<q;i++) out.push(base);
+  });
+  return out;
+}
 // à la carte (AC-Kern) über die typisch/fix gewichteten Produkte — Kategorie-Chips (activeCats) + Max-Items + 4 Build-Schalter (opts).
-// opts: noFish (fish:true raus), noSushiDaily (brand "Sushi Daily" raus), mustVeg (≥1 cat vegetables), mustCarbs (≥1 cat carbs_rice_grains).
+// opts: noFish (fish:true raus), noSushiDaily (brand "Sushi Daily" raus), mustVeg (≥1 cat vegetables), mustCarbs (≥1 cat carbs_rice_grains),
+// baseItems (feste "Picks" — in JEDER Bestellung enthalten; maxN zählt Picks + Vorschläge zusammen, also Vorschlags-Budget = maxN − Picks).
 function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
   opts = opts||{};
   let pool = WAITROSE_MENU.items.filter(x=>!activeCats||activeCats[x.cat]);
@@ -2890,6 +2912,15 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
   if(opts.noSushiDaily) pool = pool.filter(x=>x.brand!=="Sushi Daily");
   const reqs=[]; if(opts.mustVeg) reqs.push("vegetables"); if(opts.mustCarbs) reqs.push("carbs_rice_grains");
   const rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
+  const base = (opts.baseItems&&opts.baseItems.length)?opts.baseItems:null;
+  if(base){
+    const addBudget = (maxN===Infinity)?Infinity:Math.max(0, maxN-base.length);
+    if(addBudget<1){ // Picks füllen das Limit schon → nur die Picks (aber die Pflicht-Kategorie-Filter wie im alaCarteCombos-Pfad respektieren)
+      if(rf && !rf(base)) return []; // z.B. "must include a vegetable", aber kein Platz mehr für Vorschläge → kein passendes Ergebnis
+      const n=sumN(base,1); return [{items:base.slice(),nutrition:n,score:score(n,t,mode,p)}];
+    }
+    return alaCarteCombos(t, mode, p, pool, addBudget, undefined, undefined, rf, base);
+  }
   return alaCarteCombos(t, mode, p, pool, maxN, undefined, undefined, rf);
 }
 // Waitrose-Nuss-Toppings ("top with …", NUR Waitrose-Build) — je Nuss max EINE Portion (20 g default, im Panel editierbar),
@@ -3412,6 +3443,24 @@ function App() {
   // "Top with …"-Nuss-Toppings (nur Waitrose-Build): Schalter je Nuss + editierbares Gramm (Default 20 g) fürs Panel
   const [wNuts,setWNuts]=useState({peanuts:false,cashews:false,pine:false});
   const [wNutG,setWNutG]=useState({peanuts:20,cashews:20,pine:20});
+  // "Build around my picks" (nur Waitrose-Build): fest gewählte Produkte, die der Optimizer als Basis nimmt und drumherum auffüllt.
+  // Gleiche Warenkorb-Mechanik wie Track (variabel → eigene Zeile mit eigenem Gramm, fix → qty), persistiert.
+  const [wPickQ,setWPickQ]=useState("");
+  const [wPicks,setWPicks]=useState(()=>{try{const v=JSON.parse(localStorage.getItem("wt_waitrose_picks")||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}});
+  useEffect(()=>{try{localStorage.setItem("wt_waitrose_picks",JSON.stringify(wPicks));}catch(e){}},[wPicks]);
+  const addPick=it=>setWPicks(o=>{
+    if(it.variable) return [...o,{item:it,qty:1,g:it.g}];
+    const idx=o.findIndex(e=>e.item.id===it.id&&!e.item.variable);
+    if(idx>=0){const n=o.slice();n[idx]={...n[idx],qty:n[idx].qty+1};return n;}
+    return [...o,{item:it,qty:1,g:it.g}];
+  });
+  const setPickGram=(i,g)=>setWPicks(o=>o.map((e,idx)=>idx===i?{...e,g:g}:e));
+  const changePickQty=(i,d)=>setWPicks(o=>o.map((e,idx)=>idx===i?{...e,qty:Math.max(1,(e.qty||1)+d)}:e));
+  const removePick=i=>setWPicks(o=>o.filter((_,idx)=>idx!==i));
+  const clearPicks=()=>setWPicks([]);
+  const wPickResults=useMemo(()=>resto==="waitrose"&&wMode==="build"?waitroseSearch(wPickQ,60):[],[resto,wMode,wPickQ]);
+  const wPickItems=useMemo(()=>waitrosePickItems(wPicks),[wPicks]);
+  const wPickTotal=useMemo(()=>waitroseTotal(wPicks),[wPicks]);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -3493,7 +3542,7 @@ function App() {
   const resultsPho=useMemo(()=>resto==="pho"?optimizePho(targets,mode,prefs,phoCats,maxPho):[],[resto,targets,mode,prefs,phoCats,maxPho]);
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish):[],[resto,targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish]);
-  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustVeg:wMustVeg,mustCarbs:wMustCarbs}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustVeg,wMustCarbs]);
+  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustVeg:wMustVeg,mustCarbs:wMustCarbs,baseItems:wPickItems}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustVeg,wMustCarbs,wPickItems]);
   const resultsPure=useMemo(()=>resto==="pure"?optimizePure(targets,mode,prefs,pureCats,maxPure):[],[resto,targets,mode,prefs,pureCats,maxPure]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -4219,6 +4268,63 @@ function App() {
             )
       ),
 
+      // Waitrose Build: "Build around your own picks" — feste Produkte sperren; die Vorschläge unten füllen den Rest der Makros drumherum
+      resto==="waitrose"&&wMode==="build"&&h("div",{style:{marginBottom:18,background:"#101512",border:"1px solid #24402f",borderRadius:12,padding:14}},
+        h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:6}},"🔒 Build around your own picks (optional)"),
+        h("div",{style:{fontSize:11,color:"#8a9a90",lineHeight:1.5,marginBottom:10}},"Lock in products you definitely want — the suggestions below then fill the rest of your macros around them. Leave empty for full suggestions as usual."),
+        h("input",{type:"text",value:wPickQ,onChange:e=>setWPickQ(e.target.value),placeholder:"Search products to lock in…",
+          style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"10px 13px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:wPickQ.trim()?10:0}}),
+        // Trefferliste (nur bei aktiver Suche)
+        wPickQ.trim()!==""&&h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:wPicks.length?14:0}},
+          wPickResults.length===0
+            ? h("div",{style:{fontSize:12,color:"#666",fontFamily:S.mono}},"No matches.")
+            : wPickResults.slice(0,8).map(it=>h("div",{key:it.id,style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,background:"#141414",border:"1px solid #222",borderRadius:9,padding:"9px 11px"}},
+                h("div",{style:{minWidth:0,flex:1}},
+                  h("div",{style:{display:"flex",alignItems:"center",gap:7,marginBottom:2}},
+                    h("span",{style:{fontSize:8,fontWeight:700,color:"#86efac",background:"rgba(34,139,58,0.16)",border:"1px solid rgba(34,139,58,0.4)",borderRadius:5,padding:"2px 5px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},it.brand),
+                    h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},it.name)),
+                  h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888"}},(()=>{const m=wtScale(it,it.g);return m.kcal+" kcal · P "+m.protein+" · C "+m.carbs+" · F "+m.fat+"  ·  "+(it.variable?"typ. "+it.g+"g":it.g+"g fixed");})()),
+                  it.note&&h("div",{style:{fontSize:9,fontFamily:S.mono,color:"#d9a441",marginTop:2}},"📍 "+it.note)),
+                h("button",{onClick:()=>addPick(it),style:{flexShrink:0,background:"#14251a",border:"1px solid #2f4a35",color:"#86efac",borderRadius:8,padding:"7px 11px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:S.font,whiteSpace:"nowrap"}},"🔒 Lock in")
+              ))
+        ),
+        // Meine Picks (fest) mit Gramm-Eingabe / Menge
+        wPicks.length>0&&h("div",null,
+          h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}},
+            h("div",{style:{fontSize:10,color:"#86efac",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Your picks · "+wPicks.reduce((s,e)=>s+(e.qty||1),0)+" locked in"),
+            h("button",{onClick:clearPicks,style:{background:"none",border:"none",color:"#777",fontSize:11,cursor:"pointer",fontFamily:S.mono,textDecoration:"underline",padding:0}},"Clear")),
+          h("div",{style:{display:"flex",flexDirection:"column",gap:6,marginBottom:10}},
+            ...wPicks.map((e,i)=>{ const s=wtScale(e.item,e.g); return h("div",{key:i,style:{background:"#15201a",border:"1px solid #2a3a30",borderRadius:9,padding:"8px 10px"}},
+              h("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:3}},
+                h("span",{style:{fontSize:11}},"🔒"),
+                h("span",{style:{fontSize:8,fontWeight:700,color:"#86efac",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"}},e.item.brand),
+                h("span",{style:{fontSize:13,color:"#eee",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1,minWidth:0}},e.item.name)),
+              h("div",{style:{fontSize:10,fontFamily:S.mono,color:"#888",marginBottom:e.item.note?3:7}},Math.round(s.kcal*e.qty)+" kcal · P "+r1(s.protein*e.qty)+" · C "+r1(s.carbs*e.qty)+" · F "+r1(s.fat*e.qty)),
+              e.item.note&&h("div",{style:{fontSize:9,fontFamily:S.mono,color:"#d9a441",marginBottom:7}},"📍 "+e.item.note),
+              h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}},
+                h("div",{style:{display:"flex",alignItems:"center",gap:5}},
+                  h("span",{style:{fontSize:9,color:"#666",fontFamily:S.mono}},e.item.variable?"Weight":"Fixed"),
+                  h("input",{type:"number",inputMode:"numeric",value:e.g,onChange:ev=>setPickGram(i,ev.target.value),
+                    style:{width:56,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:7,padding:"5px 7px",color:"#fff",fontSize:13,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
+                  h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g")),
+                h("div",{style:{display:"flex",alignItems:"center",gap:6,flexShrink:0}},
+                  e.item.variable
+                    ? h("button",{onClick:()=>addPick(e.item),title:"Add another (separate weight)",style:{height:26,borderRadius:7,border:"1px solid #2f4a35",background:"#14251a",color:"#86efac",fontSize:11,fontWeight:700,lineHeight:1,cursor:"pointer",fontFamily:S.font,padding:"0 9px"}},"＋ add another")
+                    : [
+                        h("button",{key:"m",onClick:()=>changePickQty(i,-1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"−"),
+                        h("span",{key:"q",style:{fontSize:13,fontFamily:S.mono,color:"#fff",minWidth:18,textAlign:"center"}},e.qty),
+                        h("button",{key:"p",onClick:()=>changePickQty(i,1),style:{width:26,height:26,borderRadius:7,border:"1px solid #333",background:"#1c1c1c",color:"#ccc",fontSize:16,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"+"),
+                      ],
+                  h("button",{onClick:()=>removePick(i),style:{width:26,height:26,borderRadius:7,border:"1px solid #3a2a2a",background:"#1c1414",color:"#f87171",fontSize:13,lineHeight:1,cursor:"pointer",fontFamily:S.font}},"✕")
+                )
+              )
+            );})
+          ),
+          h("div",{style:{fontSize:11,fontFamily:S.mono,color:"#7a8a80",lineHeight:1.5}},
+            "Locked so far: "+wPickTotal.kcal+" kcal · C "+wPickTotal.carbs+" · P "+wPickTotal.protein+" · F "+wPickTotal.fat+". These count toward “Max. products per order” — the suggestions below top up toward your target.")
+        )
+      ),
+
       // Results header + Sort by (Accuracy-Sortierung)
       (resto!=="search"&&(resto!=="waitrose"||wMode==="build")) && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
         h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2}},"Top results"),
@@ -4713,7 +4819,7 @@ function App() {
         h("div",{style:{marginBottom:16}},
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Items"),
           ...AC.sel.items.map((x,xi)=>h("div",{key:xi,style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderBottom:xi<AC.sel.items.length-1?"1px solid #1f1f1f":"none"}},
-            h("span",{style:{color:"#e0e0e0"}},x.name),
+            h("span",{style:{color:x._locked?"#86efac":"#e0e0e0"}},(x._locked?"🔒 ":"")+x.name),
             h("span",{style:{color:"#999",fontFamily:S.mono}},x.kcal+" kcal · P "+x.protein+"g")
           )),
           ccAC.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
@@ -4732,12 +4838,16 @@ function App() {
 
         // Order guide (à la carte) — Waitrose: Einkaufsliste statt Deliveroo-Bestellung
         (()=>{
-          const counts={};AC.sel.items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
+          // Dedup-Key = id + Name + Lock-Status (wie itsuLabel): trennt Waitrose-Gewichts-/Lock-Varianten desselben Produkts,
+          // sonst würde ein gesperrter Pick mit einem gleich-id Vorschlag (oder 2 Picks unterschiedlichen Gewichts) zu EINER
+          // falsch beschrifteten Zeile verschmelzen (falsches "N×"/Gewicht). Bei den AC-Restaurants identisch zum id-Dedup.
+          const ckey=x=>x.id+"|"+x.name+"|"+(x._locked?"1":"0");
+          const counts={};AC.sel.items.forEach(x=>counts[ckey(x)]=(counts[ckey(x)]||0)+1);
           const uniq=[];const seenIds=new Set();
-          AC.sel.items.forEach(x=>{if(!seenIds.has(x.id)){seenIds.add(x.id);uniq.push(x);}});
+          AC.sel.items.forEach(x=>{const k=ckey(x);if(!seenIds.has(k)){seenIds.add(k);uniq.push(x);}});
           // Waitrose-Einkaufsliste: Marke voranstellen ("Marke · Produkt"), damit man das Produkt im Laden schneller findet
-          const wLbl=x=>((resto==="waitrose"&&x.brand)?x.brand+" · "+x.name:x.name)+(x.note?"  📍 "+x.note:"");
-          const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:wLbl(x)})),...cornStep(ccAC),
+          const wLbl=x=>(x._locked?"🔒 ":"")+((resto==="waitrose"&&x.brand)?x.brand+" · "+x.name:x.name)+(x.note?"  📍 "+x.note:"")+(x._locked?"  (your pick)":"");
+          const steps=[...uniq.map(x=>({l:(counts[ckey(x)]>1?counts[ckey(x)]+"×":"1×"),v:wLbl(x)})),...cornStep(ccAC),
             ...nutAC.nuts.map(nr=>({l:nr.grams+"g",v:nr.nut.brand+" · "+nr.nut.name}))];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
