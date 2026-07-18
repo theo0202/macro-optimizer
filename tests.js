@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, optimizeWaitrose, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1410,6 +1410,28 @@ const rCombo = T.optimizeWaitrose(tgtAny, "macros", {}, waAll, 3, { mustVeg: tru
 check("Waitrose mustVeg + noSushiDaily kombiniert", rCombo.length > 0 && rCombo.every(r => r.items.some(x => x.cat === "vegetables") && r.items.every(x => x.brand !== "Sushi Daily")), true);
 // resultFilter beruehrt andere AC-Restaurants nicht (Default undefined)
 check("Pho unveraendert trotz neuem resultFilter-Param", T.optimizePho(tgtAny, "macros", {}, (() => { const o = {}; T.PHO.cats.forEach(c => o[c.id] = true); return o; })(), 3).length > 0, true);
+// ── Nuss-Toppings ("top with …", Waitrose-Build; je Nuss max 1 Portion 20g, selbstbegrenzend wie Corn Cakes) ──
+check("Waitrose 3 Nuss-Toppings (peanuts/cashews/pine)", T.WAITROSE_NUTS.map(n => n.id).join() === "peanuts,cashews,pine", true);
+check("Waitrose Nuss Default 20g", T.WAITROSE_NUTS.every(n => n.g === 20), true);
+// Peanuts @20g = p100×0.2: kcal 125, protein 5.3, fat 10.4
+check("Waitrose Peanuts@20g kcal (125)", T.wtScale(T.WAITROSE_NUTS.find(n => n.id === "peanuts"), 20).kcal, 125);
+check("Waitrose Peanuts@20g protein (5.3)", T.wtScale(T.WAITROSE_NUTS.find(n => n.id === "peanuts"), 20).protein, 5.3);
+const zero = { kcal: 0, fat: 0, sat: 0, carbs: 0, sugars: 0, fibre: 0, protein: 0, salt: 0 };
+const peanut20 = T.wtScale(T.WAITROSE_NUTS.find(n => n.id === "peanuts"), 20);
+// Ziel = Peanuts@20g -> aus leerer Basis wird Peanuts gewaehlt (Score ~0)
+const tgtPeanut = { protein: peanut20.protein, carbs: peanut20.carbs, fat: peanut20.fat, kcal: peanut20.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("bestWaitroseNuts waehlt Peanuts (Ziel = Peanuts@20g)", T.bestWaitroseNuts(zero, ["peanuts"], tgtPeanut, "macros", {}).nuts.map(n => n.id).join() === "peanuts", true);
+// selbstbegrenzend: Basis bereits AM Ziel -> keine Nuss (Ueberschuss verschlechtert)
+check("bestWaitroseNuts selbstbegrenzend (Basis am Ziel -> leer)", T.bestWaitroseNuts(peanut20, ["peanuts"], tgtPeanut, "macros", {}).nuts.length, 0);
+// je Nuss max 1 Portion: chosen-Array hat jede Nuss hoechstens einmal
+const rNut = T.bestWaitroseNuts(zero, ["peanuts", "cashews", "pine"], { protein: 30, carbs: 15, fat: 40, kcal: 520, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {});
+check("bestWaitroseNuts: jede Nuss max 1x", new Set(rNut.nuts.map(n => n.id)).size === rNut.nuts.length, true);
+// applyWaitroseNuts: leere enabledIds -> unveraendert (Identitaet)
+const dummy = [{ items: [], nutrition: { ...zero }, score: 1 }];
+check("applyWaitroseNuts leer -> Identitaet", T.applyWaitroseNuts(dummy, [], tgtAny, "macros", {}) === dummy, true);
+// applyWaitroseNuts speichert nuts + _nutBase, wenn eine Nuss hilft
+const augN = T.applyWaitroseNuts([{ items: [], nutrition: { ...zero }, score: T.bestWaitroseNuts(zero, [], tgtPeanut, "macros", {}).score }], ["peanuts"], tgtPeanut, "macros", {});
+check("applyWaitroseNuts augmentiert (nuts + _nutBase gesetzt)", augN[0].nuts.length === 1 && augN[0].nuts[0].id === "peanuts" && !!augN[0]._nutBase, true);
 // Neue Sushi-Daily (variabel): Salmon Tartare Bowl @354g -> kcal 175×3.54 = 619.5; Veggie Roll (sushi) @175g -> kcal 135×1.75 = 236.3
 check("Waitrose Salmon Tartare Bowl cat bowl, variabel typ. 354g", (() => { const x = T.WAITROSE.items.find(y => y.id === "salmon_tartare_bowl"); return x.cat === "bowl" && x.variable === true && x.g === 354; })(), true);
 check("Waitrose wtScale Salmon Tartare Bowl@354g kcal (619.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "salmon_tartare_bowl"), 354).kcal, 619.5);

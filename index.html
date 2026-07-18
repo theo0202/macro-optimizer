@@ -2870,6 +2870,36 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
   const rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
   return alaCarteCombos(t, mode, p, pool, maxN, undefined, undefined, rf);
 }
+// Waitrose-Nuss-Toppings ("top with …", NUR Waitrose-Build) — wie Corn Cakes, ABER je Nuss max EINE Portion (20 g default,
+// im Panel editierbar), nicht mehrere. Werte per 100 g; die Portion skaliert per wtScale (p100 × g/100). Selbstbegrenzend:
+// eine Nuss wird nur addiert, wenn sie den Score verbessert (sonst 0), wie Corn Cakes.
+const WAITROSE_NUTS=[
+  { id:"peanuts", name:"Roasted Peanuts", brand:"Waitrose", g:20, p100:{ kcal:625, fat:51.9, sat:8.7, carbs:10, sugars:4.8, fibre:6.4, protein:26.3, salt:0.02 } },
+  { id:"cashews", name:"Roasted Cashew Nuts", brand:"Waitrose", g:20, p100:{ kcal:610, fat:48.2, sat:8.2, carbs:19.3, sugars:4.5, fibre:5.1, protein:22.1, salt:0.04 } },
+  { id:"pine", name:"Pine Kernels", brand:"Waitrose (Duchy Organic)", g:20, p100:{ kcal:694, fat:68.6, sat:4.6, carbs:4, sugars:3.9, fibre:2.5, protein:14, salt:0 } },
+];
+// Beste Nuss-Teilmenge (jede Nuss 0/1 × 20 g) fuer eine Basis-Nutrition — minimiert den Score; leere Menge = nichts hilft.
+function bestWaitroseNuts(base, enabledIds, t, mode, p){
+  const nuts=WAITROSE_NUTS.filter(x=>enabledIds.indexOf(x.id)>=0);
+  let best={nuts:[], nutrition:base, score:score(base,t,mode,p)};
+  const N=nuts.length;
+  for(let mask=1; mask<(1<<N); mask++){
+    const chosen=[], nn={}; for(const k of KEYS) nn[k]=base[k]||0;
+    for(let i=0;i<N;i++) if(mask&(1<<i)){ const m=wtScale(nuts[i], nuts[i].g); chosen.push(nuts[i]); for(const k of KEYS) nn[k]+=m[k]||0; }
+    for(const k of KEYS) nn[k]=Math.round(nn[k]*10)/10;
+    const s=score(nn,t,mode,p);
+    if(s<best.score-1e-9) best={nuts:chosen, nutrition:nn, score:s};
+  }
+  return best;
+}
+// Augmentiert + re-sortiert die Ergebnisliste um die beste Nuss-Teilmenge (je 20 g). Leere enabledIds → unveraendert.
+// r.nuts = gewaehlte Nuesse (je 20 g default), r._nutBase = nutrition VOR Nuessen (fuer Live-Recompute im Panel).
+function applyWaitroseNuts(arr, enabledIds, t, mode, p){
+  if(!enabledIds||!enabledIds.length) return arr;
+  return arr.map(r=>{ const b=bestWaitroseNuts(r.nutrition, enabledIds, t, mode, p);
+    return b.nuts.length ? Object.assign({}, r, {nuts:b.nuts, _nutBase:r.nutrition, nutrition:b.nutrition, score:b.score})
+                         : Object.assign({}, r, {nuts:[], _nutBase:r.nutrition}); }).sort((a,b)=>a.score-b.score);
+}
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
   const rt=r._resto;
@@ -3361,6 +3391,9 @@ function App() {
   const [wNoSushiDaily,setWNoSushiDaily]=useState(false);
   const [wMustVeg,setWMustVeg]=useState(false);
   const [wMustCarbs,setWMustCarbs]=useState(false);
+  // "Top with …"-Nuss-Toppings (nur Waitrose-Build): Schalter je Nuss + editierbares Gramm (Default 20 g) fürs Panel
+  const [wNuts,setWNuts]=useState({peanuts:false,cashews:false,pine:false});
+  const [wNutG,setWNutG]=useState({peanuts:20,cashews:20,pine:20});
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -3468,7 +3501,9 @@ function App() {
   // Corn Cakes (restaurantsuebergreifend): die aktive Ergebnisliste EINMAL augmentieren (Karten + Ranking).
   // Memoisiert → stabile Objekt-Identitaet, damit die Selektion-Markierung (sel===r) heil bleibt.
   const activeRaw=resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:(AC?AC.res:[]);
-  const activeResults=useMemo(()=>applyCornCakes(activeRaw,cornCakes,targets,mode,prefs,cornCap),[activeRaw,cornCakes,targets,mode,prefs,cornCap]);
+  // Nuss-Toppings NUR im Waitrose-Build-Modus; nach den Corn Cakes augmentiert (Nuss-Basis = corn-inklusive nutrition).
+  const wNutEnabled=(resto==="waitrose"&&wMode==="build")?["peanuts","cashews","pine"].filter(id=>wNuts[id]):[];
+  const activeResults=useMemo(()=>applyWaitroseNuts(applyCornCakes(activeRaw,cornCakes,targets,mode,prefs,cornCap),wNutEnabled,targets,mode,prefs),[activeRaw,cornCakes,targets,mode,prefs,cornCap,resto,wMode,wNuts]);
   // Live-Berechnung der Cake-Anzahl fuers Detail-Panel (reagiert sofort auf Ziel-Aenderung / Schalter / Cap).
   // base = corn-freie nutrition (sel._base falls augmentiert, sonst sel.nutrition). Liefert {n, total, base}.
   const cornTot=(base)=>{
@@ -3477,6 +3512,22 @@ function App() {
     if(!n) return {n:0,total:base,base:base};
     const tot={}; for(const k of KEYS) tot[k]=Math.round((((base[k]||0)+n*CORN_CAKE[k]))*10)/10;
     return {n,total:tot,base:base};
+  };
+  // Nuss-Toppings live fuers Panel (nur Waitrose-Build): welche Nuesse (Entscheidung bei 20 g) + Makros bei editierbarem Gramm.
+  // base = corn-inklusive Basis (ccAC.total). Liefert {nuts:[{nut,grams,mac}], total: base + Nuesse}.
+  const nutTot=(base)=>{
+    if(!base||!(resto==="waitrose"&&wMode==="build")) return {nuts:[], total:base};
+    const enabled=["peanuts","cashews","pine"].filter(id=>wNuts[id]);
+    if(!enabled.length) return {nuts:[], total:base};
+    const chosen=bestWaitroseNuts(base, enabled, targets, mode, prefs).nuts; // Auswahl bei Default 20 g
+    if(!chosen.length) return {nuts:[], total:base};
+    const tot={}; for(const k of KEYS) tot[k]=base[k]||0;
+    // effektives Gramm: leer/ungueltig/negativ → Default 20; 0 & positiv gelten (0 = 0 Beitrag). grams & mac immer konsistent.
+    const rows=chosen.map(nut=>{ const raw=wNutG[nut.id], gv=parseFloat(raw); const g=(raw===""||raw==null||isNaN(gv)||gv<0)?nut.g:gv;
+      const mac={}; for(const k of KEYS) mac[k]=Math.round((((nut.p100&&nut.p100[k])||0)*g/100)*10)/10;
+      for(const k of KEYS) tot[k]+=mac[k]||0; return {nut,grams:g,mac}; });
+    for(const k of KEYS) tot[k]=Math.round(tot[k]*10)/10;
+    return {nuts:rows, total:tot};
   };
   // Kompakte "nur Restaurant" (corn-frei) Makro-Zeile fuers Detail-Panel — erscheint nur, wenn Cakes dabei sind.
   const cornBaseRow=(cc)=> (cc&&cc.n>0&&cc.base)? h("div",{style:{margin:"-4px 0 14px",padding:"8px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
@@ -3518,7 +3569,9 @@ function App() {
   // base = corn-freie nutrition (selTotal/selFTotal werden corn-frei berechnet; ._base bei den .nutrition-Panels).
   const ccSub=cornTot(selTotal);
   const ccFJ=cornTot(selFTotal);
-  const ccAC=cornTot(AC&&AC.sel?(AC.sel._base||AC.sel.nutrition):null);
+  // Basis = corn- UND nuss-freie nutrition: _base (falls corn-augmentiert) → _nutBase (falls nuss-augmentiert) → nutrition
+  const ccAC=cornTot(AC&&AC.sel?(AC.sel._base||AC.sel._nutBase||AC.sel.nutrition):null);
+  const nutAC=nutTot(ccAC.total); // Nuesse auf die corn-inklusive AC-Basis (nur Waitrose-Build; sonst {nuts:[],total:base})
   const ccUG=cornTot(selU?(selU._base||selU.nutrition):null);
   const ccAt=cornTot(selA?(selA._base||selA.nutrition):null);
   const ccCh=cornTot(selCh?(selCh._base||selCh.nutrition):null);
@@ -3527,6 +3580,8 @@ function App() {
   const cornStep=cc=>cc.n>0?[{l:"Supplement",v:cc.n+"× "+CORN_CAKE.name}]:[];
   // Karten-Suffix: " · +N× corn cakes" (r ist bereits via applyCornCakes augmentiert → r.corn).
   const cornLbl=r=>(r&&r.corn>0)?" · +"+r.corn+"× corn cakes":"";
+  // Karten-Suffix fuer Nuss-Toppings (r via applyWaitroseNuts augmentiert → r.nuts, je 20 g). z.B. " · + peanuts, cashews"
+  const nutLbl=r=>(r&&r.nuts&&r.nuts.length)?" · + "+r.nuts.map(n=>n.name.toLowerCase()).join(", "):"";
 
   // Sort by: im Kalorien-Modus gibt es keine Makro-Ziele → Protein/Carbs/Fat fallen auf Score zurück
   const effSort=(mode==="macros"||sortBy==="score"||sortBy==="kcal")?sortBy:"score";
@@ -3913,7 +3968,10 @@ function App() {
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:wMustVeg,onChange:e=>setWMustVeg(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a vegetable"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-            h("input",{type:"checkbox",checked:wMustCarbs,onChange:e=>setWMustCarbs(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a carbs / rice / grains")
+            h("input",{type:"checkbox",checked:wMustCarbs,onChange:e=>setWMustCarbs(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a carbs / rice / grains"),
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginTop:4}},"Top with nuts (20g, one portion · adjust after selecting)"),
+          ...WAITROSE_NUTS.map(nut=>h("label",{key:nut.id,style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:!!wNuts[nut.id],onChange:e=>setWNuts(p=>({...p,[nut.id]:e.target.checked})),style:{accentColor:S.green,width:16,height:16}}),"Top with 20g "+nut.name))
         )
       ),
 
@@ -4314,7 +4372,7 @@ function App() {
                 h("div",null,
                   h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},itsuLabel(r.items)),
                   h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
-                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · ")+cornLbl(r))
+                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · ")+cornLbl(r)+nutLbl(r))
                 ),
                 h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
@@ -4607,16 +4665,29 @@ function App() {
         h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},itsuLabel(AC.sel.items)),
         h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},(resto==="waitrose"?"Waitrose · ":"à la carte · ")+AC.sel.items.length+(resto==="waitrose"?(AC.sel.items.length===1?" product · typical weights":" products · typical weights"):(AC.sel.items.length===1?" Item":" Items"))),
 
-        // Macro bars
+        // Macro bars (nutAC.total = corn-inklusiv + Nuss-Toppings; == ccAC.total wenn keine Nuesse / kein Waitrose)
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:ccAC.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Carbs",value:ccAC.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Protein",value:ccAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Fat",value:ccAC.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
-          h(MacroBar,{label:"Fibre",value:ccAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
-          h(MacroBar,{label:"Salt",value:ccAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+          h(MacroBar,{label:"Calories",value:nutAC.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Carbs",value:nutAC.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:nutAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Fat",value:nutAC.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:nutAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:nutAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
-        cornBaseRow(ccAC),
+        // "Restaurant only"-Basis: Waitrose berücksichtigt Corn Cakes UND Nuss-Toppings (Basis = ccAC.base, excl. beides);
+        // Label + Sichtbarkeit passen sich an (rendert auch bei nuts-only). Andere Restaurants: unveränderter cornBaseRow.
+        (resto==="waitrose"
+          ? ((ccAC.n>0||nutAC.nuts.length)&&ccAC.base ? h("div",{style:{margin:"-4px 0 14px",padding:"8px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
+              h("div",{style:{fontSize:9,color:"#666",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:5}},
+                "Restaurant only · excl. "+[ccAC.n>0?"corn cakes":null, nutAC.nuts.length?"nut toppings":null].filter(Boolean).join(" & ")),
+              h("div",{style:{display:"flex",gap:14,fontSize:12,fontFamily:S.mono,flexWrap:"wrap"}},
+                h("span",{style:{color:"#4ade80",fontWeight:700}},ccAC.base.kcal+" kcal"),
+                h("span",{style:{color:"#fbbf24"}},"C "+ccAC.base.carbs+"g"),
+                h("span",{style:{color:"#60a5fa"}},"P "+ccAC.base.protein+"g"),
+                h("span",{style:{color:"#f87171"}},"F "+ccAC.base.fat+"g")
+              )
+            ) : null)
+          : cornBaseRow(ccAC)),
 
         // Einzelne Items mit kcal
         h("div",{style:{marginBottom:16}},
@@ -4627,7 +4698,16 @@ function App() {
           )),
           ccAC.n>0&&h("div",{key:"corn",style:{display:"flex",justifyContent:"space-between",fontSize:12,padding:"4px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
             h("span",{style:{color:"#7a7"}},ccAC.n+"× "+CORN_CAKE.name),
-            h("span",{style:{color:"#999",fontFamily:S.mono}},Math.round(ccAC.n*CORN_CAKE.kcal*10)/10+" kcal · C "+Math.round(ccAC.n*CORN_CAKE.carbs*10)/10+"g"))
+            h("span",{style:{color:"#999",fontFamily:S.mono}},Math.round(ccAC.n*CORN_CAKE.kcal*10)/10+" kcal · C "+Math.round(ccAC.n*CORN_CAKE.carbs*10)/10+"g")),
+          // Nuss-Toppings mit editierbarem Gramm (nur Waitrose-Build; Default 20 g, "adjust once added")
+          ...nutAC.nuts.map((nr,ni)=>h("div",{key:"nut"+ni,style:{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,fontSize:12,padding:"5px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+            h("span",{style:{color:"#d9a441",flex:1,minWidth:0}},"+ "+nr.nut.name),
+            h("div",{style:{display:"flex",alignItems:"center",gap:4,flexShrink:0}},
+              h("input",{type:"number",inputMode:"numeric",value:wNutG[nr.nut.id],onChange:ev=>{const v=ev.target.value;setWNutG(p=>({...p,[nr.nut.id]:v}));},
+                style:{width:48,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:6,padding:"4px 6px",color:"#fff",fontSize:12,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
+              h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g"),
+              h("span",{style:{color:"#999",fontFamily:S.mono,minWidth:58,textAlign:"right"}},nr.mac.kcal+" kcal"))
+          ))
         ),
 
         // Order guide (à la carte) — Waitrose: Einkaufsliste statt Deliveroo-Bestellung
@@ -4635,7 +4715,8 @@ function App() {
           const counts={};AC.sel.items.forEach(x=>counts[x.id]=(counts[x.id]||0)+1);
           const uniq=[];const seenIds=new Set();
           AC.sel.items.forEach(x=>{if(!seenIds.has(x.id)){seenIds.add(x.id);uniq.push(x);}});
-          const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name})),...cornStep(ccAC)];
+          const steps=[...uniq.map(x=>({l:(counts[x.id]>1?counts[x.id]+"×":"1×"),v:x.name})),...cornStep(ccAC),
+            ...nutAC.nuts.map(nr=>({l:nr.grams+"g",v:nr.nut.name+" ("+nr.nut.brand+")"}))];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
               h("span",{style:{fontSize:13}},resto==="waitrose"?"🛒":"📋"),resto==="waitrose"?" Shopping list (Waitrose)":" Order guide (Deliveroo)"),
