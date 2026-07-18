@@ -1385,8 +1385,31 @@ check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
 check("WAITROSE_MENU hat 7 Kategorien + 51 Items", T.WAITROSE_MENU.cats.length === 7 && T.WAITROSE_MENU.items.length === 51, true);
+const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true); // activeCats = alle Kategorien an
 // Build-Kategorie-Filter fuer die neue Excel-Kategorie
 check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitrose({ protein: 6, carbs: 45, fat: 4, kcal: 250, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { carbs_rice_grains: true }, 2).every(r => r.items.every(x => x.cat === "carbs_rice_grains")), true);
+// ── Build-Schalter (opts): No fish / No Sushi Daily / Must include vegetable / Must include carbs (alle Default AUS) ──
+const tgtAny = { protein: 20, carbs: 40, fat: 10, kcal: 330, fibMin: null, fibMax: null, sMin: null, sMax: null };
+// fish:true auf den Fisch-Items (Salmon/Poke/Sushi-Set); Chicken/Grains/Veg/Gyoza kein fish
+check("Waitrose fish-Flag auf Salmon/Poke/Sushi-Set", ["salmon_maki", "discovery_salmon_nigiri", "vibrant_salmon_poke_bowl", "salmon_tartare_bowl", "deluxe_duo_poke", "menu_san_sushi_set"].every(id => T.WAITROSE.items.find(x => x.id === id).fish === true), true);
+check("Waitrose Chicken/Grains kein fish-Flag", !T.WAITROSE.items.find(x => x.id === "teriyaki_chicken_poke").fish && !T.WAITROSE.items.find(x => x.id === "5_bean_medley").fish, true);
+// No fish: kein fish-Item im Ergebnis; Gegenprobe: Ziel = Deluxe Duo Poke -> ohne Schalter erscheint es, mit Schalter nicht
+const tgtPoke = { protein: 22.3, carbs: 68.4, fat: 19.8, kcal: 551, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Waitrose ohne 'No fish': Deluxe Duo Poke moeglich (Gegenprobe)", T.optimizeWaitrose(tgtPoke, "macros", {}, waAll, 2, {}).some(r => r.items.some(x => x.id === "deluxe_duo_poke")), true);
+check("Waitrose 'No fish': kein fish-Item im Ergebnis", T.optimizeWaitrose(tgtPoke, "macros", {}, waAll, 3, { noFish: true }).every(r => r.items.every(x => !x.fish)), true);
+// No Sushi Daily: keine Sushi-Daily-Marke im Ergebnis
+check("Waitrose 'No Sushi Daily': keine Sushi-Daily-Marke", T.optimizeWaitrose(tgtAny, "macros", {}, waAll, 3, { noSushiDaily: true }).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);
+// Must include vegetable: jedes Ergebnis hat >=1 Gemuese-Item
+const rVeg = T.optimizeWaitrose(tgtAny, "macros", {}, waAll, 3, { mustVeg: true });
+check("Waitrose 'Must include vegetable': jedes Ergebnis hat >=1 Gemuese", rVeg.length > 0 && rVeg.every(r => r.items.some(x => x.cat === "vegetables")), true);
+// Must include carbs/rice/grains: jedes Ergebnis hat >=1 Carbs-Item
+const rCarb = T.optimizeWaitrose(tgtAny, "macros", {}, waAll, 3, { mustCarbs: true });
+check("Waitrose 'Must include carbs': jedes Ergebnis hat >=1 Carbs/Rice/Grains", rCarb.length > 0 && rCarb.every(r => r.items.some(x => x.cat === "carbs_rice_grains")), true);
+// Kombination mustVeg + noSushiDaily: beide Constraints gleichzeitig
+const rCombo = T.optimizeWaitrose(tgtAny, "macros", {}, waAll, 3, { mustVeg: true, noSushiDaily: true });
+check("Waitrose mustVeg + noSushiDaily kombiniert", rCombo.length > 0 && rCombo.every(r => r.items.some(x => x.cat === "vegetables") && r.items.every(x => x.brand !== "Sushi Daily")), true);
+// resultFilter beruehrt andere AC-Restaurants nicht (Default undefined)
+check("Pho unveraendert trotz neuem resultFilter-Param", T.optimizePho(tgtAny, "macros", {}, (() => { const o = {}; T.PHO.cats.forEach(c => o[c.id] = true); return o; })(), 3).length > 0, true);
 // Neue Sushi-Daily (variabel): Salmon Tartare Bowl @354g -> kcal 175×3.54 = 619.5; Veggie Roll (sushi) @175g -> kcal 135×1.75 = 236.3
 check("Waitrose Salmon Tartare Bowl cat bowl, variabel typ. 354g", (() => { const x = T.WAITROSE.items.find(y => y.id === "salmon_tartare_bowl"); return x.cat === "bowl" && x.variable === true && x.g === 354; })(), true);
 check("Waitrose wtScale Salmon Tartare Bowl@354g kcal (619.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "salmon_tartare_bowl"), 354).kcal, 619.5);
@@ -1398,8 +1421,6 @@ const wFlame = T.WAITROSE.items.find(x => x.id === "flamegrilled_chicken_pieces"
 check("Waitrose Flamegrilled Pieces cat chicken_pieces, fix 160g", wFlame.cat === "chicken_pieces" && wFlame.variable === false && wFlame.g === 160, true);
 check("Waitrose wtScale Flamegrilled@160g kcal (220.8)", T.wtScale(wFlame, 160).kcal, 220.8);
 check("Waitrose wtScale Flamegrilled@160g protein (44.3)", T.wtScale(wFlame, 160).protein, 44.3);
-// activeCats fuer optimizeWaitrose (neue Signatur t,mode,p,activeCats,maxN)
-const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true);
 // Kategorie-Filter: nur chicken_pieces -> alle Ergebnis-Items sind chicken_pieces
 check("Waitrose Build Kategorie-Filter (nur chicken_pieces)", T.optimizeWaitrose({ protein: 40, carbs: 3, fat: 2, kcal: 200, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { chicken_pieces: true }, 2).every(r => r.items.every(x => x.cat === "chicken_pieces")), true);
 // California Maki (Sushi Daily) ist laut User schalentierFREI -> via SHELLFISH_SAFE vom "california"-Filter ausgenommen

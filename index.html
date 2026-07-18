@@ -2254,7 +2254,7 @@ const SHELLFISH_SAFE=new Set(["california maki"]);
 // damit die Ausnahme auch bei den gramm-suffixierten Optimizer-Namen greift. Regex läuft weiterhin auf dem vollen Namen.
 function isShellfish(x){ const n=((x&&x.name)||"").toLowerCase(); const base=n.replace(/\s*\([^)]*\)\s*$/,"").trim(); if(SHELLFISH_SAFE.has(n)||SHELLFISH_SAFE.has(base)) return false; return SHELLFISH_RE.test(n)||SHELLFISH_NAMES.has(n); }
 
-function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey) {
+function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey, resultFilter) {
   pool=pool.filter(x=>!isShellfish(x)); // Schalentier permanent raus (Allergie)
   const dk=distinctBy||null; // optional: keine zwei Items mit gleichem dk(x) in EINER Bestellung (z.B. "no duplicate bagels")
   const distinctOk=dk?(items,x)=>{const k=dk(x);return !items.some(y=>dk(y)===k);}:null;
@@ -2300,12 +2300,13 @@ function alaCarteCombos(t, mode, p, pool, maxN, distinctBy, dedupKey) {
     }
   }
   R.sort(byScore);
+  let RF = resultFilter ? R.filter(r=>resultFilter(r.items)) : R; // optional: "muss X enthalten"-Constraint (z.B. Waitrose ≥1 Gemüse)
   if(dedupKey){ // optional: gleichwertige Ergebnisse (z.B. Bun-Permutationen) zusammenfassen, besten je Klasse behalten
     const seenK=new Set(), out=[];
-    for(const r of R){ const k=dedupKey(r.items); if(seenK.has(k))continue; seenK.add(k); out.push(r); if(out.length>=20)break; }
+    for(const r of RF){ const k=dedupKey(r.items); if(seenK.has(k))continue; seenK.add(k); out.push(r); if(out.length>=20)break; }
     return out;
   }
-  return R.slice(0,20);
+  return RF.slice(0,20);
 }
 // "only sushi" = Kategorie sushi & poké, aber OHNE die Poké-Bowls (User-Wunsch: nur Sushi/Sashimi).
 // "only sushi w/o sashimi" = zusätzlich ohne Sashimi-Items. noSashimi ist die strengere Variante (impliziert only sushi).
@@ -2735,26 +2736,26 @@ const WAITROSE = {
   { id:"flamegrilled_chicken_pieces", name:"Cooked Flamegrilled Chicken Pieces", brand:"Waitrose", cat:"chicken_pieces", variable:false, g:160,
     p100:{ kcal:138, fat:2.7, sat:0.8, carbs:0.6, sugars:0.6, fibre:0.5, protein:27.7, salt:0.50 } },
   // Sushi (Sushi Daily, gewicht-variierend; sat oft nicht angegeben → 0). California Maki = User-bestätigt schalentierfrei (SHELLFISH_SAFE)
-  { id:"menu_san_sushi_set", name:"Menu San Sushi Set", brand:"Sushi Daily", cat:"sushi", variable:true, g:324,
+  { id:"menu_san_sushi_set", name:"Menu San Sushi Set", brand:"Sushi Daily", cat:"sushi", fish:true, variable:true, g:324,
     p100:{ kcal:175, fat:7, sat:0, carbs:20, sugars:2.5, fibre:0.6, protein:7.7, salt:0.06 } },
   { id:"cucumber_maki", name:"Cucumber Maki", brand:"Sushi Daily", cat:"sushi", variable:true, g:108,
     p100:{ kcal:113, fat:0.7, sat:0, carbs:24, sugars:3.3, fibre:0, protein:2.7, salt:0.04 } },
-  { id:"salmon_maki", name:"Salmon Maki", brand:"Sushi Daily", cat:"sushi", variable:true, g:108,
+  { id:"salmon_maki", name:"Salmon Maki", brand:"Sushi Daily", cat:"sushi", fish:true, variable:true, g:108,
     p100:{ kcal:171, fat:4.6, sat:0, carbs:24, sugars:2.9, fibre:0, protein:8.4, salt:0.07 } },
   { id:"avocado_maki", name:"Avocado Maki", brand:"Sushi Daily", cat:"sushi", variable:true, g:108,
     p100:{ kcal:172, fat:6.8, sat:0, carbs:24, sugars:3.0, fibre:1.2, protein:3.0, salt:0.04 } },
   { id:"teriyaki_chicken_maki", name:"Teriyaki Chicken Maki", brand:"Sushi Daily", cat:"sushi", variable:true, g:113,
     p100:{ kcal:97, fat:1.0, sat:0, carbs:15, sugars:6.3, fibre:0, protein:6.9, salt:0.73 } },
-  { id:"discovery_salmon_nigiri", name:"Discovery Salmon Nigiri", brand:"Sushi Daily", cat:"sushi", variable:true, g:84,
+  { id:"discovery_salmon_nigiri", name:"Discovery Salmon Nigiri", brand:"Sushi Daily", cat:"sushi", fish:true, variable:true, g:84,
     p100:{ kcal:169, fat:5.4, sat:0, carbs:21, sugars:2.6, fibre:0, protein:9.1, salt:0.07 } },
   { id:"california_maki", name:"California Maki", brand:"Sushi Daily", cat:"sushi", variable:true, g:140,
     p100:{ kcal:185, fat:8.9, sat:0, carbs:18, sugars:2.2, fibre:1.1, protein:7.7, salt:0.06 } },
   { id:"veggie_roll", name:"Veggie Roll", brand:"Sushi Daily", cat:"sushi", variable:true, g:175,
     p100:{ kcal:135, fat:4.3, sat:0, carbs:21, sugars:4.2, fibre:1.1, protein:2.5, salt:0.04 } },
   // Poke (Sushi Daily)
-  { id:"deluxe_duo_poke", name:"Deluxe Duo Poke", brand:"Sushi Daily", cat:"poke", variable:true, g:360,
+  { id:"deluxe_duo_poke", name:"Deluxe Duo Poke", brand:"Sushi Daily", cat:"poke", fish:true, variable:true, g:360,
     p100:{ kcal:153, fat:5.5, sat:0, carbs:19, sugars:4.3, fibre:1.1, protein:6.2, salt:0.16 } },
-  { id:"vibrant_salmon_poke_bowl", name:"Vibrant Salmon Poke Bowl", brand:"Sushi Daily", cat:"poke", variable:true, g:326,
+  { id:"vibrant_salmon_poke_bowl", name:"Vibrant Salmon Poke Bowl", brand:"Sushi Daily", cat:"poke", fish:true, variable:true, g:326,
     p100:{ kcal:153, fat:5.3, sat:0, carbs:20, sugars:4.5, fibre:1.2, protein:5.8, salt:0.35 } },
   { id:"teriyaki_chicken_poke", name:"Teriyaki Chicken Poke", brand:"Sushi Daily", cat:"poke", variable:true, g:366,
     p100:{ kcal:142, fat:3.6, sat:0, carbs:21, sugars:6.1, fibre:1.2, protein:5.8, salt:0.48 } },
@@ -2763,7 +2764,7 @@ const WAITROSE = {
     p100:{ kcal:153, fat:4.8, sat:0, carbs:20, sugars:0, fibre:0, protein:6.5, salt:0 } },
   { id:"korean_fried_chicken_bowl", name:"Korean Fried Chicken Bowl", brand:"Sushi Daily", cat:"bowl", variable:true, g:326,
     p100:{ kcal:184, fat:3.6, sat:0, carbs:32, sugars:9, fibre:0, protein:5.9, salt:0.84 } },
-  { id:"salmon_tartare_bowl", name:"Salmon Tartare Bowl", brand:"Sushi Daily", cat:"bowl", variable:true, g:354,
+  { id:"salmon_tartare_bowl", name:"Salmon Tartare Bowl", brand:"Sushi Daily", cat:"bowl", fish:true, variable:true, g:354,
     p100:{ kcal:175, fat:7.3, sat:0, carbs:18, sugars:2.2, fibre:0, protein:9.4, salt:0.07 } },
   // Gyoza (Sushi Daily)
   { id:"chicken_gyoza_sushi_daily", name:"Chicken Gyoza", brand:"Sushi Daily", cat:"gyoza", variable:true, g:130,
@@ -2854,12 +2855,21 @@ function waitroseTotal(entries){
 // Grammzahl ins Name gezogen (z.B. "Yakisoba Chicken (326g typ.)") → sichtbar in Karte/Panel/Einkaufsliste.
 function waitroseOrderItems(){
   return WAITROSE.items.map(it=>{ const m=wtScale(it, it.g); return {
-    id:it.id, cat:it.cat, brand:it.brand, g:it.g, variable:!!it.variable,
+    id:it.id, cat:it.cat, brand:it.brand, fish:!!it.fish, g:it.g, variable:!!it.variable,
     name:it.name+" ("+it.g+"g"+(it.variable?" typ.":"")+")", ...m }; });
 }
 const WAITROSE_MENU = { cats: WAITROSE.cats, items: waitroseOrderItems() };
-// à la carte (AC-Kern) über die typisch/fix gewichteten Produkte — Kategorie-Chips (activeCats) + Max-Items
-function optimizeWaitrose(t, mode, p, activeCats, maxN){ return alaCarteCombos(t, mode, p, WAITROSE_MENU.items.filter(x=>!activeCats||activeCats[x.cat]), maxN); }
+// à la carte (AC-Kern) über die typisch/fix gewichteten Produkte — Kategorie-Chips (activeCats) + Max-Items + 4 Build-Schalter (opts).
+// opts: noFish (fish:true raus), noSushiDaily (brand "Sushi Daily" raus), mustVeg (≥1 cat vegetables), mustCarbs (≥1 cat carbs_rice_grains).
+function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
+  opts = opts||{};
+  let pool = WAITROSE_MENU.items.filter(x=>!activeCats||activeCats[x.cat]);
+  if(opts.noFish) pool = pool.filter(x=>!x.fish);
+  if(opts.noSushiDaily) pool = pool.filter(x=>x.brand!=="Sushi Daily");
+  const reqs=[]; if(opts.mustVeg) reqs.push("vegetables"); if(opts.mustCarbs) reqs.push("carbs_rice_grains");
+  const rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
+  return alaCarteCombos(t, mode, p, pool, maxN, undefined, undefined, rf);
+}
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
   const rt=r._resto;
@@ -3346,6 +3356,11 @@ function App() {
   const [selWt,setSelWt]=useState(null);
   const [maxWt,setMaxWt]=useState(5);
   const [waitroseCats,setWaitroseCats]=useState(()=>{const o={};WAITROSE.cats.forEach(c=>o[c.id]=c.on);return o;});
+  // Waitrose Build-Schalter (alle Default AUS — opt-in): Fisch raus / Sushi-Daily raus / Gemüse-Pflicht / Carbs-Pflicht
+  const [wNoFish,setWNoFish]=useState(false);
+  const [wNoSushiDaily,setWNoSushiDaily]=useState(false);
+  const [wMustVeg,setWMustVeg]=useState(false);
+  const [wMustCarbs,setWMustCarbs]=useState(false);
 
   // Helper: default salad state
   const defaultSalad=()=>{const o={};STD_SALAD_IDS.forEach(id=>o[id]=true);return o;};
@@ -3427,7 +3442,7 @@ function App() {
   const resultsPho=useMemo(()=>resto==="pho"?optimizePho(targets,mode,prefs,phoCats,maxPho):[],[resto,targets,mode,prefs,phoCats,maxPho]);
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish):[],[resto,targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish]);
-  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt]);
+  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustVeg:wMustVeg,mustCarbs:wMustCarbs}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustVeg,wMustCarbs]);
   const resultsPure=useMemo(()=>resto==="pure"?optimizePure(targets,mode,prefs,pureCats,maxPure):[],[resto,targets,mode,prefs,pureCats,maxPure]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -3887,8 +3902,18 @@ function App() {
             onClick:()=>setWaitroseCats(p=>({...p,[c.id]:!p[c.id]}))}))
         ),
         wMode==="build"&&h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Max. products per order"),
-        wMode==="build"&&h("div",{style:{display:"flex",gap:5}},
+        wMode==="build"&&h("div",{style:{display:"flex",gap:5,marginBottom:12}},
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxWt===n,onClick:()=>setMaxWt(n),small:true}))
+        ),
+        wMode==="build"&&h("div",{style:{display:"flex",flexDirection:"column",gap:8}},
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:wNoFish,onChange:e=>setWNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:wNoSushiDaily,onChange:e=>setWNoSushiDaily(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Sushi Daily products"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:wMustVeg,onChange:e=>setWMustVeg(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a vegetable"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:wMustCarbs,onChange:e=>setWMustCarbs(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a carbs / rice / grains")
         )
       ),
 
