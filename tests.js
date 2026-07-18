@@ -1344,6 +1344,10 @@ check("Waitrose Egg Noodles (fix 275g) mit Store-Notiz", (() => { const x = T.WA
 check("Waitrose Mozzarella (Essential Waitrose, cheese, fix 125g, 157/100g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "lighter_italian_mozzarella"); return x && x.brand === "Essential Waitrose" && x.cat === "cheese" && x.g === 125 && x.p100.kcal === 157 && x.p100.protein === 18; })(), true);
 // note propagiert in die Build-Order-Items (waitroseOrderItems)
 check("Waitrose note propagiert in Order-Items", T.waitroseOrderItems().find(x => x.id === "egg_noodles").note === "located at vegetable fridge", true);
+// Portions-Warnung (warn) auf Veetee Sticky Rice (½ pack) + Propagation in Order- und Pick-Items
+check("Waitrose Veetee Sticky Rice hat Portions-Warnung (warn)", /130g/.test(T.WAITROSE.items.find(x => x.id === "sticky_rice_veetee").warn || ""), true);
+check("Waitrose warn propagiert in Order-Items", /130g/.test(T.waitroseOrderItems().find(x => x.id === "sticky_rice_veetee").warn || ""), true);
+check("Waitrose warn propagiert in Pick-Items", /130g/.test(T.waitrosePickItems([{ item: T.WAITROSE.items.find(x => x.id === "sticky_rice_veetee"), qty: 1, g: 130 }])[0].warn || ""), true);
 check("Waitrose Falafel-Kategorie = 3 Cauldron-Items", T.WAITROSE.items.filter(x => x.cat === "falafel").length, 3);
 check("Waitrose Heinz Beef Ravioli (fix 400g, 74/100g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "heinz_beef_ravioli"); return x && x.brand === "Heinz" && x.cat === "carbs_rice_grains" && x.g === 400 && x.p100.kcal === 74; })(), true);
 check("Waitrose Middle Eastern Falafels (Cauldron, fix 200g, kcal 222×2=444)", (() => { const x = T.WAITROSE.items.find(y => y.id === "middle_eastern_falafels"); return x && x.brand === "Cauldron" && x.cat === "falafel" && x.g === 200 && T.wtScale(x, 200).kcal === 444; })(), true);
