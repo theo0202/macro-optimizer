@@ -71,6 +71,15 @@ check("Subway Pepperoni/Salami bleiben Extras", T.D.extras.filter(e => /pepperon
 // Meatball Marinara nutzt die HALAL Meatballs (in marinara sauce) = 229 kcal (User 20.06.2026; Subway nutzt sie generell)
 check("Subway Meatball Marinara = HALAL marinara (229 kcal)", T.D.proteins.find(p => p.id === "meatball_marinara").kcal, 229);
 check("Subway Meatball Marinara Fett (14)", T.D.proteins.find(p => p.id === "meatball_marinara").fat, 14);
+// Pulled Plant (neues Protein, 60g Serving): kcal 114, protein 10, fat 4.6, sat 0.67, salt 0.63
+const pPlant = T.D.proteins.find(p => p.id === "pulled_plant");
+check("Subway Pulled Plant Protein vorhanden", !!pPlant, true);
+check("Subway Pulled Plant Werte (114/10/4.6/7.2)", pPlant && pPlant.kcal === 114 && pPlant.protein === 10 && pPlant.fat === 4.6 && pPlant.carbs === 7.2 && pPlant.servingG === 60, true);
+// vom Optimizer als Protein waehlbar: Ziel = 6-inch Wholegrain + Pulled Plant + Std-Salad (kein Kaese) -> erscheint als Protein
+const brW6 = T.D.breads.find(b => b.id === "wholegrain"), chNone6 = T.D.cheeses.find(c => c.id === "none");
+const ppSub = T.sumN([brW6, pPlant, chNone6, ...T.STD_SALAD], 1);
+const rPP = T.optimize({ protein: ppSub.protein, carbs: ppSub.carbs, fat: ppSub.fat, kcal: ppSub.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true, false, { wholegrain: true }, "6inch", true, false);
+check("Subway Pulled Plant vom Optimizer waehlbar (Top-Ergebnis)", rPP.some(r => r.protein.id === "pulled_plant"), true);
 // Lincolnshire Sausage entfernt (steht nicht in Deliveroos Build-Your-Own-Liste)
 check("Subway kein Lincolnshire Sausage (Protein)", !T.D.proteins.some(p => /lincolnshire/i.test(p.id + p.name)), true);
 // Brot-Mehrfachauswahl: Optimizer nutzt nur die erlaubten Brote; leeres Objekt = alle Brote
