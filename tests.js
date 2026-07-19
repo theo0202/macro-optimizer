@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, alaCarteCombos, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, alaCarteCombos, WAITROSE_MEALS, waitroseMealItems, waitroseMealResults, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1578,6 +1578,24 @@ const poolItsu = T.ITSU.items.filter(x => x.cat === "rice_bowls");
 const combA = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "macros", {}, poolItsu, 2);
 const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "macros", {}, poolItsu, 2, undefined, undefined, undefined, undefined);
 check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
+
+// ===== "Pre-selected Meals" — kuratierte Waitrose-Kombis =====
+check("WAITROSE_MEALS: 6 Mahlzeiten", T.WAITROSE_MEALS.length, 6);
+// jedes Mahlzeit-Produkt existiert im Katalog
+check("WAITROSE_MEALS: alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
+const mealRes = T.waitroseMealResults({ protein: 70, carbs: 90, fat: 20, kcal: 820 }, "macros", {});
+check("waitroseMealResults: 6 Ergebnisse in AC-Form", mealRes.length === 6 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+// Meal 1 = Tomato&Basil Chicken 160g + Heinz Ravioli 400g + Tomatoey French Lentils 250g = 867 kcal
+const meal1 = mealRes.find(r => r._meal === "m1");
+check("waitroseMealResults Meal 1 = 867 kcal (216+296+355)", meal1.nutrition.kcal, 867);
+check("waitroseMealResults Meal 1 = 3 Items", meal1.items.length, 3);
+check("waitroseMealResults Meal 1 Protein = 71.3g", meal1.nutrition.protein, 71.3);
+// Gramm im Namen + KEINE _locked-Markierung (feste Kombi, kein Pick)
+check("waitroseMealItems: Gramm im Namen, kein _locked", (() => { const its = T.waitroseMealItems(T.WAITROSE_MEALS[0]); return its[0].name.includes("(160g)") && its.every(x => !x._locked); })(), true);
+// Meal 6 traegt die Egg-Noodles-Store-Notiz durch
+check("waitroseMealItems: note propagiert (Egg Noodles)", T.waitroseMealItems(T.WAITROSE_MEALS[5]).find(x => x.id === "egg_noodles").note === "located at vegetable fridge", true);
+// Score reagiert aufs Ziel (Sortierung nach Passung moeglich)
+check("waitroseMealResults: score ist finite", mealRes.every(r => isFinite(r.score)), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
