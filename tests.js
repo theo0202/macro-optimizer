@@ -97,6 +97,13 @@ check("Subway Brot Legacy-String (1 Brot) weiterhin ok", T.optimize(t1, "macros"
 const tChick = { protein: 50, carbs: 60, fat: 8, kcal: 512, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway 'No Roast Chicken': kein roast_chicken-Protein", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, true).every(r => r.protein.id !== "roast_chicken"), true);
 check("Subway ohne Schalter: Roast Chicken möglich (Gegenprobe)", T.optimize(tChick, "macros", {}, true, true, {}, "footlong", true, false).some(r => r.protein.id === "roast_chicken"), true);
+// Schalter "No turkey breast" (15. Param, Default AN) — filtert das turkey-Protein
+check("Subway D.proteins hat Turkey Breast", T.D.proteins.some(p => p.id === "turkey"), true);
+const wgB = T.D.breads.find(b => b.id === "wholegrain"), noneC = T.D.cheeses.find(c => c.id === "none"), turkeyP = T.D.proteins.find(p => p.id === "turkey");
+const turkeyBase = T.sumN([wgB, turkeyP, noneC, ...T.STD_SALAD], 1);
+const tTurkey = { protein: turkeyBase.protein, carbs: turkeyBase.carbs, fat: turkeyBase.fat, kcal: turkeyBase.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Subway ohne 'No turkey breast': Turkey Breast möglich (Gegenprobe)", T.optimize(tTurkey, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, false).some(r => r.protein.id === "turkey"), true);
+check("Subway 'No turkey breast': kein turkey-Protein", T.optimize(tTurkey, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, true).every(r => r.protein.id !== "turkey"), true);
 // Schalter "No Poached Egg" (12. Param, Default AUS)
 check("Subway D.extras hat Poached Egg", T.D.extras.some(e => e.id === "poached_egg"), true);
 const tEgg = { protein: 55, carbs: 50, fat: 10, kcal: 510, fibMin: null, fibMax: null, sMin: null, sMax: null };
