@@ -2928,7 +2928,7 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
 // "Pre-selected Meals" — kuratierte Waitrose-Kombis (alle Produkte im Katalog), zum schnellen Durchbrowsen eines guten Gerichts.
 // Jede Mahlzeit = feste Produkt-Liste (id + Gramm); wird zur AC-Ergebnisform (items/nutrition/score) gerendert wie ein Build-Ergebnis.
 // cuisine = Anzeige-Kategorie (Filter-Chips + Badge auf der Karte). Reihenfolge der Chips: WAITROSE_CUISINES.
-const WAITROSE_CUISINES=["Italian","Asian","Mediterranean","Mexican","Indian","British"];
+const WAITROSE_CUISINES=["Italian","Asian","Mediterranean","Middle Eastern","Mexican","Indian","British"];
 const WAITROSE_MEALS=[
   { id:"m1", cuisine:"Italian", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"heinz_beef_ravioli",g:400}, {id:"tomatoey_french_lentils",g:250} ] },
   { id:"m2", cuisine:"Asian", items:[ {id:"egg_fried_rice",g:250}, {id:"green_thai_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
@@ -2947,6 +2947,17 @@ const WAITROSE_MEALS=[
   { id:"m13", cuisine:"Italian", items:[ {id:"heinz_beef_ravioli",g:400}, {id:"flamegrilled_chicken_pieces",g:160}, {id:"tomatoey_french_lentils",g:250} ] },
   { id:"m14", cuisine:"Italian", items:[ {id:"heinz_beef_ravioli",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"lighter_italian_mozzarella",g:125} ] },
   { id:"m15", cuisine:"Italian", items:[ {id:"heinz_beef_ravioli",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
+  // Batch 4 (User 18.07.2026) — m19/m20 sind die ersten "Middle Eastern"-Mahlzeiten (nutzen Turkish Bulgur + Cauldron-Falafel);
+  // m21–m23 haben 4 Produkte + enthalten Sushi-Daily-Produkte (Gyoza/Veggie Roll/Edamame) → vom "No Sushi Daily"-Schalter erfasst.
+  { id:"m16", cuisine:"Asian", items:[ {id:"british_katsu_chicken_pieces",g:160}, {id:"egg_noodles",g:275}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
+  { id:"m17", cuisine:"Mediterranean", items:[ {id:"lemon_herb_chicken_pieces",g:160}, {id:"mediterranean_style_grains",g:250}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
+  { id:"m18", cuisine:"Italian", items:[ {id:"lemon_herb_chicken_pieces",g:160}, {id:"lighter_italian_mozzarella",g:125}, {id:"sun_dried_tomato_black_olive_mixed_grains",g:250} ] },
+  { id:"m19", cuisine:"Middle Eastern", items:[ {id:"flamegrilled_chicken_pieces",g:160}, {id:"turkish_style_bulgur_rice",g:250}, {id:"butternut_red_chilli_bites",g:175} ] },
+  { id:"m20", cuisine:"Middle Eastern", items:[ {id:"lemon_herb_chicken_pieces",g:160}, {id:"turkish_style_bulgur_rice",g:250}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
+  { id:"m21", cuisine:"Asian", items:[ {id:"chicken_gyoza_sushi_daily",g:130}, {id:"sticky_rice_veetee",g:130}, {id:"edamame_sushi_daily",g:93}, {id:"green_thai_chicken_pieces",g:160} ] },
+  { id:"m22", cuisine:"Asian", items:[ {id:"chicken_gyoza_sushi_daily",g:130}, {id:"sticky_rice_veetee",g:130}, {id:"edamame_beans",g:160}, {id:"sweet_chilli_chicken_pieces",g:160} ] },
+  { id:"m23", cuisine:"Asian", items:[ {id:"chicken_gyoza_sushi_daily",g:130}, {id:"veggie_roll",g:175}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_sushi_daily",g:93} ] },
+  { id:"m24", cuisine:"British", items:[ {id:"beluga_lentils",g:250}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"carrot_swede_potato_mash",g:400} ] },
 ];
 // Eine Mahlzeit → AC-Items (skaliert aufs Gramm, Gramm im Namen; note/warn propagiert; KEINE _locked-Markierung — feste Kombi).
 function waitroseMealItems(meal){
@@ -2962,10 +2973,12 @@ function waitroseMealResults(t,mode,p){
   return WAITROSE_MEALS.map(meal=>{ const items=waitroseMealItems(meal), nutrition=sumN(items,1);
     return { _meal:meal.id, _cuisine:meal.cuisine||"", items, nutrition, score:score(nutrition,t,mode,p) }; });
 }
-// Filter für den Meals-Tab: nach Küche (Chip) + Produkt-Suche (Substring über Item-Namen/Marken, Mehrwort-AND)
-function filterMeals(results, cuisine, query){
+// Filter für den Meals-Tab: nach Küche (Chip) + Produkt-Suche (Substring über Item-Namen/Marken, Mehrwort-AND) + "No Sushi Daily"
+// (noSD: Mahlzeiten mit einem Sushi-Daily-Produkt — Gyoza/Veggie Roll/Sushi/Poke/Bowl/Edamame — komplett raus)
+function filterMeals(results, cuisine, query, noSD){
   let rs=results;
   if(cuisine&&cuisine!=="all") rs=rs.filter(r=>r._cuisine===cuisine);
+  if(noSD) rs=rs.filter(r=>!r.items.some(x=>x.brand==="Sushi Daily"));
   const q=(query||"").trim().toLowerCase();
   if(q){ const terms=q.split(/\s+/); rs=rs.filter(r=>terms.every(t=>r.items.some(x=>(x.name+" "+(x.brand||"")).toLowerCase().includes(t)))); }
   return rs;
@@ -3484,6 +3497,7 @@ function App() {
   const [selMeal,setSelMeal]=useState(null); // "Pre-selected meals"-Tab: gewählte Mahlzeit
   const [mealCuisine,setMealCuisine]=useState("all"); // Küchen-Filter (Chip, Einzelauswahl)
   const [mealQ,setMealQ]=useState(""); // Produkt-Suche im Meals-Tab
+  const [mealNoSD,setMealNoSD]=useState(false); // "No Sushi Daily products" — Default AUS (die kuratierten SD-Mahlzeiten sollen sichtbar sein)
   const [maxWt,setMaxWt]=useState(3);
   const [waitroseCats,setWaitroseCats]=useState(()=>{const o={};WAITROSE.cats.forEach(c=>o[c.id]=c.on);return o;});
   // Waitrose Build-Schalter (alle Default AUS — opt-in): Fisch raus / Sushi-Daily raus / Gemüse-Pflicht / Carbs-Pflicht
@@ -3594,7 +3608,7 @@ function App() {
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish):[],[resto,targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish]);
   const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustVeg:wMustVeg,mustCarbs:wMustCarbs,baseItems:wPickItems}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustVeg,wMustCarbs,wPickItems]);
-  const resultsMeals=useMemo(()=>resto==="meals"?filterMeals(waitroseMealResults(targets,mode,prefs),mealCuisine,mealQ):[],[resto,targets,mode,prefs,mealCuisine,mealQ]);
+  const resultsMeals=useMemo(()=>resto==="meals"?filterMeals(waitroseMealResults(targets,mode,prefs),mealCuisine,mealQ,mealNoSD):[],[resto,targets,mode,prefs,mealCuisine,mealQ,mealNoSD]);
   const resultsPure=useMemo(()=>resto==="pure"?optimizePure(targets,mode,prefs,pureCats,maxPure):[],[resto,targets,mode,prefs,pureCats,maxPure]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -4388,10 +4402,12 @@ function App() {
         h("div",{style:{fontSize:11,color:"#b8a58c",lineHeight:1.5,marginBottom:10}},"Curated Waitrose meal combos — all products are in the catalogue. Filter by cuisine or search a product to see every meal that uses it. Sorted by fit to your current macro targets."),
         h("input",{type:"text",value:mealQ,onChange:e=>setMealQ(e.target.value),placeholder:"Search a product (e.g. edamame, katsu, mozzarella)…",
           style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"10px 13px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:10}}),
-        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5,marginBottom:10}},
           h(Chip,{label:"All",small:true,active:mealCuisine==="all",onClick:()=>setMealCuisine("all")}),
           ...WAITROSE_CUISINES.map(c=>h(Chip,{key:c,label:c,small:true,active:mealCuisine===c,onClick:()=>setMealCuisine(mealCuisine===c?"all":c)}))
-        )
+        ),
+        h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+          h("input",{type:"checkbox",checked:mealNoSD,onChange:e=>setMealNoSD(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Sushi Daily products")
       ),
       resto==="meals"&&resultsMeals.length===0&&h("div",{style:{fontSize:12,color:"#888",fontFamily:S.mono,padding:"12px 0 18px"}},"No saved meals match — try a different product or cuisine."),
 
