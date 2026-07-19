@@ -2934,6 +2934,13 @@ const WAITROSE_MEALS=[
   { id:"m4", items:[ {id:"carrot_swede_potato_mash",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
   { id:"m5", items:[ {id:"firecracker_basmati_rice",g:250}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
   { id:"m6", items:[ {id:"egg_noodles",g:275}, {id:"green_thai_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
+  // Batch 2 (User 18.07.2026) — Sticky Rice hier bewusst 260g (voller Pack, beide Boxen; die ⚠️-Warnung bleibt als Produkt-Hinweis)
+  { id:"m7", items:[ {id:"sticky_rice_veetee",g:260}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m8", items:[ {id:"golden_vegetable",g:220}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m9", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"sun_dried_tomato_black_olive_mixed_grains",g:250}, {id:"lighter_italian_mozzarella",g:125} ] },
+  { id:"m10", items:[ {id:"sweet_chilli_chicken_pieces",g:160}, {id:"egg_fried_rice",g:250}, {id:"edamame_beans",g:160} ] },
+  { id:"m11", items:[ {id:"smoky_chipotle_lime_chicken_pieces",g:160}, {id:"spicy_mexican_rice",g:250}, {id:"5_bean_medley",g:240} ] },
+  { id:"m12", items:[ {id:"british_tikka_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245}, {id:"golden_vegetable",g:220} ] },
 ];
 // Eine Mahlzeit → AC-Items (skaliert aufs Gramm, Gramm im Namen; note/warn propagiert; KEINE _locked-Markierung — feste Kombi).
 function waitroseMealItems(meal){
@@ -4377,7 +4384,7 @@ function App() {
 
       // Results list
       (resto!=="search"&&(resto!=="waitrose"||wMode==="build")) && h("div",{style:{display:"flex",flexDirection:"column",gap:8,marginBottom:20}},
-        ...sortResults(activeResults,effSort,sortTgts).slice(0,8).map((r,i)=>{
+        ...sortResults(activeResults,effSort,sortTgts).slice(0,resto==="meals"?activeResults.length:8).map((r,i)=>{
           if(resto==="all"||resto==="accurate"){
             return h("button",{key:i,onClick:()=>selectAcross(r),style:{
               background:"#151515",border:"1px solid #222",borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",

@@ -1580,11 +1580,11 @@ const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "
 check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
 
 // ===== "Pre-selected Meals" — kuratierte Waitrose-Kombis =====
-check("WAITROSE_MEALS: 6 Mahlzeiten", T.WAITROSE_MEALS.length, 6);
+check("WAITROSE_MEALS: 12 Mahlzeiten", T.WAITROSE_MEALS.length, 12);
 // jedes Mahlzeit-Produkt existiert im Katalog
 check("WAITROSE_MEALS: alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 const mealRes = T.waitroseMealResults({ protein: 70, carbs: 90, fat: 20, kcal: 820 }, "macros", {});
-check("waitroseMealResults: 6 Ergebnisse in AC-Form", mealRes.length === 6 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+check("waitroseMealResults: 12 Ergebnisse in AC-Form", mealRes.length === 12 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
 // Meal 1 = Tomato&Basil Chicken 160g + Heinz Ravioli 400g + Tomatoey French Lentils 250g = 867 kcal
 const meal1 = mealRes.find(r => r._meal === "m1");
 check("waitroseMealResults Meal 1 = 867 kcal (216+296+355)", meal1.nutrition.kcal, 867);
@@ -1596,6 +1596,15 @@ check("waitroseMealItems: Gramm im Namen, kein _locked", (() => { const its = T.
 check("waitroseMealItems: note propagiert (Egg Noodles)", T.waitroseMealItems(T.WAITROSE_MEALS[5]).find(x => x.id === "egg_noodles").note === "located at vegetable fridge", true);
 // Score reagiert aufs Ziel (Sortierung nach Passung moeglich)
 check("waitroseMealResults: score ist finite", mealRes.every(r => isFinite(r.score)), true);
+// Batch 2: m7 nutzt Veetee Sticky Rice bei 260g (voller Pack) = 827 kcal; warn propagiert
+const m7 = mealRes.find(r => r._meal === "m7");
+check("waitroseMealResults m7 (Sticky Rice 260g) = 827.2 kcal", m7.nutrition.kcal, 827.2);
+check("waitroseMealItems m7: Sticky Rice bei 260g im Namen + warn dabei", (() => { const x = T.waitroseMealItems(T.WAITROSE_MEALS.find(m => m.id === "m7")).find(y => y.id === "sticky_rice_veetee"); return x.name.includes("(260g)") && /130g/.test(x.warn); })(), true);
+// m12 nutzt Ben's Golden Vegetable (nicht die Waitrose-Reis-Variante) = 809 kcal
+const m12 = mealRes.find(r => r._meal === "m12");
+check("waitroseMealResults m12 (Tikka/Greens/Golden Veg) = 809.4 kcal", m12.nutrition.kcal, 809.4);
+// alle 12 Mahlzeit-Produkt-ids existieren weiterhin
+check("WAITROSE_MEALS (12): alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : "\nAlle Tests bestanden");
 process.exit(failures ? 1 : 0);
