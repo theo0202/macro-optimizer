@@ -1588,11 +1588,14 @@ const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "
 check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
 
 // ===== "Pre-selected Meals" — kuratierte Waitrose-Kombis =====
-check("WAITROSE_MEALS: 24 Mahlzeiten", T.WAITROSE_MEALS.length, 24);
+check("WAITROSE_MEALS: 26 Mahlzeiten", T.WAITROSE_MEALS.length, 26);
 // jedes Mahlzeit-Produkt existiert im Katalog
 check("WAITROSE_MEALS: alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 const mealRes = T.waitroseMealResults({ protein: 70, carbs: 90, fat: 20, kcal: 820 }, "macros", {});
-check("waitroseMealResults: 24 Ergebnisse in AC-Form", mealRes.length === 24 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+check("waitroseMealResults: 26 Ergebnisse in AC-Form", mealRes.length === 26 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+// Batch 5: m25 (Baked-Beans-Teller) + m26 (Asian Egg Noodles)
+check("m25 (Flamegrilled+Mash+BakedBeans) ~780.8 kcal, British", (() => { const r = mealRes.find(x => x._meal === "m25"); return r && r._cuisine === "British" && Math.abs(r.nutrition.kcal - 780.8) < 0.6 && r.items.some(x => x.id === "classic_baked_beans"); })(), true);
+check("m26 (EggNoodles+Edamame+SweetChilli) ~749.2 kcal, Asian", (() => { const r = mealRes.find(x => x._meal === "m26"); return r && r._cuisine === "Asian" && Math.abs(r.nutrition.kcal - 749.2) < 0.6; })(), true);
 // Batch 4: neue Küche "Middle Eastern" + 9 neue Mahlzeiten (inkl. 4-Produkt-Kombis + Sushi-Daily)
 check("WAITROSE_CUISINES enthält Middle Eastern", T.WAITROSE_CUISINES.includes("Middle Eastern"), true);
 check("Mahlzeiten mit cuisine Middle Eastern = 2", mealRes.filter(r => r._cuisine === "Middle Eastern").length, 2);
@@ -1602,9 +1605,9 @@ check("m21 (Gyoza+StickyRice+Edamame+GreenThai) 4 Items ~755 kcal", m21r.items.l
 check("m24 (BelugaLentils+Tomato&Basil+Mash) ~879 kcal", Math.abs(m24r.nutrition.kcal - 879) < 0.6, true);
 check("Batch 4: alle 9 neuen Produkt-ids existieren", ["m16","m17","m18","m19","m20","m21","m22","m23","m24"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 // "No Sushi Daily products"-Filter: nur m21/m22/m23 enthalten Sushi-Daily-Produkte -> 24-3=21
-check("filterMeals noSD: 3 Mahlzeiten mit Sushi Daily raus -> 21", T.filterMeals(mealRes, "all", "", true).length, 21);
+check("filterMeals noSD: 3 Mahlzeiten mit Sushi Daily raus -> 23", T.filterMeals(mealRes, "all", "", true).length, 23);
 check("filterMeals noSD: kein Sushi-Daily-Produkt in den Ergebnissen", T.filterMeals(mealRes, "all", "", true).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);
-check("filterMeals noSD=false: alle 24 (Gegenprobe)", T.filterMeals(mealRes, "all", "", false).length, 24);
+check("filterMeals noSD=false: alle 26 (Gegenprobe)", T.filterMeals(mealRes, "all", "", false).length, 26);
 // noSD kombiniert mit Küche: Asian ohne Sushi Daily
 check("filterMeals Asian + noSD: nur Asian, kein Sushi Daily", T.filterMeals(mealRes, "Asian", "", true).every(r => r._cuisine === "Asian" && r.items.every(x => x.brand !== "Sushi Daily")), true);
 // Küche: jede Mahlzeit hat eine gültige cuisine + _cuisine im Ergebnis
@@ -1612,7 +1615,7 @@ check("WAITROSE_MEALS: jede Mahlzeit hat gültige cuisine", T.WAITROSE_MEALS.eve
 check("waitroseMealResults traegt _cuisine", mealRes.every(r => T.WAITROSE_CUISINES.includes(r._cuisine)), true);
 // filterMeals: Küchen-Filter (nur Italian)
 check("filterMeals Küche 'Italian' -> nur Italian", T.filterMeals(mealRes, "Italian", "").every(r => r._cuisine === "Italian"), true);
-check("filterMeals 'all' -> alle 24", T.filterMeals(mealRes, "all", "").length, 24);
+check("filterMeals 'all' -> alle 26", T.filterMeals(mealRes, "all", "").length, 26);
 // filterMeals: Produkt-Suche (alle Gerichte mit Edamame)
 const eda = T.filterMeals(mealRes, "all", "edamame");
 check("filterMeals Suche 'edamame' -> nur Gerichte mit Edamame", eda.length > 0 && eda.every(r => r.items.some(x => /edamame/i.test(x.name))), true);
