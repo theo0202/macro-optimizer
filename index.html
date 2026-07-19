@@ -2927,20 +2927,26 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
 }
 // "Pre-selected Meals" — kuratierte Waitrose-Kombis (alle Produkte im Katalog), zum schnellen Durchbrowsen eines guten Gerichts.
 // Jede Mahlzeit = feste Produkt-Liste (id + Gramm); wird zur AC-Ergebnisform (items/nutrition/score) gerendert wie ein Build-Ergebnis.
+// cuisine = Anzeige-Kategorie (Filter-Chips + Badge auf der Karte). Reihenfolge der Chips: WAITROSE_CUISINES.
+const WAITROSE_CUISINES=["Italian","Asian","Mediterranean","Mexican","Indian","British"];
 const WAITROSE_MEALS=[
-  { id:"m1", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"heinz_beef_ravioli",g:400}, {id:"tomatoey_french_lentils",g:250} ] },
-  { id:"m2", items:[ {id:"egg_fried_rice",g:250}, {id:"green_thai_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
-  { id:"m3", items:[ {id:"mediterranean_style_grains",g:250}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"lighter_italian_mozzarella",g:125} ] },
-  { id:"m4", items:[ {id:"carrot_swede_potato_mash",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
-  { id:"m5", items:[ {id:"firecracker_basmati_rice",g:250}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
-  { id:"m6", items:[ {id:"egg_noodles",g:275}, {id:"green_thai_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
+  { id:"m1", cuisine:"Italian", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"heinz_beef_ravioli",g:400}, {id:"tomatoey_french_lentils",g:250} ] },
+  { id:"m2", cuisine:"Asian", items:[ {id:"egg_fried_rice",g:250}, {id:"green_thai_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m3", cuisine:"Mediterranean", items:[ {id:"mediterranean_style_grains",g:250}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"lighter_italian_mozzarella",g:125} ] },
+  { id:"m4", cuisine:"British", items:[ {id:"carrot_swede_potato_mash",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
+  { id:"m5", cuisine:"Asian", items:[ {id:"firecracker_basmati_rice",g:250}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m6", cuisine:"Asian", items:[ {id:"egg_noodles",g:275}, {id:"green_thai_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
   // Batch 2 (User 18.07.2026) — Sticky Rice hier bewusst 260g (voller Pack, beide Boxen; die ⚠️-Warnung bleibt als Produkt-Hinweis)
-  { id:"m7", items:[ {id:"sticky_rice_veetee",g:260}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
-  { id:"m8", items:[ {id:"golden_vegetable",g:220}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
-  { id:"m9", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"sun_dried_tomato_black_olive_mixed_grains",g:250}, {id:"lighter_italian_mozzarella",g:125} ] },
-  { id:"m10", items:[ {id:"sweet_chilli_chicken_pieces",g:160}, {id:"egg_fried_rice",g:250}, {id:"edamame_beans",g:160} ] },
-  { id:"m11", items:[ {id:"smoky_chipotle_lime_chicken_pieces",g:160}, {id:"spicy_mexican_rice",g:250}, {id:"5_bean_medley",g:240} ] },
-  { id:"m12", items:[ {id:"british_tikka_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245}, {id:"golden_vegetable",g:220} ] },
+  { id:"m7", cuisine:"Asian", items:[ {id:"sticky_rice_veetee",g:260}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m8", cuisine:"Asian", items:[ {id:"golden_vegetable",g:220}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m9", cuisine:"Italian", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"sun_dried_tomato_black_olive_mixed_grains",g:250}, {id:"lighter_italian_mozzarella",g:125} ] },
+  { id:"m10", cuisine:"Asian", items:[ {id:"sweet_chilli_chicken_pieces",g:160}, {id:"egg_fried_rice",g:250}, {id:"edamame_beans",g:160} ] },
+  { id:"m11", cuisine:"Mexican", items:[ {id:"smoky_chipotle_lime_chicken_pieces",g:160}, {id:"spicy_mexican_rice",g:250}, {id:"5_bean_medley",g:240} ] },
+  { id:"m12", cuisine:"Indian", items:[ {id:"british_tikka_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245}, {id:"golden_vegetable",g:220} ] },
+  // Batch 3 (User 18.07.2026) — Beef-Ravioli-Kombis (Italienisch)
+  { id:"m13", cuisine:"Italian", items:[ {id:"heinz_beef_ravioli",g:400}, {id:"flamegrilled_chicken_pieces",g:160}, {id:"tomatoey_french_lentils",g:250} ] },
+  { id:"m14", cuisine:"Italian", items:[ {id:"heinz_beef_ravioli",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"lighter_italian_mozzarella",g:125} ] },
+  { id:"m15", cuisine:"Italian", items:[ {id:"heinz_beef_ravioli",g:400}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"peas_cabbage_tenderstem_broccoli_layers",g:245} ] },
 ];
 // Eine Mahlzeit → AC-Items (skaliert aufs Gramm, Gramm im Namen; note/warn propagiert; KEINE _locked-Markierung — feste Kombi).
 function waitroseMealItems(meal){
@@ -2954,7 +2960,15 @@ function waitroseMealItems(meal){
 // Alle Mahlzeiten als AC-Ergebnisse (items/nutrition/score) gegen das aktuelle Ziel — Score = Fit, sortierbar nach Passung.
 function waitroseMealResults(t,mode,p){
   return WAITROSE_MEALS.map(meal=>{ const items=waitroseMealItems(meal), nutrition=sumN(items,1);
-    return { _meal:meal.id, items, nutrition, score:score(nutrition,t,mode,p) }; });
+    return { _meal:meal.id, _cuisine:meal.cuisine||"", items, nutrition, score:score(nutrition,t,mode,p) }; });
+}
+// Filter für den Meals-Tab: nach Küche (Chip) + Produkt-Suche (Substring über Item-Namen/Marken, Mehrwort-AND)
+function filterMeals(results, cuisine, query){
+  let rs=results;
+  if(cuisine&&cuisine!=="all") rs=rs.filter(r=>r._cuisine===cuisine);
+  const q=(query||"").trim().toLowerCase();
+  if(q){ const terms=q.split(/\s+/); rs=rs.filter(r=>terms.every(t=>r.items.some(x=>(x.name+" "+(x.brand||"")).toLowerCase().includes(t)))); }
+  return rs;
 }
 // Waitrose-Nuss-Toppings ("top with …", NUR Waitrose-Build) — je Nuss max EINE Portion (20 g default, im Panel editierbar),
 // nicht mehrere. Werte per 100 g; die Portion skaliert per wtScale (p100 × g/100). **ERZWUNGEN** (User 13.07.2026): JEDE
@@ -3467,6 +3481,8 @@ function App() {
   const [wMode,setWMode]=useState("build");
   const [selWt,setSelWt]=useState(null);
   const [selMeal,setSelMeal]=useState(null); // "Pre-selected meals"-Tab: gewählte Mahlzeit
+  const [mealCuisine,setMealCuisine]=useState("all"); // Küchen-Filter (Chip, Einzelauswahl)
+  const [mealQ,setMealQ]=useState(""); // Produkt-Suche im Meals-Tab
   const [maxWt,setMaxWt]=useState(3);
   const [waitroseCats,setWaitroseCats]=useState(()=>{const o={};WAITROSE.cats.forEach(c=>o[c.id]=c.on);return o;});
   // Waitrose Build-Schalter (alle Default AUS — opt-in): Fisch raus / Sushi-Daily raus / Gemüse-Pflicht / Carbs-Pflicht
@@ -3577,7 +3593,7 @@ function App() {
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish):[],[resto,targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish]);
   const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustVeg:wMustVeg,mustCarbs:wMustCarbs,baseItems:wPickItems}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustVeg,wMustCarbs,wPickItems]);
-  const resultsMeals=useMemo(()=>resto==="meals"?waitroseMealResults(targets,mode,prefs):[],[resto,targets,mode,prefs]);
+  const resultsMeals=useMemo(()=>resto==="meals"?filterMeals(waitroseMealResults(targets,mode,prefs),mealCuisine,mealQ):[],[resto,targets,mode,prefs,mealCuisine,mealQ]);
   const resultsPure=useMemo(()=>resto==="pure"?optimizePure(targets,mode,prefs,pureCats,maxPure):[],[resto,targets,mode,prefs,pureCats,maxPure]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -4364,8 +4380,17 @@ function App() {
         )
       ),
 
-      // Pre-selected meals: kurze Erklärung (kuratierte Waitrose-Kombis, nach Ziel-Passung sortiert)
-      resto==="meals"&&h("div",{style:{marginBottom:16,fontSize:11,color:"#b8a58c",lineHeight:1.5}},"Curated Waitrose meal combos — all products are already in the catalogue. Sorted by how well they fit your current macro targets; tap one for the full breakdown + shopping list. Set your goals above to re-rank."),
+      // Pre-selected meals: Erklärung + Produkt-Suche + Küchen-Filter (kuratierte Waitrose-Kombis, nach Ziel-Passung sortiert)
+      resto==="meals"&&h("div",{style:{marginBottom:16}},
+        h("div",{style:{fontSize:11,color:"#b8a58c",lineHeight:1.5,marginBottom:10}},"Curated Waitrose meal combos — all products are in the catalogue. Filter by cuisine or search a product to see every meal that uses it. Sorted by fit to your current macro targets."),
+        h("input",{type:"text",value:mealQ,onChange:e=>setMealQ(e.target.value),placeholder:"Search a product (e.g. edamame, katsu, mozzarella)…",
+          style:{width:"100%",boxSizing:"border-box",background:"#151515",border:"1px solid #2a2a2a",borderRadius:10,padding:"10px 13px",color:"#fff",fontSize:14,fontFamily:S.font,outline:"none",marginBottom:10}}),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+          h(Chip,{label:"All",small:true,active:mealCuisine==="all",onClick:()=>setMealCuisine("all")}),
+          ...WAITROSE_CUISINES.map(c=>h(Chip,{key:c,label:c,small:true,active:mealCuisine===c,onClick:()=>setMealCuisine(mealCuisine===c?"all":c)}))
+        )
+      ),
+      resto==="meals"&&resultsMeals.length===0&&h("div",{style:{fontSize:12,color:"#888",fontFamily:S.mono,padding:"12px 0 18px"}},"No saved meals match — try a different product or cuisine."),
 
       // Results header + Sort by (Accuracy-Sortierung)
       (resto!=="search"&&(resto!=="waitrose"||wMode==="build")) && h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8,marginBottom:10}},
@@ -4538,7 +4563,9 @@ function App() {
             }},
               h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}},
                 h("div",null,
-                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},itsuLabel(r.items)),
+                  h("div",{style:{fontSize:13,fontWeight:600,color:"#fff",marginBottom:2}},
+                    r._cuisine?h("span",{key:"cz",style:{fontSize:8,fontWeight:700,color:"#fbbf24",background:"rgba(180,83,9,0.22)",border:"1px solid rgba(180,83,9,0.5)",borderRadius:5,padding:"2px 6px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,marginRight:6,verticalAlign:"middle",whiteSpace:"nowrap"}},r._cuisine):null,
+                    itsuLabel(r.items)),
                   h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
                     r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · ")+cornLbl(r)+nutLbl(r))
                 ),
@@ -4831,7 +4858,7 @@ function App() {
       // Detail panel (à la carte: Itsu & Pret)
       AC&&AC.sel&&h("div",{style:{background:"#151515",borderRadius:12,border:"1px solid "+S.green,padding:16}},
         h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},itsuLabel(AC.sel.items)),
-        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},((resto==="waitrose"||resto==="meals")?"Waitrose · ":"à la carte · ")+AC.sel.items.length+((resto==="waitrose"||resto==="meals")?(AC.sel.items.length===1?" product · typical weights":" products · typical weights"):(AC.sel.items.length===1?" Item":" Items"))),
+        h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},(resto==="meals"&&AC.sel._cuisine?AC.sel._cuisine+" · ":"")+((resto==="waitrose"||resto==="meals")?"Waitrose · ":"à la carte · ")+AC.sel.items.length+((resto==="waitrose"||resto==="meals")?(AC.sel.items.length===1?" product · typical weights":" products · typical weights"):(AC.sel.items.length===1?" Item":" Items"))),
 
         // Macro bars (nutAC.total = corn-inklusiv + Nuss-Toppings; == ccAC.total wenn keine Nuesse / kein Waitrose)
         h("div",{style:{marginBottom:16}},

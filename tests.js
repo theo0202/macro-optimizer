@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, alaCarteCombos, WAITROSE_MEALS, waitroseMealItems, waitroseMealResults, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, alaCarteCombos, WAITROSE_MEALS, WAITROSE_CUISINES, waitroseMealItems, waitroseMealResults, filterMeals, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1580,11 +1580,28 @@ const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "
 check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
 
 // ===== "Pre-selected Meals" — kuratierte Waitrose-Kombis =====
-check("WAITROSE_MEALS: 12 Mahlzeiten", T.WAITROSE_MEALS.length, 12);
+check("WAITROSE_MEALS: 15 Mahlzeiten", T.WAITROSE_MEALS.length, 15);
 // jedes Mahlzeit-Produkt existiert im Katalog
 check("WAITROSE_MEALS: alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 const mealRes = T.waitroseMealResults({ protein: 70, carbs: 90, fat: 20, kcal: 820 }, "macros", {});
-check("waitroseMealResults: 12 Ergebnisse in AC-Form", mealRes.length === 12 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+check("waitroseMealResults: 15 Ergebnisse in AC-Form", mealRes.length === 15 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+// Küche: jede Mahlzeit hat eine gültige cuisine + _cuisine im Ergebnis
+check("WAITROSE_MEALS: jede Mahlzeit hat gültige cuisine", T.WAITROSE_MEALS.every(m => T.WAITROSE_CUISINES.includes(m.cuisine)), true);
+check("waitroseMealResults traegt _cuisine", mealRes.every(r => T.WAITROSE_CUISINES.includes(r._cuisine)), true);
+// filterMeals: Küchen-Filter (nur Italian)
+check("filterMeals Küche 'Italian' -> nur Italian", T.filterMeals(mealRes, "Italian", "").every(r => r._cuisine === "Italian"), true);
+check("filterMeals 'all' -> alle 15", T.filterMeals(mealRes, "all", "").length, 15);
+// filterMeals: Produkt-Suche (alle Gerichte mit Edamame)
+const eda = T.filterMeals(mealRes, "all", "edamame");
+check("filterMeals Suche 'edamame' -> nur Gerichte mit Edamame", eda.length > 0 && eda.every(r => r.items.some(x => /edamame/i.test(x.name))), true);
+check("filterMeals Suche 'mozzarella' findet Gerichte", T.filterMeals(mealRes, "all", "mozzarella").every(r => r.items.some(x => /mozzarella/i.test(x.name))), true);
+// filterMeals: Küche + Suche kombiniert (Italian + ravioli)
+check("filterMeals 'Italian' + 'ravioli' kombiniert", T.filterMeals(mealRes, "Italian", "ravioli").every(r => r._cuisine === "Italian" && r.items.some(x => /ravioli/i.test(x.name))), true);
+check("filterMeals kein Treffer -> []", T.filterMeals(mealRes, "all", "xyzzy_nonexistent").length, 0);
+// Batch 3: die 3 neuen Ravioli-Kombis (m13-m15)
+check("waitroseMealResults m13 (Ravioli+Flamegrilled+FrenchLentils) = 871.8 kcal", mealRes.find(r => r._meal === "m13").nutrition.kcal, 871.8);
+check("waitroseMealResults m14 (Ravioli+Tomato&Basil+Mozzarella) = 708 kcal", mealRes.find(r => r._meal === "m14").nutrition.kcal, 708.3);
+check("waitroseMealResults m15 (Ravioli+Tomato&Basil+Greens) = 767 kcal", mealRes.find(r => r._meal === "m15").nutrition.kcal, 766.8);
 // Meal 1 = Tomato&Basil Chicken 160g + Heinz Ravioli 400g + Tomatoey French Lentils 250g = 867 kcal
 const meal1 = mealRes.find(r => r._meal === "m1");
 check("waitroseMealResults Meal 1 = 867 kcal (216+296+355)", meal1.nutrition.kcal, 867);
