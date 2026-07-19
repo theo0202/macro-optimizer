@@ -1330,13 +1330,15 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (58)", T.WAITROSE.items.length, 58);
+check("Waitrose Produkte (59)", T.WAITROSE.items.length, 59);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
 // Kategorien: Chicken pieces / Sushi / Poke / Bowl / Gyoza / Carbs, Rice, Grains / Vegetables (Excel-Import 13.07.2026)
 check("Waitrose 9 Kategorien (inkl. Falafel + Cheese)", T.WAITROSE.cats.length, 9);
 check("Waitrose jedes Item hat gueltige Kategorie", T.WAITROSE.items.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
-check("Waitrose Chicken pieces = 7 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 7);
+check("Waitrose Chicken pieces = 8 Items", T.WAITROSE.items.filter(x => x.cat === "chicken_pieces").length, 8);
 check("Waitrose British Katsu Chicken Pieces (fix 160g, kcal 135)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_katsu_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 135; })(), true);
+check("Waitrose British Tikka Chicken Pieces (fix 160g, 139/100g, P25.6)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_tikka_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 139 && x.p100.protein === 25.6 && x.p100.salt === 0.49; })(), true);
+check("Waitrose Tikka @160g = 222.4 kcal (per-100g×1.6)", T.wtScale(T.WAITROSE.items.find(x => x.id === "british_tikka_chicken_pieces"), 160).kcal, 222.4);
 check("Waitrose Carbs/Rice/Grains = 25 Items (+ Egg Noodles)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 25);
 check("Waitrose Cheese-Kategorie = 1 (Lighter Italian Mozzarella)", T.WAITROSE.items.filter(x => x.cat === "cheese").length, 1);
 // Egg Noodles: fix 275g, Notiz "located at vegetable fridge"; Mozzarella (Essential Waitrose) cheese, fix 125g
@@ -1393,7 +1395,7 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
 // waitroseSearch schliesst die 3 Nuss-Portionen ein (Track-Basket): 52 Produkte + 3 Nuesse = 55
-check("waitroseSearch leere Query -> Katalog + 3 Nuesse (61)", T.waitroseSearch("", 65).length, 61);
+check("waitroseSearch leere Query -> Katalog + 3 Nuesse (62)", T.waitroseSearch("", 65).length, 62);
 check("waitroseSearch 'peanut' findet Roasted Peanuts (Nuss im Track)", T.waitroseSearch("peanut", 60).some(x => x.id === "peanuts"), true);
 check("waitroseSearch 'pine' findet Pine Kernels", T.waitroseSearch("pine", 60).some(x => x.id === "pine" && x.variable === true && x.cat === "nuts"), true);
 // Nuesse bleiben AUSSERHALB des Build-Pools (WAITROSE.items / WAITROSE_MENU unveraendert bei 52)
@@ -1414,14 +1416,14 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 58 Items", wItems.length, 58);
+check("waitroseOrderItems: 59 Items", wItems.length, 59);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 9 Kategorien + 58 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 58, true);
+check("WAITROSE_MENU hat 9 Kategorien + 59 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 59, true);
 const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true); // activeCats = alle Kategorien an
 // Build-Kategorie-Filter fuer die neue Excel-Kategorie
 check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitrose({ protein: 6, carbs: 45, fat: 4, kcal: 250, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { carbs_rice_grains: true }, 2).every(r => r.items.every(x => x.cat === "carbs_rice_grains")), true);
