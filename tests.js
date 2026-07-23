@@ -1602,11 +1602,15 @@ check("Batch 7: alle 6 neuen Produkt-ids existieren", ["m29","m30","m31","m32","
 // "Must include Sushi Daily" / "Only Sushi Daily" (Meals-Filter, exklusiv)
 check("filterMeals mustSD: 9 Mahlzeiten mit >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).length, 9);
 check("filterMeals mustSD: jede hat >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
-check("filterMeals onlySD: keine Mahlzeit ist komplett Sushi Daily -> 0", T.filterMeals(mealRes, "all", "", false, false, true).length, 0);
-check("filterMeals onlySD hat Vorrang vor mustSD/noSD", T.filterMeals(mealRes, "all", "", true, true, true).length, 0);
-// optimizeWaitrose: onlySushiDaily (Pool nur SD) + mustSushiDaily (Ergebnis-Constraint)
-const rOnlySD = T.optimizeWaitrose({ carbs: 70, protein: 30, fat: 20, kcal: 580, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { onlySushiDaily: true });
-check("optimizeWaitrose onlySushiDaily: nur Sushi-Daily-Produkte", rOnlySD.length > 0 && rOnlySD.every(r => r.items.every(x => x.brand === "Sushi Daily")), true);
+// "Only Sushi Daily + chicken": nur SD-Produkte ODER Waitrose-Chicken, mind. 1 SD -> m23 + m29-m34 = 7
+const isSDorChick = x => x.brand === "Sushi Daily" || x.cat === "chicken_pieces";
+check("filterMeals onlySD (+chicken): 7 Mahlzeiten (nur SD+Chicken, >=1 SD)", T.filterMeals(mealRes, "all", "", false, false, true).length, 7);
+check("filterMeals onlySD: jede nur SD+Chicken und >=1 SD", T.filterMeals(mealRes, "all", "", false, false, true).every(r => r.items.every(isSDorChick) && r.items.some(x => x.brand === "Sushi Daily")), true);
+check("filterMeals onlySD hat Vorrang vor mustSD/noSD -> 7", T.filterMeals(mealRes, "all", "", true, true, true).length, 7);
+// optimizeWaitrose: onlySushiDaily (Pool nur SD+Chicken, >=1 SD) + mustSushiDaily (Ergebnis-Constraint)
+const rOnlySD = T.optimizeWaitrose({ carbs: 70, protein: 45, fat: 20, kcal: 640, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { onlySushiDaily: true });
+check("optimizeWaitrose onlySushiDaily (+chicken): nur SD-Produkte oder Waitrose-Chicken", rOnlySD.length > 0 && rOnlySD.every(r => r.items.every(isSDorChick)), true);
+check("optimizeWaitrose onlySushiDaily: jedes Ergebnis hat >=1 Sushi Daily", rOnlySD.every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
 const rMustSD = T.optimizeWaitrose({ carbs: 85, protein: 65, fat: 20, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { mustSushiDaily: true });
 check("optimizeWaitrose mustSushiDaily: jedes Ergebnis hat >=1 Sushi Daily", rMustSD.length > 0 && rMustSD.every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
 check("optimizeWaitrose noSushiDaily bleibt (Gegenprobe): kein SD", T.optimizeWaitrose({ carbs: 85, protein: 65, fat: 20, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { noSushiDaily: true }).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);

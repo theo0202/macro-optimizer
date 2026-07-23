@@ -2915,12 +2915,13 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
   opts = opts||{};
   let pool = WAITROSE_MENU.items.filter(x=>!activeCats||activeCats[x.cat]);
   if(opts.noFish) pool = pool.filter(x=>!x.fish);
-  // Sushi-Daily-Schalter (UI-exklusiv): onlySushiDaily = Pool nur SD · noSushiDaily = Pool ohne SD · mustSushiDaily = Ergebnis-Constraint (≥1 SD)
-  if(opts.onlySushiDaily) pool = pool.filter(x=>x.brand==="Sushi Daily");
+  // Sushi-Daily-Schalter (UI-exklusiv): onlySushiDaily = "Only Sushi Daily + chicken" (Pool nur SD-Produkte ODER Waitrose-Chicken-Pieces)
+  // · noSushiDaily = Pool ohne SD · mustSushiDaily = Ergebnis-Constraint (≥1 SD). onlySushiDaily verlangt zusätzlich ≥1 SD im Ergebnis.
+  if(opts.onlySushiDaily) pool = pool.filter(x=>x.brand==="Sushi Daily"||x.cat==="chicken_pieces");
   else if(opts.noSushiDaily) pool = pool.filter(x=>x.brand!=="Sushi Daily");
   const reqs=[]; if(opts.mustVeg) reqs.push("vegetables"); if(opts.mustCarbs) reqs.push("carbs_rice_grains");
   let rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
-  if(opts.mustSushiDaily){ const base=rf; rf=(items)=>(base?base(items):true)&&items.some(x=>x.brand==="Sushi Daily"); } // ≥1 Sushi-Daily-Produkt im Ergebnis
+  if(opts.mustSushiDaily||opts.onlySushiDaily){ const base=rf; rf=(items)=>(base?base(items):true)&&items.some(x=>x.brand==="Sushi Daily"); } // ≥1 Sushi-Daily-Produkt im Ergebnis
   const base = (opts.baseItems&&opts.baseItems.length)?opts.baseItems:null;
   if(base){
     const addBudget = (maxN===Infinity)?Infinity:Math.max(0, maxN-base.length);
@@ -2995,12 +2996,12 @@ function waitroseMealResults(t,mode,p){
 }
 // Filter für den Meals-Tab: nach Küche (Chip) + Produkt-Suche (Substring über Item-Namen/Marken, Mehrwort-AND)
 // + 3 sich gegenseitig ausschließende Sushi-Daily-Schalter (UI erzwingt max. einen an):
-//   onlySD = NUR Sushi-Daily-Produkte (jede Item-Marke "Sushi Daily") · mustSD = mind. 1 Sushi-Daily-Produkt · noSD = kein Sushi-Daily-Produkt
+//   onlySD = "Only Sushi Daily + chicken" (nur SD-Produkte ODER Waitrose-Chicken-Pieces, mind. 1 SD) · mustSD = mind. 1 SD · noSD = kein SD
 function filterMeals(results, cuisine, query, noSD, mustSD, onlySD){
   let rs=results;
   if(cuisine&&cuisine!=="all") rs=rs.filter(r=>r._cuisine===cuisine);
-  const hasSD=r=>r.items.some(x=>x.brand==="Sushi Daily"), allSD=r=>r.items.every(x=>x.brand==="Sushi Daily");
-  if(onlySD) rs=rs.filter(allSD);
+  const isSD=x=>x.brand==="Sushi Daily", isSDorChick=x=>isSD(x)||x.cat==="chicken_pieces", hasSD=r=>r.items.some(isSD);
+  if(onlySD) rs=rs.filter(r=>r.items.every(isSDorChick)&&hasSD(r)); // nur SD + Waitrose-Chicken, mind. 1 SD
   else if(mustSD) rs=rs.filter(hasSD);
   else if(noSD) rs=rs.filter(r=>!hasSD(r));
   const q=(query||"").trim().toLowerCase();
@@ -4130,7 +4131,7 @@ function App() {
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:wMustSD,onChange:e=>{setWMustSD(e.target.checked);if(e.target.checked){setWNoSushiDaily(false);setWOnlySD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Must include Sushi Daily"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-            h("input",{type:"checkbox",checked:wOnlySD,onChange:e=>{setWOnlySD(e.target.checked);if(e.target.checked){setWNoSushiDaily(false);setWMustSD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Only Sushi Daily"),
+            h("input",{type:"checkbox",checked:wOnlySD,onChange:e=>{setWOnlySD(e.target.checked);if(e.target.checked){setWNoSushiDaily(false);setWMustSD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Only Sushi Daily + chicken"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:wMustVeg,onChange:e=>setWMustVeg(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a vegetable"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
@@ -4444,7 +4445,7 @@ function App() {
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:mealMustSD,onChange:e=>{setMealMustSD(e.target.checked);if(e.target.checked){setMealNoSD(false);setMealOnlySD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Must include Sushi Daily"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-            h("input",{type:"checkbox",checked:mealOnlySD,onChange:e=>{setMealOnlySD(e.target.checked);if(e.target.checked){setMealNoSD(false);setMealMustSD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Only Sushi Daily")
+            h("input",{type:"checkbox",checked:mealOnlySD,onChange:e=>{setMealOnlySD(e.target.checked);if(e.target.checked){setMealNoSD(false);setMealMustSD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Only Sushi Daily + chicken")
         )
       ),
       resto==="meals"&&resultsMeals.length===0&&h("div",{style:{fontSize:12,color:"#888",fontFamily:S.mono,padding:"12px 0 18px"}},"No saved meals match — try a different product or cuisine."),
