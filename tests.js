@@ -1589,11 +1589,27 @@ const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "
 check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
 
 // ===== "Pre-selected Meals" — kuratierte Waitrose-Kombis =====
-check("WAITROSE_MEALS: 28 Mahlzeiten", T.WAITROSE_MEALS.length, 28);
+check("WAITROSE_MEALS: 34 Mahlzeiten", T.WAITROSE_MEALS.length, 34);
 // jedes Mahlzeit-Produkt existiert im Katalog
 check("WAITROSE_MEALS: alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 const mealRes = T.waitroseMealResults({ protein: 70, carbs: 90, fat: 20, kcal: 820 }, "macros", {});
-check("waitroseMealResults: 28 Ergebnisse in AC-Form", mealRes.length === 28 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+check("waitroseMealResults: 34 Ergebnisse in AC-Form", mealRes.length === 34 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+// Batch 7: 6 Sushi-Daily-lastige Asian-Kombis (m29-m34)
+check("m29 (Yakisoba+Edamame+SweetChilli) ~827.6 kcal, Asian", (() => { const r = mealRes.find(x => x._meal === "m29"); return r && r._cuisine === "Asian" && Math.abs(r.nutrition.kcal - 827.6) < 0.6; })(), true);
+check("m32 (Gyoza+VeggieGyoza+Edamame+SweetChilli) 4 Items ~747.4 kcal", (() => { const r = mealRes.find(x => x._meal === "m32"); return r && r.items.length === 4 && Math.abs(r.nutrition.kcal - 747.4) < 0.6; })(), true);
+check("m33 (TeriyakiMaki+Katsu+Yakisoba) ~824.4 kcal", (() => { const r = mealRes.find(x => x._meal === "m33"); return r && Math.abs(r.nutrition.kcal - 824.4) < 0.6; })(), true);
+check("Batch 7: alle 6 neuen Produkt-ids existieren", ["m29","m30","m31","m32","m33","m34"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
+// "Must include Sushi Daily" / "Only Sushi Daily" (Meals-Filter, exklusiv)
+check("filterMeals mustSD: 9 Mahlzeiten mit >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).length, 9);
+check("filterMeals mustSD: jede hat >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
+check("filterMeals onlySD: keine Mahlzeit ist komplett Sushi Daily -> 0", T.filterMeals(mealRes, "all", "", false, false, true).length, 0);
+check("filterMeals onlySD hat Vorrang vor mustSD/noSD", T.filterMeals(mealRes, "all", "", true, true, true).length, 0);
+// optimizeWaitrose: onlySushiDaily (Pool nur SD) + mustSushiDaily (Ergebnis-Constraint)
+const rOnlySD = T.optimizeWaitrose({ carbs: 70, protein: 30, fat: 20, kcal: 580, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { onlySushiDaily: true });
+check("optimizeWaitrose onlySushiDaily: nur Sushi-Daily-Produkte", rOnlySD.length > 0 && rOnlySD.every(r => r.items.every(x => x.brand === "Sushi Daily")), true);
+const rMustSD = T.optimizeWaitrose({ carbs: 85, protein: 65, fat: 20, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { mustSushiDaily: true });
+check("optimizeWaitrose mustSushiDaily: jedes Ergebnis hat >=1 Sushi Daily", rMustSD.length > 0 && rMustSD.every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
+check("optimizeWaitrose noSushiDaily bleibt (Gegenprobe): kein SD", T.optimizeWaitrose({ carbs: 85, protein: 65, fat: 20, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { noSushiDaily: true }).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);
 // Batch 6: m27/m28 (Ricotta-Peppers-Kombis)
 check("m27 (Lemon&Herb+PuyLentils+Ricotta) ~761.2 kcal, Mediterranean", (() => { const r = mealRes.find(x => x._meal === "m27"); return r && r._cuisine === "Mediterranean" && Math.abs(r.nutrition.kcal - 761.2) < 0.6 && r.items.some(x => x.id === "ricotta_stuffed_cherry_peppers"); })(), true);
 check("m28 (Tomato&Basil+FrenchLentils+Ricotta) ~739.8 kcal, Italian", (() => { const r = mealRes.find(x => x._meal === "m28"); return r && r._cuisine === "Italian" && Math.abs(r.nutrition.kcal - 739.8) < 0.6; })(), true);
@@ -1609,9 +1625,9 @@ check("m21 (Gyoza+StickyRice+Edamame+GreenThai) 4 Items ~755 kcal", m21r.items.l
 check("m24 (BelugaLentils+Tomato&Basil+Mash) ~879 kcal", Math.abs(m24r.nutrition.kcal - 879) < 0.6, true);
 check("Batch 4: alle 9 neuen Produkt-ids existieren", ["m16","m17","m18","m19","m20","m21","m22","m23","m24"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 // "No Sushi Daily products"-Filter: nur m21/m22/m23 enthalten Sushi-Daily-Produkte -> 24-3=21
-check("filterMeals noSD: 3 Mahlzeiten mit Sushi Daily raus -> 25", T.filterMeals(mealRes, "all", "", true).length, 25);
+check("filterMeals noSD: 9 Mahlzeiten mit Sushi Daily raus -> 25", T.filterMeals(mealRes, "all", "", true).length, 25);
 check("filterMeals noSD: kein Sushi-Daily-Produkt in den Ergebnissen", T.filterMeals(mealRes, "all", "", true).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);
-check("filterMeals noSD=false: alle 28 (Gegenprobe)", T.filterMeals(mealRes, "all", "", false).length, 28);
+check("filterMeals noSD=false: alle 34 (Gegenprobe)", T.filterMeals(mealRes, "all", "", false).length, 34);
 // noSD kombiniert mit Küche: Asian ohne Sushi Daily
 check("filterMeals Asian + noSD: nur Asian, kein Sushi Daily", T.filterMeals(mealRes, "Asian", "", true).every(r => r._cuisine === "Asian" && r.items.every(x => x.brand !== "Sushi Daily")), true);
 // Küche: jede Mahlzeit hat eine gültige cuisine + _cuisine im Ergebnis
@@ -1619,7 +1635,7 @@ check("WAITROSE_MEALS: jede Mahlzeit hat gültige cuisine", T.WAITROSE_MEALS.eve
 check("waitroseMealResults traegt _cuisine", mealRes.every(r => T.WAITROSE_CUISINES.includes(r._cuisine)), true);
 // filterMeals: Küchen-Filter (nur Italian)
 check("filterMeals Küche 'Italian' -> nur Italian", T.filterMeals(mealRes, "Italian", "").every(r => r._cuisine === "Italian"), true);
-check("filterMeals 'all' -> alle 28", T.filterMeals(mealRes, "all", "").length, 28);
+check("filterMeals 'all' -> alle 34", T.filterMeals(mealRes, "all", "").length, 34);
 // filterMeals: Produkt-Suche (alle Gerichte mit Edamame)
 const eda = T.filterMeals(mealRes, "all", "edamame");
 check("filterMeals Suche 'edamame' -> nur Gerichte mit Edamame", eda.length > 0 && eda.every(r => r.items.some(x => /edamame/i.test(x.name))), true);

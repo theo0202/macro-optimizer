@@ -2915,9 +2915,12 @@ function optimizeWaitrose(t, mode, p, activeCats, maxN, opts){
   opts = opts||{};
   let pool = WAITROSE_MENU.items.filter(x=>!activeCats||activeCats[x.cat]);
   if(opts.noFish) pool = pool.filter(x=>!x.fish);
-  if(opts.noSushiDaily) pool = pool.filter(x=>x.brand!=="Sushi Daily");
+  // Sushi-Daily-Schalter (UI-exklusiv): onlySushiDaily = Pool nur SD · noSushiDaily = Pool ohne SD · mustSushiDaily = Ergebnis-Constraint (≥1 SD)
+  if(opts.onlySushiDaily) pool = pool.filter(x=>x.brand==="Sushi Daily");
+  else if(opts.noSushiDaily) pool = pool.filter(x=>x.brand!=="Sushi Daily");
   const reqs=[]; if(opts.mustVeg) reqs.push("vegetables"); if(opts.mustCarbs) reqs.push("carbs_rice_grains");
-  const rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
+  let rf = reqs.length ? (items=>reqs.every(c=>items.some(x=>x.cat===c))) : undefined;
+  if(opts.mustSushiDaily){ const base=rf; rf=(items)=>(base?base(items):true)&&items.some(x=>x.brand==="Sushi Daily"); } // ≥1 Sushi-Daily-Produkt im Ergebnis
   const base = (opts.baseItems&&opts.baseItems.length)?opts.baseItems:null;
   if(base){
     const addBudget = (maxN===Infinity)?Infinity:Math.max(0, maxN-base.length);
@@ -2968,6 +2971,13 @@ const WAITROSE_MEALS=[
   // Batch 6 (User 18.07.2026) — Ricotta-Stuffed-Cherry-Peppers-Kombis (italienisch/mediterran)
   { id:"m27", cuisine:"Mediterranean", items:[ {id:"lemon_herb_chicken_pieces",g:160}, {id:"puy_lentils",g:250}, {id:"ricotta_stuffed_cherry_peppers",g:135} ] },
   { id:"m28", cuisine:"Italian", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"tomatoey_french_lentils",g:250}, {id:"ricotta_stuffed_cherry_peppers",g:135} ] },
+  // Batch 7 (User 18.07.2026) — Sushi-Daily-lastige Asian-Kombis (Yakisoba Bowl / Gyoza / Teriyaki Maki + Edamame)
+  { id:"m29", cuisine:"Asian", items:[ {id:"yakisoba_chicken",g:326}, {id:"edamame_sushi_daily",g:93}, {id:"sweet_chilli_chicken_pieces",g:160} ] },
+  { id:"m30", cuisine:"Asian", items:[ {id:"yakisoba_chicken",g:326}, {id:"edamame_sushi_daily",g:93}, {id:"british_katsu_chicken_pieces",g:160} ] },
+  { id:"m31", cuisine:"Asian", items:[ {id:"yakisoba_chicken",g:326}, {id:"edamame_sushi_daily",g:93}, {id:"green_thai_chicken_pieces",g:160} ] },
+  { id:"m32", cuisine:"Asian", items:[ {id:"chicken_gyoza_sushi_daily",g:130}, {id:"veggie_gyoza",g:130}, {id:"edamame_sushi_daily",g:93}, {id:"sweet_chilli_chicken_pieces",g:160} ] },
+  { id:"m33", cuisine:"Asian", items:[ {id:"teriyaki_chicken_maki",g:113}, {id:"british_katsu_chicken_pieces",g:160}, {id:"yakisoba_chicken",g:326} ] },
+  { id:"m34", cuisine:"Asian", items:[ {id:"teriyaki_chicken_maki",g:113}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"yakisoba_chicken",g:326} ] },
 ];
 // Eine Mahlzeit → AC-Items (skaliert aufs Gramm, Gramm im Namen; note/warn propagiert; KEINE _locked-Markierung — feste Kombi).
 function waitroseMealItems(meal){
@@ -2983,12 +2993,16 @@ function waitroseMealResults(t,mode,p){
   return WAITROSE_MEALS.map(meal=>{ const items=waitroseMealItems(meal), nutrition=sumN(items,1);
     return { _meal:meal.id, _cuisine:meal.cuisine||"", items, nutrition, score:score(nutrition,t,mode,p) }; });
 }
-// Filter für den Meals-Tab: nach Küche (Chip) + Produkt-Suche (Substring über Item-Namen/Marken, Mehrwort-AND) + "No Sushi Daily"
-// (noSD: Mahlzeiten mit einem Sushi-Daily-Produkt — Gyoza/Veggie Roll/Sushi/Poke/Bowl/Edamame — komplett raus)
-function filterMeals(results, cuisine, query, noSD){
+// Filter für den Meals-Tab: nach Küche (Chip) + Produkt-Suche (Substring über Item-Namen/Marken, Mehrwort-AND)
+// + 3 sich gegenseitig ausschließende Sushi-Daily-Schalter (UI erzwingt max. einen an):
+//   onlySD = NUR Sushi-Daily-Produkte (jede Item-Marke "Sushi Daily") · mustSD = mind. 1 Sushi-Daily-Produkt · noSD = kein Sushi-Daily-Produkt
+function filterMeals(results, cuisine, query, noSD, mustSD, onlySD){
   let rs=results;
   if(cuisine&&cuisine!=="all") rs=rs.filter(r=>r._cuisine===cuisine);
-  if(noSD) rs=rs.filter(r=>!r.items.some(x=>x.brand==="Sushi Daily"));
+  const hasSD=r=>r.items.some(x=>x.brand==="Sushi Daily"), allSD=r=>r.items.every(x=>x.brand==="Sushi Daily");
+  if(onlySD) rs=rs.filter(allSD);
+  else if(mustSD) rs=rs.filter(hasSD);
+  else if(noSD) rs=rs.filter(r=>!hasSD(r));
   const q=(query||"").trim().toLowerCase();
   if(q){ const terms=q.split(/\s+/); rs=rs.filter(r=>terms.every(t=>r.items.some(x=>(x.name+" "+(x.brand||"")).toLowerCase().includes(t)))); }
   return rs;
@@ -3508,11 +3522,15 @@ function App() {
   const [mealCuisine,setMealCuisine]=useState("all"); // Küchen-Filter (Chip, Einzelauswahl)
   const [mealQ,setMealQ]=useState(""); // Produkt-Suche im Meals-Tab
   const [mealNoSD,setMealNoSD]=useState(false); // "No Sushi Daily products" — Default AUS (die kuratierten SD-Mahlzeiten sollen sichtbar sein)
+  const [mealMustSD,setMealMustSD]=useState(false); // "Must include Sushi Daily" (Meals) — exklusiv mit No/Only Sushi Daily
+  const [mealOnlySD,setMealOnlySD]=useState(false); // "Only Sushi Daily" (Meals) — exklusiv mit No/Must Sushi Daily
   const [maxWt,setMaxWt]=useState(3);
   const [waitroseCats,setWaitroseCats]=useState(()=>{const o={};WAITROSE.cats.forEach(c=>o[c.id]=c.on);return o;});
   // Waitrose Build-Schalter (alle Default AUS — opt-in): Fisch raus / Sushi-Daily raus / Gemüse-Pflicht / Carbs-Pflicht
   const [wNoFish,setWNoFish]=useState(false);
   const [wNoSushiDaily,setWNoSushiDaily]=useState(true);
+  const [wMustSD,setWMustSD]=useState(false);   // "Must include Sushi Daily" (Build) — exklusiv mit No/Only Sushi Daily
+  const [wOnlySD,setWOnlySD]=useState(false);   // "Only Sushi Daily" (Build) — exklusiv mit No/Must Sushi Daily
   const [wMustVeg,setWMustVeg]=useState(false);
   const [wMustCarbs,setWMustCarbs]=useState(false);
   // "Top with …"-Nuss-Toppings (nur Waitrose-Build): Schalter je Nuss + editierbares Gramm (Default 20 g) fürs Panel
@@ -3617,8 +3635,8 @@ function App() {
   const resultsPho=useMemo(()=>resto==="pho"?optimizePho(targets,mode,prefs,phoCats,maxPho):[],[resto,targets,mode,prefs,phoCats,maxPho]);
   const resultsWing=useMemo(()=>resto==="wingstop"?optimizeWingstop(targets,mode,prefs,wingCats,maxWing):[],[resto,targets,mode,prefs,wingCats,maxWing]);
   const resultsSC=useMemo(()=>resto==="sushico"?optimizeSushiCo(targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish):[],[resto,targets,mode,prefs,scCats,maxSC,scNoSashimi,scNoSushi,scOnlySushiNoSashimi,scNoFish]);
-  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustVeg:wMustVeg,mustCarbs:wMustCarbs,baseItems:wPickItems}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustVeg,wMustCarbs,wPickItems]);
-  const resultsMeals=useMemo(()=>resto==="meals"?filterMeals(waitroseMealResults(targets,mode,prefs),mealCuisine,mealQ,mealNoSD):[],[resto,targets,mode,prefs,mealCuisine,mealQ,mealNoSD]);
+  const resultsWt=useMemo(()=>resto==="waitrose"&&wMode==="build"?optimizeWaitrose(targets,mode,prefs,waitroseCats,maxWt,{noFish:wNoFish,noSushiDaily:wNoSushiDaily,mustSushiDaily:wMustSD,onlySushiDaily:wOnlySD,mustVeg:wMustVeg,mustCarbs:wMustCarbs,baseItems:wPickItems}):[],[resto,wMode,targets,mode,prefs,waitroseCats,maxWt,wNoFish,wNoSushiDaily,wMustSD,wOnlySD,wMustVeg,wMustCarbs,wPickItems]);
+  const resultsMeals=useMemo(()=>resto==="meals"?filterMeals(waitroseMealResults(targets,mode,prefs),mealCuisine,mealQ,mealNoSD,mealMustSD,mealOnlySD):[],[resto,targets,mode,prefs,mealCuisine,mealQ,mealNoSD,mealMustSD,mealOnlySD]);
   const resultsPure=useMemo(()=>resto==="pure"?optimizePure(targets,mode,prefs,pureCats,maxPure):[],[resto,targets,mode,prefs,pureCats,maxPure]);
   // "All restaurants" — restaurantsübergreifend, alle Exclude-Schalter an (Itsu only-sushi aus). Rechnet nur im "all"-Tab.
   const resultsAll=useMemo(()=>resto==="all"?optimizeAll(targets,mode,prefs,subSize,null,maxAll):[],[resto,targets,mode,prefs,subSize,maxAll]);
@@ -4108,7 +4126,11 @@ function App() {
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:wNoFish,onChange:e=>setWNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-            h("input",{type:"checkbox",checked:wNoSushiDaily,onChange:e=>setWNoSushiDaily(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Sushi Daily products"),
+            h("input",{type:"checkbox",checked:wNoSushiDaily,onChange:e=>{setWNoSushiDaily(e.target.checked);if(e.target.checked){setWMustSD(false);setWOnlySD(false);}},style:{accentColor:S.green,width:16,height:16}}),"No Sushi Daily products"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:wMustSD,onChange:e=>{setWMustSD(e.target.checked);if(e.target.checked){setWNoSushiDaily(false);setWOnlySD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Must include Sushi Daily"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:wOnlySD,onChange:e=>{setWOnlySD(e.target.checked);if(e.target.checked){setWNoSushiDaily(false);setWMustSD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Only Sushi Daily"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:wMustVeg,onChange:e=>setWMustVeg(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Must include a vegetable"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
@@ -4416,8 +4438,14 @@ function App() {
           h(Chip,{label:"All",small:true,active:mealCuisine==="all",onClick:()=>setMealCuisine("all")}),
           ...WAITROSE_CUISINES.map(c=>h(Chip,{key:c,label:c,small:true,active:mealCuisine===c,onClick:()=>setMealCuisine(mealCuisine===c?"all":c)}))
         ),
-        h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
-          h("input",{type:"checkbox",checked:mealNoSD,onChange:e=>setMealNoSD(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No Sushi Daily products")
+        h("div",{style:{display:"flex",flexDirection:"column",gap:6}},
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:mealNoSD,onChange:e=>{setMealNoSD(e.target.checked);if(e.target.checked){setMealMustSD(false);setMealOnlySD(false);}},style:{accentColor:S.green,width:16,height:16}}),"No Sushi Daily products"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:mealMustSD,onChange:e=>{setMealMustSD(e.target.checked);if(e.target.checked){setMealNoSD(false);setMealOnlySD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Must include Sushi Daily"),
+          h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+            h("input",{type:"checkbox",checked:mealOnlySD,onChange:e=>{setMealOnlySD(e.target.checked);if(e.target.checked){setMealNoSD(false);setMealMustSD(false);}},style:{accentColor:S.green,width:16,height:16}}),"Only Sushi Daily")
+        )
       ),
       resto==="meals"&&resultsMeals.length===0&&h("div",{style:{fontSize:12,color:"#888",fontFamily:S.mono,padding:"12px 0 18px"}},"No saved meals match — try a different product or cuisine."),
 
