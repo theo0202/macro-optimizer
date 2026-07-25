@@ -2144,12 +2144,15 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg, noPhilly, maxOnePhilly, noTurkey) {
+function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg, noPhilly, maxOnePhilly, noTurkey, proteinsOk) {
   const m = sz==="footlong"?2:1;
   // Käse-Pool: "No cheese" → none; "Cheese" bzw. "Double cheese" → einer der beiden Käse (kein none); sonst alle
   const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : (forceCheese||doubleCheese) ? D.cheeses.filter(c=>c.id!=="none") : D.cheeses;
   let prots = D.proteins.filter(x=>!(noRoastChicken&&x.id==="roast_chicken")&&!(noTurkey&&x.id==="turkey")); // Schalter "No Roast Chicken Breast" + "No turkey breast"
   if(noPhilly) prots = prots.filter(x=>x.id!=="philly_steak");                            // Schalter "No Philly Steak" (Protein raus)
+  // Protein-Sub-Selektor (wie Brot-Auswahl): sind ein oder mehr Proteine gewählt, wird NUR daraus optimiert — die explizite
+  // Wahl überstimmt die Exclude-Schalter (No Roast Chicken / No turkey). Leer/nichts gewählt → oben gefilterter Voll-Pool.
+  if(proteinsOk){ const sel=D.proteins.filter(x=>proteinsOk[x.id]); if(sel.length) prots = sel; }
   let extras = noPoachedEgg ? D.extras.filter(x=>x.id!=="poached_egg") : D.extras;         // Schalter "No Poached Egg"
   if(noPhilly) extras = extras.filter(x=>x.id!=="philly_steak_extra");                     // "No Philly Steak" (Extra raus)
   // breadsOk: null/undefined = alle Brote · String = genau ein Brot (Legacy) · Objekt {id:true,...} = erlaubte Auswahl
@@ -3385,6 +3388,7 @@ function App() {
   const [noPhilly,setNoPhilly]=useState(false); // "No Philly Steak" — Default AUS (opt-in; Philly-Protein + -Extra ganz raus)
   const [maxOnePhilly,setMaxOnePhilly]=useState(true); // "Max 1× Philly Steak" — Default AN: kein Philly-Sub + zusätzlich Philly-Extra
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
+  const [proteinsOk,setProteinsOk]=useState({}); // gewählte Protein-Subs (Mehrfachauswahl); leer = alle (Optimizer wählt frei)
   const [sel,setSel]=useState(null);
   const [mSal,setMSal]=useState({});
   const [mSau,setMSau]=useState({});
@@ -3649,7 +3653,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey,proteinsOk),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey,proteinsOk]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -3904,6 +3908,16 @@ function App() {
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
           h(Chip,{label:"All breads",active:!D.breads.some(b=>breadsOk[b.id]),onClick:()=>setBreadsOk({}),small:true}),
           ...D.breads.map(b=>h(Chip,{key:b.id,label:b.name,active:!!breadsOk[b.id],onClick:()=>setBreadsOk(p=>({...p,[b.id]:!p[b.id]})),small:true}))
+        )
+      ),
+
+      // Protein-Sub-Selektor (nur Subway) — wie die Brot-Auswahl: ein/mehrere Proteine festlegen, Optimizer wählt das beste daraus.
+      // Extras bleiben frei wählbar; nur das Sub-Protein wird fixiert. „All proteins" = frei (Optimizer wählt).
+      resto==="subway"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Protein sub (pick one or more — optimizer chooses the best)"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+          h(Chip,{label:"All proteins",active:!D.proteins.some(x=>proteinsOk[x.id]),onClick:()=>setProteinsOk({}),small:true}),
+          ...D.proteins.map(x=>h(Chip,{key:x.id,label:x.name,active:!!proteinsOk[x.id],onClick:()=>setProteinsOk(p=>({...p,[x.id]:!p[x.id]})),small:true}))
         )
       ),
 

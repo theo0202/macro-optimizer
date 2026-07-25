@@ -104,6 +104,14 @@ const turkeyBase = T.sumN([wgB, turkeyP, noneC, ...T.STD_SALAD], 1);
 const tTurkey = { protein: turkeyBase.protein, carbs: turkeyBase.carbs, fat: turkeyBase.fat, kcal: turkeyBase.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
 check("Subway ohne 'No turkey breast': Turkey Breast möglich (Gegenprobe)", T.optimize(tTurkey, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, false).some(r => r.protein.id === "turkey"), true);
 check("Subway 'No turkey breast': kein turkey-Protein", T.optimize(tTurkey, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, true).every(r => r.protein.id !== "turkey"), true);
+// Protein-Sub-Selektor (16. Param) — wie die Brot-Auswahl: gewählte Proteine legen den Sub fest, Extras bleiben frei
+const tSub = { protein: 45, carbs: 55, fat: 15, kcal: 535, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("Subway Protein-Sub: nur Philly Steak -> alle Ergebnisse Philly", (() => { const r = T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }); return r.length > 0 && r.every(x => x.protein.id === "philly_steak"); })(), true);
+check("Subway Protein-Sub: Philly + Spiced Plant -> nur diese zwei", T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true, spiced_plant: true }).every(x => ["philly_steak", "spiced_plant"].includes(x.protein.id)), true);
+check("Subway Protein-Sub: leer -> nicht fixiert (mehrere Proteine moeglich)", new Set(T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, false, {}).map(x => x.protein.id)).size > 1, true);
+check("Subway Protein-Sub ueberstimmt Exclude (Turkey trotz noTurkey=true)", (() => { const r = T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, true, { turkey: true }); return r.length > 0 && r.every(x => x.protein.id === "turkey"); })(), true);
+// Extras bleiben trotz Protein-Lock frei (ein Ergebnis mit Philly + Extra existiert)
+check("Subway Protein-Sub: Extras weiter frei waehlbar", T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }).some(x => (x.extras || []).length > 0), true);
 // Schalter "No Poached Egg" (12. Param, Default AUS)
 check("Subway D.extras hat Poached Egg", T.D.extras.some(e => e.id === "poached_egg"), true);
 const tEgg = { protein: 55, carbs: 50, fat: 10, kcal: 510, fibMin: null, fibMax: null, sMin: null, sMax: null };
