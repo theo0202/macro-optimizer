@@ -96,6 +96,14 @@ const D = {
     { id:"coleslaw_regular",name:"Coleslaw Regular",servingG:40,kcal:60,fat:5.2,sat:0.4,carbs:2.4,sugars:2.1,fibre:0.8,protein:0,salt:0.2 },
     { id:"coleslaw_double",name:"Coleslaw Double",servingG:80,kcal:119,fat:10,sat:0.8,carbs:4.8,sugars:4.2,fibre:1.6,protein:1,salt:0.5 },
   ],
+  // Cookies (eigenständige Süßware, NICHT footlong-verdoppelt) — Werte per Serving aus UKI&ROI Nutritional Info Jan 2026 PDF (Seite 2)
+  cookies: [
+    { id:"cookie_choc_chunk",name:"Chocolate Chunk Cookie",servingG:45,kcal:214,fat:10,sat:5.1,carbs:28,sugars:16,fibre:1.2,protein:2.3,salt:0.3 },
+    { id:"cookie_rainbow",name:"Rainbow Cookie",servingG:45,kcal:214,fat:9.8,sat:5,carbs:28,sugars:18,fibre:2,protein:2,salt:0.1 },
+    { id:"cookie_vegan_choc",name:"Vegan Double Chocolate Cookie",servingG:46,kcal:220,fat:11,sat:6,carbs:27,sugars:17,fibre:2,protein:2,salt:0.3 },
+    { id:"cookie_macadamia",name:"White Macadamia Nut Cookie",servingG:45,kcal:215,fat:10,sat:5,carbs:27,sugars:16,fibre:1,protein:2.3,salt:0.4 },
+    { id:"cookie_footlong_choc",name:"Footlong Choc Chip Cookie",servingG:265,kcal:1344,fat:68,sat:33,carbs:164,sugars:94,fibre:6,protein:15,salt:1.7 },
+  ],
 };
 
 // Farmer J (eigene Erfassung, data/farmerj.json). Order Rule (Deliveroo):
@@ -2144,7 +2152,7 @@ async function ocrMacroScreenshot(file, onProgress) {
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
 
-function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg, noPhilly, maxOnePhilly, noTurkey, proteinsOk) {
+function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg, noPhilly, maxOnePhilly, noTurkey, proteinsOk, cookiesOk) {
   const m = sz==="footlong"?2:1;
   // Käse-Pool: "No cheese" → none; "Cheese" bzw. "Double cheese" → einer der beiden Käse (kein none); sonst alle
   const ch = noCheese ? D.cheeses.filter(c=>c.id==="none") : (forceCheese||doubleCheese) ? D.cheeses.filter(c=>c.id!=="none") : D.cheeses;
@@ -2181,20 +2189,29 @@ function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastC
     }
   }
   R.sort((a,b)=>a.score-b.score);
-  if(noSides) return R.slice(0,20);
+  // Einzel-Add-on (×1, NICHT footlong-verdoppelt): Side bzw. Cookie werden nach dem Sub addiert
+  const addSingle=(n,it)=>{const o={};for(const k of KEYS)o[k]=Math.round(((n[k]||0)+(it[k]||0))*10)/10;return o;};
+  // Cookie (optional, gewählt wie die Brot-/Protein-Auswahl): sind ein/mehrere Cookies gewählt, wird der best-passende
+  // ERLAUBTE Cookie zu JEDEM Ergebnis (×1) hinzugefügt und neu sortiert. Leer/nichts gewählt = kein Cookie.
+  const cks = cookiesOk ? (D.cookies||[]).filter(c=>cookiesOk[c.id]) : [];
+  const addCookie=list=>{ if(!cks.length) return list;
+    for(const r of list){ let best=cks[0], bn=addSingle(r.nutrition,cks[0]), bs=score(bn,t,mode,p);
+      for(let i=1;i<cks.length;i++){ const n=addSingle(r.nutrition,cks[i]), s=score(n,t,mode,p); if(s<bs){best=cks[i];bn=n;bs=s;} }
+      r.cookie=best; r.nutrition=bn; r.score=bs; }
+    list.sort((a,b)=>a.score-b.score); return list; };
+  if(noSides) return addCookie(R).slice(0,20);
   // Sides: optional EINE Beilage (×1, NICHT footlong-verdoppelt). Die besten Subs um Side-Varianten + "ohne Side"
   // erweitern, neu scoren — der Optimizer nimmt nur dann eine Side, wenn sie den Score verbessert.
-  const withSide=(n,sd)=>{const o={};for(const k of KEYS)o[k]=Math.round(((n[k]||0)+(sd[k]||0))*10)/10;return o;};
   const out=[];
   for(const r of R.slice(0,40)){
     out.push(r);
     for(const sd of D.sides){
-      const n=withSide(r.nutrition,sd);
+      const n=addSingle(r.nutrition,sd);
       out.push({...r,side:sd,nutrition:n,score:score(n,t,mode,p)});
     }
   }
   out.sort((a,b)=>a.score-b.score);
-  return out.slice(0,20);
+  return addCookie(out).slice(0,20);
 }
 
 // Farmer J: Custom Fieldtray = Main × Base × (0–2 Sides). Sets laufen als fertige Alternativen mit.
@@ -2693,7 +2710,7 @@ function buildSearchIndex(){
   addArr("Itsu",ITSU.items); addArr("Pret",PRET.items); addArr("Nando's",NANDOS.items);
   addArr("Wagamama",WAGA.items); addArr("GDK",GDK.items); addArr("The Fitness Chef",TFC.items);
   addArr("Pepe's",PEPES.items); addArr("Pizza Express",PIZZAEXPRESS.items); addArr("Wasabi",WASABI.items); addArr("Leon",LEON.items); addArr("Bagel Factory",BAGELFACTORY.items); addArr("Pho",PHO.items); addArr("Wingstop",WINGSTOP.items); addArr("The Sushi Co",SUSHICO.items); addArr("Pure",PURE.items);
-  ["breads","proteins","cheeses","extras","salads","sauces","seasonings"].forEach(k=>addArr("Subway",D[k]));
+  ["breads","proteins","cheeses","extras","salads","sauces","seasonings","sides","cookies"].forEach(k=>addArr("Subway",D[k]));
   ["mains","bases","sides","toppings","sdt","sets"].forEach(k=>addArr("Farmer J",FJ[k]));
   ["greens","carbs","prots","veg","tops","dress","scoops"].forEach(k=>addArr("Urban Greens",UG[k]));
   ["bases","mixed","ingredients","proteins","sauces","crunches","addons"].forEach(k=>addArr("Atis",ATIS[k]));
@@ -3389,12 +3406,14 @@ function App() {
   const [maxOnePhilly,setMaxOnePhilly]=useState(true); // "Max 1× Philly Steak" — Default AN: kein Philly-Sub + zusätzlich Philly-Extra
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle
   const [proteinsOk,setProteinsOk]=useState({}); // gewählte Protein-Subs (Mehrfachauswahl); leer = alle (Optimizer wählt frei)
+  const [cookiesOk,setCookiesOk]=useState({}); // erlaubte Cookies (Mehrfachauswahl); leer = kein Cookie (Optimizer nimmt den best-passenden aus der Auswahl)
   const [sel,setSel]=useState(null);
   const [mSal,setMSal]=useState({});
   const [mSau,setMSau]=useState({});
   const [mSea,setMSea]=useState({});
   const [mExt,setMExt]=useState({});
   const [mSide,setMSide]=useState(""); // gewählte Side im Detail-Panel (id oder "")
+  const [mCookie,setMCookie]=useState(""); // gewählter Cookie im Detail-Panel (id oder "")
   // Farmer J
   const [freeOnly,setFO]=useState(true);
   const [showSets,setShowSets]=useState(false);
@@ -3653,7 +3672,7 @@ function App() {
     return t;
   },[mode,tP,tC,tF,tK,fibMin,fibMax,sMin,sMax]);
 
-  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey,proteinsOk),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey,proteinsOk]);
+  const results=useMemo(()=>optimize(targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey,proteinsOk,cookiesOk),[targets,mode,prefs,noSauce,noCheese,breadsOk,subSize,onlySubs,noRoast,forceCheese,doubleCheese,noPoachedEgg,noPhilly,maxOnePhilly,noTurkey,proteinsOk,cookiesOk]);
   const resultsFJ=useMemo(()=>optimizeFJ(targets,mode,prefs,freeOnly),[targets,mode,prefs,freeOnly]);
   const resultsItsu=useMemo(()=>optimizeItsu(targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi),[targets,mode,prefs,itsuCats,maxIt,noSoupsEtc,onlySushi,noSashimi]);
   const resultsPret=useMemo(()=>optimizePret(targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly),[targets,mode,prefs,pretCats,maxP,onlyRel,saladsOnly]);
@@ -3751,8 +3770,9 @@ function App() {
     D.seasonings.forEach(s=>{if(mSea[s.id])items.push(s);});
     D.salads.forEach(s=>{if(mSal[s.id])items.push(s);}); // Gemüse-Toppings (PDF "Vegetables") gehören zum Sub → ×m
     const sideItem=D.sides.find(s=>s.id===mSide);   // Side = eigenständiges Produkt → ×1 (nicht footlong-verdoppelt) → singleItems
-    return sumN(items,m,sideItem?[sideItem]:[]);
-  },[sel,mSal,mSau,mSea,mExt,mSide,subSize]);
+    const cookieItem=(D.cookies||[]).find(c=>c.id===mCookie); // Cookie ebenfalls ×1 (nicht footlong-verdoppelt)
+    return sumN(items,m,[...(sideItem?[sideItem]:[]),...(cookieItem?[cookieItem]:[])]);
+  },[sel,mSal,mSau,mSea,mExt,mSide,mCookie,subSize]);
 
   const selFTotal=useMemo(()=>{
     if(!selF)return null;
@@ -3918,6 +3938,16 @@ function App() {
         h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
           h(Chip,{label:"All proteins",active:!D.proteins.some(x=>proteinsOk[x.id]),onClick:()=>setProteinsOk({}),small:true}),
           ...D.proteins.map(x=>h(Chip,{key:x.id,label:x.name,active:!!proteinsOk[x.id],onClick:()=>setProteinsOk(p=>({...p,[x.id]:!p[x.id]})),small:true}))
+        )
+      ),
+
+      // Cookie-Selektor (nur Subway) — optional 1 Cookie zusätzlich zum Sub, gewählt wie Brot/Protein: erlaubte Cookies angeben,
+      // Optimizer nimmt je Ergebnis den best-passenden. „No cookie" (Default) = kein Cookie.
+      resto==="subway"&&h("div",{style:{background:"#151515",borderRadius:12,padding:12,marginBottom:12,border:"1px solid #222"}},
+        h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:8}},"Cookie (optional — pick one or more, optimizer chooses the best)"),
+        h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+          h(Chip,{label:"No cookie",active:!D.cookies.some(c=>cookiesOk[c.id]),onClick:()=>setCookiesOk({}),small:true}),
+          ...D.cookies.map(c=>h(Chip,{key:c.id,label:c.name,active:!!cookiesOk[c.id],onClick:()=>setCookiesOk(p=>({...p,[c.id]:!p[c.id]})),small:true}))
         )
       ),
 
@@ -4718,7 +4748,7 @@ function App() {
             );
           }
           const isSel=sel===r;
-          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt(isSel?{}:(doubleCheese?{"__double_cheese":true}:{}));setMSide(isSel?"":(r.side?r.side.id:""));},style:{
+          return h("button",{key:i,onClick:()=>{setSel(isSel?null:r);setMSal(isSel?{}:defaultSalad());setMSau({});setMSea({});setMExt(isSel?{}:(doubleCheese?{"__double_cheese":true}:{}));setMSide(isSel?"":(r.side?r.side.id:""));setMCookie(isSel?"":(r.cookie?r.cookie.id:""));},style:{
             background:isSel?"rgba(0,151,67,0.08)":"#151515",
             border:isSel?"1px solid "+S.green:"1px solid #222",
             borderRadius:10,padding:"12px 14px",cursor:"pointer",textAlign:"left",transition:"all .15s",
@@ -4732,6 +4762,7 @@ function App() {
                   r.extras.length>0&&" · +"+r.extras.map(e=>e.name).join(", +"),
                   r.sauces.length>0&&" · "+r.sauces.map(s=>s.name).join(", "),
                   r.side&&" · + "+r.side.name,
+                  r.cookie&&" · 🍪 "+r.cookie.name,
                   cornLbl(r)
                 )
               ),
@@ -4858,6 +4889,15 @@ function App() {
           )
         ),
 
+        // Cookie (optional, max 1 — eigenständige Süßware, nicht footlong-verdoppelt)
+        h("div",{style:{marginBottom:16}},
+          h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Cookie (optional, max 1)"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
+            ...D.cookies.map(c=>h(Chip,{key:c.id,label:c.name+" (+"+c.kcal+")",small:true,active:mCookie===c.id,
+              onClick:()=>setMCookie(mCookie===c.id?"":c.id)}))
+          )
+        ),
+
         // Order guide
         (()=>{
           const aE=[...(sel.extras||[]),...D.extras.filter(e=>mExt[e.id])];
@@ -4874,6 +4914,7 @@ function App() {
             {l:"Sauce",v:noSauce?"None":(aS.map(s=>s.name).join(", ")||"–")},
             {l:"Seasonings",v:aSea.map(s=>s.name).join(", ")||"–"},
             ...(mSide?[{l:"Side",v:(D.sides.find(s=>s.id===mSide)||{}).name+" (separate item)"}]:[]),
+            ...(mCookie?[{l:"Cookie",v:(D.cookies.find(c=>c.id===mCookie)||{}).name+" (separate item)"}]:[]),
             ...cornStep(ccSub),
           ];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},

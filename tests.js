@@ -112,6 +112,24 @@ check("Subway Protein-Sub: leer -> nicht fixiert (mehrere Proteine moeglich)", n
 check("Subway Protein-Sub ueberstimmt Exclude (Turkey trotz noTurkey=true)", (() => { const r = T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, true, { turkey: true }); return r.length > 0 && r.every(x => x.protein.id === "turkey"); })(), true);
 // Extras bleiben trotz Protein-Lock frei (ein Ergebnis mit Philly + Extra existiert)
 check("Subway Protein-Sub: Extras weiter frei waehlbar", T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }).some(x => (x.extras || []).length > 0), true);
+// Cookie-Selektor (17. Param) — optional 1 Cookie zusätzlich zum Sub, gewählt wie Brot/Protein
+check("Subway D.cookies = 5", T.D.cookies.length, 5);
+check("Subway Cookie Chocolate Chunk (214 kcal, per Serving)", T.D.cookies.find(c => c.id === "cookie_choc_chunk").kcal, 214);
+const tCk = { protein: 45, carbs: 70, fat: 20, kcal: 640, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const optCk = ck => T.optimize(tCk, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, false, { philly_steak: true }, ck);
+check("Subway Cookie: keine Auswahl -> kein r.cookie", optCk({}).every(r => !r.cookie), true);
+const rChoc = optCk({ cookie_choc_chunk: true });
+check("Subway Cookie: Auswahl -> jedes Ergebnis hat den Cookie", rChoc.length > 0 && rChoc.every(r => r.cookie && r.cookie.id === "cookie_choc_chunk"), true);
+check("Subway Cookie: Multi-Auswahl -> r.cookie aus der Auswahl", optCk({ cookie_choc_chunk: true, cookie_rainbow: true }).every(r => ["cookie_choc_chunk", "cookie_rainbow"].includes(r.cookie.id)), true);
+// Cookie ×1 bei Footlong (nicht verdoppelt): gelockter Plain-Sub (= Ziel), Footlong; Cookie-Beitrag = genau 1× (214)
+const wgB2 = T.D.breads.find(b => b.id === "wholegrain"), phProt2 = T.D.proteins.find(x => x.id === "philly_steak"), noneC2 = T.D.cheeses.find(c => c.id === "none");
+const plain2 = T.sumN([wgB2, phProt2, noneC2, ...T.STD_SALAD], 2);
+const tgtPlain = { protein: plain2.protein, carbs: plain2.carbs, fat: plain2.fat, kcal: plain2.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rPlainCk = T.optimize(tgtPlain, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }, { cookie_choc_chunk: true });
+check("Subway Cookie ×1 bei Footlong (nicht verdoppelt)", rPlainCk[0].cookie && Math.abs(rPlainCk[0].nutrition.kcal - (plain2.kcal + 214)) < 1, true);
+// Cookies (+Sides) sind im "Add own order"-Such-Index (buildSearchIndex) trackbar
+check("Search-Index enthaelt Subway-Cookies (Footlong Choc)", T.SEARCH_INDEX.some(x => x.resto === "Subway" && x.name === "Footlong Choc Chip Cookie" && x.kcal === 1344), true);
+check("Search-Index: alle 5 Subway-Cookies drin", T.D.cookies.every(c => T.SEARCH_INDEX.some(x => x.resto === "Subway" && x.name === c.name)), true);
 // Schalter "No Poached Egg" (12. Param, Default AUS)
 check("Subway D.extras hat Poached Egg", T.D.extras.some(e => e.id === "poached_egg"), true);
 const tEgg = { protein: 55, carbs: 50, fat: 10, kcal: 510, fibMin: null, fibMax: null, sMin: null, sMax: null };
