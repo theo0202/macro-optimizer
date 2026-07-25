@@ -96,13 +96,15 @@ const D = {
     { id:"coleslaw_regular",name:"Coleslaw Regular",servingG:40,kcal:60,fat:5.2,sat:0.4,carbs:2.4,sugars:2.1,fibre:0.8,protein:0,salt:0.2 },
     { id:"coleslaw_double",name:"Coleslaw Double",servingG:80,kcal:119,fat:10,sat:0.8,carbs:4.8,sugars:4.2,fibre:1.6,protein:1,salt:0.5 },
   ],
-  // Cookies (eigenständige Süßware, NICHT footlong-verdoppelt) — Werte per Serving aus UKI&ROI Nutritional Info Jan 2026 PDF (Seite 2)
+  // Cookies (eigenständige Süßware, NICHT footlong-verdoppelt) — Werte per Serving, User-Vorgabe 18.07.2026 (aktuelle
+  // Subway-UK-Produktseiten; ersetzen die alten PDF-Werte komplett. Footlong Choc Chip Cookie gibt es dort nicht mehr).
   cookies: [
-    { id:"cookie_choc_chunk",name:"Chocolate Chunk Cookie",servingG:45,kcal:214,fat:10,sat:5.1,carbs:28,sugars:16,fibre:1.2,protein:2.3,salt:0.3 },
-    { id:"cookie_rainbow",name:"Rainbow Cookie",servingG:45,kcal:214,fat:9.8,sat:5,carbs:28,sugars:18,fibre:2,protein:2,salt:0.1 },
-    { id:"cookie_vegan_choc",name:"Vegan Double Chocolate Cookie",servingG:46,kcal:220,fat:11,sat:6,carbs:27,sugars:17,fibre:2,protein:2,salt:0.3 },
-    { id:"cookie_macadamia",name:"White Macadamia Nut Cookie",servingG:45,kcal:215,fat:10,sat:5,carbs:27,sugars:16,fibre:1,protein:2.3,salt:0.4 },
-    { id:"cookie_footlong_choc",name:"Footlong Choc Chip Cookie",servingG:265,kcal:1344,fat:68,sat:33,carbs:164,sugars:94,fibre:6,protein:15,salt:1.7 },
+    { id:"cookie_macadamia",name:"White Chip Macadamia Nut Cookie",servingG:45,kcal:215,fat:10,sat:5.1,carbs:27,sugars:16,fibre:0.5,protein:2.3,salt:0.42 },
+    { id:"cookie_choc_chunk",name:"Chocolate Chunk Cookie",servingG:45,kcal:214,fat:10,sat:5.1,carbs:28,sugars:16,fibre:1.2,protein:2.3,salt:0.28 },
+    { id:"cookie_rainbow",name:"Rainbow Chocolate Chip Cookie",servingG:45,kcal:212,fat:9.8,sat:5,carbs:28,sugars:18,fibre:1.5,protein:2.2,salt:0.29 },
+    { id:"cookie_double_choc_ve",name:"Double Chocolate Cookie (Ve)",servingG:45,kcal:217,fat:11,sat:5.7,carbs:27,sugars:17,fibre:2.2,protein:2,salt:0.28 },
+    { id:"cookie_raspberry_cheesecake",name:"Raspberry Cheesecake Cookie",servingG:45,kcal:208,fat:9.6,sat:5.4,carbs:27,sugars:16,fibre:0.2,protein:2.5,salt:0.29 },
+    { id:"cookie_oreo_cup",name:"Oreo Cookie Cup",servingG:64,kcal:319,fat:17,sat:8.3,carbs:38,sugars:24,fibre:1.6,protein:2.5,salt:0.4 },
   ],
 };
 
@@ -3759,7 +3761,7 @@ function App() {
     )
   ) : null;
 
-  const selTotal=useMemo(()=>{
+  const selParts=useMemo(()=>{
     if(!sel)return null;
     const m=subSize==="footlong"?2:1;
     const items=[sel.bread,sel.protein,sel.cheese,...sel.extras,...sel.sauces];
@@ -3771,8 +3773,12 @@ function App() {
     D.salads.forEach(s=>{if(mSal[s.id])items.push(s);}); // Gemüse-Toppings (PDF "Vegetables") gehören zum Sub → ×m
     const sideItem=D.sides.find(s=>s.id===mSide);   // Side = eigenständiges Produkt → ×1 (nicht footlong-verdoppelt) → singleItems
     const cookieItem=(D.cookies||[]).find(c=>c.id===mCookie); // Cookie ebenfalls ×1 (nicht footlong-verdoppelt)
-    return sumN(items,m,[...(sideItem?[sideItem]:[]),...(cookieItem?[cookieItem]:[])]);
+    const singles=[...(sideItem?[sideItem]:[]),...(cookieItem?[cookieItem]:[])];
+    // Getrennte Aufschlüsselung fürs Panel: Sub allein (×m) vs. Side/Cookie (je ×1) — Summe = total
+    return { sub:sumN(items,m), side:sideItem?sumN([sideItem],1):null, cookie:cookieItem?sumN([cookieItem],1):null,
+      total:sumN(items,m,singles) };
   },[sel,mSal,mSau,mSea,mExt,mSide,mCookie,subSize]);
+  const selTotal=selParts?selParts.total:null;
 
   const selFTotal=useMemo(()=>{
     if(!selF)return null;
@@ -4828,6 +4834,23 @@ function App() {
           h(MacroBar,{label:"Salt",value:ccSub.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
         cornBaseRow(ccSub),
+
+        // Getrennte Aufschlüsselung: Sub / Side / Cookie einzeln (nur wenn Side oder Cookie dabei) — die Bars oben sind die Summe
+        selParts&&(selParts.side||selParts.cookie)&&h("div",{style:{margin:"-4px 0 14px",padding:"9px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
+          h("div",{style:{fontSize:9,color:"#666",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"Breakdown"),
+          ...[{l:"Sub",n:selParts.sub},
+              ...(selParts.side?[{l:(D.sides.find(s=>s.id===mSide)||{}).name||"Side",n:selParts.side}]:[]),
+              ...(selParts.cookie?[{l:"🍪 "+((D.cookies.find(c=>c.id===mCookie)||{}).name||"Cookie"),n:selParts.cookie}]:[])
+             ].map((row,ri)=>h("div",{key:ri,style:{display:"flex",alignItems:"baseline",justifyContent:"space-between",gap:8,flexWrap:"wrap",padding:"3px 0"}},
+            h("span",{style:{fontSize:11,color:"#bbb",fontFamily:S.font,minWidth:0,flex:1}},row.l),
+            h("div",{style:{display:"flex",gap:10,fontSize:11,fontFamily:S.mono,flexShrink:0}},
+              h("span",{style:{color:"#4ade80",fontWeight:700}},row.n.kcal+" kcal"),
+              h("span",{style:{color:"#fbbf24"}},"C "+row.n.carbs),
+              h("span",{style:{color:"#60a5fa"}},"P "+row.n.protein),
+              h("span",{style:{color:"#f87171"}},"F "+row.n.fat)
+            )
+          ))
+        ),
 
         // Extras
         h("div",{style:{marginBottom:12}},
