@@ -2865,6 +2865,28 @@ const WAITROSE = {
     p100:{ kcal:156, fat:4.1, sat:0.5, carbs:19, sugars:1.5, fibre:6.9, protein:7.3, salt:0.46 } },
   { id:"peas_cabbage_tenderstem_broccoli_layers", name:"Peas, Cabbage & Tenderstem Broccoli Layers", brand:"Waitrose", cat:"vegetables", variable:false, g:245,
     p100:{ kcal:104, fat:5, sat:3, carbs:6.2, sugars:4.7, fibre:4, protein:6.4, salt:0.2 } },
+  // "London Nährwerte Waitrose Nummer 2.xlsx" (User 18.07.2026) — 10 Produkte, Werte live gegen waitrose.com/itsu.com verifiziert (alle korrekt).
+  // Nur 2 Marken korrigiert (in der Excel vertauscht): Spinach & Chickpea Veggie Bites = All Plants · Spinach & Feta Parcels = Waitrose.
+  { id:"lentil_protein_noodles", name:"Lentil Protein Noodles", brand:"Waitrose", cat:"carbs_rice_grains", variable:false, g:275,
+    p100:{ kcal:139, fat:1, sat:0.2, carbs:26.7, sugars:0.5, fibre:1.8, protein:4.8, salt:0.1 } },
+  { id:"singapore_rice_noodles", name:"Singapore Rice Noodles", brand:"Waitrose", cat:"carbs_rice_grains", variable:false, g:275,
+    p100:{ kcal:133, fat:1.9, sat:0.3, carbs:25.8, sugars:1.9, fibre:1.6, protein:2.5, salt:0.21 } },
+  { id:"itsu_chicken_spring_onion_gyoza", name:"8 gyoza dumplings (chicken & spring onion)", brand:"itsu", cat:"gyoza", variable:false, g:150,
+    p100:{ kcal:155, fat:4.4, sat:1.2, carbs:20, sugars:2.5, fibre:1.7, protein:8.2, salt:0.71 } },
+  { id:"itsu_vegetable_festival_gyoza", name:"8 gyoza dumplings (vegetable festival)", brand:"itsu", cat:"gyoza", variable:false, g:150,
+    p100:{ kcal:139, fat:2.1, sat:0.2, carbs:24, sugars:4, fibre:2.3, protein:4.6, salt:1.4 } },
+  { id:"roasted_vegetable_couscous", name:"Roasted vegetable couscous (fresh)", brand:"Waitrose", cat:"carbs_rice_grains", variable:false, g:200,
+    p100:{ kcal:149, fat:6.1, sat:0.7, carbs:17.3, sugars:3.8, fibre:3, protein:4.6, salt:0.38 } },
+  { id:"edamame_bean_salad", name:"Edamame Bean Salad with an aromatic soy dressing (fresh)", brand:"Waitrose", cat:"vegetables", variable:false, g:190,
+    p100:{ kcal:101, fat:2.2, sat:0.4, carbs:8, sugars:3, fibre:8.8, protein:8, salt:0.3 } },
+  { id:"mixed_bean_salad_paprika", name:"Mixed Bean Salad in a smoky paprika dressing (fresh)", brand:"Waitrose", cat:"vegetables", variable:false, g:240,
+    p100:{ kcal:133, fat:5.4, sat:0.5, carbs:13.1, sugars:3.8, fibre:6, protein:5, salt:0.35 } },
+  { id:"spinach_chickpea_veggie_bites", name:"Spinach & Chickpea Veggie Bites with parsley, basil and a squeeze of lemon", brand:"All Plants", cat:"falafel", variable:false, g:171,
+    p100:{ kcal:209, fat:11.8, sat:0.8, carbs:16.4, sugars:1.6, fibre:6.2, protein:6, salt:0.98 } },
+  { id:"spinach_feta_parcels", name:"Spinach & Feta Parcels", brand:"Waitrose", cat:"gyoza", variable:false, g:112,
+    p100:{ kcal:270, fat:13.1, sat:3.1, carbs:29.3, sugars:2.3, fibre:2.2, protein:7.6, salt:0.56 } },
+  { id:"sweetcorn_fritters", name:"Sweetcorn Fritters", brand:"Waitrose", cat:"carbs_rice_grains", variable:false, g:150,
+    p100:{ kcal:224, fat:8.4, sat:1, carbs:28.6, sugars:5.5, fibre:4.8, protein:6.1, salt:0.67 } },
 ] };
 // Makros eines Produkts bei gegebener Gramm-Zahl (p100 × g/100), 1 Dezimale. Ungueltige Gramm → typisches Gewicht
 function wtScale(item, grams){
