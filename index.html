@@ -3034,6 +3034,13 @@ const WAITROSE_MEALS=[
   { id:"m42", cuisine:"Asian", items:[ {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_bean_salad",g:190}, {id:"teriyaki_chicken_maki",g:113}, {id:"sweetcorn_fritters",g:150} ] },
   { id:"m43", cuisine:"Mexican", items:[ {id:"sweetcorn_fritters",g:150}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
   { id:"m44", cuisine:"Asian", items:[ {id:"singapore_rice_noodles",g:275}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  // Batch 9 (User 18.07.2026) — Gyoza/Fried-Rice-Kombis (Sticky Rice hier bei 130g = ½ Pack, siehe ⚠️-Warnung am Produkt)
+  { id:"m45", cuisine:"Asian", items:[ {id:"itsu_chicken_spring_onion_gyoza",g:150}, {id:"edamame_beans",g:160}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"sticky_rice_veetee",g:130} ] },
+  { id:"m46", cuisine:"Asian", items:[ {id:"edamame_beans",g:160}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"sticky_rice_veetee",g:130}, {id:"itsu_vegetable_festival_gyoza",g:150} ] },
+  { id:"m47", cuisine:"Asian", items:[ {id:"edamame_bean_salad",g:190}, {id:"sweetcorn_fritters",g:150}, {id:"british_katsu_chicken_pieces",g:160} ] },
+  { id:"m48", cuisine:"Asian", items:[ {id:"chinese_special_fried_rice",g:250}, {id:"edamame_beans",g:160}, {id:"british_katsu_chicken_pieces",g:160} ] },
+  { id:"m49", cuisine:"Asian", items:[ {id:"egg_fried_rice",g:250}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
+  { id:"m50", cuisine:"Asian", items:[ {id:"egg_fried_rice",g:250}, {id:"edamame_bean_salad",g:190}, {id:"flamegrilled_chicken_pieces",g:160} ] },
 ];
 // Eine Mahlzeit → AC-Items (skaliert aufs Gramm, Gramm im Namen; note/warn propagiert; KEINE _locked-Markierung — feste Kombi).
 function waitroseMealItems(meal){
