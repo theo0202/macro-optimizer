@@ -132,6 +132,24 @@ const plain2 = T.sumN([wgB2, phProt2, noneC2, ...T.STD_SALAD], 2);
 const tgtPlain = { protein: plain2.protein, carbs: plain2.carbs, fat: plain2.fat, kcal: plain2.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rPlainCk = T.optimize(tgtPlain, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }, { cookie_choc_chunk: true });
 check("Subway Cookie ×1 bei Footlong (nicht verdoppelt)", rPlainCk[0].cookie && Math.abs(rPlainCk[0].nutrition.kcal - (plain2.kcal + 214)) < 1, true);
+// Hash Browns werden NICHT footlong-verdoppelt (User 31.07.2026) + Schalter "No hash browns" (18. Param, Default AUS)
+const hbEx = T.D.extras.find(e => e.id === "hash_browns");
+check("Subway D.extras hat Hash Browns (184 kcal)", hbEx && hbEx.kcal === 184, true);
+// Ziel = Plain-Footlong-Sub + GENAU 1× Hash Browns -> Top-Ergebnis trifft es exakt (waere bei ×2 um 184 kcal daneben)
+const hbBase = T.sumN([wgB2, phProt2, noneC2, ...T.STD_SALAD], 2);
+const tHB = { protein: hbBase.protein + hbEx.protein, carbs: hbBase.carbs + hbEx.carbs, fat: hbBase.fat + hbEx.fat, kcal: hbBase.kcal + hbEx.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rHB = T.optimize(tHB, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true });
+const rHBtop = rHB.find(r => (r.extras || []).some(e => e.id === "hash_browns"));
+check("Subway Hash Browns ×1 bei Footlong (nicht verdoppelt)", rHBtop && Math.abs(rHBtop.nutrition.kcal - (hbBase.kcal + 184)) < 1, true);
+check("Subway Hash Browns: andere Extras weiter ×2 bei Footlong (Gegenprobe Turkey Ham)", (() => {
+  const th = T.D.extras.find(e => e.id === "turkey_ham");
+  const tTH = { protein: hbBase.protein + th.protein * 2, carbs: hbBase.carbs + th.carbs * 2, fat: hbBase.fat + th.fat * 2, kcal: hbBase.kcal + th.kcal * 2, fibMin: null, fibMax: null, sMin: null, sMax: null };
+  const r = T.optimize(tTH, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true });
+  const top = r.find(x => (x.extras || []).some(e => e.id === "turkey_ham"));
+  return top && Math.abs(top.nutrition.kcal - (hbBase.kcal + th.kcal * 2)) < 1;
+})(), true);
+check("Subway 'No hash browns': nie im Ergebnis", T.optimize(tHB, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }, undefined, true).every(r => (r.extras || []).every(e => e.id !== "hash_browns")), true);
+check("Subway ohne Schalter: Hash Browns moeglich (Gegenprobe)", rHB.some(r => (r.extras || []).some(e => e.id === "hash_browns")), true);
 // Cookies (+Sides) sind im "Add own order"-Such-Index (buildSearchIndex) trackbar
 check("Search-Index enthaelt Subway-Cookies (Oreo Cookie Cup)", T.SEARCH_INDEX.some(x => x.resto === "Subway" && x.name === "Oreo Cookie Cup" && x.kcal === 319), true);
 check("Search-Index: alle 6 Subway-Cookies drin", T.D.cookies.every(c => T.SEARCH_INDEX.some(x => x.resto === "Subway" && x.name === c.name)), true);
