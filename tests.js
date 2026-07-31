@@ -140,7 +140,13 @@ const hbBase = T.sumN([wgB2, phProt2, noneC2, ...T.STD_SALAD], 2);
 const tHB = { protein: hbBase.protein + hbEx.protein, carbs: hbBase.carbs + hbEx.carbs, fat: hbBase.fat + hbEx.fat, kcal: hbBase.kcal + hbEx.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
 const rHB = T.optimize(tHB, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true });
 const rHBtop = rHB.find(r => (r.extras || []).some(e => e.id === "hash_browns"));
-check("Subway Hash Browns ×1 bei Footlong (nicht verdoppelt)", rHBtop && Math.abs(rHBtop.nutrition.kcal - (hbBase.kcal + 184)) < 1, true);
+check("Subway Hash Browns: Footlong = volle Werte (+184, nicht verdoppelt)", rHBtop && Math.abs(rHBtop.nutrition.kcal - (hbBase.kcal + 184)) < 1, true);
+// 6 Inch = HALBE Hash-Browns-Werte (+92): Ziel = Plain-6inch-Sub + halbe Hash Browns
+const hbBase6 = T.sumN([wgB2, phProt2, noneC2, ...T.STD_SALAD], 1);
+const tHB6 = { protein: hbBase6.protein + hbEx.protein / 2, carbs: hbBase6.carbs + hbEx.carbs / 2, fat: hbBase6.fat + hbEx.fat / 2, kcal: hbBase6.kcal + hbEx.kcal / 2, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rHB6 = T.optimize(tHB6, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, false, { philly_steak: true });
+const rHB6top = rHB6.find(r => (r.extras || []).some(e => e.id === "hash_browns"));
+check("Subway Hash Browns: 6 Inch = halbe Werte (+92)", rHB6top && Math.abs(rHB6top.nutrition.kcal - (hbBase6.kcal + 92)) < 1, true);
 check("Subway Hash Browns: andere Extras weiter ×2 bei Footlong (Gegenprobe Turkey Ham)", (() => {
   const th = T.D.extras.find(e => e.id === "turkey_ham");
   const tTH = { protein: hbBase.protein + th.protein * 2, carbs: hbBase.carbs + th.carbs * 2, fat: hbBase.fat + th.fat * 2, kcal: hbBase.kcal + th.kcal * 2, fibMin: null, fibMax: null, sMin: null, sMax: null };

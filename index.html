@@ -2153,10 +2153,14 @@ async function ocrMacroScreenshot(file, onProgress) {
 // Standard salad = all except jalapenos, sweetcorn, olives
 const STD_SALAD_IDS = ["lettuce","tomatoes","cucumber","pickles","peppers","red_onions"];
 const STD_SALAD = D.salads.filter(s=>STD_SALAD_IDS.includes(s.id));
-// Extras, die NICHT footlong-verdoppelt werden (User 31.07.2026): Hash Browns kommen auch beim Footlong nur 1× auf den Sub.
-// Werden daher als singleItems (×1) statt über den ×m-Multiplikator gerechnet — in optimize UND im Detail-Panel.
+// Extras, die NICHT footlong-verdoppelt werden (User 31.07.2026): bei Hash Browns sind die gespeicherten Werte die
+// FOOTLONG-Portion — 6 Inch bekommt die HÄLFTE. Faktor also m/2 (6inch → ×0.5, footlong → ×1) statt des normalen ×m.
+// Umgesetzt über singleItems von sumN (die ×1 zählen), mit vorskaliertem Item — in optimize UND im Detail-Panel.
 const SUBWAY_SINGLE_EXTRAS = new Set(["hash_browns"]);
-const splitSingleExtras = arr => { const mul=[],sng=[]; for(const x of arr){ (x&&SUBWAY_SINGLE_EXTRAS.has(x.id)?sng:mul).push(x); } return [mul,sng]; };
+const scaleItemN = (it,f) => { const o={id:it.id,name:it.name}; for(const k of KEYS) o[k]=(it[k]||0)*f; return o; };
+const splitSingleExtras = (arr,m) => { const mul=[],sng=[];
+  for(const x of arr){ if(x&&SUBWAY_SINGLE_EXTRAS.has(x.id)) sng.push(scaleItemN(x,m/2)); else mul.push(x); }
+  return [mul,sng]; };
 
 function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastChicken, forceCheese, doubleCheese, noPoachedEgg, noPhilly, maxOnePhilly, noTurkey, proteinsOk, cookiesOk, noHashBrowns) {
   const m = sz==="footlong"?2:1;
@@ -2182,8 +2186,8 @@ function optimize(t, mode, p, noSauce, noCheese, breadsOk, sz, noSides, noRoastC
     const ex = (maxOnePhilly&&pr.id==="philly_steak") ? extras.filter(x=>x.id!=="philly_steak_extra") : extras;
     const base=[b,pr,...cx,...STD_SALAD], bn=sumN(base,m), bs=score(bn,t,mode,p); // Std-Salad (Vegetables) gehört zum Sub → ×m (footlong verdoppelt)
     R.push({bread:b,protein:pr,cheese:c,extras:[],sauces:[],nutrition:bn,score:bs});
-    // Extras ×m — AUSSER den nicht-verdoppelten (Hash Browns), die via singleItems ×1 zählen
-    const nWith=(...adds)=>{ const [mul,sng]=splitSingleExtras(adds); return sumN([...base,...mul],m,sng); };
+    // Extras ×m — AUSSER den nicht-verdoppelten (Hash Browns): die zählen via singleItems mit Faktor m/2 (6inch = halbe Werte)
+    const nWith=(...adds)=>{ const [mul,sng]=splitSingleExtras(adds,m); return sumN([...base,...mul],m,sng); };
     for(let i=0;i<ex.length;i++){
       const n1=nWith(ex[i]), s1=score(n1,t,mode,p);
       if(s1<bs+0.5) R.push({bread:b,protein:pr,cheese:c,extras:[ex[i]],sauces:[],nutrition:n1,score:s1});
@@ -3789,8 +3793,8 @@ function App() {
     const sideItem=D.sides.find(s=>s.id===mSide);   // Side = eigenständiges Produkt → ×1 (nicht footlong-verdoppelt) → singleItems
     const cookieItem=(D.cookies||[]).find(c=>c.id===mCookie); // Cookie ebenfalls ×1 (nicht footlong-verdoppelt)
     const singles=[...(sideItem?[sideItem]:[]),...(cookieItem?[cookieItem]:[])];
-    // Hash Browns gehören zum Sub, werden aber NICHT verdoppelt → aus items rausziehen und ×1 rechnen
-    const [subMul,subSng]=splitSingleExtras(items);
+    // Hash Browns gehören zum Sub, werden aber NICHT verdoppelt → aus items rausziehen und mit m/2 rechnen (6inch = halbe Werte)
+    const [subMul,subSng]=splitSingleExtras(items,m);
     // Getrennte Aufschlüsselung fürs Panel: Sub allein (×m, Hash Browns ×1) vs. Side/Cookie (je ×1) — Summe = total
     return { sub:sumN(subMul,m,subSng), side:sideItem?sumN([sideItem],1):null, cookie:cookieItem?sumN([cookieItem],1):null,
       total:sumN(subMul,m,[...subSng,...singles]) };
@@ -4876,8 +4880,8 @@ function App() {
           h("div",{style:{fontSize:10,color:"#555",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:6}},"+ Add extras"),
           h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
             ...D.extras.filter(e=>!sel.extras.find(x=>x.id===e.id)&&!(noPoachedEgg&&e.id==="poached_egg")&&!(noHashBrowns&&e.id==="hash_browns")&&!(e.id==="philly_steak_extra"&&(noPhilly||(maxOnePhilly&&sel.protein.id==="philly_steak")))).map(e=>
-              // Hash Browns werden nicht footlong-verdoppelt → Chip zeigt den ×1-Wert
-              h(Chip,{key:e.id,label:e.name+" (+"+(e.kcal*((subSize==="footlong"&&!SUBWAY_SINGLE_EXTRAS.has(e.id))?2:1))+")",small:true,active:!!mExt[e.id],
+              // Hash Browns: gespeicherte Werte = Footlong-Portion, 6 Inch = Hälfte → Faktor m/2 statt ×m
+              h(Chip,{key:e.id,label:e.name+" (+"+Math.round(e.kcal*(subSize==="footlong"?2:1)*(SUBWAY_SINGLE_EXTRAS.has(e.id)?0.5:1))+")",small:true,active:!!mExt[e.id],
                 onClick:()=>setMExt(p=>({...p,[e.id]:!p[e.id]}))})
             ),
             h(Chip,{key:"dm",label:"Double Meat (+"+sel.protein.kcal*(subSize==="footlong"?2:1)+")",small:true,
