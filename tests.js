@@ -112,6 +112,26 @@ check("Subway Protein-Sub: leer -> nicht fixiert (mehrere Proteine moeglich)", n
 check("Subway Protein-Sub ueberstimmt Exclude (Turkey trotz noTurkey=true)", (() => { const r = T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, true, { turkey: true }); return r.length > 0 && r.every(x => x.protein.id === "turkey"); })(), true);
 // Extras bleiben trotz Protein-Lock frei (ein Ergebnis mit Philly + Extra existiert)
 check("Subway Protein-Sub: Extras weiter frei waehlbar", T.optimize(tSub, "macros", {}, true, true, {}, "footlong", true, false, false, false, false, false, false, false, { philly_steak: true }).some(x => (x.extras || []).length > 0), true);
+// "Veggie Delite" = Protein-Position OHNE Makros (User 09.08.2026): nur Brot/Salat/Extras zaehlen
+const vd = T.D.proteins.find(x => x.id === "veggie_delite");
+check("Subway Veggie Delite existiert als Protein", !!vd, true);
+check("Subway Veggie Delite hat 0 Makros (alle 8)", vd && ["kcal", "fat", "sat", "carbs", "sugars", "fibre", "protein", "salt"].every(k => vd[k] === 0), true);
+// Ein Veggie-Delite-Sub = exakt Brot + Std-Salat (Protein traegt nichts bei)
+const vdBread = T.D.breads.find(b => b.id === "wholegrain"), vdNoCheese = T.D.cheeses.find(c => c.id === "none");
+const vdExpect6 = T.sumN([vdBread, vdNoCheese, ...T.STD_SALAD], 1);
+const tVD = { protein: vdExpect6.protein, carbs: vdExpect6.carbs, fat: vdExpect6.fat, kcal: vdExpect6.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rVD = T.optimize(tVD, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, false, { veggie_delite: true });
+check("Subway Veggie Delite: Sub = Brot + Std-Salat (kein Protein-Beitrag)", rVD.length > 0 && rVD[0].protein.id === "veggie_delite" && Math.abs(rVD[0].nutrition.kcal - vdExpect6.kcal) < 0.5 && rVD[0].extras.length === 0, true);
+// Footlong verdoppelt weiterhin korrekt (0×2 = 0 bleibt 0)
+const vdExpect12 = T.sumN([vdBread, vdNoCheese, ...T.STD_SALAD], 2);
+const rVD12 = T.optimize({ protein: vdExpect12.protein, carbs: vdExpect12.carbs, fat: vdExpect12.fat, kcal: vdExpect12.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, true, true, { wholegrain: true }, "footlong", true, false, false, false, false, false, false, false, { veggie_delite: true });
+check("Subway Veggie Delite Footlong = Brot+Salat ×2", rVD12.length > 0 && Math.abs(rVD12[0].nutrition.kcal - vdExpect12.kcal) < 0.5, true);
+// Extras zaehlen bei Veggie Delite ganz normal (hier: Poached Egg on top)
+const peX = T.D.extras.find(e => e.id === "poached_egg");
+const tVDe = { protein: vdExpect6.protein + peX.protein, carbs: vdExpect6.carbs + peX.carbs, fat: vdExpect6.fat + peX.fat, kcal: vdExpect6.kcal + peX.kcal, fibMin: null, fibMax: null, sMin: null, sMax: null };
+const rVDe = T.optimize(tVDe, "macros", {}, true, true, { wholegrain: true }, "6inch", true, false, false, false, false, false, false, false, { veggie_delite: true });
+check("Subway Veggie Delite: Extras zaehlen normal", rVDe.some(r => (r.extras || []).some(e => e.id === "poached_egg") && Math.abs(r.nutrition.kcal - (vdExpect6.kcal + peX.kcal)) < 0.5), true);
+
 // Cookie-Selektor (17. Param) — optional 1 Cookie zusätzlich zum Sub, gewählt wie Brot/Protein
 check("Subway D.cookies = 6 (User-Werte 18.07.2026)", T.D.cookies.length, 6);
 check("Subway Cookie Chocolate Chunk (214 kcal, salt 0.28)", (() => { const c = T.D.cookies.find(x => x.id === "cookie_choc_chunk"); return c.kcal === 214 && c.salt === 0.28 && c.fibre === 1.2 && c.servingG === 45; })(), true);
