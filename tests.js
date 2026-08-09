@@ -1412,7 +1412,12 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (71)", T.WAITROSE.items.length, 71);
+check("Waitrose Produkte (74)", T.WAITROSE.items.length, 74);
+// User 09.08.2026: Tilda Coconut Basmati + Merchant Gourmet Giant Beans / BBQ Baked Beans
+check("Waitrose Tilda Coconut Basmati Rice (250g, 162/100g -> 405 kcal)", (() => { const x = T.WAITROSE.items.find(y => y.id === "coconut_basmati_rice"); return x && x.brand === "Tilda" && x.cat === "carbs_rice_grains" && x.g === 250 && x.p100.kcal === 162 && x.p100.sat === 3.6 && x.p100.salt === 0.03 && T.wtScale(x, 250).kcal === 405; })(), true);
+check("Waitrose Giant Beans (Merchant Gourmet, 220g, 124/100g, P7.2)", (() => { const x = T.WAITROSE.items.find(y => y.id === "giant_beans"); return x && x.brand === "Merchant Gourmet" && x.g === 220 && x.p100.kcal === 124 && x.p100.protein === 7.2 && x.p100.fibre === 5.7; })(), true);
+check("Waitrose BBQ Baked Beans (Merchant Gourmet, 200g, 94/100g -> 188 kcal)", (() => { const x = T.WAITROSE.items.find(y => y.id === "bbq_baked_beans"); return x && x.g === 200 && x.p100.kcal === 94 && x.p100.sugars === 2.6 && T.wtScale(x, 200).kcal === 188; })(), true);
+check("Waitrose: BBQ + Classic Baked Beans sind getrennte Produkte", T.WAITROSE.items.filter(x => /baked beans/i.test(x.name)).length, 2);
 // "London Nährwerte Waitrose Nummer 2.xlsx" — 10 Produkte (Werte live verifiziert; Marken #8/#9 korrigiert)
 check("Waitrose Singapore Rice Noodles (275g, 133/100g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "singapore_rice_noodles"); return x && x.brand === "Waitrose" && x.cat === "carbs_rice_grains" && x.g === 275 && x.p100.kcal === 133 && x.p100.salt === 0.21; })(), true);
 check("Waitrose itsu Chicken Gyoza (itsu, gyoza, 150g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "itsu_chicken_spring_onion_gyoza"); return x && x.brand === "itsu" && x.cat === "gyoza" && x.g === 150 && x.p100.protein === 8.2; })(), true);
@@ -1429,7 +1434,7 @@ check("Waitrose Chicken pieces = 8 Items", T.WAITROSE.items.filter(x => x.cat ==
 check("Waitrose British Katsu Chicken Pieces (fix 160g, kcal 135)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_katsu_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 135; })(), true);
 check("Waitrose British Tikka Chicken Pieces (fix 160g, 139/100g, P25.6)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_tikka_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 139 && x.p100.protein === 25.6 && x.p100.salt === 0.49; })(), true);
 check("Waitrose Tikka @160g = 222.4 kcal (per-100g×1.6)", T.wtScale(T.WAITROSE.items.find(x => x.id === "british_tikka_chicken_pieces"), 160).kcal, 222.4);
-check("Waitrose Carbs/Rice/Grains = 30 Items (+ Noodles/Couscous/Fritters)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 30);
+check("Waitrose Carbs/Rice/Grains = 33 Items (+ Coconut Rice/Giant Beans/BBQ Beans)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 33);
 check("Waitrose Cheese-Kategorie = 2 (Mozzarella + Ricotta Peppers)", T.WAITROSE.items.filter(x => x.cat === "cheese").length, 2);
 // Egg Noodles: fix 275g, Notiz "located at vegetable fridge"; Mozzarella (Essential Waitrose) cheese, fix 125g
 check("Waitrose Egg Noodles (fix 275g) mit Store-Notiz", (() => { const x = T.WAITROSE.items.find(y => y.id === "egg_noodles"); return x && x.g === 275 && x.p100.kcal === 120 && x.note === "located at vegetable fridge"; })(), true);
@@ -1486,7 +1491,7 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
 // waitroseSearch schliesst die 3 Nuss-Portionen ein (Track-Basket): 52 Produkte + 3 Nuesse = 55
-check("waitroseSearch leere Query -> Katalog + 3 Nuesse (74)", T.waitroseSearch("", 80).length, 74);
+check("waitroseSearch leere Query -> Katalog + 3 Nuesse (77)", T.waitroseSearch("", 85).length, 77);
 check("waitroseSearch 'peanut' findet Roasted Peanuts (Nuss im Track)", T.waitroseSearch("peanut", 60).some(x => x.id === "peanuts"), true);
 check("waitroseSearch 'pine' findet Pine Kernels", T.waitroseSearch("pine", 60).some(x => x.id === "pine" && x.variable === true && x.cat === "nuts"), true);
 // Nuesse bleiben AUSSERHALB des Build-Pools (WAITROSE.items / WAITROSE_MENU unveraendert bei 52)
@@ -1507,14 +1512,14 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 71 Items", wItems.length, 71);
+check("waitroseOrderItems: 74 Items", wItems.length, 74);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 9 Kategorien + 71 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 71, true);
+check("WAITROSE_MENU hat 9 Kategorien + 74 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 74, true);
 const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true); // activeCats = alle Kategorien an
 // Build-Kategorie-Filter fuer die neue Excel-Kategorie
 check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitrose({ protein: 6, carbs: 45, fat: 4, kcal: 250, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { carbs_rice_grains: true }, 2).every(r => r.items.every(x => x.cat === "carbs_rice_grains")), true);
