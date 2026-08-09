@@ -42,8 +42,6 @@ const D = {
     { id:"philly_steak",name:"Philly Steak",servingG:71,kcal:86,fat:1.4,sat:0.4,carbs:8,sugars:3.9,fibre:0.7,protein:11,salt:0.7 },
     { id:"spiced_plant",name:"Spiced Plant Patty",servingG:85,kcal:169,fat:9,sat:0.8,carbs:10,sugars:1.6,fibre:2.7,protein:11,salt:1 },
     { id:"pulled_plant",name:"BBQ Pulled Plant",servingG:60,kcal:114,fat:4.6,sat:0.67,carbs:7.2,sugars:2.3,fibre:1.2,protein:10,salt:0.63 },
-    { id:"spicy_italian",name:"Spicy Italian",servingG:36,kcal:146,fat:12.6,sat:4.5,carbs:2,sugars:0,fibre:0,protein:7.6,salt:1.4 },
-    { id:"classic_bmt",name:"Classic B.M.T.",servingG:64,kcal:175,fat:13.7,sat:4.9,carbs:2,sugars:0.1,fibre:0.1,protein:11.5,salt:1.9 },
     // Veggie Delite = "kein Protein" (User 09.08.2026): der Sub ist nur Brot + Salat + selbst gewählte Extras. Die Protein-Position
     // trägt daher BEWUSST 0 kcal/0 Makros — NICHT die Veggie-Delite-Werte aus der Nährwert-PDF (die enthalten Brot + Standard-Salat).
     { id:"veggie_delite",name:"Veggie Delite",servingG:0,kcal:0,fat:0,sat:0,carbs:0,sugars:0,fibre:0,protein:0,salt:0 },
@@ -3425,7 +3423,7 @@ function App() {
   const [noRoast,setNoRoast]=useState(true); // "No Roast Chicken Breast" — Exclude-Schalter, Default AN (Konvention)
   const [noPoachedEgg,setNoPoachedEgg]=useState(true); // "No Poached Egg" — Default AN (User 18.07.2026)
   const [noTurkey,setNoTurkey]=useState(true); // "No turkey breast" — Exclude-Schalter (filtert das turkey-Protein), Default AN (User 18.07.2026)
-  const [noHashBrowns,setNoHashBrowns]=useState(false); // "No hash browns" — Default AUS (User 31.07.2026, opt-in)
+  const [noHashBrowns,setNoHashBrowns]=useState(true); // "No hash browns" — Default AN (User 09.08.2026)
   const [noPhilly,setNoPhilly]=useState(false); // "No Philly Steak" — Default AUS (opt-in; Philly-Protein + -Extra ganz raus)
   const [maxOnePhilly,setMaxOnePhilly]=useState(true); // "Max 1× Philly Steak" — Default AN: kein Philly-Sub + zusätzlich Philly-Extra
   const [breadsOk,setBreadsOk]=useState({wholegrain:true}); // erlaubte Brote (Mehrfachauswahl); leer = alle

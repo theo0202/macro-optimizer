@@ -62,11 +62,11 @@ check("Subway single cheese: nutrition = Sub + Käse ×1", approx(topSC.nutritio
 check("Subway D.sides (3)", T.D.sides.length, 3);
 check("Subway Baked Beans Snack Pot kcal (PDF)", T.D.sides.find(s => s.id === "baked_beans_snack_pot").kcal, 109);
 check("Subway Coleslaw Double kcal (PDF)", T.D.sides.find(s => s.id === "coleslaw_double").kcal, 119);
-// Combo-Proteine: Deliveroo Build-Your-Own hat Pepperoni/Salami nur in Combos (Spicy Italian / Classic B.M.T.)
+// Pepperoni/Salami gibt es NICHT als eigenständiges Protein; die Combo-Subs Spicy Italian / Classic B.M.T. sind
+// auf User-Wunsch (09.08.2026) ebenfalls raus — Pepperoni/Salami bleiben aber als Extra wählbar.
 check("Subway kein standalone Pepperoni/Salami als Protein", !T.D.proteins.some(p => p.id === "pepperoni_main" || p.id === "salami_main"), true);
-check("Subway Spicy Italian = Salami+Pepperoni (146 kcal)", T.D.proteins.find(p => p.id === "spicy_italian").kcal, 146);
-check("Subway Spicy Italian Protein-Summe (7.6g)", T.D.proteins.find(p => p.id === "spicy_italian").protein, 7.6);
-check("Subway Classic B.M.T. = Pepperoni+Salami+Turkey Ham (175 kcal)", T.D.proteins.find(p => p.id === "classic_bmt").kcal, 175);
+check("Subway Spicy Italian entfernt", T.D.proteins.some(p => p.id === "spicy_italian"), false);
+check("Subway Classic B.M.T. entfernt", T.D.proteins.some(p => p.id === "classic_bmt"), false);
 check("Subway Pepperoni/Salami bleiben Extras", T.D.extras.filter(e => /pepperoni|salami/i.test(e.name)).length, 2);
 // Meatball Marinara nutzt die HALAL Meatballs (in marinara sauce) = 229 kcal (User 20.06.2026; Subway nutzt sie generell)
 check("Subway Meatball Marinara = HALAL marinara (229 kcal)", T.D.proteins.find(p => p.id === "meatball_marinara").kcal, 229);
