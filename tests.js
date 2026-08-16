@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, WAITROSE_GHEE, gheeGrams, applyWaitroseGhee, alaCarteCombos, WAITROSE_MEALS, WAITROSE_CUISINES, waitroseMealItems, waitroseMealResults, filterMeals, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, WAITROSE_GHEE, bestGheeGrams, applyWaitroseGhee, alaCarteCombos, WAITROSE_MEALS, WAITROSE_CUISINES, waitroseMealItems, waitroseMealResults, filterMeals, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1579,16 +1579,21 @@ check("applyWaitroseNuts augmentiert (nuts + _nutBase gesetzt)", augN[0].nuts.le
 // ===== Ghee Butter (Waitrose-Build-Schalter "Add ghee butter", Default AUS, freie Grammzahl) =====
 check("WAITROSE_GHEE Werte (895/100g, Fett 99.4, sat 70.5)", (() => { const g = T.WAITROSE_GHEE; return g && g.p100.kcal === 895 && g.p100.fat === 99.4 && g.p100.sat === 70.5 && g.p100.carbs === 0.5 && g.p100.protein === 0.1 && g.p100.salt === 0; })(), true);
 check("WAITROSE_GHEE Default 10g = 89.5 kcal", T.wtScale(T.WAITROSE_GHEE, 10).kcal, 89.5);
-check("WAITROSE_GHEE 25g = 223.8 kcal (freie Grammzahl)", T.wtScale(T.WAITROSE_GHEE, 25).kcal, 223.8);
-// gheeGrams: leer/ungueltig/negativ -> Default 10; 0 und positive gelten
-check("gheeGrams Fallback (leer/ungueltig/negativ -> 10)", [T.gheeGrams(""), T.gheeGrams(null), T.gheeGrams("abc"), T.gheeGrams(-5)].every(x => x === 10), true);
-check("gheeGrams akzeptiert 0 und beliebige Werte", T.gheeGrams(0) === 0 && T.gheeGrams(37.5) === 37.5, true);
-// applyWaitroseGhee: aus -> Identitaet; an -> jedes Ergebnis augmentiert (+ _gheeBase)
+check("WAITROSE_GHEE 25g = 223.8 kcal", T.wtScale(T.WAITROSE_GHEE, 25).kcal, 223.8);
+// bestGheeGrams: das Tool waehlt die Menge selbst (User 09.08.2026) — Scan 0..50g, score-minimal
+// Ziel = exakt 20g Ghee Fett-Luecke -> Optimum ~20g
+const gheeGap = { protein: 0, carbs: 0, fat: 19.9, kcal: 179, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("bestGheeGrams trifft die Fett-Luecke (~20g)", Math.abs(T.bestGheeGrams(zero, gheeGap, "macros", {}) - 20) <= 1, true);
+// Fett-Ziel schon erreicht -> 0g (selbstbegrenzend wie Corn Cakes)
+const gheeFull = { protein: 40, carbs: 60, fat: 20, kcal: 580, fibMin: null, fibMax: null, sMin: null, sMax: null };
+check("bestGheeGrams: Fett schon am Ziel -> 0g", T.bestGheeGrams({ ...zero, protein: 40, carbs: 60, fat: 20, kcal: 580 }, gheeFull, "macros", {}), 0);
+check("bestGheeGrams nie ueber dem Cap (50g)", T.bestGheeGrams(zero, { protein: 0, carbs: 0, fat: 200, kcal: 1800, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}) <= 50, true);
+// applyWaitroseGhee: aus -> Identitaet; an -> Menge selbst gewaehlt (+ _gheeBase)
 const dummyG = [{ items: [], nutrition: { ...zero }, score: 1 }];
-check("applyWaitroseGhee aus -> Identitaet", T.applyWaitroseGhee(dummyG, false, 10, tgtAny, "macros", {}) === dummyG, true);
-const augG = T.applyWaitroseGhee([{ items: [], nutrition: { ...zero }, score: 9 }], true, 20, tgtAny, "macros", {});
-check("applyWaitroseGhee an: ghee + _gheeBase gesetzt, Makros addiert", augG[0].ghee && augG[0].ghee.grams === 20 && Math.abs(augG[0].nutrition.kcal - 179) < 0.2 && !!augG[0]._gheeBase, true);
-check("applyWaitroseGhee: erzwungen (auch wenn Score schlechter wird)", T.applyWaitroseGhee([{ items: [], nutrition: { ...zero }, score: 0 }], true, 50, { protein: 40, carbs: 60, fat: 5, kcal: 445, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {})[0].ghee !== null, true);
+check("applyWaitroseGhee aus -> Identitaet", T.applyWaitroseGhee(dummyG, false, tgtAny, "macros", {}) === dummyG, true);
+const augG = T.applyWaitroseGhee([{ items: [], nutrition: { ...zero }, score: 9 }], true, gheeGap, "macros", {});
+check("applyWaitroseGhee an: waehlt Gramm selbst + _gheeBase gesetzt", augG[0].ghee && Math.abs(augG[0].ghee.grams - 20) <= 1 && !!augG[0]._gheeBase && augG[0].nutrition.kcal > 170, true);
+check("applyWaitroseGhee: kein Nutzen -> ghee null (selbstbegrenzend)", T.applyWaitroseGhee([{ items: [], nutrition: { ...zero, protein: 40, carbs: 60, fat: 20, kcal: 580 }, score: 0 }], true, gheeFull, "macros", {})[0].ghee, null);
 // Neue Sushi-Daily (variabel): Salmon Tartare Bowl @354g -> kcal 175×3.54 = 619.5; Veggie Roll (sushi) @175g -> kcal 135×1.75 = 236.3
 check("Waitrose Salmon Tartare Bowl cat bowl, variabel typ. 354g", (() => { const x = T.WAITROSE.items.find(y => y.id === "salmon_tartare_bowl"); return x.cat === "bowl" && x.variable === true && x.g === 354; })(), true);
 check("Waitrose wtScale Salmon Tartare Bowl@354g kcal (619.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "salmon_tartare_bowl"), 354).kcal, 619.5);
