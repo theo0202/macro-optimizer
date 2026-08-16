@@ -2864,6 +2864,8 @@ const WAITROSE = {
   { id:"chinese_special_fried_rice", name:"Chinese Special Fried Rice", brand:"Tilda", cat:"carbs_rice_grains", variable:false, g:250,
     p100:{ kcal:128, fat:2.5, sat:0.4, carbs:23.2, sugars:1.3, fibre:1.6, protein:2.5, salt:0.95 } },
   // Veetee-Pack = 2 Boxen à 130g; nutzbare Portion = eine Box (130g), nicht der ganze 260g-Pack (User 13.07.2026)
+  { id:"thai_jasmine_veetee", name:"Steam Filtered Thai Jasmine", brand:"Veetee", cat:"carbs_rice_grains", variable:false, g:140, warn:"½ pack — so only 140g (1 of 2 boxes); whole pack = 280g",
+    p100:{ kcal:144, fat:1.5, sat:0.2, carbs:29.1, sugars:0.1, fibre:1.2, protein:2.9, salt:0.01 } },
   { id:"sticky_rice_veetee", name:"Sticky Rice", brand:"Veetee", cat:"carbs_rice_grains", variable:false, g:130, warn:"½ pack — so only 130g (1 of 2 boxes)",
     p100:{ kcal:152, fat:1.8, sat:0.2, carbs:31.7, sugars:0.1, fibre:0, protein:2.3, salt:0.14 } },
   { id:"4_potato_breads", name:"4 Potato Breads", brand:"Irwin's", cat:"carbs_rice_grains", variable:false, g:240,
@@ -2939,7 +2941,7 @@ function wtScale(item, grams){
 // Nuesse (WAITROSE_NUTS) sind im Track-Basket such-/hinzufuegbar (per-100g, 20 g typisch + editierbar) — NUR hier, nicht im Build-Pool.
 function waitroseSearch(query, limit){
   const q=(query||"").trim().toLowerCase(), terms=q?q.split(/\s+/):[];
-  return WAITROSE.items.concat(WAITROSE_NUTS).filter(x=>{const hay=(x.name+" "+x.brand).toLowerCase();return terms.every(t=>hay.includes(t));})
+  return WAITROSE.items.concat(WAITROSE_NUTS).concat([WAITROSE_GHEE]).filter(x=>{const hay=(x.name+" "+x.brand).toLowerCase();return terms.every(t=>hay.includes(t));})
     .slice(0, limit||60);
 }
 // Summe eines Warenkorbs [{item, qty, g}] — Makros = p100 × g/100 × qty, 1 Dezimale
@@ -3114,6 +3116,22 @@ function applyWaitroseNuts(arr, enabledIds, t, mode, p){
   return arr.map(r=>{ const b=bestWaitroseNuts(r.nutrition, enabledIds, t, mode, p);
     return b.nuts.length ? Object.assign({}, r, {nuts:b.nuts, _nutBase:r.nutrition, nutrition:b.nutrition, score:b.score})
                          : Object.assign({}, r, {nuts:[], _nutBase:r.nutrition}); }).sort((a,b)=>a.score-b.score);
+}
+// Ghee Butter (Waitrose-Build, User 09.08.2026): Schalter "Add ghee butter" (Default AUS) + FREI wählbare Grammzahl.
+// Wie die Nuss-Toppings erzwungen: ist der Schalter an, wird die gewählte Menge auf JEDES Ergebnis addiert (Fett-Booster).
+// "<0.5"/"<0.1" der Nährwerttabelle als Obergrenze übernommen; keine Ballaststoff-Angabe → 0.
+const WAITROSE_GHEE = { id:"ghee_butter", name:"Ghee Butter", brand:"Waitrose", cat:"ghee", variable:true, g:10,
+  p100:{ kcal:895, fat:99.4, sat:70.5, carbs:0.5, sugars:0.1, fibre:0, protein:0.1, salt:0 } };
+// Gültige Grammzahl: leer/ungültig/negativ → Default (10 g); 0 und positive Werte gelten.
+function gheeGrams(grams){ const gv=parseFloat(grams); return (grams===""||grams==null||isNaN(gv)||gv<0)?WAITROSE_GHEE.g:gv; }
+// Augmentiert + re-sortiert die Ergebnisliste um die Ghee-Portion. on=false → Array unverändert (Identität).
+// r.ghee = {grams,mac}, r._gheeBase = nutrition VOR Ghee (fuer Live-Recompute im Panel).
+function applyWaitroseGhee(arr, on, grams, t, mode, p){
+  if(!on) return arr;
+  const g=gheeGrams(grams), mac=wtScale(WAITROSE_GHEE,g);
+  return arr.map(r=>{ const n={}; for(const k of KEYS) n[k]=Math.round((((r.nutrition[k]||0)+(mac[k]||0)))*10)/10;
+    return Object.assign({}, r, {ghee:{grams:g,mac}, _gheeBase:r.nutrition, nutrition:n, score:score(n,t,mode,p)}); })
+    .sort((a,b)=>a.score-b.score);
 }
 // Kurze Order-Zusammenfassung pro Cross-Restaurant-Ergebnis (dispatch nach _resto)
 function summarizeAcross(r){
@@ -3622,6 +3640,9 @@ function App() {
   // "Top with …"-Nuss-Toppings (nur Waitrose-Build): Schalter je Nuss + editierbares Gramm (Default 20 g) fürs Panel
   const [wNuts,setWNuts]=useState({peanuts:false,cashews:false,pine:false});
   const [wNutG,setWNutG]=useState({peanuts:20,cashews:20,pine:20});
+  // "Add ghee butter" (nur Waitrose-Build): Default AUS; Grammzahl frei wählbar (Default 10 g)
+  const [wGhee,setWGhee]=useState(false);
+  const [wGheeG,setWGheeG]=useState(10);
   // "Build around my picks" (nur Waitrose-Build): fest gewählte Produkte, die der Optimizer als Basis nimmt und drumherum auffüllt.
   // Gleiche Warenkorb-Mechanik wie Track (variabel → eigene Zeile mit eigenem Gramm, fix → qty), persistiert.
   const [wPickQ,setWPickQ]=useState("");
@@ -3751,7 +3772,9 @@ function App() {
   const activeRaw=resto==="all"?resultsAll:resto==="accurate"?resultsAccurate:resto==="subway"?results:resto==="farmerj"?resultsFJ:resto==="ug"?resultsUG:resto==="atis"?resultsAtis:resto==="chopstix"?resultsChopstix:resto==="fiveguys"?resultsFiveGuys:(AC?AC.res:[]);
   // Nuss-Toppings NUR im Waitrose-Build-Modus; nach den Corn Cakes augmentiert (Nuss-Basis = corn-inklusive nutrition).
   const wNutEnabled=(resto==="waitrose"&&wMode==="build")?["peanuts","cashews","pine"].filter(id=>wNuts[id]):[];
-  const activeResults=useMemo(()=>applyWaitroseNuts(applyCornCakes(activeRaw,cornCakes,targets,mode,prefs,cornCap),wNutEnabled,targets,mode,prefs),[activeRaw,cornCakes,targets,mode,prefs,cornCap,resto,wMode,wNuts]);
+  // Ghee zuletzt (nach Corn Cakes + Nuessen) — nur im Waitrose-Build, erzwungen wenn der Schalter an ist
+  const wGheeOn=(resto==="waitrose"&&wMode==="build"&&wGhee);
+  const activeResults=useMemo(()=>applyWaitroseGhee(applyWaitroseNuts(applyCornCakes(activeRaw,cornCakes,targets,mode,prefs,cornCap),wNutEnabled,targets,mode,prefs),wGheeOn,wGheeG,targets,mode,prefs),[activeRaw,cornCakes,targets,mode,prefs,cornCap,resto,wMode,wNuts,wGheeOn,wGheeG]);
   // Live-Berechnung der Cake-Anzahl fuers Detail-Panel (reagiert sofort auf Ziel-Aenderung / Schalter / Cap).
   // base = corn-freie nutrition (sel._base falls augmentiert, sonst sel.nutrition). Liefert {n, total, base}.
   const cornTot=(base)=>{
@@ -3776,6 +3799,14 @@ function App() {
       for(const k of KEYS) tot[k]+=mac[k]||0; return {nut,grams:g,mac}; });
     for(const k of KEYS) tot[k]=Math.round(tot[k]*10)/10;
     return {nuts:rows, total:tot};
+  };
+  // Ghee live fuers Panel (nur Waitrose-Build + Schalter an): Makros bei der aktuell eingestellten Grammzahl.
+  // base = corn- + nuss-inklusive Basis (nutAC.total). Liefert {ghee:{grams,mac}|null, total: base + Ghee}.
+  const gheeTot=(base)=>{
+    if(!base||!(resto==="waitrose"&&wMode==="build")||!wGhee) return {ghee:null, total:base};
+    const g=gheeGrams(wGheeG), mac=wtScale(WAITROSE_GHEE,g);
+    const tot={}; for(const k of KEYS) tot[k]=Math.round((((base[k]||0)+(mac[k]||0)))*10)/10;
+    return {ghee:{grams:g,mac}, total:tot};
   };
   // Kompakte "nur Restaurant" (corn-frei) Makro-Zeile fuers Detail-Panel — erscheint nur, wenn Cakes dabei sind.
   const cornBaseRow=(cc)=> (cc&&cc.n>0&&cc.base)? h("div",{style:{margin:"-4px 0 14px",padding:"8px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
@@ -3825,8 +3856,9 @@ function App() {
   const ccSub=cornTot(selTotal);
   const ccFJ=cornTot(selFTotal);
   // Basis = corn- UND nuss-freie nutrition: _base (falls corn-augmentiert) → _nutBase (falls nuss-augmentiert) → nutrition
-  const ccAC=cornTot(AC&&AC.sel?(AC.sel._base||AC.sel._nutBase||AC.sel.nutrition):null);
+  const ccAC=cornTot(AC&&AC.sel?(AC.sel._base||AC.sel._nutBase||AC.sel._gheeBase||AC.sel.nutrition):null);
   const nutAC=nutTot(ccAC.total); // Nuesse auf die corn-inklusive AC-Basis (nur Waitrose-Build; sonst {nuts:[],total:base})
+  const gheeAC=gheeTot(nutAC.total); // Ghee zuletzt (nur Waitrose-Build + Schalter an; sonst {ghee:null,total:base})
   const ccUG=cornTot(selU?(selU._base||selU.nutrition):null);
   const ccAt=cornTot(selA?(selA._base||selA.nutrition):null);
   const ccCh=cornTot(selCh?(selCh._base||selCh.nutrition):null);
@@ -3837,6 +3869,8 @@ function App() {
   const cornLbl=r=>(r&&r.corn>0)?" · +"+r.corn+"× corn cakes":"";
   // Karten-Suffix fuer Nuss-Toppings (r via applyWaitroseNuts augmentiert → r.nuts, je 20 g). z.B. " · + peanuts, cashews"
   const nutLbl=r=>(r&&r.nuts&&r.nuts.length)?" · + "+r.nuts.map(n=>n.name.toLowerCase()).join(", "):"";
+  // Karten-Suffix fuer Ghee (r via applyWaitroseGhee augmentiert → r.ghee). z.B. " · + 10g ghee"
+  const gheeLbl=r=>(r&&r.ghee)?" · + "+r.ghee.grams+"g ghee":"";
 
   // Sort by: im Kalorien-Modus gibt es keine Makro-Ziele → Protein/Carbs/Fat fallen auf Score zurück
   const effSort=(mode==="macros"||sortBy==="score"||sortBy==="kcal")?sortBy:"score";
@@ -4236,6 +4270,16 @@ function App() {
           ...[1,2,3,5,Infinity].map(n=>h(Chip,{key:String(n),label:n===Infinity?"∞":String(n),active:maxWt===n,onClick:()=>setMaxWt(n),small:true}))
         ),
         wMode==="build"&&h("div",{style:{display:"flex",flexDirection:"column",gap:8}},
+          // Ghee ganz oben (User 09.08.2026): Default AUS; wenn an, wird die frei wählbare Menge auf JEDES Ergebnis addiert
+          h("div",{style:{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}},
+            h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
+              h("input",{type:"checkbox",checked:wGhee,onChange:e=>setWGhee(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"Add ghee butter"),
+            wGhee&&h("div",{style:{display:"flex",alignItems:"center",gap:4}},
+              h("input",{type:"number",inputMode:"numeric",value:wGheeG,onChange:e=>setWGheeG(e.target.value),
+                style:{width:52,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:7,padding:"4px 7px",color:"#fff",fontSize:12,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
+              h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g"),
+              h("span",{style:{fontSize:10,color:"#666",fontFamily:S.mono}},"≈ "+wtScale(WAITROSE_GHEE,gheeGrams(wGheeG)).kcal+" kcal"))
+          ),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
             h("input",{type:"checkbox",checked:wNoFish,onChange:e=>setWNoFish(e.target.checked),style:{accentColor:S.green,width:16,height:16}}),"No fish"),
           h("label",{style:{display:"flex",alignItems:"center",gap:6,cursor:"pointer",fontSize:12,color:"#999"}},
@@ -4739,7 +4783,7 @@ function App() {
                     r._cuisine?h("span",{key:"cz",style:{fontSize:8,fontWeight:700,color:"#fbbf24",background:"rgba(180,83,9,0.22)",border:"1px solid rgba(180,83,9,0.5)",borderRadius:5,padding:"2px 6px",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:0.5,marginRight:6,verticalAlign:"middle",whiteSpace:"nowrap"}},r._cuisine):null,
                     itsuLabel(r.items)),
                   h("div",{style:{fontSize:10,color:"#777",fontFamily:S.mono}},
-                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · ")+cornLbl(r)+nutLbl(r))
+                    r.items.length+(r.items.length===1?" Item · ":" Items · ")+cats.join(" · ")+cornLbl(r)+nutLbl(r)+gheeLbl(r))
                 ),
                 h("div",{style:{fontSize:16,fontWeight:700,color:"#4ade80",fontFamily:S.mono}},
                   r.nutrition.kcal,h("span",{style:{fontSize:9,color:"#666",fontWeight:400}}," kcal"))
@@ -5062,21 +5106,21 @@ function App() {
         h("div",{style:{fontSize:15,fontWeight:700,color:"#fff",marginBottom:4}},itsuLabel(AC.sel.items)),
         h("div",{style:{fontSize:11,color:"#777",marginBottom:12,fontFamily:S.mono}},(resto==="meals"&&AC.sel._cuisine?AC.sel._cuisine+" · ":"")+((resto==="waitrose"||resto==="meals")?"Waitrose · ":"à la carte · ")+AC.sel.items.length+((resto==="waitrose"||resto==="meals")?(AC.sel.items.length===1?" product · typical weights":" products · typical weights"):(AC.sel.items.length===1?" Item":" Items"))),
 
-        // Macro bars (nutAC.total = corn-inklusiv + Nuss-Toppings; == ccAC.total wenn keine Nuesse / kein Waitrose)
+        // Macro bars (gheeAC.total = corn-inklusiv + Nuss-Toppings + Ghee; == ccAC.total ohne Zusaetze / kein Waitrose)
         h("div",{style:{marginBottom:16}},
-          h(MacroBar,{label:"Calories",value:nutAC.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
-          h(MacroBar,{label:"Carbs",value:nutAC.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
-          h(MacroBar,{label:"Protein",value:nutAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
-          h(MacroBar,{label:"Fat",value:nutAC.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
-          h(MacroBar,{label:"Fibre",value:nutAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
-          h(MacroBar,{label:"Salt",value:nutAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
+          h(MacroBar,{label:"Calories",value:gheeAC.total.kcal,target:mode==="macros"?autoK:tK,color:"#4ade80",unit:" kcal"}),
+          h(MacroBar,{label:"Carbs",value:gheeAC.total.carbs,target:mode==="macros"?tC:0,color:"#fbbf24"}),
+          h(MacroBar,{label:"Protein",value:gheeAC.total.protein,target:mode==="macros"?tP:0,color:"#60a5fa"}),
+          h(MacroBar,{label:"Fat",value:gheeAC.total.fat,target:mode==="macros"?tF:0,color:"#f87171"}),
+          h(MacroBar,{label:"Fibre",value:gheeAC.total.fibre,target:fibMin!==""?Number(fibMin):0,color:"#a78bfa"}),
+          h(MacroBar,{label:"Salt",value:gheeAC.total.salt,target:sMax!==""?Number(sMax):0,color:"#94a3b8"})
         ),
         // "Restaurant only"-Basis: Waitrose berücksichtigt Corn Cakes UND Nuss-Toppings (Basis = ccAC.base, excl. beides);
         // Label + Sichtbarkeit passen sich an (rendert auch bei nuts-only). Andere Restaurants: unveränderter cornBaseRow.
         (resto==="waitrose"
-          ? ((ccAC.n>0||nutAC.nuts.length)&&ccAC.base ? h("div",{style:{margin:"-4px 0 14px",padding:"8px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
+          ? ((ccAC.n>0||nutAC.nuts.length||gheeAC.ghee)&&ccAC.base ? h("div",{style:{margin:"-4px 0 14px",padding:"8px 11px",background:"#0d0d0d",borderRadius:8,border:"1px solid #222"}},
               h("div",{style:{fontSize:9,color:"#666",fontFamily:S.mono,textTransform:"uppercase",letterSpacing:1,marginBottom:5}},
-                "Restaurant only · excl. "+[ccAC.n>0?"corn cakes":null, nutAC.nuts.length?"nut toppings":null].filter(Boolean).join(" & ")),
+                "Restaurant only · excl. "+[ccAC.n>0?"corn cakes":null, nutAC.nuts.length?"nut toppings":null, gheeAC.ghee?"ghee":null].filter(Boolean).join(" & ")),
               h("div",{style:{display:"flex",gap:14,fontSize:12,fontFamily:S.mono,flexWrap:"wrap"}},
                 h("span",{style:{color:"#4ade80",fontWeight:700}},ccAC.base.kcal+" kcal"),
                 h("span",{style:{color:"#fbbf24"}},"C "+ccAC.base.carbs+"g"),
@@ -5106,7 +5150,15 @@ function App() {
                 style:{width:48,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:6,padding:"4px 6px",color:"#fff",fontSize:12,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
               h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g"),
               h("span",{style:{color:"#999",fontFamily:S.mono,minWidth:58,textAlign:"right"}},nr.mac.kcal+" kcal"))
-          ))
+          )),
+          // Ghee mit frei editierbarem Gramm (nur Waitrose-Build + Schalter an)
+          gheeAC.ghee&&h("div",{key:"ghee",style:{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,fontSize:12,padding:"5px 0",borderTop:"1px solid #1f1f1f",marginTop:2}},
+            h("span",{style:{color:"#d9a441",flex:1,minWidth:0}},"+ "+WAITROSE_GHEE.name),
+            h("div",{style:{display:"flex",alignItems:"center",gap:4,flexShrink:0}},
+              h("input",{type:"number",inputMode:"numeric",value:wGheeG,onChange:ev=>setWGheeG(ev.target.value),
+                style:{width:48,boxSizing:"border-box",background:"#1c1c1c",border:"1px solid #333",borderRadius:6,padding:"4px 6px",color:"#fff",fontSize:12,fontFamily:S.mono,outline:"none",textAlign:"right"}}),
+              h("span",{style:{fontSize:11,color:"#888",fontFamily:S.mono}},"g"),
+              h("span",{style:{color:"#999",fontFamily:S.mono,minWidth:58,textAlign:"right"}},gheeAC.ghee.mac.kcal+" kcal")))
         ),
 
         // Order guide (à la carte) — Waitrose: Einkaufsliste statt Deliveroo-Bestellung
@@ -5121,7 +5173,8 @@ function App() {
           // Waitrose-Einkaufsliste: Marke voranstellen ("Marke · Produkt"), damit man das Produkt im Laden schneller findet
           const wLbl=x=>(x._locked?"🔒 ":"")+(((resto==="waitrose"||resto==="meals")&&x.brand)?x.brand+" · "+x.name:x.name)+(x.warn?"  ⚠️ "+x.warn:"")+(x.note?"  📍 "+x.note:"")+(x._locked?"  (your pick)":"");
           const steps=[...uniq.map(x=>({l:(counts[ckey(x)]>1?counts[ckey(x)]+"×":"1×"),v:wLbl(x)})),...cornStep(ccAC),
-            ...nutAC.nuts.map(nr=>({l:nr.grams+"g",v:nr.nut.brand+" · "+nr.nut.name}))];
+            ...nutAC.nuts.map(nr=>({l:nr.grams+"g",v:nr.nut.brand+" · "+nr.nut.name})),
+            ...(gheeAC.ghee?[{l:gheeAC.ghee.grams+"g",v:WAITROSE_GHEE.brand+" · "+WAITROSE_GHEE.name}]:[])];
           return h("div",{style:{background:"#0d0d0d",borderRadius:8,padding:14,border:"1px solid #2a2a2a"}},
             h("div",{style:{fontSize:10,color:S.green,fontFamily:S.mono,textTransform:"uppercase",letterSpacing:2,marginBottom:10,display:"flex",alignItems:"center",gap:6}},
               h("span",{style:{fontSize:13}},(resto==="waitrose"||resto==="meals")?"🛒":"📋"),(resto==="waitrose"||resto==="meals")?" Shopping list (Waitrose)":" Order guide (Deliveroo)"),

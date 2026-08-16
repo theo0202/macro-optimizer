@@ -10,7 +10,7 @@ global.React = { useState: () => [null, () => {}], useMemo: (f) => f, createElem
 global.ReactDOM = { render: () => {} };
 global.document = { getElementById: () => null };
 
-(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, alaCarteCombos, WAITROSE_MEALS, WAITROSE_CUISINES, waitroseMealItems, waitroseMealResults, filterMeals, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
+(0, eval)(m[1] + "\n;globalThis.__t = { D, FJ, ITSU, PRET, NANDOS, UG, WAGA, GDK, ATIS, TFC, CHOPSTIX, PEPES, FIVEGUYS, PIZZAEXPRESS, WASABI, STD_SALAD, sumN, optimize, optimizeFJ, optimizeItsu, optimizePret, optimizeNandos, optimizeUG, optimizeWaga, optimizeGDK, optimizeAtis, optimizeTFC, optimizeChopstix, optimizePepes, optimizeFiveGuys, optimizePizzaExpress, optimizeWasabi, LEON, optimizeLeon, BAGELFACTORY, optimizeBagelFactory, bfSwap, isBFSalmon, PHO, optimizePho, WINGSTOP, optimizeWingstop, SUSHICO, optimizeSushiCo, PURE, optimizePure, isShellfish, optimizeAll, sortResults, parseMacroScreenshot, itsuLabel, SEARCH_INDEX, searchItems, orderTotal, WAITROSE, wtScale, waitroseSearch, waitroseTotal, WAITROSE_MENU, waitroseOrderItems, waitrosePickItems, optimizeWaitrose, WAITROSE_NUTS, bestWaitroseNuts, applyWaitroseNuts, WAITROSE_GHEE, gheeGrams, applyWaitroseGhee, alaCarteCombos, WAITROSE_MEALS, WAITROSE_CUISINES, waitroseMealItems, waitroseMealResults, filterMeals, CORN_CAKE, CORN_CAKE_MAX, cornCapCount, bestCornCakes, withCornCake, applyCornCakes };");
 const T = globalThis.__t;
 
 let failures = 0;
@@ -1412,7 +1412,11 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (74)", T.WAITROSE.items.length, 74);
+check("Waitrose Produkte (75)", T.WAITROSE.items.length, 75);
+// Veetee Thai Jasmine: 2×140g-Pack -> Default 140g (½ Pack) mit Portions-Warnung, ganze Packung = 280g
+check("Waitrose Veetee Thai Jasmine (140g Default, 144/100g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "thai_jasmine_veetee"); return x && x.brand === "Veetee" && x.cat === "carbs_rice_grains" && x.g === 140 && x.p100.kcal === 144 && x.p100.carbs === 29.1 && /140g/.test(x.warn || ""); })(), true);
+check("Waitrose Thai Jasmine @140g = 201.6 kcal", T.wtScale(T.WAITROSE.items.find(x => x.id === "thai_jasmine_veetee"), 140).kcal, 201.6);
+check("Waitrose Thai Jasmine @280g (ganze Packung) = 403.2 kcal", T.wtScale(T.WAITROSE.items.find(x => x.id === "thai_jasmine_veetee"), 280).kcal, 403.2);
 // User 09.08.2026: Tilda Coconut Basmati + Merchant Gourmet Giant Beans / BBQ Baked Beans
 check("Waitrose Tilda Coconut Basmati Rice (250g, 162/100g -> 405 kcal)", (() => { const x = T.WAITROSE.items.find(y => y.id === "coconut_basmati_rice"); return x && x.brand === "Tilda" && x.cat === "carbs_rice_grains" && x.g === 250 && x.p100.kcal === 162 && x.p100.sat === 3.6 && x.p100.salt === 0.03 && T.wtScale(x, 250).kcal === 405; })(), true);
 check("Waitrose Giant Beans (Merchant Gourmet, 220g, 124/100g, P7.2)", (() => { const x = T.WAITROSE.items.find(y => y.id === "giant_beans"); return x && x.brand === "Merchant Gourmet" && x.g === 220 && x.p100.kcal === 124 && x.p100.protein === 7.2 && x.p100.fibre === 5.7; })(), true);
@@ -1434,7 +1438,7 @@ check("Waitrose Chicken pieces = 8 Items", T.WAITROSE.items.filter(x => x.cat ==
 check("Waitrose British Katsu Chicken Pieces (fix 160g, kcal 135)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_katsu_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 135; })(), true);
 check("Waitrose British Tikka Chicken Pieces (fix 160g, 139/100g, P25.6)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_tikka_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 139 && x.p100.protein === 25.6 && x.p100.salt === 0.49; })(), true);
 check("Waitrose Tikka @160g = 222.4 kcal (per-100g×1.6)", T.wtScale(T.WAITROSE.items.find(x => x.id === "british_tikka_chicken_pieces"), 160).kcal, 222.4);
-check("Waitrose Carbs/Rice/Grains = 33 Items (+ Coconut Rice/Giant Beans/BBQ Beans)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 33);
+check("Waitrose Carbs/Rice/Grains = 34 Items (+ Thai Jasmine)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 34);
 check("Waitrose Cheese-Kategorie = 2 (Mozzarella + Ricotta Peppers)", T.WAITROSE.items.filter(x => x.cat === "cheese").length, 2);
 // Egg Noodles: fix 275g, Notiz "located at vegetable fridge"; Mozzarella (Essential Waitrose) cheese, fix 125g
 check("Waitrose Egg Noodles (fix 275g) mit Store-Notiz", (() => { const x = T.WAITROSE.items.find(y => y.id === "egg_noodles"); return x && x.g === 275 && x.p100.kcal === 120 && x.note === "located at vegetable fridge"; })(), true);
@@ -1491,7 +1495,8 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
 // waitroseSearch schliesst die 3 Nuss-Portionen ein (Track-Basket): 52 Produkte + 3 Nuesse = 55
-check("waitroseSearch leere Query -> Katalog + 3 Nuesse (77)", T.waitroseSearch("", 85).length, 77);
+check("waitroseSearch leere Query -> Katalog + 3 Nuesse + Ghee (79)", T.waitroseSearch("", 90).length, 79);
+check("waitroseSearch findet Ghee Butter (Track-Basket)", T.waitroseSearch("ghee").some(x => x.id === "ghee_butter"), true);
 check("waitroseSearch 'peanut' findet Roasted Peanuts (Nuss im Track)", T.waitroseSearch("peanut", 60).some(x => x.id === "peanuts"), true);
 check("waitroseSearch 'pine' findet Pine Kernels", T.waitroseSearch("pine", 60).some(x => x.id === "pine" && x.variable === true && x.cat === "nuts"), true);
 // Nuesse bleiben AUSSERHALB des Build-Pools (WAITROSE.items / WAITROSE_MENU unveraendert bei 52)
@@ -1512,14 +1517,16 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 74 Items", wItems.length, 74);
+check("waitroseOrderItems: 75 Items", wItems.length, 75);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 9 Kategorien + 74 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 74, true);
+check("WAITROSE_MENU hat 9 Kategorien + 75 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 75, true);
+// Ghee ist KEIN Build-Pool-Produkt (nur Schalter + Track-Basket) — wie die Nuesse
+check("Ghee nicht in WAITROSE.items / WAITROSE_MENU", !T.WAITROSE.items.some(x => x.id === "ghee_butter") && !T.WAITROSE_MENU.items.some(x => x.id === "ghee_butter"), true);
 const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true); // activeCats = alle Kategorien an
 // Build-Kategorie-Filter fuer die neue Excel-Kategorie
 check("Waitrose Build Kategorie-Filter (nur carbs_rice_grains)", T.optimizeWaitrose({ protein: 6, carbs: 45, fat: 4, kcal: 250, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, { carbs_rice_grains: true }, 2).every(r => r.items.every(x => x.cat === "carbs_rice_grains")), true);
@@ -1568,6 +1575,20 @@ check("applyWaitroseNuts leer -> Identitaet", T.applyWaitroseNuts(dummy, [], tgt
 // applyWaitroseNuts speichert nuts + _nutBase, wenn eine Nuss hilft
 const augN = T.applyWaitroseNuts([{ items: [], nutrition: { ...zero }, score: T.bestWaitroseNuts(zero, [], tgtPeanut, "macros", {}).score }], ["peanuts"], tgtPeanut, "macros", {});
 check("applyWaitroseNuts augmentiert (nuts + _nutBase gesetzt)", augN[0].nuts.length === 1 && augN[0].nuts[0].id === "peanuts" && !!augN[0]._nutBase, true);
+
+// ===== Ghee Butter (Waitrose-Build-Schalter "Add ghee butter", Default AUS, freie Grammzahl) =====
+check("WAITROSE_GHEE Werte (895/100g, Fett 99.4, sat 70.5)", (() => { const g = T.WAITROSE_GHEE; return g && g.p100.kcal === 895 && g.p100.fat === 99.4 && g.p100.sat === 70.5 && g.p100.carbs === 0.5 && g.p100.protein === 0.1 && g.p100.salt === 0; })(), true);
+check("WAITROSE_GHEE Default 10g = 89.5 kcal", T.wtScale(T.WAITROSE_GHEE, 10).kcal, 89.5);
+check("WAITROSE_GHEE 25g = 223.8 kcal (freie Grammzahl)", T.wtScale(T.WAITROSE_GHEE, 25).kcal, 223.8);
+// gheeGrams: leer/ungueltig/negativ -> Default 10; 0 und positive gelten
+check("gheeGrams Fallback (leer/ungueltig/negativ -> 10)", [T.gheeGrams(""), T.gheeGrams(null), T.gheeGrams("abc"), T.gheeGrams(-5)].every(x => x === 10), true);
+check("gheeGrams akzeptiert 0 und beliebige Werte", T.gheeGrams(0) === 0 && T.gheeGrams(37.5) === 37.5, true);
+// applyWaitroseGhee: aus -> Identitaet; an -> jedes Ergebnis augmentiert (+ _gheeBase)
+const dummyG = [{ items: [], nutrition: { ...zero }, score: 1 }];
+check("applyWaitroseGhee aus -> Identitaet", T.applyWaitroseGhee(dummyG, false, 10, tgtAny, "macros", {}) === dummyG, true);
+const augG = T.applyWaitroseGhee([{ items: [], nutrition: { ...zero }, score: 9 }], true, 20, tgtAny, "macros", {});
+check("applyWaitroseGhee an: ghee + _gheeBase gesetzt, Makros addiert", augG[0].ghee && augG[0].ghee.grams === 20 && Math.abs(augG[0].nutrition.kcal - 179) < 0.2 && !!augG[0]._gheeBase, true);
+check("applyWaitroseGhee: erzwungen (auch wenn Score schlechter wird)", T.applyWaitroseGhee([{ items: [], nutrition: { ...zero }, score: 0 }], true, 50, { protein: 40, carbs: 60, fat: 5, kcal: 445, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {})[0].ghee !== null, true);
 // Neue Sushi-Daily (variabel): Salmon Tartare Bowl @354g -> kcal 175×3.54 = 619.5; Veggie Roll (sushi) @175g -> kcal 135×1.75 = 236.3
 check("Waitrose Salmon Tartare Bowl cat bowl, variabel typ. 354g", (() => { const x = T.WAITROSE.items.find(y => y.id === "salmon_tartare_bowl"); return x.cat === "bowl" && x.variable === true && x.g === 354; })(), true);
 check("Waitrose wtScale Salmon Tartare Bowl@354g kcal (619.5)", T.wtScale(T.WAITROSE.items.find(x => x.id === "salmon_tartare_bowl"), 354).kcal, 619.5);
