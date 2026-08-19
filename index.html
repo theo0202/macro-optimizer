@@ -2893,8 +2893,6 @@ const WAITROSE = {
   // Cheese — drained-Gewicht als Portion (per-100g)
   { id:"lighter_italian_mozzarella", name:"Lighter Italian Mozzarella", brand:"Essential Waitrose", cat:"cheese", variable:false, g:125,
     p100:{ kcal:157, fat:9, sat:5.8, carbs:1, sugars:1, fibre:0, protein:18, salt:0.6 } },
-  { id:"ricotta_stuffed_cherry_peppers", name:"Ricotta Stuffed Cherry Peppers", brand:"Waitrose", cat:"cheese", variable:false, g:135,
-    p100:{ kcal:125, fat:6.8, sat:3.4, carbs:10.9, sugars:10.7, fibre:2.2, protein:4.1, salt:0.57 } },
   // Vegetables (Sushi Daily Edamame + Waitrose-Sortiment aus "London Nährwerte Waitrose.xlsx")
   { id:"edamame_sushi_daily", name:"Edamame", brand:"Sushi Daily", cat:"vegetables", variable:true, g:93,
     p100:{ kcal:135, fat:3.3, sat:0, carbs:12, sugars:0, fibre:0, protein:12, salt:0 } },
@@ -2928,8 +2926,6 @@ const WAITROSE = {
     p100:{ kcal:209, fat:11.8, sat:0.8, carbs:16.4, sugars:1.6, fibre:6.2, protein:6, salt:0.98 } },
   { id:"spinach_feta_parcels", name:"Spinach & Feta Parcels", brand:"Waitrose", cat:"gyoza", variable:false, g:112,
     p100:{ kcal:270, fat:13.1, sat:3.1, carbs:29.3, sugars:2.3, fibre:2.2, protein:7.6, salt:0.56 } },
-  { id:"sweetcorn_fritters", name:"Sweetcorn Fritters", brand:"Waitrose", cat:"carbs_rice_grains", variable:false, g:150,
-    p100:{ kcal:224, fat:8.4, sat:1, carbs:28.6, sugars:5.5, fibre:4.8, protein:6.1, salt:0.67 } },
 ] };
 // Makros eines Produkts bei gegebener Gramm-Zahl (p100 × g/100), 1 Dezimale. Ungueltige Gramm → typisches Gewicht
 function wtScale(item, grams){
@@ -3035,8 +3031,6 @@ const WAITROSE_MEALS=[
   { id:"m25", cuisine:"British", items:[ {id:"flamegrilled_chicken_pieces",g:160}, {id:"mashed_potato",g:400}, {id:"classic_baked_beans",g:200} ] },
   { id:"m26", cuisine:"Asian", items:[ {id:"egg_noodles",g:275}, {id:"edamame_beans",g:160}, {id:"sweet_chilli_chicken_pieces",g:160} ] },
   // Batch 6 (User 18.07.2026) — Ricotta-Stuffed-Cherry-Peppers-Kombis (italienisch/mediterran)
-  { id:"m27", cuisine:"Mediterranean", items:[ {id:"lemon_herb_chicken_pieces",g:160}, {id:"puy_lentils",g:250}, {id:"ricotta_stuffed_cherry_peppers",g:135} ] },
-  { id:"m28", cuisine:"Italian", items:[ {id:"tomato_basil_chicken_pieces",g:160}, {id:"tomatoey_french_lentils",g:250}, {id:"ricotta_stuffed_cherry_peppers",g:135} ] },
   // Batch 7 (User 18.07.2026) — Sushi-Daily-lastige Asian-Kombis (Yakisoba Bowl / Gyoza / Teriyaki Maki + Edamame)
   { id:"m29", cuisine:"Asian", items:[ {id:"yakisoba_chicken",g:326}, {id:"edamame_sushi_daily",g:93}, {id:"sweet_chilli_chicken_pieces",g:160} ] },
   { id:"m30", cuisine:"Asian", items:[ {id:"yakisoba_chicken",g:326}, {id:"edamame_sushi_daily",g:93}, {id:"british_katsu_chicken_pieces",g:160} ] },
@@ -3046,19 +3040,14 @@ const WAITROSE_MEALS=[
   { id:"m34", cuisine:"Asian", items:[ {id:"teriyaki_chicken_maki",g:113}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"yakisoba_chicken",g:326} ] },
   // Batch 8 (User 18.07.2026) — Kombis mit den neuen Produkten (Singapore/Lentil Noodles, itsu Gyoza, Sweetcorn Fritters, Feta Parcels, Edamame Bean Salad)
   { id:"m35", cuisine:"Asian", items:[ {id:"singapore_rice_noodles",g:275}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
-  { id:"m36", cuisine:"Asian", items:[ {id:"itsu_chicken_spring_onion_gyoza",g:150}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"sweetcorn_fritters",g:150} ] },
   { id:"m37", cuisine:"Asian", items:[ {id:"british_katsu_chicken_pieces",g:160}, {id:"lentil_protein_noodles",g:275}, {id:"edamame_beans",g:160} ] },
   { id:"m38", cuisine:"Mediterranean", items:[ {id:"spinach_feta_parcels",g:112}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
-  { id:"m39", cuisine:"Mexican", items:[ {id:"sweetcorn_fritters",g:150}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
   { id:"m40", cuisine:"Asian", items:[ {id:"itsu_chicken_spring_onion_gyoza",g:150}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"teriyaki_chicken_maki",g:113}, {id:"chicken_gyoza_sushi_daily",g:130} ] },
   { id:"m41", cuisine:"Asian", items:[ {id:"itsu_chicken_spring_onion_gyoza",g:150}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"veggie_roll",g:175}, {id:"edamame_bean_salad",g:190} ] },
-  { id:"m42", cuisine:"Asian", items:[ {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_bean_salad",g:190}, {id:"teriyaki_chicken_maki",g:113}, {id:"sweetcorn_fritters",g:150} ] },
-  { id:"m43", cuisine:"Mexican", items:[ {id:"sweetcorn_fritters",g:150}, {id:"tomato_basil_chicken_pieces",g:160}, {id:"5_bean_medley",g:240} ] },
   { id:"m44", cuisine:"Asian", items:[ {id:"singapore_rice_noodles",g:275}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
   // Batch 9 (User 18.07.2026) — Gyoza/Fried-Rice-Kombis (Sticky Rice hier bei 130g = ½ Pack, siehe ⚠️-Warnung am Produkt)
   { id:"m45", cuisine:"Asian", items:[ {id:"itsu_chicken_spring_onion_gyoza",g:150}, {id:"edamame_beans",g:160}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"sticky_rice_veetee",g:130} ] },
   { id:"m46", cuisine:"Asian", items:[ {id:"edamame_beans",g:160}, {id:"sweet_chilli_chicken_pieces",g:160}, {id:"sticky_rice_veetee",g:130}, {id:"itsu_vegetable_festival_gyoza",g:150} ] },
-  { id:"m47", cuisine:"Asian", items:[ {id:"edamame_bean_salad",g:190}, {id:"sweetcorn_fritters",g:150}, {id:"british_katsu_chicken_pieces",g:160} ] },
   { id:"m48", cuisine:"Asian", items:[ {id:"chinese_special_fried_rice",g:250}, {id:"edamame_beans",g:160}, {id:"british_katsu_chicken_pieces",g:160} ] },
   { id:"m49", cuisine:"Asian", items:[ {id:"egg_fried_rice",g:250}, {id:"british_katsu_chicken_pieces",g:160}, {id:"edamame_beans",g:160} ] },
   { id:"m50", cuisine:"Asian", items:[ {id:"egg_fried_rice",g:250}, {id:"edamame_bean_salad",g:190}, {id:"flamegrilled_chicken_pieces",g:160} ] },

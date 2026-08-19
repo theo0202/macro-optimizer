@@ -1412,7 +1412,7 @@ check("orderTotal salt (2x0.5 + 1x1 = 2)", ot.salt, 2);
 check("orderTotal leere Bestellung -> alles 0", T.orderTotal([]).kcal === 0 && T.orderTotal([]).protein === 0, true);
 
 // ── Waitrose Supermarkt-Tracker (per-100g × Gramm-Zahl, editierbar) ──
-check("Waitrose Produkte (75)", T.WAITROSE.items.length, 75);
+check("Waitrose Produkte (73)", T.WAITROSE.items.length, 73);
 // Veetee Thai Jasmine: 2×140g-Pack -> Default 140g (½ Pack) mit Portions-Warnung, ganze Packung = 280g
 check("Waitrose Veetee Thai Jasmine (140g Default, 144/100g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "thai_jasmine_veetee"); return x && x.brand === "Veetee" && x.cat === "carbs_rice_grains" && x.g === 140 && x.p100.kcal === 144 && x.p100.carbs === 29.1 && /140g/.test(x.warn || ""); })(), true);
 check("Waitrose Thai Jasmine @140g = 201.6 kcal", T.wtScale(T.WAITROSE.items.find(x => x.id === "thai_jasmine_veetee"), 140).kcal, 201.6);
@@ -1428,7 +1428,6 @@ check("Waitrose itsu Chicken Gyoza (itsu, gyoza, 150g)", (() => { const x = T.WA
 check("Waitrose Veggie Bites Marke = All Plants (korrigiert)", (() => { const x = T.WAITROSE.items.find(y => y.id === "spinach_chickpea_veggie_bites"); return x && x.brand === "All Plants" && x.cat === "falafel" && x.p100.kcal === 209; })(), true);
 check("Waitrose Feta Parcels Marke = Waitrose (korrigiert)", (() => { const x = T.WAITROSE.items.find(y => y.id === "spinach_feta_parcels"); return x && x.brand === "Waitrose" && x.cat === "gyoza" && x.g === 112 && x.p100.kcal === 270; })(), true);
 check("Waitrose Edamame Bean Salad (vegetables, 190g, fibre 8.8)", (() => { const x = T.WAITROSE.items.find(y => y.id === "edamame_bean_salad"); return x && x.cat === "vegetables" && x.g === 190 && x.p100.fibre === 8.8; })(), true);
-check("Waitrose Ricotta Stuffed Cherry Peppers (Waitrose, cheese, fix 135g, 125/100g -> 168.8 kcal)", (() => { const x = T.WAITROSE.items.find(y => y.id === "ricotta_stuffed_cherry_peppers"); return x && x.cat === "cheese" && x.g === 135 && x.p100.kcal === 125 && T.wtScale(x, 135).kcal === 168.8; })(), true);
 check("Waitrose Classic Baked Beans (Merchant Gourmet, fix 200g, 92/100g -> 184 kcal)", (() => { const x = T.WAITROSE.items.find(y => y.id === "classic_baked_beans"); return x && x.cat === "carbs_rice_grains" && x.brand === "Merchant Gourmet" && x.g === 200 && x.p100.kcal === 92 && T.wtScale(x, 200).kcal === 184 && T.wtScale(x, 200).protein === 10.2; })(), true);
 check("Waitrose hat gewicht-variierende + fixe Produkte", T.WAITROSE.items.some(x => x.variable) && T.WAITROSE.items.some(x => !x.variable), true);
 // Kategorien: Chicken pieces / Sushi / Poke / Bowl / Gyoza / Carbs, Rice, Grains / Vegetables (Excel-Import 13.07.2026)
@@ -1438,8 +1437,8 @@ check("Waitrose Chicken pieces = 8 Items", T.WAITROSE.items.filter(x => x.cat ==
 check("Waitrose British Katsu Chicken Pieces (fix 160g, kcal 135)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_katsu_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 135; })(), true);
 check("Waitrose British Tikka Chicken Pieces (fix 160g, 139/100g, P25.6)", (() => { const x = T.WAITROSE.items.find(y => y.id === "british_tikka_chicken_pieces"); return x && x.cat === "chicken_pieces" && x.variable === false && x.g === 160 && x.p100.kcal === 139 && x.p100.protein === 25.6 && x.p100.salt === 0.49; })(), true);
 check("Waitrose Tikka @160g = 222.4 kcal (per-100g×1.6)", T.wtScale(T.WAITROSE.items.find(x => x.id === "british_tikka_chicken_pieces"), 160).kcal, 222.4);
-check("Waitrose Carbs/Rice/Grains = 34 Items (+ Thai Jasmine)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 34);
-check("Waitrose Cheese-Kategorie = 2 (Mozzarella + Ricotta Peppers)", T.WAITROSE.items.filter(x => x.cat === "cheese").length, 2);
+check("Waitrose Carbs/Rice/Grains = 33 Items (Sweetcorn Fritters raus)", T.WAITROSE.items.filter(x => x.cat === "carbs_rice_grains").length, 33);
+check("Waitrose Cheese-Kategorie = 1 (nur Mozzarella; Ricotta Peppers raus)", T.WAITROSE.items.filter(x => x.cat === "cheese").length, 1);
 // Egg Noodles: fix 275g, Notiz "located at vegetable fridge"; Mozzarella (Essential Waitrose) cheese, fix 125g
 check("Waitrose Egg Noodles (fix 275g) mit Store-Notiz", (() => { const x = T.WAITROSE.items.find(y => y.id === "egg_noodles"); return x && x.g === 275 && x.p100.kcal === 120 && x.note === "located at vegetable fridge"; })(), true);
 check("Waitrose Mozzarella (Essential Waitrose, cheese, fix 125g, 157/100g)", (() => { const x = T.WAITROSE.items.find(y => y.id === "lighter_italian_mozzarella"); return x && x.brand === "Essential Waitrose" && x.cat === "cheese" && x.g === 125 && x.p100.kcal === 157 && x.p100.protein === 18; })(), true);
@@ -1495,7 +1494,7 @@ check("Waitrose wtScale Chicken@160g protein (40)", T.wtScale(wChick, 160).prote
 check("waitroseSearch 'sushi daily' findet die 17 Sushi-Daily-Produkte", T.waitroseSearch("sushi daily", 60).length, 17);
 check("waitroseSearch 'poke' findet Deluxe Duo Poke + Vibrant Salmon Poke", T.waitroseSearch("poke", 60).filter(x => ["deluxe_duo_poke", "vibrant_salmon_poke_bowl"].includes(x.id)).length, 2);
 // waitroseSearch schliesst die 3 Nuss-Portionen ein (Track-Basket): 52 Produkte + 3 Nuesse = 55
-check("waitroseSearch leere Query -> Katalog + 3 Nuesse + Ghee (79)", T.waitroseSearch("", 90).length, 79);
+check("waitroseSearch leere Query -> Katalog + 3 Nuesse + Ghee (77)", T.waitroseSearch("", 90).length, 77);
 check("waitroseSearch findet Ghee Butter (Track-Basket)", T.waitroseSearch("ghee").some(x => x.id === "ghee_butter"), true);
 check("waitroseSearch 'peanut' findet Roasted Peanuts (Nuss im Track)", T.waitroseSearch("peanut", 60).some(x => x.id === "peanuts"), true);
 check("waitroseSearch 'pine' findet Pine Kernels", T.waitroseSearch("pine", 60).some(x => x.id === "pine" && x.variable === true && x.cat === "nuts"), true);
@@ -1517,14 +1516,14 @@ check("waitroseTotal leerer Warenkorb -> 0", T.waitroseTotal([]).kcal, 0);
 // ── Waitrose Order-Builder (Optimizer über typische/fixe Gewichte) ──
 // waitroseOrderItems: jedes Produkt als AC-Item mit den Makros beim typischen/fixen Gewicht
 const wItems = T.waitroseOrderItems();
-check("waitroseOrderItems: 75 Items", wItems.length, 75);
+check("waitroseOrderItems: 73 Items", wItems.length, 73);
 check("waitroseOrderItems traegt Kategorie (nicht mehr 'waitrose')", wItems.every(x => T.WAITROSE.cats.some(c => c.id === x.cat)), true);
 const wPokeItem = wItems.find(x => x.id === "deluxe_duo_poke");
 // Makros = wtScale(Produkt, typisches Gewicht 360g) -> kcal 550.8
 check("waitroseOrderItems Poke = typisches Gewicht (550.8 kcal)", wPokeItem.kcal, 550.8);
 check("waitroseOrderItems Poke protein (22.3)", wPokeItem.protein, 22.3);
 check("waitroseOrderItems Grammzahl im Namen", wPokeItem.name.includes("360g"), true);
-check("WAITROSE_MENU hat 9 Kategorien + 75 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 75, true);
+check("WAITROSE_MENU hat 9 Kategorien + 73 Items", T.WAITROSE_MENU.cats.length === 9 && T.WAITROSE_MENU.items.length === 73, true);
 // Ghee ist KEIN Build-Pool-Produkt (nur Schalter + Track-Basket) — wie die Nuesse
 check("Ghee nicht in WAITROSE.items / WAITROSE_MENU", !T.WAITROSE.items.some(x => x.id === "ghee_butter") && !T.WAITROSE_MENU.items.some(x => x.id === "ghee_butter"), true);
 const waAll = {}; T.WAITROSE.cats.forEach(c => waAll[c.id] = true); // activeCats = alle Kategorien an
@@ -1702,28 +1701,27 @@ const combB = T.alaCarteCombos({ protein: 30, carbs: 40, fat: 15, kcal: 415 }, "
 check("alaCarteCombos: baseItems=undefined identisch (Regression)", JSON.stringify(combA.map(r => r.nutrition)) === JSON.stringify(combB.map(r => r.nutrition)), true);
 
 // ===== "Pre-selected Meals" — kuratierte Waitrose-Kombis =====
-check("WAITROSE_MEALS: 50 Mahlzeiten", T.WAITROSE_MEALS.length, 50);
+check("WAITROSE_MEALS: 43 Mahlzeiten", T.WAITROSE_MEALS.length, 43);
 // jedes Mahlzeit-Produkt existiert im Katalog
 check("WAITROSE_MEALS: alle Produkt-ids existieren", T.WAITROSE_MEALS.every(m => m.items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 const mealRes = T.waitroseMealResults({ protein: 70, carbs: 90, fat: 20, kcal: 820 }, "macros", {});
-check("waitroseMealResults: 50 Ergebnisse in AC-Form", mealRes.length === 50 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
+check("waitroseMealResults: 43 Ergebnisse in AC-Form", mealRes.length === 43 && mealRes.every(r => r.items && r.nutrition && typeof r.score === "number"), true);
 // Batch 9: Gyoza/Fried-Rice-Kombis (m45-m50)
 check("m45 (itsu Gyoza+Edamame+SweetChilli+StickyRice) 4 Items ~849.3 kcal", (() => { const r = mealRes.find(x => x._meal === "m45"); return r && r.items.length === 4 && Math.abs(r.nutrition.kcal - 849.3) < 0.6; })(), true);
-check("m47 (EdamameSalat+Fritters+Katsu) ~743.9 kcal", (() => { const r = mealRes.find(x => x._meal === "m47"); return r && Math.abs(r.nutrition.kcal - 743.9) < 0.6; })(), true);
 check("m50 (EggFriedRice+EdamameSalat+Flamegrilled) ~807.7 kcal", (() => { const r = mealRes.find(x => x._meal === "m50"); return r && Math.abs(r.nutrition.kcal - 807.7) < 0.6; })(), true);
-check("Batch 9: alle 6 neuen Produkt-ids existieren", ["m45","m46","m47","m48","m49","m50"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
+check("Batch 9: alle verbliebenen Produkt-ids existieren", ["m45","m46","m48","m49","m50"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 // Batch 8: Kombis mit neuen Produkten (m35-m44)
 check("m35 (Singapore Noodles+Katsu+Edamame) ~797.8 kcal", (() => { const r = mealRes.find(x => x._meal === "m35"); return r && Math.abs(r.nutrition.kcal - 797.8) < 0.6 && r.items.some(x => x.id === "singapore_rice_noodles"); })(), true);
 check("m37 (Katsu+Lentil Noodles+Edamame) ~814.3 kcal", (() => { const r = mealRes.find(x => x._meal === "m37"); return r && Math.abs(r.nutrition.kcal - 814.3) < 0.6 && r.items.some(x => x.id === "lentil_protein_noodles"); })(), true);
 check("m40 (4 Items, itsu Gyoza + Sushi Daily) ~766.3 kcal", (() => { const r = mealRes.find(x => x._meal === "m40"); return r && r.items.length === 4 && Math.abs(r.nutrition.kcal - 766.3) < 0.6; })(), true);
-check("Batch 8: alle 10 neuen Produkt-ids existieren", ["m35","m36","m37","m38","m39","m40","m41","m42","m43","m44"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
+check("Batch 8: alle verbliebenen Produkt-ids existieren", ["m35","m37","m38","m40","m41","m44"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 // Batch 7: 6 Sushi-Daily-lastige Asian-Kombis (m29-m34)
 check("m29 (Yakisoba+Edamame+SweetChilli) ~827.6 kcal, Asian", (() => { const r = mealRes.find(x => x._meal === "m29"); return r && r._cuisine === "Asian" && Math.abs(r.nutrition.kcal - 827.6) < 0.6; })(), true);
 check("m32 (Gyoza+VeggieGyoza+Edamame+SweetChilli) 4 Items ~747.4 kcal", (() => { const r = mealRes.find(x => x._meal === "m32"); return r && r.items.length === 4 && Math.abs(r.nutrition.kcal - 747.4) < 0.6; })(), true);
 check("m33 (TeriyakiMaki+Katsu+Yakisoba) ~824.4 kcal", (() => { const r = mealRes.find(x => x._meal === "m33"); return r && Math.abs(r.nutrition.kcal - 824.4) < 0.6; })(), true);
 check("Batch 7: alle 6 neuen Produkt-ids existieren", ["m29","m30","m31","m32","m33","m34"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 // "Must include Sushi Daily" / "Only Sushi Daily" (Meals-Filter, exklusiv)
-check("filterMeals mustSD: 12 Mahlzeiten mit >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).length, 12);
+check("filterMeals mustSD: 11 Mahlzeiten mit >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).length, 11);
 check("filterMeals mustSD: jede hat >=1 Sushi Daily", T.filterMeals(mealRes, "all", "", false, true, false).every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
 // "Only Sushi Daily + chicken": nur SD-Produkte ODER Waitrose-Chicken, mind. 1 SD -> m23 + m29-m34 = 7
 const isSDorChick = x => x.brand === "Sushi Daily" || x.cat === "chicken_pieces";
@@ -1737,9 +1735,6 @@ check("optimizeWaitrose onlySushiDaily: jedes Ergebnis hat >=1 Sushi Daily", rOn
 const rMustSD = T.optimizeWaitrose({ carbs: 85, protein: 65, fat: 20, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { mustSushiDaily: true });
 check("optimizeWaitrose mustSushiDaily: jedes Ergebnis hat >=1 Sushi Daily", rMustSD.length > 0 && rMustSD.every(r => r.items.some(x => x.brand === "Sushi Daily")), true);
 check("optimizeWaitrose noSushiDaily bleibt (Gegenprobe): kein SD", T.optimizeWaitrose({ carbs: 85, protein: 65, fat: 20, kcal: 780, fibMin: null, fibMax: null, sMin: null, sMax: null }, "macros", {}, waAll, 3, { noSushiDaily: true }).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);
-// Batch 6: m27/m28 (Ricotta-Peppers-Kombis)
-check("m27 (Lemon&Herb+PuyLentils+Ricotta) ~761.2 kcal, Mediterranean", (() => { const r = mealRes.find(x => x._meal === "m27"); return r && r._cuisine === "Mediterranean" && Math.abs(r.nutrition.kcal - 761.2) < 0.6 && r.items.some(x => x.id === "ricotta_stuffed_cherry_peppers"); })(), true);
-check("m28 (Tomato&Basil+FrenchLentils+Ricotta) ~739.8 kcal, Italian", (() => { const r = mealRes.find(x => x._meal === "m28"); return r && r._cuisine === "Italian" && Math.abs(r.nutrition.kcal - 739.8) < 0.6; })(), true);
 // Batch 5: m25 (Baked-Beans-Teller) + m26 (Asian Egg Noodles)
 check("m25 (Flamegrilled+Mash+BakedBeans) ~780.8 kcal, British", (() => { const r = mealRes.find(x => x._meal === "m25"); return r && r._cuisine === "British" && Math.abs(r.nutrition.kcal - 780.8) < 0.6 && r.items.some(x => x.id === "classic_baked_beans"); })(), true);
 check("m26 (EggNoodles+Edamame+SweetChilli) ~749.2 kcal, Asian", (() => { const r = mealRes.find(x => x._meal === "m26"); return r && r._cuisine === "Asian" && Math.abs(r.nutrition.kcal - 749.2) < 0.6; })(), true);
@@ -1752,9 +1747,9 @@ check("m21 (Gyoza+StickyRice+Edamame+GreenThai) 4 Items ~755 kcal", m21r.items.l
 check("m24 (BelugaLentils+Tomato&Basil+Mash) ~879 kcal", Math.abs(m24r.nutrition.kcal - 879) < 0.6, true);
 check("Batch 4: alle 9 neuen Produkt-ids existieren", ["m16","m17","m18","m19","m20","m21","m22","m23","m24"].every(id => T.WAITROSE_MEALS.find(m => m.id === id).items.every(it => T.WAITROSE.items.some(w => w.id === it.id))), true);
 // "No Sushi Daily products"-Filter: nur m21/m22/m23 enthalten Sushi-Daily-Produkte -> 24-3=21
-check("filterMeals noSD: 12 Mahlzeiten mit Sushi Daily raus -> 38", T.filterMeals(mealRes, "all", "", true).length, 38);
+check("filterMeals noSD: 11 Mahlzeiten mit Sushi Daily raus -> 32", T.filterMeals(mealRes, "all", "", true).length, 32);
 check("filterMeals noSD: kein Sushi-Daily-Produkt in den Ergebnissen", T.filterMeals(mealRes, "all", "", true).every(r => r.items.every(x => x.brand !== "Sushi Daily")), true);
-check("filterMeals noSD=false: alle 50 (Gegenprobe)", T.filterMeals(mealRes, "all", "", false).length, 50);
+check("filterMeals noSD=false: alle 43 (Gegenprobe)", T.filterMeals(mealRes, "all", "", false).length, 43);
 // noSD kombiniert mit Küche: Asian ohne Sushi Daily
 check("filterMeals Asian + noSD: nur Asian, kein Sushi Daily", T.filterMeals(mealRes, "Asian", "", true).every(r => r._cuisine === "Asian" && r.items.every(x => x.brand !== "Sushi Daily")), true);
 // Küche: jede Mahlzeit hat eine gültige cuisine + _cuisine im Ergebnis
@@ -1762,7 +1757,7 @@ check("WAITROSE_MEALS: jede Mahlzeit hat gültige cuisine", T.WAITROSE_MEALS.eve
 check("waitroseMealResults traegt _cuisine", mealRes.every(r => T.WAITROSE_CUISINES.includes(r._cuisine)), true);
 // filterMeals: Küchen-Filter (nur Italian)
 check("filterMeals Küche 'Italian' -> nur Italian", T.filterMeals(mealRes, "Italian", "").every(r => r._cuisine === "Italian"), true);
-check("filterMeals 'all' -> alle 50", T.filterMeals(mealRes, "all", "").length, 50);
+check("filterMeals 'all' -> alle 43", T.filterMeals(mealRes, "all", "").length, 43);
 // filterMeals: Produkt-Suche (alle Gerichte mit Edamame)
 const eda = T.filterMeals(mealRes, "all", "edamame");
 check("filterMeals Suche 'edamame' -> nur Gerichte mit Edamame", eda.length > 0 && eda.every(r => r.items.some(x => /edamame/i.test(x.name))), true);
